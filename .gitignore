@@ -1,0 +1,17 @@
+# Python cache and virtualenv noise
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local editor/system noise
+.DS_Store
+Thumbs.db
+
+# Local working snapshots
+OpenWebUI Model Builder/.backup/
