@@ -11,19 +11,23 @@
 
 ## Aktueller Bestand
 
-- Der Builder-Bereich ist der am weitesten ausgebaute Teil.
+- `OpenWebUI Model Builder/` ist der Ausgangspunkt fuer Vorgaben und Regenerierung.
 - `Problemfaelle/` enthaelt die fachlichen Briefings.
-- `Modelle/`, `Tools/` und `Weiteres/` sind aktuell strukturell vorhanden, aber noch nicht fachlich ausgebaut.
+- `Modelle/einzelmodelle/` enthaelt die menschenlesbar sortierten Modellpakete.
+- `Modelle/dist/` ist der Air-Gap-Copy/Paste-Bereich.
+- `Tools/jupyter/` enthaelt das produktive Offline-Jupyter-Tool.
 
 ## Empfohlene Nutzung
 
 1. Neue Problemfaelle zuerst unter `Problemfaelle/` als Briefing anlegen.
 2. Modellpakete ueber den Builder regenerieren.
-3. Nur stabile, bewusst versionierbare Artefakte einchecken.
+3. Scharfe Artefakte aus dem Builder unter `Modelle/` und `Tools/` fuer Menschen und Betrieb bereitstellen.
 4. Lokale Cache-Dateien und Backup-Snapshots nicht committen.
 
 ## Git-Konvention
 
 - Root des Git-Repositories ist `E:\OpenWebUI`.
-- Generierte OpenWebUI-Artefakte unter `OpenWebUI Model Builder/dist/` sind Teil des versionierten Outputs.
+- Builder-Quellen bleiben unter `OpenWebUI Model Builder/`.
+- Operative Modelle liegen unter `Modelle/`.
+- Operative Tools liegen unter `Tools/`.
 - Builder-Backups unter `OpenWebUI Model Builder/.backup/` bleiben lokal.

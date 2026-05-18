@@ -1,0 +1,11 @@
+{
+  "schema": "openwebui-tool-bundle-fallback/v1",
+  "tools": [
+    {
+      "id": "air_gapped_jupyter_python",
+      "name": "Air-Gapped Jupyter Python",
+      "source_file": "tools/jupyter/jupyter_tool.py",
+      "config_example": "tools/jupyter/.env.example"
+    }
+  ]
+}
