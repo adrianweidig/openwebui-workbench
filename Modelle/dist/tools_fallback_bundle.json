@@ -44,6 +44,12 @@
       "config_example": null
     },
     {
+      "id": "mediawiki_legacy_crawler",
+      "name": "MediaWiki Legacy Crawler",
+      "source_file": "Tools/openwebui_ext/tools/mediawiki_legacy_crawler.py",
+      "config_example": null
+    },
+    {
       "id": "offline_artifact_workbench",
       "name": "Offline Artifact Workbench",
       "source_file": "Tools/openwebui_ext/tools/offline_artifact_workbench.py",

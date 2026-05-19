@@ -13,6 +13,7 @@
     "inline_visuals_toolkit_v3",
     "json_csv_text_validator",
     "markdown_skill_builder",
+    "mediawiki_legacy_crawler",
     "offline_artifact_workbench",
     "openapi_schema_inspector",
     "parallel_task_planner",
@@ -123,6 +124,22 @@
       "importable": true,
       "methods": [
         "build_skill"
+      ]
+    },
+    {
+      "id": "mediawiki_legacy_crawler",
+      "name": "MediaWiki Legacy Crawler",
+      "path": "Tools/openwebui_ext/tools/mediawiki_legacy_crawler.py",
+      "purpose": "Crawl an internal MediaWiki instance through the MediaWiki API with support for legacy username/password login flows.",
+      "offline": true,
+      "configuration": [],
+      "sha256": "9714bb733d13bb617c3cc6bcb4c20395edc9088b8db2c08de04abd36d0a6e37e",
+      "importable": true,
+      "methods": [
+        "check_mediawiki",
+        "crawl_pages",
+        "fetch_page",
+        "login_check"
       ]
     },
     {

@@ -28,6 +28,10 @@ Analysiert vom Nutzer eingefügte Dateibäume. Öffnet keine lokalen Pfade und l
 
 Erzeugt sichere importierbare Skill-Markdown-Dateien aus Nutzerzielen und lehnt missbräuchliche Zielsetzungen ab.
 
+## mediawiki_legacy_crawler.py
+
+Crawlt interne MediaWiki-Instanzen ueber `api.php`. Das Tool unterstuetzt moderne Login-Token und den alten `NeedToken`-Loginflow sehr alter MediaWiki-Versionen. Zugangsdaten gehoeren in Valves (`base_url`, `username`, `password`) und werden in Ausgaben redigiert. Es schreibt keine Dateien und ruft nur die konfigurierte Wiki-API auf.
+
 ## offline_artifact_workbench.py
 
 Erzeugt offline HTML-Dokumente, 16:9-HTML-Präsentationen, optionale PDFs und ZIP-Pakete unterhalb des konfigurierten Artefaktverzeichnisses. PDF-Konvertierung nutzt lokal vorhandenes `weasyprint` oder optional `wkhtmltopdf`; fehlt ein Konverter, bleibt das HTML-Artefakt nutzbar und der Fehler nennt die lokal bereitzustellende Abhängigkeit.

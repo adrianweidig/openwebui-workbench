@@ -64,6 +64,7 @@
         "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
         "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
         "offline_artifact_workbench",
         "openapi_schema_inspector",
         "parallel_task_planner",

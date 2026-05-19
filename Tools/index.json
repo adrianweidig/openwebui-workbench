@@ -63,6 +63,14 @@
       "configuration": []
     },
     {
+      "id": "mediawiki_legacy_crawler",
+      "name": "MediaWiki Legacy Crawler",
+      "path": "Tools/openwebui_ext/tools/mediawiki_legacy_crawler.py",
+      "purpose": "Crawl an internal MediaWiki instance through the MediaWiki API with support for legacy username/password login flows.",
+      "offline": true,
+      "configuration": []
+    },
+    {
       "id": "offline_artifact_workbench",
       "name": "Offline Artifact Workbench",
       "path": "Tools/openwebui_ext/tools/offline_artifact_workbench.py",

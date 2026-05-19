@@ -36,6 +36,7 @@ Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die gesc
 - `docker_compose_triage.py`: Docker-Compose- und OpenWebUI-Fehlertexte analysieren.
 - `repo_tree_analyzer.py`: eingefügte Repository-Bäume auswerten.
 - `markdown_skill_builder.py`: OpenWebUI-Skill-Markdown erzeugen.
+- `mediawiki_legacy_crawler.py`: interne MediaWiki-Instanzen per API crawlen, inklusive Legacy-Username/Passwort-Login über Valves.
 - `offline_artifact_workbench.py`: offline HTML-, Präsentations-, PDF- und ZIP-Artefakte erzeugen.
 - `inline_visuals_toolkit_v3.py`: offline SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual-Briefs erzeugen.
 - `parallel_task_planner.py`: komplexe Arbeit in sichere Parallelwellen und Subagent-Arbeitspakete zerlegen.
