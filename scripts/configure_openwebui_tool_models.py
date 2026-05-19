@@ -82,6 +82,15 @@ def rel(path: Path) -> str:
     return path.relative_to(ROOT).as_posix()
 
 
+def should_archive(path: Path) -> bool:
+    ignored_dirs = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
+    if any(part in ignored_dirs for part in path.parts):
+        return False
+    if path.suffix in {".pyc", ".pyo", ".pyd"}:
+        return False
+    return True
+
+
 def stable_tool_id(path: Path, indexed_by_path: Dict[str, Dict[str, Any]]) -> str:
     key = rel(path).lower()
     if key in indexed_by_path:
@@ -465,7 +474,7 @@ def rebuild_zips() -> None:
     with zipfile.ZipFile(TOOLS_ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for item in [ROOT / "Tools" / "jupyter", ROOT / "Tools" / "openwebui_ext"]:
             for path in item.rglob("*"):
-                if path.is_file():
+                if path.is_file() and should_archive(path):
                     archive.write(path, rel(path))
         for path in [TOOLS_INDEX, ROOT / "Tools" / "README.md", TOOL_REGISTRY, FUNCTION_REGISTRY]:
             if path.exists():
@@ -483,7 +492,7 @@ def rebuild_zips() -> None:
             if path.exists():
                 archive.write(path, rel(path))
         for path in (MODEL_DIST / "artifacts").rglob("*"):
-            if path.is_file():
+            if path.is_file() and should_archive(path):
                 archive.write(path, rel(path))
 
 

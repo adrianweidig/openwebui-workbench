@@ -49,7 +49,7 @@ class FakeLegacyMediaWikiHandler(BaseHTTPRequestHandler):
                             "revid": 100 + index,
                             "timestamp": "2026-05-20T00:00:00Z",
                             "size": 42,
-                            "*": f"Wikitext fuer {title}",
+                            "*": f"Wikitext für {title}",
                         }
                     ],
                 }
@@ -113,7 +113,7 @@ class MediaWikiLegacyCrawlerTests(unittest.TestCase):
         crawl = asyncio.run(tool.crawl_pages(max_pages=2, include_content=True))
         self.assertIn("Main Page", crawl)
         self.assertIn("Legacy Page", crawl)
-        self.assertIn("Wikitext fuer", crawl)
+        self.assertIn("Wikitext für", crawl)
         self.assertNotIn("secret", crawl)
 
 

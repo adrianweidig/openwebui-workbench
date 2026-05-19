@@ -18,6 +18,9 @@ Dieser GPT erstellt vollständige OpenWebUI-Modellpakete für konkrete Aufgabenm
 - `bootloader.md`: kompakte Einbindung der Kernlogik für GPT-Hinweise.
 - `icon.png`: Symbolgrafik für die GPT-Darstellung.
 - `Problemfälle/`: Beispielsammlung oder Sonderfälle für problematische oder grenzwertige Modellkonstellationen.
+- `.work/`: lokale Generatorlogik und Hilfsskripte für die Regenerierung.
+
+Nicht versioniert werden lokale Sicherungen, Python-Caches und alte Builder-Ausgaben. Für die produktive OpenWebUI-Umgebung sind die kanonischen Artefakte unter `..\Modelle\dist` und `..\Tools\dist` zu verwenden.
 
 ## Typische Nutzung
 
@@ -25,4 +28,8 @@ Geeignet für interne Aufgabenmodelle, Dokumentenanalyse, Support, RAG, Code-Rev
 
 ## Für Repo-Nutzer
 
-Startpunkt ist `customgpt_infos.md`. Für die eigentliche Modell- und Promptlogik danach `systemprompt.md` und `fachwissen.md` lesen.
+Startpunkt ist `customgpt_infos.md`. Für die eigentliche Modell- und Promptlogik danach `systemprompt.md` und `fachwissen.md` lesen. Nach Änderungen an Vorgaben oder Problemfällen die produktiven Artefakte über den Generator im Repository-Stamm neu erzeugen:
+
+```powershell
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
+```

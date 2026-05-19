@@ -4,7 +4,7 @@ Dieses Repository verwaltet den lokalen Arbeitsbereich unter `E:\OpenWebUI`.
 
 ## Struktur
 
-- `OpenWebUI Model Builder/`: nur Arbeitsanweisungen, Quellvorgaben, Generatorlogik und Builder-interne Hilfsbereiche
+- `OpenWebUI Model Builder/`: nur Arbeitsanweisungen, Quellvorgaben und Generatorlogik
 - `Problemfälle/`: fachliche Briefings, aus denen die Aufgabenmodelle erzeugt werden
 - `Modelle/einzelmodelle/`: menschenlesbar sortierte, einzelne Modellpakete
 - `Modelle/dist/`: Air-Gap-Handover-Ordner für Copy/Paste, ZIP und OpenWebUI-Importdateien
@@ -21,7 +21,8 @@ Dieses Repository verwaltet den lokalen Arbeitsbereich unter `E:\OpenWebUI`.
 - Scharfe Artefakte liegen für den laufenden Betrieb unter `Modelle/` und `Tools/`.
 - Laufzeitausgaben liegen unter `Artefakte/` und werden normalerweise nicht versioniert.
 - Original-Briefings in `Problemfälle/` werden nicht destruktiv verändert.
-- Builder-interne Sicherungen bleiben unter `OpenWebUI Model Builder/.backup/`.
+- Builder-interne Sicherungen bleiben lokal unter `OpenWebUI Model Builder/.backup/`, werden ignoriert und nicht versioniert.
+- Alte Generatorausgaben unter `OpenWebUI Model Builder/dist/` sind nicht kanonisch; produktive Artefakte liegen ausschließlich unter `Modelle/dist/` und `Tools/dist/`.
 - Das Repository ist auf Offline-/Air-Gapped-Arbeit ausgelegt.
 
 ## OpenWebUI Direktnutzung
@@ -52,7 +53,7 @@ Für visuelle Offline-Ausgaben, parallele Tool-/Subagent-Planung und robuste Mod
 - `Tools/openwebui_ext/tools/tool_skill_overlay_planner.py`
 - `Tools/openwebui_ext/tools/comfyui_workflow_inspector.py`
 
-Die Tool-Registry und die Modell-Tool-Zuweisungen können reproduzierbar erzeugt und geprüft werden:
+Die Tool-Registry und die Modell-Tool-Zuweisungen können reproduzierbar erzeugt und geprüft werden. Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus den ZIP-Paketen aus:
 
 ```powershell
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips

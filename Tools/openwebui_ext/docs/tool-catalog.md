@@ -30,7 +30,7 @@ Erzeugt sichere importierbare Skill-Markdown-Dateien aus Nutzerzielen und lehnt 
 
 ## mediawiki_legacy_crawler.py
 
-Crawlt interne MediaWiki-Instanzen ueber `api.php`. Das Tool unterstuetzt moderne Login-Token und den alten `NeedToken`-Loginflow sehr alter MediaWiki-Versionen. Zugangsdaten gehoeren in Valves (`base_url`, `username`, `password`) und werden in Ausgaben redigiert. Es schreibt keine Dateien und ruft nur die konfigurierte Wiki-API auf.
+Crawlt interne MediaWiki-Instanzen über `api.php`. Das Tool unterstützt moderne Login-Token und den alten `NeedToken`-Loginflow sehr alter MediaWiki-Versionen. Zugangsdaten gehören in Valves (`base_url`, `username`, `password`) und werden in Ausgaben redigiert. Es schreibt keine Dateien und ruft nur die konfigurierte Wiki-API auf.
 
 ## offline_artifact_workbench.py
 
