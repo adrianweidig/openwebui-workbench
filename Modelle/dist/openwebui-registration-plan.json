@@ -1,0 +1,64 @@
+{
+  "schema": "openwebui-registration-plan/v1",
+  "order": [
+    "1_import_workspace_tools",
+    "2_import_workspace_skills",
+    "3_import_or_update_models",
+    "4_enable_user_or_group_access"
+  ],
+  "tools_first": [
+    "air_gapped_jupyter_python",
+    "comfyui_workflow_inspector",
+    "docker_compose_triage",
+    "github_repo_inspector",
+    "inline_visuals_toolkit_v3",
+    "json_csv_text_validator",
+    "markdown_skill_builder",
+    "offline_artifact_workbench",
+    "openapi_schema_inspector",
+    "parallel_task_planner",
+    "repo_tree_analyzer",
+    "safe_http_fetcher",
+    "tool_skill_overlay_planner"
+  ],
+  "model_import_file": "Modelle/dist/openwebui-models-import.json",
+  "global_model_params_recommendation": {
+    "function_calling": "native"
+  },
+  "verified_model_fields_used": [
+    "meta.toolIds",
+    "meta.capabilities.builtin_tools",
+    "params.function_calling"
+  ],
+  "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
+  "chat_models_configured": [
+    "anforderungsanalyse-lastenheft",
+    "api-schnittstellenentwurf",
+    "code-dokumentation",
+    "code-review",
+    "codeanalyse",
+    "codegenerierung",
+    "compliance-richtlinienprüfung",
+    "debugging-fehleranalyse",
+    "dokumentenanalyse",
+    "dokumentengenerierung",
+    "dokumentenvergleich",
+    "dokumentenzusammenfassung",
+    "email-kommunikationsassistenz",
+    "informationsextraktion",
+    "it-helpdesk-diagnose",
+    "json-csv-log-analyse",
+    "meeting-protokoll-auswertung",
+    "offline-workbench-agent",
+    "prozess-workflow-dokumentation",
+    "präsentationserstellung",
+    "refactoring-unterstützung",
+    "report-dashboard-vorbereitung",
+    "support-ticket-vorbereitung",
+    "tabellen-csv-datenanalyse",
+    "testfall-generierung",
+    "übersetzung-lokalisierung"
+  ],
+  "non_chat_models_excluded": [],
+  "tool_mode": "all_validated_custom_tools"
+}

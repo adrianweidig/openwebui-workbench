@@ -17,7 +17,7 @@
         "citations": false,
         "status_updates": true,
         "usage": true,
-        "builtin_tools": false
+        "builtin_tools": true
       },
       "suggestion_prompts": [
         {
@@ -61,6 +61,24 @@
         {
           "name": "language"
         }
+      ],
+      "toolIds": [
+        "air_gapped_jupyter_python",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "github_repo_inspector",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "repo_tree_analyzer",
+        "safe_http_fetcher",
+        "tool_skill_overlay_planner"
+      ],
+      "defaultFeatureIds": [
+        "code_interpreter"
       ]
     },
     "params": {
@@ -72,7 +90,8 @@
       "frequency_penalty": 0.0,
       "presence_penalty": 0.0,
       "seed": null,
-      "stop": []
+      "stop": [],
+      "function_calling": "native"
     }
   }
 ]

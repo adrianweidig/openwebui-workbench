@@ -67,7 +67,26 @@ Lokale Prüfung:
 ```powershell
 python scripts/validate_openwebui_extensions.py
 python -m unittest Tools.openwebui_ext.tests.test_openwebui_tools_importable
+python scripts/configure_openwebui_tool_models.py --check
 ```
+
+## Tool- und Modellregistrierung
+
+Die reproduzierbare Tool-/Modellkonfiguration wird über `scripts/configure_openwebui_tool_models.py` erzeugt:
+
+```powershell
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
+```
+
+Das Skript arbeitet in dieser Reihenfolge:
+
+1. Tool-Dateien aus `Tools/jupyter/` und `Tools/openwebui_ext/tools/` entdecken und importierbar prüfen.
+2. `Tools/index.json`, `Tools/dist/openwebui-tool-registry.json` und `Modelle/dist/tools_fallback_bundle.json` erzeugen.
+3. Chat-Modelle in `Modelle/einzelmodelle/*/model.json` konfigurieren.
+4. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
+5. Optional Offline-ZIP-Pakete neu bauen.
+
+Chat-Modelle erhalten `meta.toolIds`, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool- und Function-Calling-Zuweisungen.
 
 ## Wartung
 

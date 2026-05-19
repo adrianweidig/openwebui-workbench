@@ -4,13 +4,55 @@
     {
       "id": "air_gapped_jupyter_python",
       "name": "Air-Gapped Jupyter Python",
-      "source_file": "tools/jupyter/jupyter_tool.py",
-      "config_example": "tools/jupyter/.env.example"
+      "source_file": "Tools/jupyter/jupyter_tool.py",
+      "config_example": "Tools/jupyter/jupyter_config.example.json"
+    },
+    {
+      "id": "comfyui_workflow_inspector",
+      "name": "ComfyUI Workflow Inspector Offline",
+      "source_file": "Tools/openwebui_ext/tools/comfyui_workflow_inspector.py",
+      "config_example": null
+    },
+    {
+      "id": "docker_compose_triage",
+      "name": "Docker Compose Triage",
+      "source_file": "Tools/openwebui_ext/tools/docker_compose_triage.py",
+      "config_example": null
+    },
+    {
+      "id": "github_repo_inspector",
+      "name": "GitHub Repo Inspector",
+      "source_file": "Tools/openwebui_ext/tools/github_repo_inspector.py",
+      "config_example": null
     },
     {
       "id": "inline_visuals_toolkit_v3",
       "name": "Inline Visuals Toolkit V3 Offline",
       "source_file": "Tools/openwebui_ext/tools/inline_visuals_toolkit_v3.py",
+      "config_example": null
+    },
+    {
+      "id": "json_csv_text_validator",
+      "name": "JSON CSV Text Validator",
+      "source_file": "Tools/openwebui_ext/tools/json_csv_text_validator.py",
+      "config_example": null
+    },
+    {
+      "id": "markdown_skill_builder",
+      "name": "Markdown Skill Builder",
+      "source_file": "Tools/openwebui_ext/tools/markdown_skill_builder.py",
+      "config_example": null
+    },
+    {
+      "id": "offline_artifact_workbench",
+      "name": "Offline Artifact Workbench",
+      "source_file": "Tools/openwebui_ext/tools/offline_artifact_workbench.py",
+      "config_example": null
+    },
+    {
+      "id": "openapi_schema_inspector",
+      "name": "OpenAPI Schema Inspector",
+      "source_file": "Tools/openwebui_ext/tools/openapi_schema_inspector.py",
       "config_example": null
     },
     {
@@ -20,15 +62,21 @@
       "config_example": null
     },
     {
-      "id": "tool_skill_overlay_planner",
-      "name": "Tool Skill Overlay Planner",
-      "source_file": "Tools/openwebui_ext/tools/tool_skill_overlay_planner.py",
+      "id": "repo_tree_analyzer",
+      "name": "Repository Tree Analyzer",
+      "source_file": "Tools/openwebui_ext/tools/repo_tree_analyzer.py",
       "config_example": null
     },
     {
-      "id": "comfyui_workflow_inspector",
-      "name": "ComfyUI Workflow Inspector Offline",
-      "source_file": "Tools/openwebui_ext/tools/comfyui_workflow_inspector.py",
+      "id": "safe_http_fetcher",
+      "name": "Safe HTTP Fetcher",
+      "source_file": "Tools/openwebui_ext/tools/safe_http_fetcher.py",
+      "config_example": null
+    },
+    {
+      "id": "tool_skill_overlay_planner",
+      "name": "Tool Skill Overlay Planner",
+      "source_file": "Tools/openwebui_ext/tools/tool_skill_overlay_planner.py",
       "config_example": null
     }
   ]

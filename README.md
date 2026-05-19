@@ -52,6 +52,14 @@ Für visuelle Offline-Ausgaben, parallele Tool-/Subagent-Planung und robuste Mod
 - `Tools/openwebui_ext/tools/tool_skill_overlay_planner.py`
 - `Tools/openwebui_ext/tools/comfyui_workflow_inspector.py`
 
+Die Tool-Registry und die Modell-Tool-Zuweisungen können reproduzierbar erzeugt und geprüft werden:
+
+```powershell
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
+```
+
+Der generierte Importplan liegt unter `Modelle/dist/openwebui-registration-plan.json` und erzwingt die Reihenfolge Tools, Skills, Modelle.
+
 ### Modelle per Volume oder Dateimount
 
 Wenn der OpenWebUI-Container lokale Dateien per Volume lesen soll, ist `Modelle/dist/` der vorgesehene Handover-Ordner. Die primäre Importdatei ist `Modelle/dist/openwebui-models-import.json`.

@@ -1,5 +1,25 @@
 {
-  "schema": "openwebui-tool-index-fallback/v1",
+  "schema": "openwebui-tool-registry/v1",
+  "order": [
+    "tools",
+    "skills",
+    "models"
+  ],
+  "tool_import_order": [
+    "air_gapped_jupyter_python",
+    "comfyui_workflow_inspector",
+    "docker_compose_triage",
+    "github_repo_inspector",
+    "inline_visuals_toolkit_v3",
+    "json_csv_text_validator",
+    "markdown_skill_builder",
+    "offline_artifact_workbench",
+    "openapi_schema_inspector",
+    "parallel_task_planner",
+    "repo_tree_analyzer",
+    "safe_http_fetcher",
+    "tool_skill_overlay_planner"
+  ],
   "tools": [
     {
       "id": "air_gapped_jupyter_python",
@@ -12,6 +32,11 @@
         "OPENWEBUI_JUPYTER_TOKEN",
         "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
         "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR"
+      ],
+      "sha256": "47c74353c7296ea7e6fb5bc46af0726e59a232dc86ab6699f0fa5820c7131dad",
+      "importable": true,
+      "methods": [
+        "run_python"
       ]
     },
     {
@@ -20,7 +45,13 @@
       "path": "Tools/openwebui_ext/tools/comfyui_workflow_inspector.py",
       "purpose": "ComfyUI-Workflow-JSON lokal prüfen und Offline-Setup-Checklisten für Visual-/Audio-/Video-Tools erzeugen.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "79296223df26edb700cb9a268cffb188fcb8394db49bde52d275aedec0162e22",
+      "importable": true,
+      "methods": [
+        "build_setup_checklist",
+        "inspect_workflow"
+      ]
     },
     {
       "id": "docker_compose_triage",
@@ -28,7 +59,13 @@
       "path": "Tools/openwebui_ext/tools/docker_compose_triage.py",
       "purpose": "Docker-Compose- und OpenWebUI-Fehlertexte ohne Containerzugriff analysieren.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "93e675df1c4f694f8e7250660ec5831c18d5b1b85d3226f91b6f0ed444286e6c",
+      "importable": true,
+      "methods": [
+        "analyze_compose",
+        "analyze_error_text"
+      ]
     },
     {
       "id": "github_repo_inspector",
@@ -36,7 +73,13 @@
       "path": "Tools/openwebui_ext/tools/github_repo_inspector.py",
       "purpose": "Read-only GitHub repository metadata inspection with optional token support through Valves or OpenWebUI OAuth.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "330102009fcb2cf15c495eb2a252250d9e05caa3f0504b32639c1e9f52ac66bd",
+      "importable": true,
+      "methods": [
+        "evaluate_tool_candidate",
+        "inspect_repository"
+      ]
     },
     {
       "id": "inline_visuals_toolkit_v3",
@@ -44,7 +87,15 @@
       "path": "Tools/openwebui_ext/tools/inline_visuals_toolkit_v3.py",
       "purpose": "Offline SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual-Briefs ohne externe Assets erzeugen.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "c193ace8ffe00182690283dd0b46d5222f7b32ac2e947f41a242731021facf80",
+      "importable": true,
+      "methods": [
+        "create_mermaid_block",
+        "create_status_dashboard",
+        "create_svg_chart",
+        "create_visual_brief"
+      ]
     },
     {
       "id": "json_csv_text_validator",
@@ -52,7 +103,14 @@
       "path": "Tools/openwebui_ext/tools/json_csv_text_validator.py",
       "purpose": "JSON, CSV und strukturierte Texte lokal validieren und sensible Felder markieren.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "f1c494164748fb7d263d8cc39ab5184d239bcdde93f89892be96fae3f5529e34",
+      "importable": true,
+      "methods": [
+        "inspect_text",
+        "validate_csv",
+        "validate_json"
+      ]
     },
     {
       "id": "markdown_skill_builder",
@@ -60,7 +118,12 @@
       "path": "Tools/openwebui_ext/tools/markdown_skill_builder.py",
       "purpose": "Generate importable OpenWebUI Skill Markdown from safe user goals.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "afcfd2057c8d58cbdbf7e37eac7f228463c3743589df6741e43d16471598a300",
+      "importable": true,
+      "methods": [
+        "build_skill"
+      ]
     },
     {
       "id": "offline_artifact_workbench",
@@ -70,6 +133,14 @@
       "offline": true,
       "configuration": [
         "OPENWEBUI_ARTIFACT_ROOT"
+      ],
+      "sha256": "49517647d7dfa7e75e62358a51c05465b6d69d62b1e790e39f065c04362462d3",
+      "importable": true,
+      "methods": [
+        "bundle_artifacts",
+        "convert_html_to_pdf",
+        "create_html_document",
+        "create_slide_deck"
       ]
     },
     {
@@ -78,7 +149,12 @@
       "path": "Tools/openwebui_ext/tools/openapi_schema_inspector.py",
       "purpose": "Eingefügte OpenAPI-JSON-Schemas lokal analysieren.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "de28552554a3c61c706aa4084287c14a3a4b5ad3f70182a7d021d93587ccdcae",
+      "importable": true,
+      "methods": [
+        "inspect_openapi_json"
+      ]
     },
     {
       "id": "parallel_task_planner",
@@ -86,7 +162,14 @@
       "path": "Tools/openwebui_ext/tools/parallel_task_planner.py",
       "purpose": "Komplexe Arbeit in dependency-sichere parallele Tool-Wellen und Subagent-Arbeitspakete zerlegen.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "cdfb393c5a4ad8a9014c695b74f259cec140f4eca07e7e5f4d8c0115639732e1",
+      "importable": true,
+      "methods": [
+        "build_parallel_execution_plan",
+        "merge_parallel_results",
+        "split_for_subagents"
+      ]
     },
     {
       "id": "repo_tree_analyzer",
@@ -94,7 +177,12 @@
       "path": "Tools/openwebui_ext/tools/repo_tree_analyzer.py",
       "purpose": "Analyze a pasted repository tree or file list without server-side filesystem reads.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "1e203c719ddddbfd7f06494fd55ff6996311d90735000310793a46b8111429d9",
+      "importable": true,
+      "methods": [
+        "analyze_tree"
+      ]
     },
     {
       "id": "safe_http_fetcher",
@@ -102,7 +190,13 @@
       "path": "Tools/openwebui_ext/tools/safe_http_fetcher.py",
       "purpose": "Bounded HTTP GET and HEAD inspection for public URLs with SSRF protections.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "0af85cac674474c78a4881d104d6058e490f29be64028f3112ccdd16d170babb",
+      "importable": true,
+      "methods": [
+        "check_status",
+        "fetch_url"
+      ]
     },
     {
       "id": "tool_skill_overlay_planner",
@@ -110,7 +204,14 @@
       "path": "Tools/openwebui_ext/tools/tool_skill_overlay_planner.py",
       "purpose": "Modellbezogene Tool-/Skill-Overlays, Redundanz und Fallback-Abdeckung planen.",
       "offline": true,
-      "configuration": []
+      "configuration": [],
+      "sha256": "3c738820ac39d55583a2e5889884f56b67ade4d5bff025e3573a2a7e394e10c2",
+      "importable": true,
+      "methods": [
+        "build_overlay_matrix",
+        "compare_capability_coverage",
+        "suggest_fallback_stack"
+      ]
     }
   ]
 }
