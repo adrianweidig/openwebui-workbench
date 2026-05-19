@@ -1,0 +1,4 @@
+output/*
+temp/*
+!output/.gitkeep
+!temp/.gitkeep

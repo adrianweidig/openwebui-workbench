@@ -13,6 +13,72 @@
         "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
         "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR"
       ]
+    },
+    {
+      "id": "offline_artifact_workbench",
+      "name": "Offline Artifact Workbench",
+      "path": "Tools/openwebui_ext/tools/offline_artifact_workbench.py",
+      "purpose": "Offline HTML-, Präsentations-, PDF- und ZIP-Artefakte in einem erlaubten Artefaktverzeichnis erzeugen.",
+      "offline": true,
+      "configuration": [
+        "OPENWEBUI_ARTIFACT_ROOT"
+      ]
+    },
+    {
+      "id": "json_csv_text_validator",
+      "name": "JSON CSV Text Validator",
+      "path": "Tools/openwebui_ext/tools/json_csv_text_validator.py",
+      "purpose": "JSON, CSV und strukturierte Texte lokal validieren und sensible Felder markieren.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "docker_compose_triage",
+      "name": "Docker Compose Triage",
+      "path": "Tools/openwebui_ext/tools/docker_compose_triage.py",
+      "purpose": "Docker-Compose- und OpenWebUI-Fehlertexte ohne Containerzugriff analysieren.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "openapi_schema_inspector",
+      "name": "OpenAPI Schema Inspector",
+      "path": "Tools/openwebui_ext/tools/openapi_schema_inspector.py",
+      "purpose": "Eingefügte OpenAPI-JSON-Schemas lokal analysieren.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "inline_visuals_toolkit_v3",
+      "name": "Inline Visuals Toolkit V3 Offline",
+      "path": "Tools/openwebui_ext/tools/inline_visuals_toolkit_v3.py",
+      "purpose": "Offline SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual-Briefs ohne externe Assets erzeugen.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "parallel_task_planner",
+      "name": "Offline Parallel Task Planner",
+      "path": "Tools/openwebui_ext/tools/parallel_task_planner.py",
+      "purpose": "Komplexe Arbeit in dependency-sichere parallele Tool-Wellen und Subagent-Arbeitspakete zerlegen.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "tool_skill_overlay_planner",
+      "name": "Tool Skill Overlay Planner",
+      "path": "Tools/openwebui_ext/tools/tool_skill_overlay_planner.py",
+      "purpose": "Modellbezogene Tool-/Skill-Overlays, Redundanz und Fallback-Abdeckung planen.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "comfyui_workflow_inspector",
+      "name": "ComfyUI Workflow Inspector Offline",
+      "path": "Tools/openwebui_ext/tools/comfyui_workflow_inspector.py",
+      "purpose": "ComfyUI-Workflow-JSON lokal prüfen und Offline-Setup-Checklisten für Visual-/Audio-/Video-Tools erzeugen.",
+      "offline": true,
+      "configuration": []
     }
   ]
 }

@@ -202,11 +202,21 @@
       "base_model_id": "coder",
       "jupyter_tool_mode": "optional",
       "path": "models/compliance-richtlinienprüfung/model.json"
+    },
+    {
+      "id": "offline-workbench-agent",
+      "name": "Offline Workbench Agent",
+      "source_problem_file": "Sammelmodell: Offline ChatGPT Workbench",
+      "base_model_id": "coder",
+      "jupyter_tool_mode": "required",
+      "artifact_tool_mode": "required",
+      "path": "models/offline-workbench-agent/model.json"
     }
   ],
   "notes": [
     "Die Einzeldateien `model.json` folgen dem lokal geprüften OpenWebUI-Exportschema.",
     "Web Search ist für alle Modelle deaktiviert.",
-    "Jupyter wird nur nach Modellzuordnung und lokaler Konfiguration genutzt."
+    "Jupyter wird nur nach Modellzuordnung und lokaler Konfiguration genutzt.",
+    "Der Offline Workbench Agent ist das Sammelmodell für ChatGPT-ähnliche Offline-Nutzung."
   ]
 }

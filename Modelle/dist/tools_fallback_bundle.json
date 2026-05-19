@@ -6,6 +6,30 @@
       "name": "Air-Gapped Jupyter Python",
       "source_file": "tools/jupyter/jupyter_tool.py",
       "config_example": "tools/jupyter/.env.example"
+    },
+    {
+      "id": "inline_visuals_toolkit_v3",
+      "name": "Inline Visuals Toolkit V3 Offline",
+      "source_file": "Tools/openwebui_ext/tools/inline_visuals_toolkit_v3.py",
+      "config_example": null
+    },
+    {
+      "id": "parallel_task_planner",
+      "name": "Offline Parallel Task Planner",
+      "source_file": "Tools/openwebui_ext/tools/parallel_task_planner.py",
+      "config_example": null
+    },
+    {
+      "id": "tool_skill_overlay_planner",
+      "name": "Tool Skill Overlay Planner",
+      "source_file": "Tools/openwebui_ext/tools/tool_skill_overlay_planner.py",
+      "config_example": null
+    },
+    {
+      "id": "comfyui_workflow_inspector",
+      "name": "ComfyUI Workflow Inspector Offline",
+      "source_file": "Tools/openwebui_ext/tools/comfyui_workflow_inspector.py",
+      "config_example": null
     }
   ]
 }

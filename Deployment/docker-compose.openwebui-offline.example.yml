@@ -1,0 +1,33 @@
+services:
+  openwebui:
+    image: openwebui:latest
+    container_name: openwebui-offline
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    env_file:
+      - ./openwebui.env
+    volumes:
+      - openwebui-data:/app/backend/data
+      - E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import:ro
+      - E:\OpenWebUI\Tools:/app/backend/data/openwebui-tools:ro
+      - E:\OpenWebUI\Artefakte\output:/app/backend/data/offline_artifacts
+    networks:
+      - offline-ai
+
+  jupyter:
+    image: local-jupyter:offline
+    container_name: openwebui-jupyter
+    restart: unless-stopped
+    command: ["jupyter", "server", "--ip=0.0.0.0", "--no-browser", "--ServerApp.token=${OPENWEBUI_JUPYTER_TOKEN}"]
+    volumes:
+      - E:\OpenWebUI\Artefakte\output:/workspace/artifacts
+    networks:
+      - offline-ai
+
+volumes:
+  openwebui-data:
+
+networks:
+  offline-ai:
+    driver: bridge
