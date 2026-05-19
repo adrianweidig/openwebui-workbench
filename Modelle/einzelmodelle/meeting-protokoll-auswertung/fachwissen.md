@@ -4,8 +4,6 @@
 
 Nutzer möchten aus Notizen oder Transkripten Entscheidungen, Aufgaben, Verantwortlichkeiten, Fristen und offene Fragen extrahieren.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein Meeting nachbereitet oder in Aktionslisten überführt werden soll.
-
 ## 2. Zielgruppe
 
 Projektteams, Assistenz, Management, PMO, Fachabteilungen.

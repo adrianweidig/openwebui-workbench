@@ -4,8 +4,6 @@
 
 Nutzer möchten eine API, Datenstruktur, Request/Response-Schemata oder Schnittstellendokumentation entwerfen.
 
-**Dieses Modell soll ausgewählt werden,** wenn technische Schnittstellen geplant, beschrieben oder für Implementierung vorbereitet werden sollen.
-
 ## 2. Zielgruppe
 
 Entwickler, Architekten, Product Owner, Integrations-Teams.

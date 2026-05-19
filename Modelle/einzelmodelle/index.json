@@ -205,8 +205,8 @@
     }
   ],
   "notes": [
-    "Fallback-Struktur ohne feldgenauen OpenWebUI-Referenzexport.",
-    "Web Search ist fuer alle Modelle deaktiviert.",
+    "Die Einzeldateien `model.json` folgen dem lokal geprüften OpenWebUI-Exportschema.",
+    "Web Search ist für alle Modelle deaktiviert.",
     "Jupyter wird nur nach Modellzuordnung und lokaler Konfiguration genutzt."
   ]
 }

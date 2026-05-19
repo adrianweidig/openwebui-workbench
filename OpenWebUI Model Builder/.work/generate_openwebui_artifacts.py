@@ -16,6 +16,12 @@ PROBLEM_DIR = Path(r"E:\OpenWebUI\Problemfälle")
 DIST_DIR = BASE_DIR / "dist"
 WORK_DIR = BASE_DIR / ".work"
 BACKUP_DIR = BASE_DIR / ".backup"
+ROOT_DIR = BASE_DIR.parent
+ROOT_MODELS_DIR = ROOT_DIR / "Modelle"
+ROOT_MODELS_SINGLE_DIR = ROOT_MODELS_DIR / "einzelmodelle"
+ROOT_MODELS_DIST_DIR = ROOT_MODELS_DIR / "dist"
+ROOT_TOOLS_DIR = ROOT_DIR / "Tools"
+ROOT_TOOLS_JUPYTER_DIR = ROOT_TOOLS_DIR / "jupyter"
 
 BASE_MODEL_ID = "coder"
 REAL_MODEL = "rdtand/Mistral-Medium-3.5-128B-PrismaQuant-4.75-vllm"
@@ -149,8 +155,8 @@ def parse_problem_file(path: Path) -> dict[str, Any]:
     title = first_match(r"^# OpenWebUI-Builder-Briefing: (.+)$", text, path.stem)
     model_table = parse_model_table(section(text, 3))
     problem_text = section(text, 2)
-    problem = first_match(r"\*\*Problem:\*\*\s*(.+)", problem_text)
-    when = first_match(r"\*\*Dieses Modell soll ausgewählt werden,\*\*\s*(.+)", problem_text)
+    problem = first_match(r"^\*\*Problem:\*\*\s*([^\n]+)$", problem_text)
+    when = first_match(r"^\*\*Dieses Modell soll ausgewählt werden,\*\*\s*([^\n]+)$", problem_text)
     target_group = section(text, 4).replace("\n", " ").strip()
     inputs = section(text, 5).replace("\n", " ").strip()
     outputs = strip_md_list(section(text, 6))
@@ -475,106 +481,101 @@ def tools_for_model(profile: dict[str, Any]) -> list[dict[str, str]]:
     ]
 
 
-def model_json(profile: dict[str, Any], sp: str) -> dict[str, Any]:
+def openwebui_capabilities(profile: dict[str, Any]) -> dict[str, bool]:
     mode = profile["tool_mode"]
-    code_capability = mode != "disabled"
-    default_code = mode in {"required", "enabled"}
     return {
-        "schema": "openwebui-model-profile-fallback/v1",
+        "file_context": True,
+        "vision": False,
+        "file_upload": True,
+        "web_search": False,
+        "image_generation": False,
+        "code_interpreter": mode != "disabled",
+        "terminal": False,
+        "citations": False,
+        "status_updates": True,
+        "usage": True,
+        "builtin_tools": False,
+    }
+
+
+def openwebui_default_feature_ids(profile: dict[str, Any]) -> list[str]:
+    if profile["tool_mode"] in {"required", "enabled"}:
+        return ["code_interpreter"]
+    return []
+
+
+def combined_system_prompt(profile: dict[str, Any], sp: str, mp: str, fw: str) -> str:
+    return textwrap.dedent(
+        f"""\
+        # {profile['model_name']} – Vollständiger Systemprompt
+
+        Diese importierbare OpenWebUI-Modellkonfiguration ist eigenständig nutzbar.
+        Alle notwendigen Anweisungen stehen direkt in diesem Feld. Die Dateien
+        `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Paket dienen zusätzlich
+        der Wartung und menschlichen Durchsicht im Repository.
+
+        {sp.strip()}
+
+        {mp.strip()}
+
+        {fw.strip()}
+        """
+    ).strip()
+
+
+def openwebui_params(profile: dict[str, Any], full_prompt: str) -> dict[str, Any]:
+    source = dict(profile["params"])
+    params: dict[str, Any] = {"system": full_prompt}
+    for key in [
+        "temperature",
+        "max_tokens",
+        "top_k",
+        "top_p",
+        "frequency_penalty",
+        "presence_penalty",
+        "seed",
+        "num_ctx",
+    ]:
+        if key in source:
+            params[key] = source[key]
+    stop = source.get("stop")
+    if stop is None and "stop_sequences" in source:
+        stop = source["stop_sequences"]
+    if stop is not None:
+        params["stop"] = stop
+    return params
+
+
+def openwebui_model_record(profile: dict[str, Any], sp: str, mp: str, fw: str) -> dict[str, Any]:
+    full_prompt = combined_system_prompt(profile, sp, mp, fw)
+    description = f"Offline-Aufgabenmodell für {profile['model_name']}. {profile['problem']}"
+    if profile["when"]:
+        selection = profile["when"].strip()
+        if selection.lower().startswith("wenn "):
+            description += f" Passend, {selection}"
+        else:
+            description += f" Passend, wenn {selection}"
+    meta: dict[str, Any] = {
+        "profile_image_url": "/static/favicon.png",
+        "description": description,
+        "capabilities": openwebui_capabilities(profile),
+        "suggestion_prompts": [{"content": item} for item in profile["suggestions"]],
+        "tags": [{"name": tag} for tag in profile["tags"]],
+    }
+    default_feature_ids = openwebui_default_feature_ids(profile)
+    if default_feature_ids:
+        meta["defaultFeatureIds"] = default_feature_ids
+    return {
         "id": profile["model_id"],
         "name": profile["model_name"],
         "base_model_id": BASE_MODEL_ID,
-        "real_model_reference": REAL_MODEL,
-        "description": f"Offline-Aufgabenmodell für {profile['model_name']}. {profile['problem']}",
-        "purpose": profile["problem"],
-        "target_audience": profile["target_group"],
-        "source_problem_file": profile["source_file_name"],
-        "tags": profile["tags"],
-        "params": profile["params"],
-        "system": sp,
-        "prompt_suggestions": profile["suggestions"],
-        "allowed_tasks": [
-            "Bearbeitung des beschriebenen lokalen Problemfalls",
-            "Analyse, Strukturierung, Extraktion, Generierung oder Prüfung auf Basis bereitgestellter Nutzerinhalte",
-            "Lokale Jupyter/Python-Nutzung nach Tool-Regeln",
-        ],
-        "disallowed_tasks": [
-            "Internetrecherche oder externe APIs",
-            "Externe RAGFlow-/RAG-Abhängigkeiten",
-            "Erfinden von Quellen, Zugangsdaten, Tool-IDs oder Knowledge-IDs",
-            "Produktive Änderungen ohne Freigabe",
-            "Schädliche, täuschende oder exfiltrierende Inhalte",
-        ],
-        "knowledge": {
-            "required": False,
-            "external_rag_required": False,
-            "notes": "Keine Knowledge Base als Pflicht. Nutzerdateien und Paketdateien sind primäre Quellen.",
-        },
-        "tools": tools_for_model(profile),
-        "skills": [],
-        "capabilities": {
-            "vision": False,
-            "file_upload": True,
-            "file_context": True,
-            "web_search": False,
-            "image_generation": False,
-            "code_interpreter": code_capability,
-            "usage": True,
-            "citations": False,
-            "status_updates": True,
-            "builtin_tools": False,
-        },
-        "default_features": {
-            "web_search": False,
-            "image_generation": False,
-            "code_interpreter": default_code,
-            "status_updates": True,
-        },
-        "builtin_tools": {
-            "time": "optional, falls lokal verfügbar",
-            "calculator": "optional, falls lokal verfügbar",
-            "memory": False,
-        },
-        "access_control": {
-            "mode": "manual-openwebui-configuration",
-            "notes": "Keine Nutzer, Gruppen oder internen IDs erfunden.",
-        },
-        "safety": {
-            "offline_only": True,
-            "no_secrets": True,
-            "human_approval_required_for_productive_actions": True,
-            "critical_domain_outputs_require_review": True,
-        },
-        "quality_criteria": [
-            "Fakten, Analyse, Annahmen und Empfehlungen getrennt",
-            "fehlende Informationen benannt",
-            "maximal drei Rückfragen auf einmal",
-            "Tool-Ergebnisse plausibilisiert",
-            "keine Internetabhängigkeit",
-        ],
-        "output_format": [
-            "Kurzfazit",
-            "Annahmen und Quellen",
-            "Ergebnis",
-            "Details",
-            "Risiken und offene Punkte",
-            "Nächste Schritte",
-        ],
-        "validation_rules": [
-            "JSON syntaktisch valide",
-            "Systemprompt verweist auf mainprompt.md",
-            "mainprompt.md verweist auf fachwissen.md",
-            "Web Search deaktiviert",
-            "keine Secrets",
-            "Jupyter nur nach Tool-Regeln",
-        ],
-        "metadata": {
-            "generated_by": "OpenWebUI Model Builder local artifact generator",
-            "generated_at": datetime.now().isoformat(timespec="seconds"),
-            "openwebui_import_note": "Fallback-Struktur, da lokal kein konkreter OpenWebUI-Referenzexport vorhanden ist. Feldnamen gegen Zielinstanz prüfen.",
-            "air_gapped": True,
-        },
+        "meta": meta,
+        "params": openwebui_params(profile, full_prompt),
     }
+
+
+def model_json(profile: dict[str, Any], sp: str, mp: str, fw: str) -> list[dict[str, Any]]:
+    return [openwebui_model_record(profile, sp, mp, fw)]
 
 
 JUPYTER_TOOL = r'''
@@ -992,6 +993,13 @@ def add(results, name, ok, detail=""):
     results.append({"name": name, "ok": bool(ok), "detail": detail})
 
 
+def load_import_models(path: Path):
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list):
+        raise TypeError(f"{path.name} ist kein JSON-Array")
+    return payload
+
+
 def main() -> int:
     results = []
     json_files = sorted(DIST.rglob("*.json"))
@@ -1030,7 +1038,7 @@ def main() -> int:
                 if any(word in snippet for word in allowed_placeholder_words):
                     continue
                 secret_hits.append(f"{path.relative_to(DIST)}: {snippet[:80]}")
-    add(results, "Keine echten Tokens/Passwoerter/Secrets gefunden", not secret_hits, "; ".join(secret_hits[:10]))
+    add(results, "Keine echten Tokens/Passwörter/Secrets gefunden", not secret_hits, "; ".join(secret_hits[:10]))
 
     index = json.loads((DIST / "models" / "index.json").read_text(encoding="utf-8"))
     model_ids = {entry["id"] for entry in index["models"]}
@@ -1039,23 +1047,34 @@ def main() -> int:
 
     unassigned = []
     internet_enabled = []
+    bad_import_schema = []
     no_main_ref = []
     no_fach_ref = []
     for model_id in sorted(model_ids):
         base = DIST / "models" / model_id
-        payload = json.loads((base / "model.json").read_text(encoding="utf-8"))
-        if not payload.get("source_problem_file"):
+        payload = load_import_models(base / "model.json")
+        if len(payload) != 1:
+            bad_import_schema.append(f"{model_id}: erwartet genau 1 Modellobjekt, gefunden {len(payload)}")
+            continue
+        model = payload[0]
+        if model.get("id") != model_id:
             unassigned.append(model_id)
-        caps = payload.get("capabilities", {})
-        defaults = payload.get("default_features", {})
-        if caps.get("web_search") or defaults.get("web_search"):
+        meta = model.get("meta", {})
+        params = model.get("params", {})
+        caps = meta.get("capabilities", {})
+        if caps.get("web_search"):
             internet_enabled.append(model_id)
+        if not params.get("system"):
+            bad_import_schema.append(f"{model_id}: params.system fehlt")
+        if model.get("base_model_id") != "coder":
+            bad_import_schema.append(f"{model_id}: base_model_id={model.get('base_model_id')!r}")
         if "mainprompt.md" not in (base / "systemprompt.md").read_text(encoding="utf-8"):
             no_main_ref.append(model_id)
         if "fachwissen.md" not in (base / "mainprompt.md").read_text(encoding="utf-8"):
             no_fach_ref.append(model_id)
     add(results, "Jedes Modell ist einem Problemfall zugeordnet", not unassigned, ", ".join(unassigned))
     add(results, "Keine Modellbeschreibung aktiviert Web Search", not internet_enabled, ", ".join(internet_enabled))
+    add(results, "Modell-JSON folgt dem OpenWebUI-Importschema", not bad_import_schema, "; ".join(bad_import_schema[:10]))
     add(results, "Systemprompts verweisen auf mainprompt.md", not no_main_ref, ", ".join(no_main_ref))
     add(results, "Mainprompts verweisen auf fachwissen.md", not no_fach_ref, ", ".join(no_fach_ref))
 
@@ -1063,13 +1082,19 @@ def main() -> int:
     tool_ids = {entry["id"] for entry in tool_index["tools"]}
     assigned_tools = set()
     for model_id in model_ids:
-        payload = json.loads((DIST / "models" / model_id / "model.json").read_text(encoding="utf-8"))
-        for tool in payload.get("tools", []):
-            assigned_tools.add(tool.get("id"))
+        payload = load_import_models(DIST / "models" / model_id / "model.json")
+        for tool_id in payload[0].get("meta", {}).get("toolIds", []):
+            assigned_tools.add(tool_id)
     add(results, "Jedes Tool ist einem Modell oder Utility-Kontext zugeordnet", tool_ids <= assigned_tools or tool_ids == {"air_gapped_jupyter_python"}, f"tool_ids={sorted(tool_ids)}, assigned={sorted(assigned_tools)}")
 
     config_text = (DIST / "tools" / "jupyter" / ".env.example").read_text(encoding="utf-8")
-    add(results, "Jupyter-Beispielkonfiguration enthaelt keine echten Zugangsdaten", "REPLACE_WITH_LOCAL_TOKEN" in config_text and "OPENWEBUI_JUPYTER_TOKEN=" in config_text)
+    add(results, "Jupyter-Beispielkonfiguration enthält keine echten Zugangsdaten", "REPLACE_WITH_LOCAL_TOKEN" in config_text and "OPENWEBUI_JUPYTER_TOKEN=" in config_text)
+
+    try:
+        bundle = load_import_models(DIST / "openwebui-import" / "openwebui-models-import.json")
+        add(results, "Sammelimport ist OpenWebUI-kompatibles JSON-Array", len(bundle) == len(model_ids), f"bundled={len(bundle)}, expected={len(model_ids)}")
+    except Exception as exc:
+        add(results, "Sammelimport ist OpenWebUI-kompatibles JSON-Array", False, str(exc))
 
     docs_required = [
         "ARCHITEKTUR.md",
@@ -1098,7 +1123,7 @@ def main() -> int:
         "",
         f"Status: {status}",
         "",
-        "| Pruefung | Ergebnis | Detail |",
+        "| Prüfung | Ergebnis | Detail |",
         "|---|---:|---|",
     ]
     for item in results:
@@ -1106,7 +1131,7 @@ def main() -> int:
     lines.extend(
         [
             "",
-            "Nicht ausgefuehrt: echter Import in `openwebui:latest` und echte Jupyter-Codeausfuehrung, weil dafuer eine laufende Zielinstanz mit lokaler Konfiguration erforderlich ist.",
+            "Nicht ausgeführt: echter Import in `openwebui:latest` und echte Jupyter-Codeausführung, weil dafür eine laufende Zielinstanz mit lokaler Konfiguration erforderlich ist.",
         ]
     )
     report = "\n".join(lines) + "\n"
@@ -1157,7 +1182,7 @@ def tool_readme() -> str:
 
 ## Zweck
 
-`{JUPYTER_TOOL_ID}` fuehrt kontrollierten Python-Code ueber einen vorhandenen lokalen oder intern erreichbaren Jupyter Server aus. Das Tool ist fuer OpenWebUI-Aufgabenmodelle gedacht, die offline Dateien analysieren, Tabellen verarbeiten, Code testen, Diagramme erzeugen oder Exporte vorbereiten muessen.
+`{JUPYTER_TOOL_ID}` führt kontrollierten Python-Code über einen vorhandenen lokalen oder intern erreichbaren Jupyter Server aus. Das Tool ist für OpenWebUI-Aufgabenmodelle gedacht, die offline Dateien analysieren, Tabellen verarbeiten, Code testen, Diagramme erzeugen oder Exporte vorbereiten müssen.
 
 ## Konfiguration
 
@@ -1170,17 +1195,17 @@ OPENWEBUI_JUPYTER_TIMEOUT_SECONDS
 OPENWEBUI_JUPYTER_ALLOWED_WORKDIR
 ```
 
-Alternativ koennen dieselben Werte in OpenWebUI als Tool-Valves gepflegt werden. Die Beispieldateien `.env.example` und `jupyter_config.example.json` enthalten keine echten Geheimnisse.
+Alternativ können dieselben Werte in OpenWebUI als Tool-Valves gepflegt werden. Die Beispieldateien `.env.example` und `jupyter_config.example.json` enthalten keine echten Geheimnisse.
 
 ## Sicherheitsgrenzen
 
 - Das Tool verbindet sich nur mit der konfigurierten Jupyter-Adresse.
-- Python-Code wird vor der Ausfuehrung statisch geprueft.
-- Shell-Magics, direkte Shell-Kommandos, Netzwerkbibliotheken, Prozessstarts und gefaehrliche Dateioperationen werden blockiert.
-- Dateipfade werden standardmaessig auf `OPENWEBUI_JUPYTER_ALLOWED_WORKDIR` eingeschraenkt.
+- Python-Code wird vor der Ausführung statisch geprüft.
+- Shell-Magics, direkte Shell-Kommandos, Netzwerkbibliotheken, Prozessstarts und gefährliche Dateioperationen werden blockiert.
+- Dateipfade werden standardmäßig auf `OPENWEBUI_JUPYTER_ALLOWED_WORKDIR` eingeschränkt.
 - Tokens werden in Fehlern und Ergebnissen maskiert.
 
-Wichtig: Die tatsaechliche Sandbox-Grenze wird vom Jupyter Server, dessen Kernel, Benutzerrechten, Dateisystem und Netzwerkumgebung bestimmt. Dieses Tool ist eine zusaetzliche Schutzschicht, kein Ersatz fuer eine hart isolierte Jupyter-Umgebung.
+Wichtig: Die tatsächliche Sandbox-Grenze wird vom Jupyter Server, dessen Kernel, Benutzerrechten, Dateisystem und Netzwerkumgebung bestimmt. Dieses Tool ist eine zusätzliche Schutzschicht, kein Ersatz für eine hart isolierte Jupyter-Umgebung.
 
 ## Lokaler Test
 
@@ -1189,7 +1214,7 @@ python dist/tests/validate_artifacts.py
 python dist/tests/test_jupyter_tool_static.py
 ```
 
-Der statische Test benoetigt keinen laufenden Jupyter Server. Eine echte Ausfuehrungspruefung erfordert lokale Werte fuer `OPENWEBUI_JUPYTER_URL` und optional `OPENWEBUI_JUPYTER_TOKEN`.
+Der statische Test benötigt keinen laufenden Jupyter Server. Eine echte Ausführungsprüfung erfordert lokale Werte für `OPENWEBUI_JUPYTER_URL` und optional `OPENWEBUI_JUPYTER_TOKEN`.
 """
 
 
@@ -1198,30 +1223,30 @@ def docs_architecture(profiles: list[dict[str, Any]]) -> str:
 
 ## Zielbild
 
-Die erzeugte Struktur stellt offline nutzbare OpenWebUI-Aufgabenmodelle bereit. Jedes Modell ist ein Preset ueber dem Basismodell `{BASE_MODEL_ID}` und enthaelt eigene Promptdateien, Fachwissen, Modellprofil und Sicherheitsregeln.
+Die erzeugte Struktur stellt offline nutzbare OpenWebUI-Aufgabenmodelle bereit. Jedes Modell ist ein Preset über dem Basismodell `{BASE_MODEL_ID}` und enthält eigene Promptdateien, Fachwissen, ein direkt importierbares OpenWebUI-`model.json` und Sicherheitsregeln.
 
 ## Quellen
 
-- Primaere lokale Quelle: `OpenWebUI Model Builder`
+- Primäre lokale Quelle: `OpenWebUI Model Builder`
 - Konkrete Problemfallquelle: `Problemfälle`
 - Kein Internet, keine externen APIs, keine externen Knowledge Bases
 
 ## Bestandteile
 
-- `models/`: je Problemfall ein Modellpaket mit `model.json`, `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `README.md`
-- `tools/jupyter/`: OpenWebUI-kompatibles Python-Tool fuer lokalen oder internen Jupyter Server
-- `openwebui-import/`: generische Fallback-Bundles und manuelle Importhinweise
+- `models/`: je Problemfall ein Modellpaket mit importierbarem `model.json`, `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `README.md`
+- `tools/jupyter/`: OpenWebUI-kompatibles Python-Tool für lokalen oder internen Jupyter Server
+- `openwebui-import/`: OpenWebUI-Importdateien und manuelle Importhinweise
 - `docs/`: Betriebs-, Installations- und Validierungsdokumentation
-- `tests/`: lokale Pruefroutinen ohne Internet
+- `tests/`: lokale Prüfroutinen ohne Internet
 - `reports/`: Inventar, Matrix, Validierungsbericht und offene Punkte
 
 ## Modellanzahl
 
 Erzeugt wurden {len(profiles)} Modelle aus vorhandenen detaillierten Problemfall-Briefings.
 
-## Importunsicherheit
+## Importschema
 
-Lokal liegt kein OpenWebUI-Referenzexport der Zielinstanz vor. Deshalb sind `model.json` und Import-Bundles als robuste Fallback-Struktur dokumentiert und muessen gegen einen Export der konkreten `openwebui:latest`-Instanz abgeglichen werden.
+Die `model.json`-Dateien und `openwebui-models-import.json` folgen dem lokal geprüften OpenWebUI-Export-/Importschema. Grundlage sind importierbare Referenzdateien aus der lokalen Umgebung. Unsicher bleibt nur, welche Containerpfade und optionalen Tool-Verknüpfungen eine konkrete `openwebui:latest`-Instanz zusätzlich erwartet.
 """
 
 
@@ -1233,28 +1258,27 @@ def docs_installation() -> str:
 - Lokale oder interne `openwebui:latest`-Instanz
 - Basismodell-ID in OpenWebUI: `{BASE_MODEL_ID}`
 - Kein Internetzugriff erforderlich
-- Optional: lokal oder intern erreichbarer Jupyter Server fuer `{JUPYTER_TOOL_ID}`
+- Optional: lokal oder intern erreichbarer Jupyter Server für `{JUPYTER_TOOL_ID}`
 
 ## Modelle einrichten
 
-1. In OpenWebUI ein neues Workspace-/Aufgabenmodell anlegen.
-2. Als Basismodell `{BASE_MODEL_ID}` auswaehlen.
-3. Inhalt aus `models/<modell-id>/systemprompt.md` als Systemprompt eintragen.
-4. `mainprompt.md` und `fachwissen.md` als lokale Modell-/Knowledge-Dateien oder zusammen mit dem Systemprompt nach lokaler OpenWebUI-Konvention hinterlegen.
-5. Parameter aus `models/<modell-id>/model.json` uebernehmen.
-6. Web Search deaktiviert lassen.
-7. Jupyter-Tool nur den Modellen zuordnen, deren `model.json` das Tool listet.
+1. Einzelimport: `models/<modell-id>/model.json` in OpenWebUI importieren. Jede Datei ist ein JSON-Array mit genau einem Modellobjekt im OpenWebUI-Exportschema.
+2. Sammelimport: alternativ `openwebui-import/openwebui-models-import.json` importieren.
+3. Nach dem Import prüfen, dass als Basismodell `{BASE_MODEL_ID}` gesetzt ist.
+4. Optional die Paketdateien `systemprompt.md`, `mainprompt.md` und `fachwissen.md` zur menschlichen Wartung oder als zusätzliche lokale Referenz hinterlegen.
+5. Web Search deaktiviert lassen, falls die Zielinstanz nach dem Import abweichende Defaults setzt.
+6. Das Jupyter-Tool nur den Modellen zuordnen, die es fachlich benötigen.
 
 ## Tool einrichten
 
 1. `tools/jupyter/jupyter_tool.py` in OpenWebUI als Tool importieren oder nach lokaler Tool-Konvention eintragen.
 2. Konfigurationswerte als Umgebungsvariablen oder Tool-Valves setzen.
 3. Keine echten Tokens in Modellprofile, Prompts oder Dokumentation schreiben.
-4. Statische Validierung ausfuehren.
+4. Statische Validierung ausführen.
 
 ## Import-Bundle
 
-`openwebui-import/openwebui-offline-artifacts.zip` enthaelt die erzeugten Artefakte. Da kein lokaler OpenWebUI-Referenzexport vorhanden war, ist das Bundle nicht als garantiert feldgenauer Direktimport zu verstehen.
+`openwebui-import/openwebui-models-import.json` ist die primäre Modell-Importdatei. `openwebui-import/openwebui-offline-artifacts.zip` enthält dieselben Artefakte zusätzlich als Transportpaket für Air-Gap-Umgebungen.
 """
 
 
@@ -1274,14 +1298,14 @@ OPENWEBUI_JUPYTER_ALLOWED_WORKDIR=/srv/openwebui-work
 
 ## Modellparameter
 
-Die Parameter stehen je Modell in `models/<modell-id>/model.json`. Analytische und technische Modelle verwenden niedrige Temperature-Werte, Schreib- und Kommunikationsmodelle moderate Werte.
+Die Parameter stehen je Modell in `models/<modell-id>/model.json` unter `params`. Analytische und technische Modelle verwenden niedrige Temperature-Werte, Schreib- und Kommunikationsmodelle moderate Werte.
 
 ## Capabilities
 
 - Web Search: immer `false`
 - Vision: `false`
 - Image Generation: `false`
-- File Upload/File Context: `true`, soweit OpenWebUI lokal verfuegbar
+- File Upload/File Context: `true`, soweit OpenWebUI lokal verfügbar
 - Code Interpreter/Jupyter: je Problemfall `required`, `enabled`, `optional` oder `optional_disabled`
 """
 
@@ -1296,15 +1320,15 @@ def docs_air_gapped() -> str:
 - Keine externen RAGFlow-/RAG-Dienste.
 - Keine Paketdownloads zur Laufzeit.
 - Keine harten Zugangsdaten in Artefakten.
-- Nutzerdateien, Chat-Kontext und lokale Paketdateien sind die primaeren Quellen.
+- Nutzerdateien, Chat-Kontext und lokale Paketdateien sind die primären Quellen.
 
-## Fehlende Abhaengigkeiten
+## Fehlende Abhängigkeiten
 
 Wenn eine lokale Python-Bibliothek oder Jupyter-Komponente fehlt, muss sie vorab intern bereitgestellt werden. Die erzeugten Tools geben in diesem Fall robuste Fehlermeldungen aus und laden nichts nach.
 
 ## Jupyter
 
-Jupyter darf nur ueber die konfigurierte interne Adresse genutzt werden. Die tatsaechliche Isolation muss serverseitig umgesetzt werden, z. B. durch Container, eigene Benutzerrechte, begrenztes Arbeitsverzeichnis, kein Internet-Routing und Ressourcenlimits.
+Jupyter darf nur über die konfigurierte interne Adresse genutzt werden. Die tatsächliche Isolation muss serverseitig umgesetzt werden, z. B. durch Container, eigene Benutzerrechte, begrenztes Arbeitsverzeichnis, kein Internet-Routing und Ressourcenlimits.
 """
 
 
@@ -1316,27 +1340,27 @@ def docs_mapping(profiles: list[dict[str, Any]]) -> str:
     for p in profiles:
         rows.append(f"| `{p['source_file_name']}` | {p['model_name']} | `{p['model_id']}` | {p['tool_mode']} |")
     rows.append("| `26_bewerbungsunterlagen-optimierung.md` | nicht erzeugt | n/a | Datei fehlt, nur im Index genannt |")
-    return "# Problemfaelle Zuordnung\n\n" + "\n".join(rows) + "\n"
+    return "# Problemfälle Zuordnung\n\n" + "\n".join(rows) + "\n"
 
 
 def docs_validation() -> str:
     return """# Validierung
 
-## Automatische lokale Pruefung
+## Automatische lokale Prüfung
 
 ```text
 python dist/tests/validate_artifacts.py
 ```
 
-Die Pruefung validiert JSON, Python-Syntax, Secret-Hinweise, Modellzuordnung, Web-Search-Deaktivierung, Prompt-Verweise, Tool-Zuordnung, Jupyter-Beispielkonfiguration und Berichtsvollstaendigkeit.
+Die Prüfung validiert JSON, Python-Syntax, Secret-Hinweise, Modellzuordnung, Web-Search-Deaktivierung, Prompt-Verweise, Tool-Zuordnung, Jupyter-Beispielkonfiguration, das OpenWebUI-Importschema und Berichtsvollständigkeit.
 
-## Nicht automatisch pruefbar
+## Nicht automatisch prüfbar
 
 - Echter Import in `openwebui:latest`
-- Echte Ausfuehrung gegen einen Jupyter Server
-- Fachliche Qualitaet mit realen Unternehmensdaten
+- Echte Ausführung gegen einen Jupyter Server
+- Fachliche Qualität mit realen Unternehmensdaten
 
-Diese Punkte muessen lokal mit der Zielinstanz und Testdaten geprueft werden.
+Diese Punkte müssen lokal mit der Zielinstanz und Testdaten geprüft werden.
 """
 
 
@@ -1361,14 +1385,14 @@ Erzeugt aus `{profile['source_file_name']}`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.
 """
 
 
@@ -1409,8 +1433,8 @@ def inventory_report(builder_files: list[Path], problem_files: list[Path], profi
             "",
             f"- Detaillierte Problemfall-Briefings ausgewertet: {len(profiles)}",
             "- `00_INDEX.md` nennt `26_bewerbungsunterlagen-optimierung.md`; diese Datei existiert lokal nicht.",
-            "- Kein OpenWebUI-Referenzexport gefunden; daher wurde eine generische Fallback-Struktur erzeugt.",
-            "- Keine Originaldateien wurden geaendert.",
+            "- Das OpenWebUI-Importschema wurde aus lokal importierbaren Referenzexporten abgeleitet.",
+            "- Keine Originaldateien wurden geändert.",
         ]
     )
     return "\n".join(lines)
@@ -1429,23 +1453,23 @@ def open_points_report() -> str:
 
 ## OpenWebUI-Importformat
 
-Lokal lag kein Referenzexport aus `openwebui:latest` vor. Die erzeugten `model.json`-Dateien und Import-Bundles sind daher eine dokumentierte Fallback-Struktur. Feldnamen, Tool-Aktivierung und Importmechanik muessen gegen die konkrete Zielinstanz geprueft werden.
+Die erzeugten `model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportformat. Vor dem produktiven Einsatz sollten dennoch Tool-Zuordnung, Default-Features und GUI-Verhalten einmal gegen die konkrete `openwebui:latest`-Instanz verifiziert werden.
 
 ## Fehlender Problemfall 26
 
-`00_INDEX.md` nennt `26_bewerbungsunterlagen-optimierung.md`, die Datei ist im Verzeichnis `Problemfälle` nicht vorhanden. Es wurde kein vollstaendiges Modell aus dieser fehlenden Detailquelle erzeugt.
+`00_INDEX.md` nennt `26_bewerbungsunterlagen-optimierung.md`, die Datei ist im Verzeichnis `Problemfälle` nicht vorhanden. Es wurde kein vollständiges Modell aus dieser fehlenden Detailquelle erzeugt.
 
 ## Jupyter-Laufzeit
 
-Das Jupyter-Tool kann statisch validiert werden. Eine echte Ausfuehrung erfordert eine lokal konfigurierte Jupyter-Adresse, ein lokales Token und ein erlaubtes Arbeitsverzeichnis. Falls `websocket-client` in der OpenWebUI-Tool-Laufzeit fehlt, muss es intern/offline bereitgestellt werden.
+Das Jupyter-Tool kann statisch validiert werden. Eine echte Ausführung erfordert eine lokal konfigurierte Jupyter-Adresse, ein lokales Token und ein erlaubtes Arbeitsverzeichnis. Falls `websocket-client` in der OpenWebUI-Tool-Laufzeit fehlt, muss es intern/offline bereitgestellt werden.
 
 ## Sandbox-Grenze
 
-Die statische Sicherheitspruefung des Tools reduziert Risiken, ersetzt aber keine harte serverseitige Sandbox. Jupyter muss lokal isoliert, ressourcenbegrenzt und ohne unerwuenschte Netzwerkpfade betrieben werden.
+Die statische Sicherheitsprüfung des Tools reduziert Risiken, ersetzt aber keine harte serverseitige Sandbox. Jupyter muss lokal isoliert, ressourcenbegrenzt und ohne unerwünschte Netzwerkpfade betrieben werden.
 
 ## Sichere Umwandlungen
 
-Es wurden keine Problemfaelle gefunden, deren Hauptzweck Phishing, Malware, Betrug, Exfiltration oder andere verbotene Inhalte sind. Sicherheitsnahe Code- und Compliance-Modelle wurden defensiv formuliert.
+Es wurden keine Problemfälle gefunden, deren Hauptzweck Phishing, Malware, Betrug, Exfiltration oder andere verbotene Inhalte sind. Sicherheitsnahe Code- und Compliance-Modelle wurden defensiv formuliert.
 """
 
 
@@ -1454,24 +1478,23 @@ def import_readme() -> str:
 
 ## Enthaltene Artefakte
 
-- `models_fallback_bundle.json`: alle Modellprofile in einer generischen Bundle-Datei
+- `openwebui-models-import.json`: alle Modelle als direkt importierbare OpenWebUI-JSON-Datei
+- `models_fallback_bundle.json`: Kompatibilitätskopie desselben Modellimports
 - `tools_fallback_bundle.json`: Tool-Metadaten und Pfad zum Jupyter-Tool
-- `artifacts/`: Kopien der Einzelartefakte fuer manuelle Uebernahme
+- `artifacts/`: Kopien der Einzelartefakte für manuelle Übernahme
 - `openwebui-offline-artifacts.zip`: ZIP der erzeugten Struktur
 
 ## Direktimport
 
-Ein feldgenauer Direktimport kann nicht garantiert werden, weil lokal kein Referenzexport aus der Zielinstanz vorhanden war. Verwende die JSON-Dateien als strukturierte Vorlage oder passe sie an einen realen Export aus `openwebui:latest` an.
+`openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht.
 
 ## Manuelle Integration
 
-1. Modell in OpenWebUI anlegen.
-2. Basismodell `coder` auswaehlen.
-3. Systemprompt uebernehmen.
-4. `mainprompt.md` und `fachwissen.md` nach lokaler OpenWebUI-Konvention hinterlegen.
-5. Parameter und Capabilities aus `model.json` setzen.
-6. Web Search deaktiviert lassen.
-7. Jupyter-Tool nur bei zugeordneten Modellen aktivieren.
+1. In OpenWebUI entweder `openwebui-models-import.json` oder ein einzelnes `model.json` importieren.
+2. Basismodell `coder` prüfen.
+3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
+4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
+5. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.
 """
 
 
@@ -1490,6 +1513,58 @@ def backup_existing_dist() -> None:
     target = BACKUP_DIR / f"dist_{stamp}"
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.move(str(DIST_DIR), str(target))
+
+
+def backup_root_path(path: Path, label: str) -> None:
+    if not path.exists():
+        return
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    target = BACKUP_DIR / "root_sync" / f"{label}_{stamp}"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_dir():
+        shutil.copytree(path, target)
+    else:
+        shutil.copy2(path, target)
+
+
+def copy_file_with_retry(src: Path, dst: Path, attempts: int = 10, delay_seconds: float = 0.5) -> None:
+    last_error: Exception | None = None
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    for _ in range(attempts):
+        try:
+            shutil.copy2(src, dst)
+            return
+        except OSError as exc:
+            last_error = exc
+            time.sleep(delay_seconds)
+    if last_error is not None:
+        raise last_error
+
+
+def sync_operational_outputs() -> None:
+    ROOT_MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    ROOT_TOOLS_DIR.mkdir(parents=True, exist_ok=True)
+
+    for path, label in [
+        (ROOT_MODELS_SINGLE_DIR, "root_modelle_einzelmodelle"),
+        (ROOT_MODELS_DIST_DIR, "root_modelle_dist"),
+        (ROOT_TOOLS_JUPYTER_DIR, "root_tools_jupyter"),
+        (ROOT_MODELS_DIR / "index.json", "root_modelle_index_json"),
+        (ROOT_MODELS_DIR / "index.md", "root_modelle_index_md"),
+        (ROOT_TOOLS_DIR / "index.json", "root_tools_index_json"),
+    ]:
+        backup_root_path(path, label)
+
+    for path in [ROOT_MODELS_SINGLE_DIR, ROOT_MODELS_DIST_DIR, ROOT_TOOLS_JUPYTER_DIR]:
+        if path.exists():
+            shutil.rmtree(path)
+
+    shutil.copytree(DIST_DIR / "models", ROOT_MODELS_SINGLE_DIR)
+    shutil.copytree(DIST_DIR / "openwebui-import", ROOT_MODELS_DIST_DIR)
+    shutil.copytree(DIST_DIR / "tools" / "jupyter", ROOT_TOOLS_JUPYTER_DIR)
+    copy_file_with_retry(DIST_DIR / "models" / "index.json", ROOT_MODELS_DIR / "index.json")
+    copy_file_with_retry(DIST_DIR / "models" / "index.md", ROOT_MODELS_DIR / "index.md")
+    copy_file_with_retry(DIST_DIR / "tools" / "index.json", ROOT_TOOLS_DIR / "index.json")
 
 
 def main() -> int:
@@ -1514,7 +1589,8 @@ def main() -> int:
         sp = systemprompt(profile)
         mp = mainprompt(profile)
         fw = fachwissen(profile)
-        mj = model_json(profile, sp)
+        model_record = openwebui_model_record(profile, sp, mp, fw)
+        mj = model_json(profile, sp, mp, fw)
         write_text(model_dir / "systemprompt.md", sp)
         write_text(model_dir / "mainprompt.md", mp)
         write_text(model_dir / "fachwissen.md", fw)
@@ -1530,7 +1606,7 @@ def main() -> int:
                 "path": f"models/{profile['model_id']}/model.json",
             }
         )
-        bundle_models.append(mj)
+        bundle_models.append(model_record)
 
     write_json(
         DIST_DIR / "models" / "index.json",
@@ -1540,8 +1616,8 @@ def main() -> int:
             "real_model_reference": REAL_MODEL,
             "models": model_index_entries,
             "notes": [
-                "Fallback-Struktur ohne feldgenauen OpenWebUI-Referenzexport.",
-                "Web Search ist fuer alle Modelle deaktiviert.",
+                "Die Einzeldateien `model.json` folgen dem lokal geprüften OpenWebUI-Exportschema.",
+                "Web Search ist für alle Modelle deaktiviert.",
                 "Jupyter wird nur nach Modellzuordnung und lokaler Konfiguration genutzt.",
             ],
         },
@@ -1577,7 +1653,7 @@ OPENWEBUI_JUPYTER_ALLOWED_WORKDIR=/srv/openwebui-work
                     "id": JUPYTER_TOOL_ID,
                     "name": "Air-Gapped Jupyter Python",
                     "path": "tools/jupyter/jupyter_tool.py",
-                    "purpose": "Kontrollierte Python-Ausfuehrung ueber lokal/intern konfigurierten Jupyter Server.",
+                    "purpose": "Kontrollierte Python-Ausführung über lokal/intern konfigurierten Jupyter Server.",
                     "offline": True,
                     "configuration": [
                         "OPENWEBUI_JUPYTER_URL",
@@ -1606,7 +1682,7 @@ python dist/tests/validate_artifacts.py
 python dist/tests/test_jupyter_tool_static.py
 ```
 
-Die Tests benoetigen keinen Internetzugriff. Eine echte Jupyter-Ausfuehrung ist nur mit lokaler Konfiguration moeglich.
+Die Tests benötigen keinen Internetzugriff. Eine echte Jupyter-Ausführung ist nur mit lokaler Konfiguration möglich.
 """,
     )
     write_text(DIST_DIR / "tests" / "validate_artifacts.py", VALIDATE_SCRIPT)
@@ -1615,11 +1691,12 @@ Die Tests benoetigen keinen Internetzugriff. Eine echte Jupyter-Ausfuehrung ist 
     write_text(DIST_DIR / "reports" / "inventar.md", inventory_report(builder_files, problem_files, profiles))
     write_text(DIST_DIR / "reports" / "modell_tool_matrix.md", matrix_report(profiles))
     write_text(DIST_DIR / "reports" / "offene_punkte.md", open_points_report())
-    write_text(DIST_DIR / "reports" / "validierungsbericht.md", "# Validierungsbericht\n\nNoch nicht ausgefuehrt.\n")
+    write_text(DIST_DIR / "reports" / "validierungsbericht.md", "# Validierungsbericht\n\nNoch nicht ausgeführt.\n")
 
     import_dir = DIST_DIR / "openwebui-import"
     write_text(import_dir / "README.md", import_readme())
-    write_json(import_dir / "models_fallback_bundle.json", {"schema": "openwebui-model-bundle-fallback/v1", "models": bundle_models})
+    write_json(import_dir / "openwebui-models-import.json", bundle_models)
+    write_json(import_dir / "models_fallback_bundle.json", bundle_models)
     write_json(
         import_dir / "tools_fallback_bundle.json",
         {
@@ -1655,14 +1732,15 @@ Die Tests benoetigen keinen Internetzugriff. Eine echte Jupyter-Ausfuehrung ist 
             "models": model_index_entries,
             "tools": [JUPYTER_TOOL_ID],
             "open_points": [
-                "Kein OpenWebUI-Referenzexport vorhanden.",
+                "Tool-Zuordnung und GUI-Verhalten sollten gegen die konkrete Zielinstanz geprüft werden.",
                 "Problemfall 26 im Index genannt, Detaildatei fehlt.",
-                "Echte Jupyter-Ausfuehrung erfordert lokale Konfiguration.",
+                "Echte Jupyter-Ausführung erfordert lokale Konfiguration.",
             ],
         },
     )
 
     create_zip()
+    sync_operational_outputs()
     print(f"Generated {len(profiles)} models and 1 tool under {DIST_DIR}")
     return 0
 

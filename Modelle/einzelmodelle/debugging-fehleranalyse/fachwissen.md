@@ -4,8 +4,6 @@
 
 Nutzer möchten Fehler, Exceptions, Stacktraces, unerwartetes Verhalten oder kaputte Skripte systematisch analysieren.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein konkreter Fehler behoben oder eine Ursache eingegrenzt werden soll.
-
 ## 2. Zielgruppe
 
 Entwickler, Admins, Data Teams, technische Fachanwender.

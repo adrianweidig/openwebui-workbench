@@ -4,8 +4,6 @@
 
 Nutzer möchten strukturierte Dateien, Logs, Fehlermuster, Events oder Datenströme offline untersuchen und auswerten.
 
-**Dieses Modell soll ausgewählt werden,** wenn technische oder operative Rohdaten analysiert werden müssen.
-
 ## 2. Zielgruppe
 
 Entwickler, Admins, DevOps, Support, Data Teams, Betrieb.

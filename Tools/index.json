@@ -5,7 +5,7 @@
       "id": "air_gapped_jupyter_python",
       "name": "Air-Gapped Jupyter Python",
       "path": "tools/jupyter/jupyter_tool.py",
-      "purpose": "Kontrollierte Python-Ausfuehrung ueber lokal/intern konfigurierten Jupyter Server.",
+      "purpose": "Kontrollierte Python-Ausführung über lokal/intern konfigurierten Jupyter Server.",
       "offline": true,
       "configuration": [
         "OPENWEBUI_JUPYTER_URL",

@@ -13,12 +13,12 @@ OPENWEBUI_JUPYTER_ALLOWED_WORKDIR=/srv/openwebui-work
 
 ## Modellparameter
 
-Die Parameter stehen je Modell in `models/<modell-id>/model.json`. Analytische und technische Modelle verwenden niedrige Temperature-Werte, Schreib- und Kommunikationsmodelle moderate Werte.
+Die Parameter stehen je Modell in `models/<modell-id>/model.json` unter `params`. Analytische und technische Modelle verwenden niedrige Temperature-Werte, Schreib- und Kommunikationsmodelle moderate Werte.
 
 ## Capabilities
 
 - Web Search: immer `false`
 - Vision: `false`
 - Image Generation: `false`
-- File Upload/File Context: `true`, soweit OpenWebUI lokal verfuegbar
+- File Upload/File Context: `true`, soweit OpenWebUI lokal verfügbar
 - Code Interpreter/Jupyter: je Problemfall `required`, `enabled`, `optional` oder `optional_disabled`

@@ -4,8 +4,6 @@
 
 Nutzer möchten CSV-, XLSX- oder tabellarische Daten offline untersuchen, bereinigen, aggregieren, visualisieren und interpretieren.
 
-**Dieses Modell soll ausgewählt werden,** wenn strukturierte Daten analysiert oder in Erkenntnisse, Tabellen, Diagramme oder Reports überführt werden sollen.
-
 ## 2. Zielgruppe
 
 Controlling, Operations, Vertrieb, Projektmanagement, Data Analysts, Verwaltung.

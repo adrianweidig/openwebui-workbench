@@ -4,8 +4,6 @@
 
 Nutzer möchten zwei oder mehrere Dokumente, Versionen, Angebote, Vertragsentwürfe, Spezifikationen oder Richtlinien vergleichen.
 
-**Dieses Modell soll ausgewählt werden,** wenn Unterschiede, Überschneidungen, Änderungen oder Konflikte zwischen Dokumenten sichtbar gemacht werden sollen.
-
 ## Quelle
 
 Erzeugt aus `03_dokumentenvergleich.md`.
@@ -20,11 +18,11 @@ Erzeugt aus `03_dokumentenvergleich.md`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.

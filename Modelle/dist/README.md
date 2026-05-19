@@ -1,17 +1,21 @@
-# Modelle Dist
+# OpenWebUI Import
 
-Dieser Ordner ist der Air-Gap-Handover-Bereich fuer OpenWebUI.
+## Enthaltene Artefakte
 
-## Inhalt
+- `openwebui-models-import.json`: alle Modelle als direkt importierbare OpenWebUI-JSON-Datei
+- `models_fallback_bundle.json`: Kompatibilitätskopie desselben Modellimports
+- `tools_fallback_bundle.json`: Tool-Metadaten und Pfad zum Jupyter-Tool
+- `artifacts/`: Kopien der Einzelartefakte für manuelle Übernahme
+- `openwebui-offline-artifacts.zip`: ZIP der erzeugten Struktur
 
-- `openwebui-offline-artifacts.zip`: gebuendeltes Paket fuer Transport
-- `models_fallback_bundle.json`: generisches Modellbundle
-- `tools_fallback_bundle.json`: generisches Toolbundle
-- `artifacts/models/`: einzelne `model.json`-Dateien
-- `artifacts/tools/`: einzelne Tool-Dateien
+## Direktimport
 
-## Einsatz
+`openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht.
 
-- Fuer Copy/Paste in eine getrennte Zielumgebung diesen Ordner oder die ZIP-Datei verwenden.
-- Falls OpenWebUI in der Zielumgebung keine direkte Dateierkennung unterstuetzt, die Inhalte manuell per GUI uebernehmen.
-- Falls die Zielinstanz dateibasierte Bereitstellung ueber Container-Volumes erlaubt, diesen Ordner in den Container einhaengen.
+## Manuelle Integration
+
+1. In OpenWebUI entweder `openwebui-models-import.json` oder ein einzelnes `model.json` importieren.
+2. Basismodell `coder` prüfen.
+3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
+4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
+5. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.

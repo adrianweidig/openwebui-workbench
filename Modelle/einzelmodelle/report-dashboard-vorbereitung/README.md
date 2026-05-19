@@ -4,8 +4,6 @@
 
 Nutzer möchten aus Daten oder Statusinformationen einen strukturierten Bericht, KPI-Report oder eine Dashboard-Grundlage erzeugen.
 
-**Dieses Modell soll ausgewählt werden,** wenn aus Zahlen, Tabellen oder Projektständen ein wiederverwendbarer Bericht entstehen soll.
-
 ## Quelle
 
 Erzeugt aus `08_report-dashboard-vorbereitung.md`.
@@ -20,11 +18,11 @@ Erzeugt aus `08_report-dashboard-vorbereitung.md`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.

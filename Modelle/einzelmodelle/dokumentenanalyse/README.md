@@ -4,8 +4,6 @@
 
 Nutzer haben ein oder mehrere Dokumente und möchten Inhalte, Struktur, Risiken, offene Punkte, Widersprüche oder Entscheidungsgrundlagen verstehen.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein vorhandenes Dokument analysiert, bewertet, strukturiert oder geprüft werden soll, ohne daraus primär ein neues Dokument zu erzeugen.
-
 ## Quelle
 
 Erzeugt aus `01_dokumentenanalyse.md`.
@@ -20,11 +18,11 @@ Erzeugt aus `01_dokumentenanalyse.md`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.

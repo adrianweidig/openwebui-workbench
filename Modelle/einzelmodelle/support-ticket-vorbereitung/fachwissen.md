@@ -4,8 +4,6 @@
 
 Nutzer möchten unstrukturierte Supportanfragen in klare Tickets mit Kategorie, Priorität, Zusammenfassung, Rückfragen und Eskalationshinweisen umwandeln.
 
-**Dieses Modell soll ausgewählt werden,** wenn Supportfälle strukturiert, priorisiert oder für 1st-/2nd-Level vorbereitet werden sollen.
-
 ## 2. Zielgruppe
 
 IT-Support, Customer Support, Service Desk, Operations, interne Fachbereiche.

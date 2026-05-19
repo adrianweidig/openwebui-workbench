@@ -4,8 +4,6 @@
 
 Nutzer möchten professionelle E-Mails, Antworten, interne Nachrichten, Zusammenfassungen oder Kommunikationsvarianten formulieren.
 
-**Dieses Modell soll ausgewählt werden,** wenn der Schwerpunkt auf klarer, passender und zielgruppengerechter Kommunikation liegt.
-
 ## 2. Zielgruppe
 
 alle Fachbereiche, Support, Management, HR, Projektteams, Vertrieb ohne externe Recherche.

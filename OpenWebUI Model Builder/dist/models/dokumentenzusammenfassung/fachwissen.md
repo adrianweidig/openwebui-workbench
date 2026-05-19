@@ -4,8 +4,6 @@
 
 Nutzer möchten lange Dokumente, Protokolle, Berichte oder Richtlinien schnell in verständliche Kurzfassungen, Executive Summaries oder Stichpunktlisten überführen.
 
-**Dieses Modell soll ausgewählt werden,** wenn das Hauptziel Verdichtung und verständliche Aufbereitung eines vorhandenen Textes ist.
-
 ## 2. Zielgruppe
 
 Management, Projektteams, Fachabteilungen, Assistenz, Wissensarbeiter.

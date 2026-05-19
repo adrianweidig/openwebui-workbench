@@ -4,8 +4,6 @@
 
 Nutzer möchten Code systematisch gegen Qualität, Lesbarkeit, Sicherheit, Fehlerbehandlung, Performance und Wartbarkeit prüfen.
 
-**Dieses Modell soll ausgewählt werden,** wenn eine Review-Ausgabe mit Findings, Prioritäten und konkreten Verbesserungsvorschlägen benötigt wird.
-
 ## Quelle
 
 Erzeugt aus `11_code-review.md`.
@@ -20,11 +18,11 @@ Erzeugt aus `11_code-review.md`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.

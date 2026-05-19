@@ -2,21 +2,20 @@
 
 ## Enthaltene Artefakte
 
-- `models_fallback_bundle.json`: alle Modellprofile in einer generischen Bundle-Datei
+- `openwebui-models-import.json`: alle Modelle als direkt importierbare OpenWebUI-JSON-Datei
+- `models_fallback_bundle.json`: Kompatibilitätskopie desselben Modellimports
 - `tools_fallback_bundle.json`: Tool-Metadaten und Pfad zum Jupyter-Tool
-- `artifacts/`: Kopien der Einzelartefakte fuer manuelle Uebernahme
+- `artifacts/`: Kopien der Einzelartefakte für manuelle Übernahme
 - `openwebui-offline-artifacts.zip`: ZIP der erzeugten Struktur
 
 ## Direktimport
 
-Ein feldgenauer Direktimport kann nicht garantiert werden, weil lokal kein Referenzexport aus der Zielinstanz vorhanden war. Verwende die JSON-Dateien als strukturierte Vorlage oder passe sie an einen realen Export aus `openwebui:latest` an.
+`openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht.
 
 ## Manuelle Integration
 
-1. Modell in OpenWebUI anlegen.
-2. Basismodell `coder` auswaehlen.
-3. Systemprompt uebernehmen.
-4. `mainprompt.md` und `fachwissen.md` nach lokaler OpenWebUI-Konvention hinterlegen.
-5. Parameter und Capabilities aus `model.json` setzen.
-6. Web Search deaktiviert lassen.
-7. Jupyter-Tool nur bei zugeordneten Modellen aktivieren.
+1. In OpenWebUI entweder `openwebui-models-import.json` oder ein einzelnes `model.json` importieren.
+2. Basismodell `coder` prüfen.
+3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
+4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
+5. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.

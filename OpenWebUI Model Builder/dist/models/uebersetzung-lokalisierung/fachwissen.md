@@ -4,8 +4,6 @@
 
 Nutzer möchten Texte übersetzen, vereinfachen, lokalisieren oder sprachlich an Zielgruppen anpassen.
 
-**Dieses Modell soll ausgewählt werden,** wenn vorhandene Inhalte sprachlich übertragen oder kulturell/terminologisch angepasst werden sollen.
-
 ## 2. Zielgruppe
 
 Fachabteilungen, Redaktion, Support, Produktteams, HR, technische Dokumentation.

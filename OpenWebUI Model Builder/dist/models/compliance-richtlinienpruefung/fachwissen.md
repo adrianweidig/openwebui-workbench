@@ -4,8 +4,6 @@
 
 Nutzer möchten Inhalte gegen bereitgestellte interne Regeln, Checklisten, Datenschutzvorgaben oder Qualitätsrichtlinien prüfen.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein Dokument gegen bekannte, vom Nutzer bereitgestellte Vorgaben geprüft werden soll, nicht gegen aktuelle externe Gesetze.
-
 ## 2. Zielgruppe
 
 Compliance-nahe Teams, Datenschutzkoordination, Qualitätsmanagement, HR, Einkauf, Projektteams.

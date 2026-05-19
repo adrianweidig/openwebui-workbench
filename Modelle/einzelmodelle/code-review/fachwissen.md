@@ -4,8 +4,6 @@
 
 Nutzer möchten Code systematisch gegen Qualität, Lesbarkeit, Sicherheit, Fehlerbehandlung, Performance und Wartbarkeit prüfen.
 
-**Dieses Modell soll ausgewählt werden,** wenn eine Review-Ausgabe mit Findings, Prioritäten und konkreten Verbesserungsvorschlägen benötigt wird.
-
 ## 2. Zielgruppe
 
 Entwickler, Tech Leads, QA, DevOps, Security-nahe Teams.

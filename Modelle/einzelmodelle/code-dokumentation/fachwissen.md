@@ -4,8 +4,6 @@
 
 Nutzer möchten vorhandenen oder neuen Code verständlich dokumentieren: README, API-Doku, Funktionskommentare, Architekturhinweise.
 
-**Dieses Modell soll ausgewählt werden,** wenn Codewissen für Nutzer, Entwickler oder Betrieb verständlich dokumentiert werden soll.
-
 ## 2. Zielgruppe
 
 Entwickler, Tech Leads, Admins, Onboarding-Teams, Open-Source-/interne Projekte.

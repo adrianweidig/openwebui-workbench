@@ -16,6 +16,13 @@ def add(results, name, ok, detail=""):
     results.append({"name": name, "ok": bool(ok), "detail": detail})
 
 
+def load_import_models(path: Path):
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list):
+        raise TypeError(f"{path.name} ist kein JSON-Array")
+    return payload
+
+
 def main() -> int:
     results = []
     json_files = sorted(DIST.rglob("*.json"))
@@ -54,7 +61,7 @@ def main() -> int:
                 if any(word in snippet for word in allowed_placeholder_words):
                     continue
                 secret_hits.append(f"{path.relative_to(DIST)}: {snippet[:80]}")
-    add(results, "Keine echten Tokens/Passwoerter/Secrets gefunden", not secret_hits, "; ".join(secret_hits[:10]))
+    add(results, "Keine echten Tokens/Passwörter/Secrets gefunden", not secret_hits, "; ".join(secret_hits[:10]))
 
     index = json.loads((DIST / "models" / "index.json").read_text(encoding="utf-8"))
     model_ids = {entry["id"] for entry in index["models"]}
@@ -63,23 +70,34 @@ def main() -> int:
 
     unassigned = []
     internet_enabled = []
+    bad_import_schema = []
     no_main_ref = []
     no_fach_ref = []
     for model_id in sorted(model_ids):
         base = DIST / "models" / model_id
-        payload = json.loads((base / "model.json").read_text(encoding="utf-8"))
-        if not payload.get("source_problem_file"):
+        payload = load_import_models(base / "model.json")
+        if len(payload) != 1:
+            bad_import_schema.append(f"{model_id}: erwartet genau 1 Modellobjekt, gefunden {len(payload)}")
+            continue
+        model = payload[0]
+        if model.get("id") != model_id:
             unassigned.append(model_id)
-        caps = payload.get("capabilities", {})
-        defaults = payload.get("default_features", {})
-        if caps.get("web_search") or defaults.get("web_search"):
+        meta = model.get("meta", {})
+        params = model.get("params", {})
+        caps = meta.get("capabilities", {})
+        if caps.get("web_search"):
             internet_enabled.append(model_id)
+        if not params.get("system"):
+            bad_import_schema.append(f"{model_id}: params.system fehlt")
+        if model.get("base_model_id") != "coder":
+            bad_import_schema.append(f"{model_id}: base_model_id={model.get('base_model_id')!r}")
         if "mainprompt.md" not in (base / "systemprompt.md").read_text(encoding="utf-8"):
             no_main_ref.append(model_id)
         if "fachwissen.md" not in (base / "mainprompt.md").read_text(encoding="utf-8"):
             no_fach_ref.append(model_id)
     add(results, "Jedes Modell ist einem Problemfall zugeordnet", not unassigned, ", ".join(unassigned))
     add(results, "Keine Modellbeschreibung aktiviert Web Search", not internet_enabled, ", ".join(internet_enabled))
+    add(results, "Modell-JSON folgt dem OpenWebUI-Importschema", not bad_import_schema, "; ".join(bad_import_schema[:10]))
     add(results, "Systemprompts verweisen auf mainprompt.md", not no_main_ref, ", ".join(no_main_ref))
     add(results, "Mainprompts verweisen auf fachwissen.md", not no_fach_ref, ", ".join(no_fach_ref))
 
@@ -87,13 +105,19 @@ def main() -> int:
     tool_ids = {entry["id"] for entry in tool_index["tools"]}
     assigned_tools = set()
     for model_id in model_ids:
-        payload = json.loads((DIST / "models" / model_id / "model.json").read_text(encoding="utf-8"))
-        for tool in payload.get("tools", []):
-            assigned_tools.add(tool.get("id"))
+        payload = load_import_models(DIST / "models" / model_id / "model.json")
+        for tool_id in payload[0].get("meta", {}).get("toolIds", []):
+            assigned_tools.add(tool_id)
     add(results, "Jedes Tool ist einem Modell oder Utility-Kontext zugeordnet", tool_ids <= assigned_tools or tool_ids == {"air_gapped_jupyter_python"}, f"tool_ids={sorted(tool_ids)}, assigned={sorted(assigned_tools)}")
 
     config_text = (DIST / "tools" / "jupyter" / ".env.example").read_text(encoding="utf-8")
-    add(results, "Jupyter-Beispielkonfiguration enthaelt keine echten Zugangsdaten", "REPLACE_WITH_LOCAL_TOKEN" in config_text and "OPENWEBUI_JUPYTER_TOKEN=" in config_text)
+    add(results, "Jupyter-Beispielkonfiguration enthält keine echten Zugangsdaten", "REPLACE_WITH_LOCAL_TOKEN" in config_text and "OPENWEBUI_JUPYTER_TOKEN=" in config_text)
+
+    try:
+        bundle = load_import_models(DIST / "openwebui-import" / "openwebui-models-import.json")
+        add(results, "Sammelimport ist OpenWebUI-kompatibles JSON-Array", len(bundle) == len(model_ids), f"bundled={len(bundle)}, expected={len(model_ids)}")
+    except Exception as exc:
+        add(results, "Sammelimport ist OpenWebUI-kompatibles JSON-Array", False, str(exc))
 
     docs_required = [
         "ARCHITEKTUR.md",
@@ -122,7 +146,7 @@ def main() -> int:
         "",
         f"Status: {status}",
         "",
-        "| Pruefung | Ergebnis | Detail |",
+        "| Prüfung | Ergebnis | Detail |",
         "|---|---:|---|",
     ]
     for item in results:
@@ -130,7 +154,7 @@ def main() -> int:
     lines.extend(
         [
             "",
-            "Nicht ausgefuehrt: echter Import in `openwebui:latest` und echte Jupyter-Codeausfuehrung, weil dafuer eine laufende Zielinstanz mit lokaler Konfiguration erforderlich ist.",
+            "Nicht ausgeführt: echter Import in `openwebui:latest` und echte Jupyter-Codeausführung, weil dafür eine laufende Zielinstanz mit lokaler Konfiguration erforderlich ist.",
         ]
     )
     report = "\n".join(lines) + "\n"

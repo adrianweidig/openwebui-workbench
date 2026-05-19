@@ -1,27 +1,27 @@
-# Workspace Uebersicht
+# Workspace Übersicht
 
 ## Ziel
 
-`E:\OpenWebUI` dient als gemeinsames Arbeitsverzeichnis fuer:
+`E:\OpenWebUI` dient als gemeinsames Arbeitsverzeichnis für:
 
 - OpenWebUI-Modellbau
 - Problemfall-Sammlung
 - lokale Tool-Entwicklung
-- spaetere manuelle Erweiterungen
+- spätere manuelle Erweiterungen
 
 ## Aktueller Bestand
 
-- `OpenWebUI Model Builder/` ist der Ausgangspunkt fuer Vorgaben und Regenerierung.
-- `Problemfaelle/` enthaelt die fachlichen Briefings.
-- `Modelle/einzelmodelle/` enthaelt die menschenlesbar sortierten Modellpakete.
+- `OpenWebUI Model Builder/` ist der Ausgangspunkt für Vorgaben und Regenerierung.
+- `Problemfälle/` enthält die fachlichen Briefings.
+- `Modelle/einzelmodelle/` enthält die menschenlesbar sortierten Modellpakete.
 - `Modelle/dist/` ist der Air-Gap-Copy/Paste-Bereich.
-- `Tools/jupyter/` enthaelt das produktive Offline-Jupyter-Tool.
+- `Tools/jupyter/` enthält das produktive Offline-Jupyter-Tool.
 
 ## Empfohlene Nutzung
 
-1. Neue Problemfaelle zuerst unter `Problemfaelle/` als Briefing anlegen.
-2. Modellpakete ueber den Builder regenerieren.
-3. Scharfe Artefakte aus dem Builder unter `Modelle/` und `Tools/` fuer Menschen und Betrieb bereitstellen.
+1. Neue Problemfälle zuerst unter `Problemfälle/` als Briefing anlegen.
+2. Modellpakete über den Builder regenerieren.
+3. Scharfe Artefakte aus dem Builder unter `Modelle/` und `Tools/` für Menschen und Betrieb bereitstellen.
 4. Lokale Cache-Dateien und Backup-Snapshots nicht committen.
 
 ## Git-Konvention

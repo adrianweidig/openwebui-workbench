@@ -4,8 +4,6 @@
 
 Nutzer möchten aus Daten oder Statusinformationen einen strukturierten Bericht, KPI-Report oder eine Dashboard-Grundlage erzeugen.
 
-**Dieses Modell soll ausgewählt werden,** wenn aus Zahlen, Tabellen oder Projektständen ein wiederverwendbarer Bericht entstehen soll.
-
 ## 2. Zielgruppe
 
 Management, Controlling, PMO, Operations, Vertrieb, Serviceleitung.

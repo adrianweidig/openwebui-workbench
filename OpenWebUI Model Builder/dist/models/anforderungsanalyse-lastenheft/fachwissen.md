@@ -4,8 +4,6 @@
 
 Nutzer möchten Anforderungen aus Beschreibungen, Gesprächen oder Dokumenten strukturieren, klären und in Lastenheft-/Pflichtenheft-nahe Form bringen.
 
-**Dieses Modell soll ausgewählt werden,** wenn unklare Wünsche in Anforderungen, Akzeptanzkriterien, Risiken und Rückfragen überführt werden sollen.
-
 ## 2. Zielgruppe
 
 Product Owner, Business Analysten, Projektleitungen, Fachbereiche, IT-Teams.

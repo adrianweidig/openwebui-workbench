@@ -4,8 +4,6 @@
 
 Nutzer möchten aus Informationen, Dokumenten oder Stichpunkten eine Präsentationsstruktur oder direkt eine PPTX-Datei erzeugen.
 
-**Dieses Modell soll ausgewählt werden,** wenn eine Folienstruktur, Management-Präsentation, Schulung, Pitch, Projektstatus oder Ergebnispräsentation benötigt wird.
-
 ## 2. Zielgruppe
 
 Management, Projektteams, Vertrieb, Schulung, Fachabteilungen, Beratung.

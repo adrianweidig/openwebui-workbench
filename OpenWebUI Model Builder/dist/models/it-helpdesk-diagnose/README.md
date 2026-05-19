@@ -4,8 +4,6 @@
 
 Nutzer möchten IT-Probleme anhand von Symptomen, Logs und Systeminformationen strukturiert eingrenzen.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein Diagnosebaum, erste Prüfungen oder Eskalationsvorbereitung benötigt werden.
-
 ## Quelle
 
 Erzeugt aus `21_it-helpdesk-diagnose.md`.
@@ -20,11 +18,11 @@ Erzeugt aus `21_it-helpdesk-diagnose.md`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.

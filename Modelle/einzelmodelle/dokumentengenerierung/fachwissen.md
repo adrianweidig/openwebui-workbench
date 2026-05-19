@@ -4,8 +4,6 @@
 
 Nutzer möchten aus Stichpunkten, Gesprächsnotizen, Tabellen oder Vorgaben professionelle Dokumente erzeugen.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein neues Dokument erstellt werden soll: Bericht, Konzept, SOP, Vorlage, Angebotstext, Projektdokumentation oder Arbeitsanweisung.
-
 ## 2. Zielgruppe
 
 Projektleitungen, Fachabteilungen, Management, Assistenz, Qualitätsmanagement, technische Teams.

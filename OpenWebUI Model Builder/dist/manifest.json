@@ -1,6 +1,6 @@
 {
   "schema": "openwebui-offline-artifact-manifest/v1",
-  "generated_at": "2026-05-18T10:47:03",
+  "generated_at": "2026-05-19T19:44:31",
   "source_dirs": [
     "E:\\OpenWebUI\\OpenWebUI Model Builder",
     "E:\\OpenWebUI\\Problemfälle"
@@ -214,8 +214,8 @@
     "air_gapped_jupyter_python"
   ],
   "open_points": [
-    "Kein OpenWebUI-Referenzexport vorhanden.",
+    "Tool-Zuordnung und GUI-Verhalten sollten gegen die konkrete Zielinstanz geprüft werden.",
     "Problemfall 26 im Index genannt, Detaildatei fehlt.",
-    "Echte Jupyter-Ausfuehrung erfordert lokale Konfiguration."
+    "Echte Jupyter-Ausführung erfordert lokale Konfiguration."
   ]
 }

@@ -47,5 +47,5 @@
 
 - Detaillierte Problemfall-Briefings ausgewertet: 25
 - `00_INDEX.md` nennt `26_bewerbungsunterlagen-optimierung.md`; diese Datei existiert lokal nicht.
-- Kein OpenWebUI-Referenzexport gefunden; daher wurde eine generische Fallback-Struktur erzeugt.
-- Keine Originaldateien wurden geaendert.
+- Das OpenWebUI-Importschema wurde aus lokal importierbaren Referenzexporten abgeleitet.
+- Keine Originaldateien wurden geändert.

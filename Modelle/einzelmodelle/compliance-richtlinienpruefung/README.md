@@ -4,8 +4,6 @@
 
 Nutzer möchten Inhalte gegen bereitgestellte interne Regeln, Checklisten, Datenschutzvorgaben oder Qualitätsrichtlinien prüfen.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein Dokument gegen bekannte, vom Nutzer bereitgestellte Vorgaben geprüft werden soll, nicht gegen aktuelle externe Gesetze.
-
 ## Quelle
 
 Erzeugt aus `25_compliance-richtlinienpruefung.md`.
@@ -20,11 +18,11 @@ Erzeugt aus `25_compliance-richtlinienpruefung.md`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.

@@ -4,8 +4,6 @@
 
 Nutzer möchten IT-Probleme anhand von Symptomen, Logs und Systeminformationen strukturiert eingrenzen.
 
-**Dieses Modell soll ausgewählt werden,** wenn ein Diagnosebaum, erste Prüfungen oder Eskalationsvorbereitung benötigt werden.
-
 ## 2. Zielgruppe
 
 Helpdesk, Admins, interne IT, technische Fachanwender.

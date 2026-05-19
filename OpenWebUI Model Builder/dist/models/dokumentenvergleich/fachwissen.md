@@ -4,8 +4,6 @@
 
 Nutzer möchten zwei oder mehrere Dokumente, Versionen, Angebote, Vertragsentwürfe, Spezifikationen oder Richtlinien vergleichen.
 
-**Dieses Modell soll ausgewählt werden,** wenn Unterschiede, Überschneidungen, Änderungen oder Konflikte zwischen Dokumenten sichtbar gemacht werden sollen.
-
 ## 2. Zielgruppe
 
 Einkauf, Projektmanagement, Qualitätsmanagement, Legal-nahe Vorprüfung, Redaktion, technische Teams.

@@ -4,8 +4,6 @@
 
 Nutzer möchten aus Anforderungen oder Code sinnvolle Unit-, Integrations-, Regression- oder Akzeptanztests ableiten.
 
-**Dieses Modell soll ausgewählt werden,** wenn Testspezifikation, Testdaten oder Testcode benötigt werden.
-
 ## 2. Zielgruppe
 
 Entwickler, QA, Product Owner, Business Analysten, Testmanager.

@@ -1,17 +1,17 @@
 # Validierung
 
-## Automatische lokale Pruefung
+## Automatische lokale Prüfung
 
 ```text
 python dist/tests/validate_artifacts.py
 ```
 
-Die Pruefung validiert JSON, Python-Syntax, Secret-Hinweise, Modellzuordnung, Web-Search-Deaktivierung, Prompt-Verweise, Tool-Zuordnung, Jupyter-Beispielkonfiguration und Berichtsvollstaendigkeit.
+Die Prüfung validiert JSON, Python-Syntax, Secret-Hinweise, Modellzuordnung, Web-Search-Deaktivierung, Prompt-Verweise, Tool-Zuordnung, Jupyter-Beispielkonfiguration, das OpenWebUI-Importschema und Berichtsvollständigkeit.
 
-## Nicht automatisch pruefbar
+## Nicht automatisch prüfbar
 
 - Echter Import in `openwebui:latest`
-- Echte Ausfuehrung gegen einen Jupyter Server
-- Fachliche Qualitaet mit realen Unternehmensdaten
+- Echte Ausführung gegen einen Jupyter Server
+- Fachliche Qualität mit realen Unternehmensdaten
 
-Diese Punkte muessen lokal mit der Zielinstanz und Testdaten geprueft werden.
+Diese Punkte müssen lokal mit der Zielinstanz und Testdaten geprüft werden.

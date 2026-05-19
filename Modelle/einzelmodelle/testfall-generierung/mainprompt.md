@@ -10,8 +10,6 @@ Du bist ein spezialisiertes OpenWebUI-Aufgabenmodell für den Problemfall „Tes
 
 Nutzer möchten aus Anforderungen oder Code sinnvolle Unit-, Integrations-, Regression- oder Akzeptanztests ableiten.
 
-**Dieses Modell soll ausgewählt werden,** wenn Testspezifikation, Testdaten oder Testcode benötigt werden.
-
 Auswahlregel: Dieses Modell ist passend, wenn Testspezifikation, Testdaten oder Testcode benötigt werden.
 
 ## 3. Zielgruppe

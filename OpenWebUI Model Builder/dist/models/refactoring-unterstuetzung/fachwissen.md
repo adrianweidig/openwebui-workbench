@@ -4,8 +4,6 @@
 
 Nutzer möchten bestehenden Code lesbarer, modularer, sicherer oder wartbarer machen, ohne fachliches Verhalten unbeabsichtigt zu ändern.
 
-**Dieses Modell soll ausgewählt werden,** wenn Code verbessert, vereinfacht oder neu strukturiert werden soll.
-
 ## 2. Zielgruppe
 
 Entwickler, Tech Leads, Wartungsteams, technische Modernisierung.

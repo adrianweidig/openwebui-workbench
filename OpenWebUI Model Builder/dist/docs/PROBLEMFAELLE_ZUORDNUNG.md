@@ -1,4 +1,4 @@
-# Problemfaelle Zuordnung
+# Problemfälle Zuordnung
 
 | Problemfall-Datei | Modell | Modell-ID | Jupyter-Modus |
 |---|---|---|---|

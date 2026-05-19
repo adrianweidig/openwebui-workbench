@@ -4,8 +4,6 @@
 
 Nutzer möchten professionelle E-Mails, Antworten, interne Nachrichten, Zusammenfassungen oder Kommunikationsvarianten formulieren.
 
-**Dieses Modell soll ausgewählt werden,** wenn der Schwerpunkt auf klarer, passender und zielgruppengerechter Kommunikation liegt.
-
 ## Quelle
 
 Erzeugt aus `23_email-kommunikationsassistenz.md`.
@@ -20,11 +18,11 @@ Erzeugt aus `23_email-kommunikationsassistenz.md`.
 
 ## Dateien
 
-- `model.json`: generisches Modellprofil
+- `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
 
 ## Hinweis
 
-Die JSON-Struktur ist eine Fallback-Struktur, weil lokal kein Referenzexport der Zielinstanz vorhanden war.
+Für den eigentlichen OpenWebUI-Import ist `model.json` die primäre Datei. Die Markdown-Dateien sind für Durchsicht, Pflege und manuelle Nacharbeit im Repository gedacht.

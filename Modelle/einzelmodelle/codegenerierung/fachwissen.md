@@ -4,8 +4,6 @@
 
 Nutzer möchten aus einer Beschreibung lauffähigen, verständlichen und wartbaren Code erzeugen.
 
-**Dieses Modell soll ausgewählt werden,** wenn neuer Code, Skripte, Funktionen, APIs, Automatisierungen oder Prototypen erstellt werden sollen.
-
 ## 2. Zielgruppe
 
 Entwickler, Data Teams, Automatisierer, Admins, technisch versierte Fachanwender.

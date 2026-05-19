@@ -4,8 +4,6 @@
 
 Nutzer möchten bestehenden Code verstehen, Abhängigkeiten erkennen, Risiken finden oder Architektur und Datenflüsse erklären lassen.
 
-**Dieses Modell soll ausgewählt werden,** wenn vorhandener Code gelesen, erklärt, strukturiert oder bewertet werden soll.
-
 ## 2. Zielgruppe
 
 Entwickler, Reviewer, Tech Leads, neue Teammitglieder, Auditoren, Admins.
