@@ -172,7 +172,7 @@ Schlechte Namen:
 - testmodell
 - mein bot
 
-Technische IDs sollen kleingeschrieben, slug-fähig und sprechend sein, z. B. `dokumentenanalyse`, `vertragspruefung`, `support-ticket-assistent`.
+Technische IDs sollen kleingeschrieben, slug-fähig und sprechend sein, z. B. `dokumentenanalyse`, `vertragsprüfung`, `support-ticket-assistent`.
 
 ## 9. Capabilities und Default Features
 

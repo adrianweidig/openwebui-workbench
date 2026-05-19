@@ -119,7 +119,7 @@ def slug_tags(model_id: str, title: str) -> list[str]:
         ("meeting", "meeting"),
         ("compliance", "compliance"),
         ("übersetzung", "language"),
-        ("uebersetzung", "language"),
+        ("übersetzung", "language"),
         ("email", "communication"),
         ("prozess", "process"),
     ]
@@ -1101,7 +1101,7 @@ def main() -> int:
         "INSTALLATION.md",
         "KONFIGURATION.md",
         "AIR_GAPPED_BETRIEB.md",
-        "PROBLEMFAELLE_ZUORDNUNG.md",
+        "PROBLEMFÄLLE_ZUORDNUNG.md",
         "VALIDIERUNG.md",
     ]
     missing_docs = [name for name in docs_required if not (DIST / "docs" / name).exists()]
@@ -1670,7 +1670,7 @@ OPENWEBUI_JUPYTER_ALLOWED_WORKDIR=/srv/openwebui-work
     write_text(DIST_DIR / "docs" / "INSTALLATION.md", docs_installation())
     write_text(DIST_DIR / "docs" / "KONFIGURATION.md", docs_configuration())
     write_text(DIST_DIR / "docs" / "AIR_GAPPED_BETRIEB.md", docs_air_gapped())
-    write_text(DIST_DIR / "docs" / "PROBLEMFAELLE_ZUORDNUNG.md", docs_mapping(profiles))
+    write_text(DIST_DIR / "docs" / "PROBLEMFÄLLE_ZUORDNUNG.md", docs_mapping(profiles))
     write_text(DIST_DIR / "docs" / "VALIDIERUNG.md", docs_validation())
 
     write_text(

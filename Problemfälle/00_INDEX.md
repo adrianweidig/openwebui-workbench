@@ -24,7 +24,7 @@ Diese Sammlung enthält Markdown-Briefings, die direkt als Eingabe für den Cust
 | `03_dokumentenvergleich.md` | Dokumentenvergleich | Nutzer möchten zwei oder mehrere Dokumente, Versionen, Angebote, Vertragsentwürfe, Spezifikationen oder Richtlinien vergleichen. |
 | `04_informationsextraktion.md` | Informationsextraktion | Nutzer möchten aus unstrukturierten Dokumenten strukturierte Informationen wie Namen, Daten, Fristen, Beträge, Aufgaben, Risiken oder Entitäten extrahieren. |
 | `05_dokumentengenerierung.md` | Dokumentengenerierung | Nutzer möchten aus Stichpunkten, Gesprächsnotizen, Tabellen oder Vorgaben professionelle Dokumente erzeugen. |
-| `06_praesentationserstellung.md` | Präsentationserstellung | Nutzer möchten aus Informationen, Dokumenten oder Stichpunkten eine Präsentationsstruktur oder direkt eine PPTX-Datei erzeugen. |
+| `06_präsentationserstellung.md` | Präsentationserstellung | Nutzer möchten aus Informationen, Dokumenten oder Stichpunkten eine Präsentationsstruktur oder direkt eine PPTX-Datei erzeugen. |
 | `07_tabellen-csv-datenanalyse.md` | Tabellen- und CSV-Datenanalyse | Nutzer möchten CSV-, XLSX- oder tabellarische Daten offline untersuchen, bereinigen, aggregieren, visualisieren und interpretieren. |
 | `08_report-dashboard-vorbereitung.md` | Report- und Dashboard-Vorbereitung | Nutzer möchten aus Daten oder Statusinformationen einen strukturierten Bericht, KPI-Report oder eine Dashboard-Grundlage erzeugen. |
 | `09_codegenerierung.md` | Codegenerierung | Nutzer möchten aus einer Beschreibung lauffähigen, verständlichen und wartbaren Code erzeugen. |
@@ -33,7 +33,7 @@ Diese Sammlung enthält Markdown-Briefings, die direkt als Eingabe für den Cust
 | `12_debugging-fehleranalyse.md` | Debugging und Fehleranalyse | Nutzer möchten Fehler, Exceptions, Stacktraces, unerwartetes Verhalten oder kaputte Skripte systematisch analysieren. |
 | `13_testfall-generierung.md` | Testfall-Generierung | Nutzer möchten aus Anforderungen oder Code sinnvolle Unit-, Integrations-, Regression- oder Akzeptanztests ableiten. |
 | `14_code-dokumentation.md` | Code-Dokumentation | Nutzer möchten vorhandenen oder neuen Code verständlich dokumentieren: README, API-Doku, Funktionskommentare, Architekturhinweise. |
-| `15_refactoring-unterstuetzung.md` | Refactoring-Unterstützung | Nutzer möchten bestehenden Code lesbarer, modularer, sicherer oder wartbarer machen, ohne fachliches Verhalten unbeabsichtigt zu ändern. |
+| `15_refactoring-unterstützung.md` | Refactoring-Unterstützung | Nutzer möchten bestehenden Code lesbarer, modularer, sicherer oder wartbarer machen, ohne fachliches Verhalten unbeabsichtigt zu ändern. |
 | `16_api-schnittstellenentwurf.md` | API- und Schnittstellenentwurf | Nutzer möchten eine API, Datenstruktur, Request/Response-Schemata oder Schnittstellendokumentation entwerfen. |
 | `17_json-csv-log-analyse.md` | JSON-, CSV- und Log-Analyse | Nutzer möchten strukturierte Dateien, Logs, Fehlermuster, Events oder Datenströme offline untersuchen und auswerten. |
 | `18_meeting-protokoll-auswertung.md` | Meeting-Protokoll-Auswertung | Nutzer möchten aus Notizen oder Transkripten Entscheidungen, Aufgaben, Verantwortlichkeiten, Fristen und offene Fragen extrahieren. |
@@ -42,8 +42,8 @@ Diese Sammlung enthält Markdown-Briefings, die direkt als Eingabe für den Cust
 | `21_it-helpdesk-diagnose.md` | IT-Helpdesk-Diagnose | Nutzer möchten IT-Probleme anhand von Symptomen, Logs und Systeminformationen strukturiert eingrenzen. |
 | `22_prozess-workflow-dokumentation.md` | Prozess- und Workflow-Dokumentation | Nutzer möchten Abläufe, SOPs, Verantwortlichkeiten, Prozessschritte oder Entscheidungspunkte dokumentieren oder verbessern. |
 | `23_email-kommunikationsassistenz.md` | E-Mail- und Kommunikationsassistenz | Nutzer möchten professionelle E-Mails, Antworten, interne Nachrichten, Zusammenfassungen oder Kommunikationsvarianten formulieren. |
-| `24_uebersetzung-lokalisierung.md` | Übersetzung und Lokalisierung | Nutzer möchten Texte übersetzen, vereinfachen, lokalisieren oder sprachlich an Zielgruppen anpassen. |
-| `25_compliance-richtlinienpruefung.md` | Compliance- und Richtlinienprüfung | Nutzer möchten Inhalte gegen bereitgestellte interne Regeln, Checklisten, Datenschutzvorgaben oder Qualitätsrichtlinien prüfen. |
+| `24_übersetzung-lokalisierung.md` | Übersetzung und Lokalisierung | Nutzer möchten Texte übersetzen, vereinfachen, lokalisieren oder sprachlich an Zielgruppen anpassen. |
+| `25_compliance-richtlinienprüfung.md` | Compliance- und Richtlinienprüfung | Nutzer möchten Inhalte gegen bereitgestellte interne Regeln, Checklisten, Datenschutzvorgaben oder Qualitätsrichtlinien prüfen. |
 | `26_bewerbungsunterlagen-optimierung.md` | Bewerbungsunterlagen-Optimierung | Nutzer möchten Lebenslauf, Anschreiben oder Profiltexte verbessern, strukturieren oder auf eine konkrete Stelle zuschneiden. |
 
 ## Nutzung

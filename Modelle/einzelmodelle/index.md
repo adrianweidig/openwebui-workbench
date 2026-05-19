@@ -7,7 +7,7 @@
 | `03_dokumentenvergleich.md` | Dokumentenvergleich | `dokumentenvergleich` | enabled |
 | `04_informationsextraktion.md` | Informationsextraktion | `informationsextraktion` | enabled |
 | `05_dokumentengenerierung.md` | Dokumentengenerierung | `dokumentengenerierung` | enabled |
-| `06_praesentationserstellung.md` | Präsentationserstellung | `praesentationserstellung` | enabled |
+| `06_präsentationserstellung.md` | Präsentationserstellung | `präsentationserstellung` | enabled |
 | `07_tabellen-csv-datenanalyse.md` | Tabellen- und CSV-Datenanalyse | `tabellen-csv-datenanalyse` | required |
 | `08_report-dashboard-vorbereitung.md` | Report- und Dashboard-Vorbereitung | `report-dashboard-vorbereitung` | enabled |
 | `09_codegenerierung.md` | Codegenerierung | `codegenerierung` | enabled |
@@ -16,7 +16,7 @@
 | `12_debugging-fehleranalyse.md` | Debugging und Fehleranalyse | `debugging-fehleranalyse` | enabled |
 | `13_testfall-generierung.md` | Testfall-Generierung | `testfall-generierung` | enabled |
 | `14_code-dokumentation.md` | Code-Dokumentation | `code-dokumentation` | enabled |
-| `15_refactoring-unterstuetzung.md` | Refactoring-Unterstützung | `refactoring-unterstuetzung` | enabled |
+| `15_refactoring-unterstützung.md` | Refactoring-Unterstützung | `refactoring-unterstützung` | enabled |
 | `16_api-schnittstellenentwurf.md` | API- und Schnittstellenentwurf | `api-schnittstellenentwurf` | enabled |
 | `17_json-csv-log-analyse.md` | JSON-, CSV- und Log-Analyse | `json-csv-log-analyse` | required |
 | `18_meeting-protokoll-auswertung.md` | Meeting-Protokoll-Auswertung | `meeting-protokoll-auswertung` | optional |
@@ -25,6 +25,6 @@
 | `21_it-helpdesk-diagnose.md` | IT-Helpdesk-Diagnose | `it-helpdesk-diagnose` | optional |
 | `22_prozess-workflow-dokumentation.md` | Prozess- und Workflow-Dokumentation | `prozess-workflow-dokumentation` | enabled |
 | `23_email-kommunikationsassistenz.md` | E-Mail- und Kommunikationsassistenz | `email-kommunikationsassistenz` | optional_disabled |
-| `24_uebersetzung-lokalisierung.md` | Übersetzung und Lokalisierung | `uebersetzung-lokalisierung` | optional |
-| `25_compliance-richtlinienpruefung.md` | Compliance- und Richtlinienprüfung | `compliance-richtlinienpruefung` | optional |
+| `24_übersetzung-lokalisierung.md` | Übersetzung und Lokalisierung | `übersetzung-lokalisierung` | optional |
+| `25_compliance-richtlinienprüfung.md` | Compliance- und Richtlinienprüfung | `compliance-richtlinienprüfung` | optional |
 | `26_bewerbungsunterlagen-optimierung.md` | nicht erzeugt | n/a | Datei fehlt, nur im Index genannt |

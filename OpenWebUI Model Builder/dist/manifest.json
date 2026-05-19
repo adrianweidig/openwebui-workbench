@@ -1,6 +1,6 @@
 {
   "schema": "openwebui-offline-artifact-manifest/v1",
-  "generated_at": "2026-05-19T19:44:31",
+  "generated_at": "2026-05-19T19:55:03",
   "source_dirs": [
     "E:\\OpenWebUI\\OpenWebUI Model Builder",
     "E:\\OpenWebUI\\Problemfälle"
@@ -50,12 +50,12 @@
       "path": "models/dokumentengenerierung/model.json"
     },
     {
-      "id": "praesentationserstellung",
+      "id": "präsentationserstellung",
       "name": "Präsentationserstellung",
-      "source_problem_file": "06_praesentationserstellung.md",
+      "source_problem_file": "06_präsentationserstellung.md",
       "base_model_id": "coder",
       "jupyter_tool_mode": "enabled",
-      "path": "models/praesentationserstellung/model.json"
+      "path": "models/präsentationserstellung/model.json"
     },
     {
       "id": "tabellen-csv-datenanalyse",
@@ -122,12 +122,12 @@
       "path": "models/code-dokumentation/model.json"
     },
     {
-      "id": "refactoring-unterstuetzung",
+      "id": "refactoring-unterstützung",
       "name": "Refactoring-Unterstützung",
-      "source_problem_file": "15_refactoring-unterstuetzung.md",
+      "source_problem_file": "15_refactoring-unterstützung.md",
       "base_model_id": "coder",
       "jupyter_tool_mode": "enabled",
-      "path": "models/refactoring-unterstuetzung/model.json"
+      "path": "models/refactoring-unterstützung/model.json"
     },
     {
       "id": "api-schnittstellenentwurf",
@@ -194,20 +194,20 @@
       "path": "models/email-kommunikationsassistenz/model.json"
     },
     {
-      "id": "uebersetzung-lokalisierung",
+      "id": "übersetzung-lokalisierung",
       "name": "Übersetzung und Lokalisierung",
-      "source_problem_file": "24_uebersetzung-lokalisierung.md",
+      "source_problem_file": "24_übersetzung-lokalisierung.md",
       "base_model_id": "coder",
       "jupyter_tool_mode": "optional",
-      "path": "models/uebersetzung-lokalisierung/model.json"
+      "path": "models/übersetzung-lokalisierung/model.json"
     },
     {
-      "id": "compliance-richtlinienpruefung",
+      "id": "compliance-richtlinienprüfung",
       "name": "Compliance- und Richtlinienprüfung",
-      "source_problem_file": "25_compliance-richtlinienpruefung.md",
+      "source_problem_file": "25_compliance-richtlinienprüfung.md",
       "base_model_id": "coder",
       "jupyter_tool_mode": "optional",
-      "path": "models/compliance-richtlinienpruefung/model.json"
+      "path": "models/compliance-richtlinienprüfung/model.json"
     }
   ],
   "tools": [

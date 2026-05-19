@@ -365,7 +365,7 @@
     }
   },
   {
-    "id": "praesentationserstellung",
+    "id": "präsentationserstellung",
     "name": "Präsentationserstellung",
     "base_model_id": "coder",
     "meta": {
@@ -1037,7 +1037,7 @@
     }
   },
   {
-    "id": "refactoring-unterstuetzung",
+    "id": "refactoring-unterstützung",
     "name": "Refactoring-Unterstützung",
     "base_model_id": "coder",
     "meta": {
@@ -1691,7 +1691,7 @@
     }
   },
   {
-    "id": "uebersetzung-lokalisierung",
+    "id": "übersetzung-lokalisierung",
     "name": "Übersetzung und Lokalisierung",
     "base_model_id": "coder",
     "meta": {
@@ -1767,7 +1767,7 @@
     }
   },
   {
-    "id": "compliance-richtlinienpruefung",
+    "id": "compliance-richtlinienprüfung",
     "name": "Compliance- und Richtlinienprüfung",
     "base_model_id": "coder",
     "meta": {

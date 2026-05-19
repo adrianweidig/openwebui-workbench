@@ -124,7 +124,7 @@ def main() -> int:
         "INSTALLATION.md",
         "KONFIGURATION.md",
         "AIR_GAPPED_BETRIEB.md",
-        "PROBLEMFAELLE_ZUORDNUNG.md",
+        "PROBLEMFÄLLE_ZUORDNUNG.md",
         "VALIDIERUNG.md",
     ]
     missing_docs = [name for name in docs_required if not (DIST / "docs" / name).exists()]

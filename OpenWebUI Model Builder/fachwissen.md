@@ -126,12 +126,12 @@ OpenWebUI-Modellname: mistral-medium präzise
 | Zweck | Guter Name | Technische ID |
 |---|---|---|
 | Dokumente analysieren | Dokumentenanalyse | `dokumentenanalyse` |
-| Verträge prüfen | Vertragsprüfung | `vertragspruefung` |
+| Verträge prüfen | Vertragsprüfung | `vertragsprüfung` |
 | Support vorbereiten | Support-Ticket-Assistent | `support-ticket-assistent` |
 | Wissensdatenbank nutzen | RAG-Wissensassistent | `rag-wissensassistent` |
 | Code prüfen | Code-Review-Assistent | `code-review-assistent` |
 | Lastenhefte bewerten | Lastenheft-Analyst | `lastenheft-analyst` |
-| Angebote prüfen | Angebotsprüfung | `angebotspruefung` |
+| Angebote prüfen | Angebotsprüfung | `angebotsprüfung` |
 | Meetings auswerten | Meeting-Protokoll-Auswertung | `meeting-protokoll-auswertung` |
 
 ### 6.2 Schlechte Namen
@@ -160,7 +160,7 @@ Beispiele:
 
 ```text
 dokumentenanalyse
-vertragspruefung
+vertragsprüfung
 support-ticket-assistent
 rag-wissensassistent
 code-review-assistent
