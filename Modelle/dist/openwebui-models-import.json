@@ -79,6 +79,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -168,6 +174,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -257,6 +269,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -346,6 +364,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -438,6 +462,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -530,6 +560,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -625,6 +661,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -717,6 +759,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -806,6 +854,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -895,6 +949,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -984,6 +1044,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1073,6 +1139,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1165,6 +1237,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1254,6 +1332,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1343,6 +1427,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1432,6 +1522,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1521,6 +1617,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1610,6 +1712,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1702,6 +1810,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1794,6 +1908,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1883,6 +2003,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -1972,6 +2098,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -2061,6 +2193,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -2153,6 +2291,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -2242,6 +2386,12 @@
         "repo_tree_analyzer",
         "safe_http_fetcher",
         "tool_skill_overlay_planner"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {
@@ -2337,6 +2487,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {

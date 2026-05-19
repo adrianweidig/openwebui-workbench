@@ -13,6 +13,7 @@ from typing import Dict, List, Tuple
 ROOT = Path(__file__).resolve().parents[1]
 EXT_DIR = ROOT / "Tools" / "openwebui_ext"
 TOOLS_DIR = EXT_DIR / "tools"
+FILTERS_DIR = EXT_DIR / "filters"
 SKILLS_DIR = EXT_DIR / "skills"
 
 RISK_PATTERNS = {
@@ -82,6 +83,48 @@ def check_tool(path: Path) -> List[str]:
     return issues
 
 
+def check_filter(path: Path) -> List[str]:
+    issues: List[str] = []
+    text = path.read_text(encoding="utf-8")
+    for label, pattern in RISK_PATTERNS.items():
+        if pattern.search(text):
+            issues.append(f"Riskantes Muster `{label}` gefunden")
+    try:
+        ast.parse(text)
+    except SyntaxError as exc:
+        issues.append(f"Syntaxfehler: Zeile {exc.lineno}: {exc.msg}")
+        return issues
+    try:
+        module = load_module(path)
+    except Exception as exc:
+        issues.append(f"Import fehlgeschlagen: {type(exc).__name__}: {exc}")
+        return issues
+    filter_cls = getattr(module, "Filter", None)
+    if filter_cls is None or not inspect.isclass(filter_cls):
+        issues.append("Keine Klasse `Filter` gefunden")
+        return issues
+    hooks = [
+        name
+        for name in ["inlet", "stream", "outlet"]
+        if inspect.isfunction(getattr(filter_cls, name, None))
+    ]
+    if not hooks:
+        issues.append("Kein Filter-Hook `inlet`, `stream` oder `outlet` gefunden")
+    for name in hooks:
+        method = getattr(filter_cls, name)
+        if not inspect.iscoroutinefunction(method):
+            issues.append(f"Hook `{name}` ist nicht async")
+        signature = inspect.signature(method)
+        for param_name, param in signature.parameters.items():
+            if param_name in ALLOWED_SPECIAL_PARAMS:
+                continue
+            if param.annotation is inspect._empty:
+                issues.append(f"Hook `{name}` Parameter `{param_name}` ohne Typannotation")
+        if signature.return_annotation is inspect._empty:
+            issues.append(f"Hook `{name}` ohne Return-Typannotation")
+    return issues
+
+
 def parse_frontmatter(text: str) -> Tuple[Dict[str, str], str]:
     if not text.startswith("---\n"):
         return {}, text
@@ -113,11 +156,17 @@ def check_skill(path: Path) -> List[str]:
 
 def main() -> int:
     tool_files = sorted(TOOLS_DIR.glob("*.py"))
+    filter_files = sorted(FILTERS_DIR.glob("*.py")) if FILTERS_DIR.exists() else []
     skill_files = sorted(SKILLS_DIR.glob("*.md"))
     all_issues: Dict[str, List[str]] = {}
 
     for path in tool_files:
         issues = check_tool(path)
+        if issues:
+            all_issues[str(path.relative_to(ROOT))] = issues
+
+    for path in filter_files:
+        issues = check_filter(path)
         if issues:
             all_issues[str(path.relative_to(ROOT))] = issues
 
@@ -131,6 +180,7 @@ def main() -> int:
     print("# OpenWebUI Extension Validation")
     print()
     print(f"- Tools geprüft: {len(tool_files)}")
+    print(f"- Filter geprüft: {len(filter_files)}")
     print(f"- Skills geprüft: {len([p for p in skill_files if p.name.upper() != 'README.MD'])}")
     print(f"- Dateien mit Befunden: {len(all_issues)}")
     print()
@@ -142,7 +192,7 @@ def main() -> int:
                 print(f"- {issue}")
         return 1
     print("## Ergebnis")
-    print("Alle geprüften OpenWebUI-Tools und Skills sind syntaktisch und strukturell valide.")
+    print("Alle geprüften OpenWebUI-Tools, Filter und Skills sind syntaktisch und strukturell valide.")
     return 0
 
 

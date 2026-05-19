@@ -2,9 +2,10 @@
   "schema": "openwebui-registration-plan/v1",
   "order": [
     "1_import_workspace_tools",
-    "2_import_workspace_skills",
-    "3_import_or_update_models",
-    "4_enable_user_or_group_access"
+    "2_import_workspace_filters",
+    "3_import_workspace_skills",
+    "4_import_or_update_models",
+    "5_enable_user_or_group_access"
   ],
   "tools_first": [
     "air_gapped_jupyter_python",
@@ -21,16 +22,22 @@
     "safe_http_fetcher",
     "tool_skill_overlay_planner"
   ],
+  "filters_before_models": [
+    "context_compressor_filter"
+  ],
   "model_import_file": "Modelle/dist/openwebui-models-import.json",
   "global_model_params_recommendation": {
     "function_calling": "native"
   },
   "verified_model_fields_used": [
     "meta.toolIds",
+    "meta.filterIds",
+    "meta.defaultFilterIds",
     "meta.capabilities.builtin_tools",
     "params.function_calling"
   ],
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
+  "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
   "chat_models_configured": [
     "anforderungsanalyse-lastenheft",
     "api-schnittstellenentwurf",
@@ -60,5 +67,6 @@
     "übersetzung-lokalisierung"
   ],
   "non_chat_models_excluded": [],
-  "tool_mode": "all_validated_custom_tools"
+  "tool_mode": "all_validated_custom_tools",
+  "filter_mode": "all_validated_default_filters"
 }

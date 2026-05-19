@@ -76,6 +76,12 @@
       ],
       "defaultFeatureIds": [
         "code_interpreter"
+      ],
+      "filterIds": [
+        "context_compressor_filter"
+      ],
+      "defaultFilterIds": [
+        "context_compressor_filter"
       ]
     },
     "params": {

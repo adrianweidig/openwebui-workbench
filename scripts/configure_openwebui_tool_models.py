@@ -17,9 +17,11 @@ ROOT = Path(__file__).resolve().parents[1]
 TOOLS_INDEX = ROOT / "Tools" / "index.json"
 TOOLS_DIST = ROOT / "Tools" / "dist"
 TOOL_REGISTRY = TOOLS_DIST / "openwebui-tool-registry.json"
+FUNCTION_REGISTRY = TOOLS_DIST / "openwebui-function-registry.json"
 MODEL_DIST = ROOT / "Modelle" / "dist"
 REGISTRATION_PLAN = MODEL_DIST / "openwebui-registration-plan.json"
 TOOLS_FALLBACK_BUNDLE = MODEL_DIST / "tools_fallback_bundle.json"
+FUNCTIONS_FALLBACK_BUNDLE = MODEL_DIST / "functions_fallback_bundle.json"
 MODEL_IMPORT = MODEL_DIST / "openwebui-models-import.json"
 MODEL_FALLBACK = MODEL_DIST / "models_fallback_bundle.json"
 MODEL_ARTIFACTS = MODEL_DIST / "artifacts" / "models"
@@ -29,6 +31,7 @@ MODELS_ZIP = MODEL_DIST / "openwebui-offline-artifacts.zip"
 
 FUNCTION_CALLING_NATIVE = "native"
 CHAT_MODEL_TOOL_MODE = "all_validated_custom_tools"
+CHAT_MODEL_FILTER_MODE = "all_validated_default_filters"
 EXCLUDED_MODEL_MARKERS = (
     "embedding",
     "embeddings",
@@ -52,6 +55,18 @@ class ToolRecord:
     sha256: str
     importable: bool
     methods: List[str]
+
+
+@dataclass(frozen=True)
+class FunctionRecord:
+    id: str
+    name: str
+    path: str
+    purpose: str
+    function_type: str
+    sha256: str
+    importable: bool
+    hooks: List[str]
 
 
 def read_json(path: Path) -> Any:
@@ -115,6 +130,24 @@ def inspect_tool(path: Path) -> Tuple[bool, List[str]]:
         return False, []
 
 
+def inspect_filter(path: Path) -> Tuple[bool, List[str]]:
+    try:
+        module = load_module(path)
+        filter_cls = getattr(module, "Filter", None)
+        if not inspect.isclass(filter_cls):
+            return False, []
+        hooks = []
+        for name in ["inlet", "stream", "outlet"]:
+            member = getattr(filter_cls, name, None)
+            if inspect.isfunction(member):
+                hooks.append(name)
+                if not inspect.iscoroutinefunction(member):
+                    return False, hooks
+        return "inlet" in hooks or "outlet" in hooks or "stream" in hooks, sorted(hooks)
+    except Exception:
+        return False, []
+
+
 def discover_tools() -> List[ToolRecord]:
     index = read_json(TOOLS_INDEX)
     indexed_entries = index.get("tools", [])
@@ -142,6 +175,28 @@ def discover_tools() -> List[ToolRecord]:
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                 importable=importable,
                 methods=methods,
+            )
+        )
+    return records
+
+
+def discover_functions() -> List[FunctionRecord]:
+    filter_dir = ROOT / "Tools" / "openwebui_ext" / "filters"
+    records: List[FunctionRecord] = []
+    for path in sorted(filter_dir.glob("*.py")):
+        meta = parse_doc_metadata(path)
+        importable, hooks = inspect_filter(path)
+        function_id = path.stem
+        records.append(
+            FunctionRecord(
+                id=function_id,
+                name=str(meta.get("title") or function_id.replace("_", " ").title()),
+                path=rel(path),
+                purpose=str(meta.get("description") or "OpenWebUI Workspace Filter."),
+                function_type=str(meta.get("type") or "filter"),
+                sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                importable=importable,
+                hooks=hooks,
             )
         )
     return records
@@ -196,6 +251,39 @@ def write_tool_artifacts(records: List[ToolRecord], write: bool) -> bool:
     return changed
 
 
+def write_function_artifacts(records: List[FunctionRecord], write: bool) -> bool:
+    registry = {
+        "schema": "openwebui-function-registry/v1",
+        "order": ["filters", "tools", "models"],
+        "filter_import_order": [record.id for record in records if record.importable and record.function_type == "filter"],
+        "functions": [record.__dict__ for record in records],
+    }
+    fallback = {
+        "schema": "openwebui-function-bundle-fallback/v1",
+        "functions": [
+            {
+                "id": record.id,
+                "name": record.name,
+                "type": record.function_type,
+                "source_file": record.path,
+                "default_enabled_for_chat_models": record.function_type == "filter",
+            }
+            for record in records
+            if record.importable
+        ],
+    }
+    changed = (
+        not FUNCTION_REGISTRY.exists()
+        or read_json(FUNCTION_REGISTRY) != registry
+        or not FUNCTIONS_FALLBACK_BUNDLE.exists()
+        or read_json(FUNCTIONS_FALLBACK_BUNDLE) != fallback
+    )
+    if changed and write:
+        write_json(FUNCTION_REGISTRY, registry)
+        write_json(FUNCTIONS_FALLBACK_BUNDLE, fallback)
+    return changed
+
+
 def model_files() -> List[Path]:
     return sorted(SINGLE_MODELS.glob("*/model.json"))
 
@@ -224,7 +312,16 @@ def is_non_chat_model(model: Dict[str, Any]) -> bool:
     return bool(caps.get("embedding") or caps.get("reranking") or caps.get("reranker"))
 
 
-def configure_model(model: Dict[str, Any], tool_ids: List[str]) -> Dict[str, Any]:
+def merge_unique(existing: Any, required: List[str]) -> List[str]:
+    values = existing if isinstance(existing, list) else []
+    merged: List[str] = []
+    for value in [*values, *required]:
+        if isinstance(value, str) and value not in merged:
+            merged.append(value)
+    return merged
+
+
+def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List[str]) -> Dict[str, Any]:
     model = json.loads(json.dumps(model, ensure_ascii=False))
     meta = model.setdefault("meta", {})
     params = model.setdefault("params", {})
@@ -236,12 +333,16 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str]) -> Dict[str, Any
 
     if is_non_chat_model(model):
         meta.pop("toolIds", None)
+        meta.pop("filterIds", None)
+        meta.pop("defaultFilterIds", None)
         params.pop("function_calling", None)
         capabilities["builtin_tools"] = False
         capabilities["code_interpreter"] = False
         return model
 
     meta["toolIds"] = list(tool_ids)
+    meta["filterIds"] = merge_unique(meta.get("filterIds"), filter_ids)
+    meta["defaultFilterIds"] = merge_unique(meta.get("defaultFilterIds"), filter_ids)
     params["function_calling"] = FUNCTION_CALLING_NATIVE
     capabilities["builtin_tools"] = True
     capabilities["file_context"] = bool(capabilities.get("file_context", True))
@@ -256,13 +357,14 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str]) -> Dict[str, Any
     return model
 
 
-def apply_model_config(records: List[ToolRecord], write: bool) -> Tuple[bool, List[Dict[str, Any]]]:
-    tool_ids = [record.id for record in records if record.importable]
+def apply_model_config(tool_records: List[ToolRecord], function_records: List[FunctionRecord], write: bool) -> Tuple[bool, List[Dict[str, Any]]]:
+    tool_ids = [record.id for record in tool_records if record.importable]
+    filter_ids = [record.id for record in function_records if record.importable and record.function_type == "filter"]
     changed = False
     configured_models: List[Dict[str, Any]] = []
     for path in model_files():
         data, original = load_model(path)
-        configured = configure_model(original, tool_ids)
+        configured = configure_model(original, tool_ids, filter_ids)
         configured_models.append(configured)
         new_data = [configured]
         if new_data != data:
@@ -278,23 +380,34 @@ def apply_model_config(records: List[ToolRecord], write: bool) -> Tuple[bool, Li
     return changed, configured_models
 
 
-def write_registration_plan(records: List[ToolRecord], models: List[Dict[str, Any]], write: bool) -> bool:
+def write_registration_plan(tool_records: List[ToolRecord], function_records: List[FunctionRecord], models: List[Dict[str, Any]], write: bool) -> bool:
+    filter_ids = [record.id for record in function_records if record.importable and record.function_type == "filter"]
     plan = {
         "schema": "openwebui-registration-plan/v1",
         "order": [
             "1_import_workspace_tools",
-            "2_import_workspace_skills",
-            "3_import_or_update_models",
-            "4_enable_user_or_group_access",
+            "2_import_workspace_filters",
+            "3_import_workspace_skills",
+            "4_import_or_update_models",
+            "5_enable_user_or_group_access",
         ],
-        "tools_first": [record.id for record in records if record.importable],
+        "tools_first": [record.id for record in tool_records if record.importable],
+        "filters_before_models": filter_ids,
         "model_import_file": rel(MODEL_IMPORT),
         "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE},
-        "verified_model_fields_used": ["meta.toolIds", "meta.capabilities.builtin_tools", "params.function_calling"],
+        "verified_model_fields_used": [
+            "meta.toolIds",
+            "meta.filterIds",
+            "meta.defaultFilterIds",
+            "meta.capabilities.builtin_tools",
+            "params.function_calling",
+        ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
+        "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
         "tool_mode": CHAT_MODEL_TOOL_MODE,
+        "filter_mode": CHAT_MODEL_FILTER_MODE,
     }
     changed = not REGISTRATION_PLAN.exists() or read_json(REGISTRATION_PLAN) != plan
     if changed and write:
@@ -302,21 +415,27 @@ def write_registration_plan(records: List[ToolRecord], models: List[Dict[str, An
     return changed
 
 
-def validate(records: List[ToolRecord], models: List[Dict[str, Any]]) -> List[str]:
+def validate(tool_records: List[ToolRecord], function_records: List[FunctionRecord], models: List[Dict[str, Any]]) -> List[str]:
     issues: List[str] = []
-    valid_tool_ids = {record.id for record in records if record.importable}
-    for record in records:
+    valid_tool_ids = {record.id for record in tool_records if record.importable}
+    valid_filter_ids = {record.id for record in function_records if record.importable and record.function_type == "filter"}
+    for record in tool_records:
         if not record.importable:
             issues.append(f"Tool nicht importierbar: {record.id} ({record.path})")
+    for record in function_records:
+        if not record.importable:
+            issues.append(f"Function nicht importierbar: {record.id} ({record.path})")
     for model in models:
         model_id = str(model.get("id"))
         meta = model.get("meta", {}) if isinstance(model.get("meta"), dict) else {}
         params = model.get("params", {}) if isinstance(model.get("params"), dict) else {}
         caps = meta.get("capabilities", {}) if isinstance(meta.get("capabilities"), dict) else {}
         tool_ids = meta.get("toolIds", [])
+        filter_ids = meta.get("filterIds", [])
+        default_filter_ids = meta.get("defaultFilterIds", [])
         if is_non_chat_model(model):
-            if tool_ids or params.get("function_calling"):
-                issues.append(f"Non-Chat-Modell {model_id} hat Tool-/Function-Calling-Konfiguration")
+            if tool_ids or filter_ids or default_filter_ids or params.get("function_calling"):
+                issues.append(f"Non-Chat-Modell {model_id} hat Tool-/Filter-/Function-Calling-Konfiguration")
             continue
         if params.get("function_calling") != FUNCTION_CALLING_NATIVE:
             issues.append(f"Chat-Modell {model_id} hat function_calling nicht auf native")
@@ -328,6 +447,14 @@ def validate(records: List[ToolRecord], models: List[Dict[str, Any]]) -> List[st
             missing = sorted(set(tool_ids) - valid_tool_ids)
             if missing:
                 issues.append(f"Chat-Modell {model_id} referenziert unbekannte Tools: {', '.join(missing)}")
+        if valid_filter_ids:
+            if not isinstance(filter_ids, list) or not valid_filter_ids.issubset(set(filter_ids)):
+                issues.append(f"Chat-Modell {model_id} hat nicht alle Pflichtfilter in filterIds")
+            if not isinstance(default_filter_ids, list) or not valid_filter_ids.issubset(set(default_filter_ids)):
+                issues.append(f"Chat-Modell {model_id} hat nicht alle Pflichtfilter in defaultFilterIds")
+            missing_filters = sorted(set(filter_ids) - valid_filter_ids) if isinstance(filter_ids, list) else []
+            if missing_filters:
+                issues.append(f"Chat-Modell {model_id} referenziert unbekannte Filter: {', '.join(missing_filters)}")
     return issues
 
 
@@ -340,14 +467,16 @@ def rebuild_zips() -> None:
             for path in item.rglob("*"):
                 if path.is_file():
                     archive.write(path, rel(path))
-        for path in [TOOLS_INDEX, ROOT / "Tools" / "README.md", TOOL_REGISTRY]:
-            archive.write(path, rel(path))
+        for path in [TOOLS_INDEX, ROOT / "Tools" / "README.md", TOOL_REGISTRY, FUNCTION_REGISTRY]:
+            if path.exists():
+                archive.write(path, rel(path))
     with zipfile.ZipFile(MODELS_ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for path in [
             MODEL_DIST / "README.md",
             MODEL_IMPORT,
             MODEL_FALLBACK,
             TOOLS_FALLBACK_BUNDLE,
+            FUNCTIONS_FALLBACK_BUNDLE,
             REGISTRATION_PLAN,
             MODEL_DIST / "manual_import_checklist.md",
         ]:
@@ -366,19 +495,23 @@ def main(argv: Iterable[str] | None = None) -> int:
     args = parser.parse_args(list(argv) if argv is not None else None)
 
     records = discover_tools()
+    function_records = discover_functions()
     changed_tools_index = sync_tools_index(records, args.write)
     changed_tool_artifacts = write_tool_artifacts(records, args.write)
-    changed_models, models = apply_model_config(records, args.write)
-    changed_plan = write_registration_plan(records, models, args.write)
-    issues = validate(records, models)
+    changed_function_artifacts = write_function_artifacts(function_records, args.write)
+    changed_models, models = apply_model_config(records, function_records, args.write)
+    changed_plan = write_registration_plan(records, function_records, models, args.write)
+    issues = validate(records, function_records, models)
 
     print("# OpenWebUI Tool/Model Configuration")
     print(f"- Tools entdeckt: {len(records)}")
     print(f"- Tools importierbar: {sum(1 for record in records if record.importable)}")
+    print(f"- Functions entdeckt: {len(function_records)}")
+    print(f"- Filter importierbar: {sum(1 for record in function_records if record.importable and record.function_type == 'filter')}")
     print(f"- Modelle geprüft: {len(models)}")
     print(f"- Chat-Modelle: {sum(1 for model in models if not is_non_chat_model(model))}")
     print(f"- Non-Chat-Modelle ausgeschlossen: {sum(1 for model in models if is_non_chat_model(model))}")
-    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_models or changed_plan}")
+    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_models or changed_plan}")
     if args.write and args.rebuild_zips:
         rebuild_zips()
         print("- ZIP-Artefakte: neu gebaut")
@@ -388,7 +521,7 @@ def main(argv: Iterable[str] | None = None) -> int:
             print(f"- {issue}")
         return 1 if args.check else 0
     print("\n## Ergebnis")
-    print("Tool-Registry, Importplan und Modell-Tool-Konfiguration sind konsistent.")
+    print("Tool-/Filter-Registry, Importplan und Modell-Konfiguration sind konsistent.")
     return 0
 
 

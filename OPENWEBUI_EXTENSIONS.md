@@ -1,6 +1,6 @@
 # OpenWebUI Extensions
 
-Dieses Repository enthält zusätzliche OpenWebUI-Erweiterungen unter `Tools/openwebui_ext/`. Sie ergänzen die vorhandenen Modelle und das bestehende Jupyter-Tool um praktische, einzeln importierbare Tools und Skills.
+Dieses Repository enthält zusätzliche OpenWebUI-Erweiterungen unter `Tools/openwebui_ext/`. Sie ergänzen die vorhandenen Modelle und das bestehende Jupyter-Tool um praktische, einzeln importierbare Tools, Filter und Skills.
 
 ## Tools importieren
 
@@ -10,6 +10,15 @@ Dieses Repository enthält zusätzliche OpenWebUI-Erweiterungen unter `Tools/ope
 4. Speichern, Valves prüfen und Tool gezielt für passende Modelle aktivieren.
 
 Tools führen serverseitig Python aus. Nur vertrauenswürdige Administratoren sollten Tools importieren oder ändern.
+
+## Filter importieren
+
+1. OpenWebUI als Administrator öffnen.
+2. `Workspace > Functions > Create Function` oder den passenden Importdialog für Functions/Filter wählen.
+3. Inhalt einer Datei aus `Tools/openwebui_ext/filters/*.py` einfügen.
+4. Speichern, Valves prüfen und Filter für Modelle aktivieren.
+
+Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die geschätzten Kontexttokens. Sobald der konfigurierte Schwellwert erreicht ist, sendet er eine Statusmeldung, erzeugt eine kompakte Zusammenfassung älterer Chatteile und injiziert diese als Systemkontext in denselben Chatrequest. Einen neuen Chat legt der Filter bewusst nicht selbst an, weil OpenWebUI-Filter dafür keine stabile versionsübergreifende API garantieren; der robuste Default ist die Zusammenfassung im aktuellen Chatkontext.
 
 ## Skills importieren
 
@@ -32,6 +41,10 @@ Tools führen serverseitig Python aus. Nur vertrauenswürdige Administratoren so
 - `parallel_task_planner.py`: komplexe Arbeit in sichere Parallelwellen und Subagent-Arbeitspakete zerlegen.
 - `tool_skill_overlay_planner.py`: Modell-/Tool-/Skill-Overlays mit Redundanz und Fallbacks planen.
 - `comfyui_workflow_inspector.py`: ComfyUI-Workflow-JSON lokal prüfen und Setup-Checklisten erzeugen.
+
+## Filter-Katalog
+
+- `context_compressor_filter.py`: modellübergreifender Kontextkomprimierer mit Token-Schätzung, Statusmeldung und automatischer Zusammenfassung älterer Chatanteile.
 
 ## Skill-Katalog
 
@@ -68,6 +81,7 @@ Lokale Prüfung:
 python scripts/validate_openwebui_extensions.py
 python -m unittest Tools.openwebui_ext.tests.test_openwebui_tools_importable
 python scripts/configure_openwebui_tool_models.py --check
+python -m unittest Tools.openwebui_ext.tests.test_openwebui_filters_importable
 ```
 
 ## Tool- und Modellregistrierung
@@ -81,12 +95,13 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 Das Skript arbeitet in dieser Reihenfolge:
 
 1. Tool-Dateien aus `Tools/jupyter/` und `Tools/openwebui_ext/tools/` entdecken und importierbar prüfen.
-2. `Tools/index.json`, `Tools/dist/openwebui-tool-registry.json` und `Modelle/dist/tools_fallback_bundle.json` erzeugen.
-3. Chat-Modelle in `Modelle/einzelmodelle/*/model.json` konfigurieren.
-4. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
-5. Optional Offline-ZIP-Pakete neu bauen.
+2. Filter-Dateien aus `Tools/openwebui_ext/filters/` entdecken und importierbar prüfen.
+3. `Tools/index.json`, `Tools/dist/openwebui-tool-registry.json`, `Tools/dist/openwebui-function-registry.json`, `Modelle/dist/tools_fallback_bundle.json` und `Modelle/dist/functions_fallback_bundle.json` erzeugen.
+4. Chat-Modelle in `Modelle/einzelmodelle/*/model.json` konfigurieren.
+5. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
+6. Optional Offline-ZIP-Pakete neu bauen.
 
-Chat-Modelle erhalten `meta.toolIds`, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool- und Function-Calling-Zuweisungen.
+Chat-Modelle erhalten `meta.toolIds`, `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
 
 ## Wartung
 
