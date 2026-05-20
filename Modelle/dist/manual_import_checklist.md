@@ -6,6 +6,7 @@
 - `models_fallback_bundle.json`: Kompatibilitätskopie desselben Modellimports
 - `tools_fallback_bundle.json`: Tool-Metadaten und Pfad zum Jupyter-Tool
 - `functions_fallback_bundle.json`: Filter-Metadaten für den Kontextkomprimierer
+- `artifacts/icons/`: generische schwarz-weiße Profilicons für Modellbilder
 - `artifacts/`: Kopien der Einzelartefakte für manuelle Übernahme
 - `openwebui-offline-artifacts.zip`: ZIP der erzeugten Struktur
 
@@ -19,5 +20,6 @@
 2. Basismodell `coder` prüfen.
 3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
 4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
-5. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.
-6. `context_compressor_filter.py` vor dem Modellimport als OpenWebUI-Function/Filter importieren und bei allen Chat-Modellen aktiv lassen.
+5. Optional ein schlichtes Profilicon aus `artifacts/icons/generic/` setzen; `artifacts/icons/openwebui-generic-icons.json` schlägt passende Icons je Modell-ID vor.
+6. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.
+7. `context_compressor_filter.py` vor dem Modellimport als OpenWebUI-Function/Filter importieren und bei allen Chat-Modellen aktiv lassen.

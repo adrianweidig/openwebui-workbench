@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Generic shield check icon</title>
+  <desc id="desc">Simple shield with check mark on a white background.</desc>
+  <rect width="512" height="512" fill="#fff"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#fff" stroke="#000" stroke-width="16"/>
+  <path d="M256 128l118 44v86c0 82-48 130-118 162-70-32-118-80-118-162v-86Z" fill="#fff" stroke="#000" stroke-width="20" stroke-linejoin="round"/>
+  <path d="M204 262l36 36 78-86" fill="none" stroke="#000" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

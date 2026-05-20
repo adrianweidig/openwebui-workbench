@@ -7,6 +7,7 @@ Dieses Repository verwaltet den lokalen Arbeitsbereich unter `E:\OpenWebUI`.
 - `OpenWebUI Model Builder/`: nur Arbeitsanweisungen, Quellvorgaben und Generatorlogik
 - `Problemfälle/`: fachliche Briefings, aus denen die Aufgabenmodelle erzeugt werden
 - `Modelle/einzelmodelle/`: menschenlesbar sortierte, einzelne Modellpakete
+- `Modelle/icons/`: generische schwarz-weiße SVG-/PNG-Profilicons für OpenWebUI-Modelle
 - `Modelle/dist/`: Air-Gap-Handover-Ordner für Copy/Paste, ZIP und OpenWebUI-Importdateien
 - `Tools/jupyter/`: produktiv nutzbares Jupyter-Tool mit Beispielkonfiguration
 - `Tools/openwebui_ext/`: zusätzliche importierbare OpenWebUI-Tools, Skills, Doku und Tests
@@ -34,7 +35,8 @@ Dieses Repository verwaltet den lokalen Arbeitsbereich unter `E:\OpenWebUI`.
 3. Entweder das einzelne `model.json` importieren oder ein neues Modell anlegen.
 4. Jedes `model.json` ist ein direkt importierbares OpenWebUI-JSON-Array mit genau einem Modellobjekt.
 5. Falls die Instanz Paketdateien oder Knowledge-Dateien pro Modell erlaubt, `systemprompt.md`, `mainprompt.md` und `fachwissen.md` zusätzlich hinterlegen.
-6. Das Jupyter-Tool nur dann zuordnen, wenn es im Modellprofil genannt ist.
+6. Optional ein schlichtes Profilicon aus `Modelle/icons/generic/` oder aus dem Handover unter `Modelle/dist/artifacts/icons/generic/` zuweisen.
+7. Das Jupyter-Tool nur dann zuordnen, wenn es im Modellprofil genannt ist.
 
 ### Zusätzliche Tools und Skills
 

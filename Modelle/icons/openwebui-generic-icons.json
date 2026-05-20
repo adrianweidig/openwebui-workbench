@@ -1,0 +1,136 @@
+{
+  "schema": "openwebui-generic-icons/v1",
+  "style": {
+    "background": "white",
+    "foreground": "black",
+    "format": "svg/png",
+    "viewBox": "0 0 512 512"
+  },
+  "icons": [
+    {
+      "id": "generic-chart",
+      "name": "Chart",
+      "path": "Modelle/icons/generic/generic-chart.svg",
+      "png_path": "Modelle/icons/generic/generic-chart.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-chart.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-chart.png"
+    },
+    {
+      "id": "generic-chat",
+      "name": "Chat",
+      "path": "Modelle/icons/generic/generic-chat.svg",
+      "png_path": "Modelle/icons/generic/generic-chat.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-chat.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-chat.png"
+    },
+    {
+      "id": "generic-checklist",
+      "name": "Checklist",
+      "path": "Modelle/icons/generic/generic-checklist.svg",
+      "png_path": "Modelle/icons/generic/generic-checklist.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-checklist.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-checklist.png"
+    },
+    {
+      "id": "generic-code",
+      "name": "Code",
+      "path": "Modelle/icons/generic/generic-code.svg",
+      "png_path": "Modelle/icons/generic/generic-code.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-code.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-code.png"
+    },
+    {
+      "id": "generic-data-table",
+      "name": "Data Table",
+      "path": "Modelle/icons/generic/generic-data-table.svg",
+      "png_path": "Modelle/icons/generic/generic-data-table.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-data-table.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-data-table.png"
+    },
+    {
+      "id": "generic-document",
+      "name": "Document",
+      "path": "Modelle/icons/generic/generic-document.svg",
+      "png_path": "Modelle/icons/generic/generic-document.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-document.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-document.png"
+    },
+    {
+      "id": "generic-presentation",
+      "name": "Presentation",
+      "path": "Modelle/icons/generic/generic-presentation.svg",
+      "png_path": "Modelle/icons/generic/generic-presentation.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-presentation.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-presentation.png"
+    },
+    {
+      "id": "generic-search",
+      "name": "Search",
+      "path": "Modelle/icons/generic/generic-search.svg",
+      "png_path": "Modelle/icons/generic/generic-search.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-search.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-search.png"
+    },
+    {
+      "id": "generic-shield-check",
+      "name": "Shield Check",
+      "path": "Modelle/icons/generic/generic-shield-check.svg",
+      "png_path": "Modelle/icons/generic/generic-shield-check.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-shield-check.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-shield-check.png"
+    },
+    {
+      "id": "generic-tools",
+      "name": "Tools",
+      "path": "Modelle/icons/generic/generic-tools.svg",
+      "png_path": "Modelle/icons/generic/generic-tools.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-tools.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-tools.png"
+    },
+    {
+      "id": "generic-translate",
+      "name": "Translate",
+      "path": "Modelle/icons/generic/generic-translate.svg",
+      "png_path": "Modelle/icons/generic/generic-translate.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-translate.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-translate.png"
+    },
+    {
+      "id": "generic-workflow",
+      "name": "Workflow",
+      "path": "Modelle/icons/generic/generic-workflow.svg",
+      "png_path": "Modelle/icons/generic/generic-workflow.png",
+      "dist_path": "Modelle/dist/artifacts/icons/generic/generic-workflow.svg",
+      "dist_png_path": "Modelle/dist/artifacts/icons/generic/generic-workflow.png"
+    }
+  ],
+  "suggested_model_icons": {
+    "anforderungsanalyse-lastenheft": "generic-checklist",
+    "api-schnittstellenentwurf": "generic-code",
+    "code-dokumentation": "generic-document",
+    "code-review": "generic-code",
+    "codeanalyse": "generic-code",
+    "codegenerierung": "generic-code",
+    "compliance-richtlinienprüfung": "generic-shield-check",
+    "debugging-fehleranalyse": "generic-tools",
+    "dokumentenanalyse": "generic-search",
+    "dokumentengenerierung": "generic-document",
+    "dokumentenvergleich": "generic-document",
+    "dokumentenzusammenfassung": "generic-document",
+    "email-kommunikationsassistenz": "generic-chat",
+    "informationsextraktion": "generic-search",
+    "it-helpdesk-diagnose": "generic-tools",
+    "json-csv-log-analyse": "generic-data-table",
+    "meeting-protokoll-auswertung": "generic-chat",
+    "offline-workbench-agent": "generic-tools",
+    "präsentationserstellung": "generic-presentation",
+    "prozess-workflow-dokumentation": "generic-workflow",
+    "refactoring-unterstützung": "generic-code",
+    "report-dashboard-vorbereitung": "generic-chart",
+    "support-ticket-vorbereitung": "generic-chat",
+    "tabellen-csv-datenanalyse": "generic-data-table",
+    "testfall-generierung": "generic-checklist",
+    "übersetzung-lokalisierung": "generic-translate"
+  },
+  "usage_note": "OpenWebUI-Modelle nutzen meta.profile_image_url. Diese SVGs oder PNGs koennen per GUI als Profilbild gesetzt oder in eine OpenWebUI-statisch erreichbare Ablage kopiert und dann als URL referenziert werden."
+}

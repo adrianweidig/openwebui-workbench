@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Generic translate icon</title>
+  <desc id="desc">Simple A and B translation mark on a white background.</desc>
+  <rect width="512" height="512" fill="#fff"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#fff" stroke="#000" stroke-width="16"/>
+  <path d="M166 324l60-142 60 142M190 270h72" fill="none" stroke="#000" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M318 188h36a42 42 0 0 1 0 84h-36V188Zm0 84h46a42 42 0 0 1 0 84h-46V272Z" fill="none" stroke="#000" stroke-width="20" stroke-linejoin="round"/>
+  <path d="M166 146h176M342 146l-34-30M342 146l-34 30" fill="none" stroke="#000" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

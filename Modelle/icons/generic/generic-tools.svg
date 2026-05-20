@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Generic tools icon</title>
+  <desc id="desc">Simple settings tool on a white background.</desc>
+  <rect width="512" height="512" fill="#fff"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#fff" stroke="#000" stroke-width="16"/>
+  <circle cx="256" cy="256" r="58" fill="#fff" stroke="#000" stroke-width="22"/>
+  <path d="M256 138v42M256 332v42M138 256h42M332 256h42M172 172l30 30M310 310l30 30M340 172l-30 30M202 310l-30 30" fill="none" stroke="#000" stroke-width="22" stroke-linecap="round"/>
+</svg>

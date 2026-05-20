@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Generic workflow icon</title>
+  <desc id="desc">Simple connected workflow nodes on a white background.</desc>
+  <rect width="512" height="512" fill="#fff"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#fff" stroke="#000" stroke-width="16"/>
+  <path d="M178 178h156M256 178v156M178 334h156" fill="none" stroke="#000" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="178" cy="178" r="40" fill="#fff" stroke="#000" stroke-width="20"/>
+  <circle cx="334" cy="178" r="40" fill="#fff" stroke="#000" stroke-width="20"/>
+  <circle cx="178" cy="334" r="40" fill="#fff" stroke="#000" stroke-width="20"/>
+  <circle cx="334" cy="334" r="40" fill="#fff" stroke="#000" stroke-width="20"/>
+</svg>

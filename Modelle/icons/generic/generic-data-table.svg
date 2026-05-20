@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Generic data table icon</title>
+  <desc id="desc">Simple table grid on a white background.</desc>
+  <rect width="512" height="512" fill="#fff"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#fff" stroke="#000" stroke-width="16"/>
+  <rect x="128" y="150" width="256" height="212" rx="18" fill="#fff" stroke="#000" stroke-width="18"/>
+  <path d="M128 210h256M128 270h256M128 330h256M212 150v212M300 150v212" fill="none" stroke="#000" stroke-width="16" stroke-linecap="round"/>
+</svg>

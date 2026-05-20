@@ -27,6 +27,7 @@
     "context_compressor_filter"
   ],
   "model_import_file": "Modelle/dist/openwebui-models-import.json",
+  "generic_icon_manifest": "Modelle/dist/artifacts/icons/openwebui-generic-icons.json",
   "global_model_params_recommendation": {
     "function_calling": "native"
   },
@@ -35,10 +36,12 @@
     "meta.filterIds",
     "meta.defaultFilterIds",
     "meta.capabilities.builtin_tools",
-    "params.function_calling"
+    "params.function_calling",
+    "meta.profile_image_url"
   ],
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
   "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
+  "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
   "chat_models_configured": [
     "anforderungsanalyse-lastenheft",
     "api-schnittstellenentwurf",

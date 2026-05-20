@@ -6,6 +6,7 @@ import importlib.util
 import inspect
 import json
 import re
+import shutil
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +26,8 @@ FUNCTIONS_FALLBACK_BUNDLE = MODEL_DIST / "functions_fallback_bundle.json"
 MODEL_IMPORT = MODEL_DIST / "openwebui-models-import.json"
 MODEL_FALLBACK = MODEL_DIST / "models_fallback_bundle.json"
 MODEL_ARTIFACTS = MODEL_DIST / "artifacts" / "models"
+MODEL_ICONS = ROOT / "Modelle" / "icons"
+MODEL_ICON_ARTIFACTS = MODEL_DIST / "artifacts" / "icons"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 TOOLS_ZIP = TOOLS_DIST / "openwebui-tools-skills-offline.zip"
 MODELS_ZIP = MODEL_DIST / "openwebui-offline-artifacts.zip"
@@ -293,6 +296,30 @@ def write_function_artifacts(records: List[FunctionRecord], write: bool) -> bool
     return changed
 
 
+def sync_icon_artifacts(write: bool) -> bool:
+    if not MODEL_ICONS.exists():
+        return False
+    source_files = sorted(path for path in MODEL_ICONS.rglob("*") if path.is_file() and should_archive(path))
+    changed = False
+    for source in source_files:
+        target = MODEL_ICON_ARTIFACTS / source.relative_to(MODEL_ICONS)
+        if not target.exists() or target.read_bytes() != source.read_bytes():
+            changed = True
+            break
+    existing_targets = sorted(path for path in MODEL_ICON_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_ICON_ARTIFACTS.exists() else []
+    expected_targets = {MODEL_ICON_ARTIFACTS / source.relative_to(MODEL_ICONS) for source in source_files}
+    if any(path not in expected_targets for path in existing_targets):
+        changed = True
+    if changed and write:
+        if MODEL_ICON_ARTIFACTS.exists():
+            shutil.rmtree(MODEL_ICON_ARTIFACTS)
+        for source in source_files:
+            target = MODEL_ICON_ARTIFACTS / source.relative_to(MODEL_ICONS)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+    return changed
+
+
 def model_files() -> List[Path]:
     return sorted(SINGLE_MODELS.glob("*/model.json"))
 
@@ -403,6 +430,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "tools_first": [record.id for record in tool_records if record.importable],
         "filters_before_models": filter_ids,
         "model_import_file": rel(MODEL_IMPORT),
+        "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE},
         "verified_model_fields_used": [
             "meta.toolIds",
@@ -410,9 +438,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.defaultFilterIds",
             "meta.capabilities.builtin_tools",
             "params.function_calling",
+            "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
+        "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
         "tool_mode": CHAT_MODEL_TOOL_MODE,
@@ -508,6 +538,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     changed_tools_index = sync_tools_index(records, args.write)
     changed_tool_artifacts = write_tool_artifacts(records, args.write)
     changed_function_artifacts = write_function_artifacts(function_records, args.write)
+    changed_icon_artifacts = sync_icon_artifacts(args.write)
     changed_models, models = apply_model_config(records, function_records, args.write)
     changed_plan = write_registration_plan(records, function_records, models, args.write)
     issues = validate(records, function_records, models)
@@ -520,7 +551,8 @@ def main(argv: Iterable[str] | None = None) -> int:
     print(f"- Modelle geprüft: {len(models)}")
     print(f"- Chat-Modelle: {sum(1 for model in models if not is_non_chat_model(model))}")
     print(f"- Non-Chat-Modelle ausgeschlossen: {sum(1 for model in models if is_non_chat_model(model))}")
-    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_models or changed_plan}")
+    print(f"- Icon-Artefakte geändert: {changed_icon_artifacts}")
+    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_icon_artifacts or changed_models or changed_plan}")
     if args.write and args.rebuild_zips:
         rebuild_zips()
         print("- ZIP-Artefakte: neu gebaut")

@@ -8,6 +8,8 @@
 - `functions_fallback_bundle.json`: Filter-Metadaten für den Kontextkomprimierer
 - `openwebui-registration-plan.json`: Reihenfolge für Tool-, Filter-, Skill- und Modellimport sowie Native-Function-Calling-Empfehlung
 - `artifacts/`: Kopien der Einzelartefakte für manuelle Übernahme
+- `artifacts/icons/`: generische schwarz-weiße SVG-/PNG-Profilicons mit weißem Hintergrund
+- `artifacts/icons/openwebui-generic-icons.json`: Icon-Katalog mit vorgeschlagener Modellzuordnung
 - `openwebui-offline-artifacts.zip`: ZIP der erzeugten Struktur
 - `artifacts/models/offline-workbench-agent.model.json`: Sammelmodell für ChatGPT-ähnliche Offline-Nutzung mit Jupyter- und Artefakt-Workflow
 
@@ -21,6 +23,7 @@
 2. Basismodell `coder` prüfen.
 3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
 4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
-5. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.
-6. Vor dem Modellimport Tools und Filter gemäß `openwebui-registration-plan.json` importieren.
-7. Danach `openwebui-models-import.json` importieren. Die Chat-Modelle enthalten bereits `meta.toolIds`, `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`.
+5. Optional ein passendes Profilicon aus `artifacts/icons/generic/` zuweisen; die Zuordnung steht in `artifacts/icons/openwebui-generic-icons.json`.
+6. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.
+7. Vor dem Modellimport Tools und Filter gemäß `openwebui-registration-plan.json` importieren.
+8. Danach `openwebui-models-import.json` importieren. Die Chat-Modelle enthalten bereits `meta.toolIds`, `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`.

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Generic chart icon</title>
+  <desc id="desc">Simple black line chart on a white background.</desc>
+  <rect width="512" height="512" fill="#fff"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#fff" stroke="#000" stroke-width="16"/>
+  <path d="M136 352h248" fill="none" stroke="#000" stroke-width="18" stroke-linecap="round"/>
+  <path d="M136 352V160" fill="none" stroke="#000" stroke-width="18" stroke-linecap="round"/>
+  <path d="M160 312l70-70 54 48 82-108" fill="none" stroke="#000" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="160" cy="312" r="12" fill="#000"/>
+  <circle cx="230" cy="242" r="12" fill="#000"/>
+  <circle cx="284" cy="290" r="12" fill="#000"/>
+  <circle cx="366" cy="182" r="12" fill="#000"/>
+</svg>

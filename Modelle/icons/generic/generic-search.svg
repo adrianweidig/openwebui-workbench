@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Generic search icon</title>
+  <desc id="desc">Simple magnifying glass and document lines on a white background.</desc>
+  <rect width="512" height="512" fill="#fff"/>
+  <rect x="64" y="64" width="384" height="384" rx="48" fill="#fff" stroke="#000" stroke-width="16"/>
+  <circle cx="226" cy="226" r="76" fill="#fff" stroke="#000" stroke-width="22"/>
+  <path d="M282 282l74 74" fill="none" stroke="#000" stroke-width="24" stroke-linecap="round"/>
+  <path d="M164 344h88M164 384h144" fill="none" stroke="#000" stroke-width="16" stroke-linecap="round"/>
+</svg>
