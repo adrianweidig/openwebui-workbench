@@ -35,5 +35,5 @@ $env:OPENWEBUI_ADMIN_TOKEN="YOUR_OPEN_WEBUI_API_KEY"
 python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 ```
 
-Das Skript nutzt die erzeugten Registries, importiert Tools, Functions/Filter und Skills, lädt `fachwissen.md` je Modell als Knowledge hoch und importiert anschließend die Modellprofile inklusive eingebetteter Icons.
+Das Skript nutzt die erzeugten Registries, importiert Tools, Functions/Filter und Skills, lädt `mainprompt.md` und `fachwissen.md` je Modell als Knowledge hoch und importiert anschließend die Modellprofile inklusive eingebetteter Icons.
 Es wird auch in `dist/openwebui-tools-skills-offline.zip` mit ausgeliefert.

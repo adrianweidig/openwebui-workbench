@@ -286,9 +286,10 @@ def find_knowledge_by_name(client: OpenWebUIClient, name: str) -> dict[str, Any]
     return None
 
 
-def upsert_knowledge_with_file(client: OpenWebUIClient, model_id: str, model_name: str, fachwissen: Path, public: bool) -> dict[str, str]:
-    name = f"Fachwissen - {model_name}"
-    description = f"Fachwissen.md fuer das Modell {model_id} aus dem OpenWebUI Workspace."
+def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_name: str, files: list[Path], public: bool) -> dict[str, str]:
+    name = f"Modellwissen - {model_name}"
+    filenames = ", ".join(path.name for path in files)
+    description = f"{filenames} für das Modell {model_id} aus dem OpenWebUI Workspace."
     payload = {"name": name, "description": description, "access_grants": public_read_grants(public)}
     knowledge = find_knowledge_by_name(client, name)
     if knowledge:
@@ -298,9 +299,11 @@ def upsert_knowledge_with_file(client: OpenWebUIClient, model_id: str, model_nam
     else:
         created = client.request("POST", "/api/v1/knowledge/create", payload)
         knowledge_id = created["id"]
-    uploaded = client.upload_file(fachwissen)
-    file_id = uploaded["id"]
-    client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", [{"file_id": file_id}])
+    file_refs = []
+    for file_path in files:
+        uploaded = client.upload_file(file_path)
+        file_refs.append({"file_id": uploaded["id"]})
+    client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
     return {"id": knowledge_id, "name": name}
 
 
@@ -313,13 +316,17 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
         model = data[0]
         model_id = str(model.get("id"))
         if upload_knowledge:
-            fachwissen = model_file.parent / "fachwissen.md"
-            if fachwissen.exists():
-                knowledge = upsert_knowledge_with_file(
+            prompt_files = [
+                path
+                for path in [model_file.parent / "mainprompt.md", model_file.parent / "fachwissen.md"]
+                if path.exists()
+            ]
+            if prompt_files:
+                knowledge = upsert_knowledge_with_files(
                     client,
                     model_id,
                     str(model.get("name") or model_id),
-                    fachwissen,
+                    prompt_files,
                     public,
                 )
                 meta = model.setdefault("meta", {})
@@ -353,7 +360,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--base-url", default=os.getenv("OPENWEBUI_BASE_URL", OPENWEBUI_BASE_URL))
     parser.add_argument("--token", default=os.getenv("OPENWEBUI_ADMIN_TOKEN", OPENWEBUI_ADMIN_TOKEN))
     parser.add_argument("--public-read", action="store_true", help="Grant read access to all users where OpenWebUI permits it.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload fachwissen.md files as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md and fachwissen.md files as Knowledge.")
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",

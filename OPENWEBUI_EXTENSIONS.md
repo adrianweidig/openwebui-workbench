@@ -103,7 +103,7 @@ Das Skript arbeitet in dieser Reihenfolge:
 5. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
 6. Optional Offline-ZIP-Pakete neu bauen.
 
-Chat-Modelle erhalten nur Offline-Default-Tools in `meta.toolIds`, außerdem `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `params.function_calling: "native"`, eingebettete SVG-Icons in `meta.profile_image_url` und ein High-Reasoning-Systemprofil inklusive Systemprompt, Mainprompt und Fachwissen. Feste Laufzeitparameter wie `max_tokens`, `temperature`, `top_p`, `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden nicht gesetzt, damit OpenWebUI und der jeweilige Modellserver ihre eigenen Defaults verwenden. Öffentliche Netzwerktools werden im Offline-Standard nicht zugewiesen. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
+Chat-Modelle erhalten nur Offline-Default-Tools in `meta.toolIds`, außerdem `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `params.function_calling: "native"`, use-case-spezifische `params.temperature`-/`params.top_p`-Werte, eingebettete SVG-Icons in `meta.profile_image_url` und ein High-Reasoning-Systemprofil inklusive Systemprompt, Mainprompt und Fachwissen. `params.max_tokens` wird nicht gesetzt, damit OpenWebUI und der jeweilige Modellserver ihre eigenen Kontext- und Antwortlimits verwenden. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt. Öffentliche Netzwerktools werden im Offline-Standard nicht zugewiesen. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
 
 Der API-basierte Import kann mit `Tools/import_openwebui_workspace.py` ausgeführt werden:
 
@@ -112,7 +112,7 @@ $env:OPENWEBUI_ADMIN_TOKEN="YOUR_OPEN_WEBUI_API_KEY"
 python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 ```
 
-Das Skript importiert beziehungsweise aktualisiert Tools, Functions/Filter, Skills und Modelle. Standardmäßig lädt es zusätzlich jedes `fachwissen.md` als Knowledge-Basis hoch und verknüpft diese Knowledge im jeweiligen Modellprofil.
+Das Skript importiert beziehungsweise aktualisiert Tools, Functions/Filter, Skills und Modelle. Standardmäßig lädt es zusätzlich `mainprompt.md` und `fachwissen.md` jedes Modellpakets als Knowledge-Basis hoch und verknüpft diese Knowledge im jeweiligen Modellprofil.
 
 ## Wartung
 

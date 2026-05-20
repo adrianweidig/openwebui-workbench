@@ -38,7 +38,8 @@ MODELS_ZIP = MODEL_DIST / "openwebui-offline-artifacts.zip"
 FUNCTION_CALLING_NATIVE = "native"
 CHAT_MODEL_TOOL_MODE = "all_validated_custom_tools"
 CHAT_MODEL_FILTER_MODE = "all_validated_default_filters"
-SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "function_calling"}
+SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "stop", "function_calling"}
+OMITTED_RUNTIME_PARAMS = ["max_tokens"]
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
@@ -47,8 +48,36 @@ HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 - Arbeite im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch.
 - Nutze verfügbare Offline-Tools und agentische Arbeitsschritte aktiv, wenn sie die Qualität, Reproduzierbarkeit oder Artefakterzeugung verbessern.
 - Halte Antworten trotzdem aufgabengerecht kompakt; sehr lange Ausgaben oder vollständige Artefakte nur erzeugen, wenn die Nutzeraufgabe das verlangt.
-- Die Modellprofile setzen keine festen Laufzeitwerte wie `max_tokens`, `temperature`, `top_p`, `reasoning_effort`, `num_ctx`, `top_k` oder `seed`; die Zielinstanz verwendet ihre eigenen Defaults.
+- Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits.
 """
+MODEL_TEMPERATURES = {
+    "anforderungsanalyse-lastenheft": 0.4,
+    "api-schnittstellenentwurf": 0.35,
+    "code-dokumentation": 0.35,
+    "code-review": 0.2,
+    "codeanalyse": 0.2,
+    "codegenerierung": 0.35,
+    "compliance-richtlinienprüfung": 0.2,
+    "debugging-fehleranalyse": 0.2,
+    "dokumentenanalyse": 0.2,
+    "dokumentengenerierung": 0.7,
+    "dokumentenvergleich": 0.15,
+    "dokumentenzusammenfassung": 0.25,
+    "email-kommunikationsassistenz": 0.7,
+    "informationsextraktion": 0.0,
+    "it-helpdesk-diagnose": 0.25,
+    "json-csv-log-analyse": 0.15,
+    "meeting-protokoll-auswertung": 0.35,
+    "offline-workbench-agent": 0.45,
+    "prozess-workflow-dokumentation": 0.4,
+    "präsentationserstellung": 0.7,
+    "refactoring-unterstützung": 0.25,
+    "report-dashboard-vorbereitung": 0.4,
+    "support-ticket-vorbereitung": 0.35,
+    "tabellen-csv-datenanalyse": 0.15,
+    "testfall-generierung": 0.3,
+    "übersetzung-lokalisierung": 0.35,
+}
 EXCLUDED_MODEL_MARKERS = (
     "embedding",
     "embeddings",
@@ -397,6 +426,18 @@ def merge_unique(existing: Any, required: List[str]) -> List[str]:
     return merged
 
 
+def temperature_for_model(model_id: str) -> float:
+    return MODEL_TEMPERATURES.get(model_id, 0.35)
+
+
+def top_p_for_temperature(temperature: float) -> float:
+    if temperature <= 0.2:
+        return 0.8
+    if temperature <= 0.45:
+        return 0.9
+    return 0.95
+
+
 def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
     if not isinstance(system_prompt, str):
         return system_prompt
@@ -404,9 +445,10 @@ def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
         "- Die Modellprofile erlauben bis zu " + "256" + "k Tokens über `max_tokens`, "
         "setzen aber keine nicht unterstützten Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` oder `seed`."
     )
-    default_line = "- Die Modellprofile setzen keine festen Laufzeitwerte wie `max_tokens`, `temperature`, `top_p`, `reasoning_effort`, `num_ctx`, `top_k` oder `seed`; die Zielinstanz verwendet ihre eigenen Defaults."
+    previous_default_line = "- Die Modellprofile setzen keine festen Laufzeitwerte wie `max_tokens`, `temperature`, `top_p`, `reasoning_effort`, `num_ctx`, `top_k` oder `seed`; die Zielinstanz verwendet ihre eigenen Defaults."
+    tuned_line = "- Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits."
     if HIGH_REASONING_SYSTEM_MARKER in system_prompt:
-        return system_prompt.replace(legacy_line, default_line)
+        return system_prompt.replace(legacy_line, tuned_line).replace(previous_default_line, tuned_line)
     insert_before = "\n\n        # Systemprompt"
     if insert_before in system_prompt:
         return system_prompt.replace(insert_before, f"\n\n        {HIGH_REASONING_SYSTEM_BLOCK.replace(chr(10), chr(10) + '        ')}{insert_before}", 1)
@@ -415,9 +457,13 @@ def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
 
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
     system_prompt = ensure_high_reasoning_profile(params.get("system"))
+    temperature = temperature_for_model(model_id)
     params.clear()
     if system_prompt is not None:
         params["system"] = system_prompt
+    params["temperature"] = temperature
+    params["top_p"] = top_p_for_temperature(temperature)
+    params["stop"] = []
     params["function_calling"] = FUNCTION_CALLING_NATIVE
 
 
@@ -507,14 +553,17 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
 
     summary = {
         "schema": "openwebui-model-params-summary/v1",
-        "runtime_defaults_policy": "No fixed generation/runtime values are set in model params; target OpenWebUI/model-server defaults are used.",
+        "max_tokens_policy": "omitted; target OpenWebUI/model-server limits are used.",
         "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+        "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
         "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
         "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
         "models": [
             {
                 "id": model.get("id"),
                 "name": model.get("name"),
+                "temperature": model.get("params", {}).get("temperature") if isinstance(model.get("params"), dict) else None,
+                "top_p": model.get("params", {}).get("top_p") if isinstance(model.get("params"), dict) else None,
                 "function_calling": model.get("params", {}).get("function_calling") if isinstance(model.get("params"), dict) else None,
                 "runtime_param_keys": sorted(model.get("params", {}).keys()) if isinstance(model.get("params"), dict) else [],
                 "has_systemprompt_mainprompt_fachwissen": has_prompt_sections(model),
@@ -554,12 +603,14 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
         "model_params_policy": {
-            "fixed_runtime_params": "omitted",
-            "runtime_defaults": "target OpenWebUI/model-server defaults",
+            "max_tokens": "omitted",
+            "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
             "reasoning_profile": "high_prompted_in_system",
             "reasoning_effort_runtime_param": "omitted_for_mistral_medium_3_5_128b_compatibility",
             "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+            "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
             "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
+            "temperature_by_model": MODEL_TEMPERATURES,
         },
         "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE},
         "verified_model_fields_used": [
@@ -568,6 +619,9 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.defaultFilterIds",
             "meta.capabilities.builtin_tools",
             "params.function_calling",
+            "params.temperature",
+            "params.top_p",
+            "params.stop",
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
@@ -615,6 +669,13 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         unsupported_params = sorted(set(params) - SUPPORTED_MISTRAL_RUNTIME_PARAMS)
         if unsupported_params:
             issues.append(f"Chat-Modell {model_id} setzt nicht freigegebene Runtime-Parameter: {', '.join(unsupported_params)}")
+        expected_temperature = temperature_for_model(model_id)
+        if params.get("temperature") != expected_temperature:
+            issues.append(f"Chat-Modell {model_id} nutzt temperature nicht use-case-gerecht auf {expected_temperature}")
+        if params.get("top_p") != top_p_for_temperature(expected_temperature):
+            issues.append(f"Chat-Modell {model_id} nutzt top_p nicht passend zur Temperatur")
+        if params.get("stop") != []:
+            issues.append(f"Chat-Modell {model_id} nutzt stop nicht als leere Liste")
         if caps.get("builtin_tools") is not True:
             issues.append(f"Chat-Modell {model_id} hat builtin_tools nicht aktiv")
         if not isinstance(tool_ids, list) or not tool_ids:
