@@ -48,6 +48,61 @@ def build_prompt(messages: list[dict[str, Any]]) -> str:
     return "\n\n".join(parts).strip()
 
 
+def text_from_content(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        text_parts = []
+        for item in content:
+            if isinstance(item, dict):
+                if item.get("type") in {"text", "input_text", "output_text"}:
+                    text_parts.append(str(item.get("text") or ""))
+                elif item.get("type") == "input_image":
+                    text_parts.append("[Bildinhalt]")
+            else:
+                text_parts.append(str(item))
+        return "\n".join(part for part in text_parts if part)
+    return str(content) if content is not None else ""
+
+
+def build_prompt_from_responses(payload: dict[str, Any]) -> str:
+    parts: list[str] = []
+    instructions = text_from_content(payload.get("instructions"))
+    if instructions:
+        parts.append(f"SYSTEM:\n{instructions}")
+
+    input_value = payload.get("input", "")
+    if isinstance(input_value, str):
+        if input_value.strip():
+            parts.append(f"USER:\n{input_value}")
+    elif isinstance(input_value, list):
+        for item in input_value:
+            if not isinstance(item, dict):
+                text = text_from_content(item)
+                if text:
+                    parts.append(f"USER:\n{text}")
+                continue
+
+            item_type = item.get("type")
+            if item_type == "message":
+                role = str(item.get("role") or "user").upper()
+                text = text_from_content(item.get("content", ""))
+                if text:
+                    parts.append(f"{role}:\n{text}")
+            elif item_type == "function_call_output":
+                call_id = item.get("call_id", "")
+                parts.append(f"TOOL RESULT {call_id}:\n{text_from_content(item.get('output', ''))}")
+            elif item_type == "function_call":
+                name = item.get("name", "")
+                arguments = item.get("arguments", "")
+                parts.append(f"ASSISTANT TOOL CALL {name}:\n{arguments}")
+            else:
+                text = text_from_content(item)
+                if text:
+                    parts.append(f"USER:\n{text}")
+    return "\n\n".join(parts).strip()
+
+
 def is_truthy(value: str | None) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -148,6 +203,47 @@ def chunk_text(value: str, size: int = 1200) -> list[str]:
     return [value[index : index + size] for index in range(0, len(value), size)] or [""]
 
 
+def chat_completion_response(completion_id: str, model: str, text: str, created: int) -> dict[str, Any]:
+    return {
+        "id": completion_id,
+        "object": "chat.completion",
+        "created": created,
+        "model": model,
+        "choices": [
+            {
+                "index": 0,
+                "message": {"role": "assistant", "content": text},
+                "finish_reason": "stop",
+            }
+        ],
+        "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+    }
+
+
+def responses_message_item(message_id: str, text: str, status: str = "completed") -> dict[str, Any]:
+    return {
+        "id": message_id,
+        "type": "message",
+        "status": status,
+        "role": "assistant",
+        "content": [{"type": "output_text", "text": text, "annotations": []}],
+    }
+
+
+def responses_result(response_id: str, message_id: str, model: str, text: str, created: int) -> dict[str, Any]:
+    output = [responses_message_item(message_id, text)]
+    return {
+        "id": response_id,
+        "object": "response",
+        "created_at": created,
+        "status": "completed",
+        "model": model,
+        "output": output,
+        "output_text": text,
+        "usage": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0},
+    }
+
+
 class CodexBridgeHandler(BaseHTTPRequestHandler):
     server_version = "CodexOpenAIBridge/0.1"
 
@@ -183,69 +279,164 @@ class CodexBridgeHandler(BaseHTTPRequestHandler):
             return
         self._json_response(404, {"error": {"message": "Not found"}})
 
-    def do_POST(self) -> None:  # noqa: N802
-        if self.path.rstrip("/") not in {"/v1/chat/completions", "/chat/completions"}:
-            self._json_response(404, {"error": {"message": "Not found"}})
-            return
+    def _sse_event(self, payload: Any) -> None:
+        self.wfile.write(f"data: {json.dumps(payload, ensure_ascii=False)}\n\n".encode("utf-8"))
+        self.wfile.flush()
 
-        try:
-            payload = self._read_json()
-            model = str(payload.get("model") or "coder")
-            prompt = build_prompt(payload.get("messages") or [])
-            if not prompt:
-                raise ValueError("messages must contain text content")
-            text = run_codex(
-                prompt,
-                model=model,
-                timeout=self.server.codex_timeout,
-                workdir=self.server.workdir,
-                codex_command=self.server.codex_command,
-                use_windows_codex=self.server.use_windows_codex,
+    def _chat_completions(self, payload: dict[str, Any]) -> None:
+        model = str(payload.get("model") or "coder")
+        prompt = build_prompt(payload.get("messages") or [])
+        if not prompt:
+            raise ValueError("messages must contain text content")
+        text = run_codex(
+            prompt,
+            model=model,
+            timeout=self.server.codex_timeout,
+            workdir=self.server.workdir,
+            codex_command=self.server.codex_command,
+            use_windows_codex=self.server.use_windows_codex,
+        )
+        created = int(time.time())
+        completion_id = f"chatcmpl-codex-{uuid.uuid4().hex}"
+        if payload.get("stream"):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.end_headers()
+            self._sse_event(
+                {
+                    "id": completion_id,
+                    "object": "chat.completion.chunk",
+                    "created": created,
+                    "model": model,
+                    "choices": [{"index": 0, "delta": {"role": "assistant"}, "finish_reason": None}],
+                }
             )
-            created = int(time.time())
-            completion_id = f"chatcmpl-codex-{uuid.uuid4().hex}"
-            if payload.get("stream"):
-                self.send_response(200)
-                self.send_header("Content-Type", "text/event-stream; charset=utf-8")
-                self.send_header("Cache-Control", "no-cache")
-                self.end_headers()
-                for chunk in chunk_text(text):
-                    event = {
+            for chunk in chunk_text(text):
+                self._sse_event(
+                    {
                         "id": completion_id,
                         "object": "chat.completion.chunk",
                         "created": created,
                         "model": model,
                         "choices": [{"index": 0, "delta": {"content": chunk}, "finish_reason": None}],
                     }
-                    self.wfile.write(f"data: {json.dumps(event, ensure_ascii=False)}\n\n".encode("utf-8"))
-                    self.wfile.flush()
-                done = {
+                )
+            self._sse_event(
+                {
                     "id": completion_id,
                     "object": "chat.completion.chunk",
                     "created": created,
                     "model": model,
                     "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}],
                 }
-                self.wfile.write(f"data: {json.dumps(done, ensure_ascii=False)}\n\n".encode("utf-8"))
-                self.wfile.write(b"data: [DONE]\n\n")
-                return
-            self._json_response(
-                200,
-                {
-                    "id": completion_id,
-                    "object": "chat.completion",
-                    "created": created,
-                    "model": model,
-                    "choices": [
-                        {
-                            "index": 0,
-                            "message": {"role": "assistant", "content": text},
-                            "finish_reason": "stop",
-                        }
-                    ],
-                    "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
-                },
             )
+            self.wfile.write(b"data: [DONE]\n\n")
+            return
+        self._json_response(200, chat_completion_response(completion_id, model, text, created))
+
+    def _responses(self, payload: dict[str, Any]) -> None:
+        model = str(payload.get("model") or "coder")
+        prompt = build_prompt_from_responses(payload)
+        if not prompt:
+            raise ValueError("input must contain text content")
+        text = run_codex(
+            prompt,
+            model=model,
+            timeout=self.server.codex_timeout,
+            workdir=self.server.workdir,
+            codex_command=self.server.codex_command,
+            use_windows_codex=self.server.use_windows_codex,
+        )
+        created = int(time.time())
+        response_id = f"resp_codex_{uuid.uuid4().hex}"
+        message_id = f"msg_codex_{uuid.uuid4().hex}"
+        if payload.get("stream"):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.end_headers()
+            base_response = {
+                "id": response_id,
+                "object": "response",
+                "created_at": created,
+                "status": "in_progress",
+                "model": model,
+                "output": [],
+            }
+            self._sse_event({"type": "response.created", "response": base_response})
+            self._sse_event({"type": "response.in_progress", "response": base_response})
+            self._sse_event(
+                {
+                    "type": "response.output_item.added",
+                    "output_index": 0,
+                    "item": {
+                        "id": message_id,
+                        "type": "message",
+                        "status": "in_progress",
+                        "role": "assistant",
+                        "content": [],
+                    },
+                }
+            )
+            self._sse_event(
+                {
+                    "type": "response.content_part.added",
+                    "output_index": 0,
+                    "content_index": 0,
+                    "part": {"type": "output_text", "text": "", "annotations": []},
+                }
+            )
+            for chunk in chunk_text(text):
+                self._sse_event(
+                    {
+                        "type": "response.output_text.delta",
+                        "output_index": 0,
+                        "content_index": 0,
+                        "delta": chunk,
+                    }
+                )
+            final_part = {"type": "output_text", "text": text, "annotations": []}
+            final_item = responses_message_item(message_id, text)
+            self._sse_event(
+                {
+                    "type": "response.output_text.done",
+                    "output_index": 0,
+                    "content_index": 0,
+                    "text": text,
+                }
+            )
+            self._sse_event(
+                {
+                    "type": "response.content_part.done",
+                    "output_index": 0,
+                    "content_index": 0,
+                    "part": final_part,
+                }
+            )
+            self._sse_event({"type": "response.output_item.done", "output_index": 0, "item": final_item})
+            self._sse_event(
+                {
+                    "type": "response.completed",
+                    "response": responses_result(response_id, message_id, model, text, created),
+                }
+            )
+            self.wfile.write(b"data: [DONE]\n\n")
+            return
+        self._json_response(200, responses_result(response_id, message_id, model, text, created))
+
+    def do_POST(self) -> None:  # noqa: N802
+        path = self.path.rstrip("/")
+        if path not in {"/v1/chat/completions", "/chat/completions", "/v1/responses", "/responses"}:
+            self._json_response(404, {"error": {"message": "Not found"}})
+            return
+
+        try:
+            payload = self._read_json()
+            if path in {"/v1/responses", "/responses"}:
+                self._responses(payload)
+            else:
+                self._chat_completions(payload)
         except Exception as exc:
             self._json_response(500, {"error": {"message": str(exc), "type": "codex_bridge_error"}})
 

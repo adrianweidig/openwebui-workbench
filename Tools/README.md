@@ -9,7 +9,7 @@ Dieser Ordner enthält die operativ relevanten Tool-Artefakte.
 - `dist/`: portables Offline-Paket für Tools und Skills
 - `index.json`: Tool-Index für die lokale Übersicht
 - `import_openwebui_workspace.py`: API-Importer für Tools, Functions/Filter, Skills, Knowledge und Modelle
-- `codex_openai_bridge.py`: lokaler Test-Provider, der Codex CLI als minimale OpenAI-kompatible Chat-API bereitstellt
+- `codex_openai_bridge.py`: lokaler Test-Provider, der Codex CLI als minimale OpenAI-kompatible Responses-/Chat-API bereitstellt
 
 ## Nutzung
 
@@ -41,11 +41,11 @@ Es wird auch in `dist/openwebui-tools-skills-offline.zip` mit ausgeliefert.
 
 ## Codex-Testprovider
 
-`codex_openai_bridge.py` ist nur für lokale Tests gedacht. Das Skript speichert keine OpenAI- oder Codex-Secrets, sondern nutzt die bereits lokal authentifizierte Codex-CLI. In einer WSL-/Docker-Umgebung, in der OpenWebUI im Container läuft und Codex unter Windows angemeldet ist, kann der Bridge-Server so gestartet werden:
+`codex_openai_bridge.py` ist nur für lokale Tests gedacht. Das Skript speichert keine OpenAI- oder Codex-Secrets, sondern nutzt die bereits lokal authentifizierte Codex-CLI. Es stellt bevorzugt `/v1/responses` bereit und bietet `/v1/chat/completions` nur als Kompatibilitätsfallback an. In einer WSL-/Docker-Umgebung, in der OpenWebUI im Container läuft und Codex unter Windows angemeldet ist, kann der Bridge-Server so gestartet werden:
 
 ```bash
 cd /mnt/e/OpenWebUI
 python3 Tools/codex_openai_bridge.py --host 0.0.0.0 --port 4010 --windows-codex
 ```
 
-Danach in OpenWebUI einen OpenAI-kompatiblen Provider auf `http://172.23.0.1:4010/v1` konfigurieren. Der Bridge-Provider stellt `coder`, `codex`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.3-codex` und `gpt-5.3-codex-spark` bereit; `coder` und `codex` werden intern auf `gpt-5.5` abgebildet. Die Gateway-IP kann je Docker-Netz abweichen und muss bei Bedarf mit `docker network inspect <netz>` geprüft werden.
+Danach in OpenWebUI einen OpenAI-kompatiblen Provider auf `http://172.23.0.1:4010/v1` konfigurieren und `api_type` auf `responses` setzen. Der Bridge-Provider stellt `coder`, `codex`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.3-codex` und `gpt-5.3-codex-spark` bereit; `coder` und `codex` werden intern auf `gpt-5.5` abgebildet. Die Gateway-IP kann je Docker-Netz abweichen und muss bei Bedarf mit `docker network inspect <netz>` geprüft werden.
