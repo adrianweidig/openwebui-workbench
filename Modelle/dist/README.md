@@ -7,7 +7,7 @@
 - `tools_fallback_bundle.json`: Tool-Metadaten und Pfade zum Jupyter-Tool sowie zu den Offline-Visual-, Parallel-, Overlay- und ComfyUI-Prüftools
 - `functions_fallback_bundle.json`: Filter-Metadaten für den Kontextkomprimierer
 - `openwebui-registration-plan.json`: Reihenfolge für Tool-, Filter-, Skill- und Modellimport sowie Native-Function-Calling-Empfehlung
-- `openwebui-model-params-summary.json`: explizite Prüfübersicht für `temperature`, `top_p`, Runtime-Keys, eingebettete Icons und Tool-Zuordnung je Modell
+- `openwebui-model-params-summary.json`: explizite Prüfübersicht für `temperature`, `top_p`, Runtime-Keys, Tool-Pflichtprofil, eingebettete Icons und Tool-Zuordnung je Modell
 - `artifacts/`: Kopien der Einzelartefakte für manuelle Übernahme
 - `artifacts/icons/`: generische schwarz-weiße SVG-/PNG-Profilicons mit weißem Hintergrund
 - `artifacts/icons/openwebui-generic-icons.json`: Icon-Katalog mit vorgeschlagener Modellzuordnung
@@ -18,7 +18,7 @@
 
 `openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht.
 
-Die Chat-Modelle nutzen natives Tool-Calling, use-case-spezifische `temperature`-/`top_p`-Werte, eingebettete Modellicons und ein High-Reasoning-Systemprofil. Systemprompt, Mainprompt und Fachwissen sind im jeweiligen `params.system` enthalten. Der Standardworkflow ist offline; öffentliche Netzwerktools werden nicht zugewiesen. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
+Die Chat-Modelle nutzen natives Tool-Calling, use-case-spezifische `temperature`-/`top_p`-Werte, eingebettete Modellicons, ein High-Reasoning-Systemprofil und verbindliche Tool-Nutzungsregeln. Systemprompt, Mainprompt und Fachwissen sind im jeweiligen `params.system` enthalten. Der Standardworkflow ist offline; öffentliche Netzwerktools werden nicht zugewiesen. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
 
 ## Manuelle Integration
 

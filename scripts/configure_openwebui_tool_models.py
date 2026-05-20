@@ -43,6 +43,7 @@ OMITTED_RUNTIME_PARAMS = ["max_tokens"]
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
+TOOL_FORCE_SYSTEM_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
 HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
 - Arbeite im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch.
@@ -77,6 +78,138 @@ MODEL_TEMPERATURES = {
     "tabellen-csv-datenanalyse": 0.15,
     "testfall-generierung": 0.3,
     "übersetzung-lokalisierung": 0.35,
+}
+TOOL_FORCE_PROFILES = {
+    "anforderungsanalyse-lastenheft": {
+        "tools": ["offline_artifact_workbench", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner"],
+        "skills": ["prompt-to-tool-workflow", "model-tool-skill-overlays", "offline-artifact-production"],
+        "focus": "Anforderungen, Akzeptanzkriterien, Tool-/Skill-Abdeckung und Handover-Artefakte strukturiert validieren.",
+    },
+    "api-schnittstellenentwurf": {
+        "tools": ["openapi_schema_inspector", "json_csv_text_validator", "offline_artifact_workbench"],
+        "skills": ["api-integration-debugging", "safe-mcp-openapi-import", "secure-tool-usage"],
+        "focus": "OpenAPI-/JSON-Schemata prüfen, API-Verträge konsistent halten und Schnittstellenartefakte erzeugen.",
+    },
+    "code-dokumentation": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["repository-maintenance", "offline-artifact-production", "secure-tool-usage"],
+        "focus": "Repository-Struktur, Codeauszüge und Dokumentationsartefakte mit lokalen Prüfpfaden absichern.",
+    },
+    "code-review": {
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python"],
+        "skills": ["code-review-deep", "repository-maintenance", "secure-tool-usage"],
+        "focus": "Diffs, Dateibäume, Findings, Tests und strukturierte Review-Ergebnisse toolgestützt prüfen.",
+    },
+    "codeanalyse": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["code-review-deep", "repository-maintenance", "secure-tool-usage"],
+        "focus": "Code- und Strukturfragen mit Dateibaum-, Parsing- oder Testhilfen belegen.",
+    },
+    "codegenerierung": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["repository-maintenance", "secure-tool-usage", "openwebui-tool-authoring"],
+        "focus": "Vorhandene Struktur prüfen, erzeugten Code lokal plausibilisieren und strukturierte Daten validieren.",
+    },
+    "compliance-richtlinienprüfung": {
+        "tools": ["json_csv_text_validator", "repo_tree_analyzer", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "secure-tool-usage", "redundant-fallback-tooling"],
+        "focus": "Bereitgestellte Richtlinien, Tabellen, Dateibäume und Nachweisartefakte nachvollziehbar prüfen.",
+    },
+    "debugging-fehleranalyse": {
+        "tools": ["docker_compose_triage", "repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["docker-openwebui-troubleshooting", "repository-maintenance", "secure-tool-usage"],
+        "focus": "Logs, Compose-Auszüge, Codepfade und Reproduktionsdaten toolgestützt eingrenzen.",
+    },
+    "dokumentenanalyse": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "data-cleaning-analysis", "offline-artifact-production"],
+        "focus": "Bereitgestellte Dokumentinhalte, Tabellen und Extrakte lokal prüfen und bei Bedarf als Artefakt ausgeben.",
+    },
+    "dokumentengenerierung": {
+        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "json_csv_text_validator"],
+        "skills": ["offline-artifact-production", "visual-toolkit-v3-offline", "secure-tool-usage"],
+        "focus": "HTML/PDF/ZIP-fähige Ergebnisse mit Artefakt- und Visual-Tools erzeugen.",
+    },
+    "dokumentenvergleich": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "research-grounding", "offline-artifact-production"],
+        "focus": "Vergleichstabellen, Differenzen und Belegstellen mit lokalen Prüf- oder Tabellenpfaden absichern.",
+    },
+    "dokumentenzusammenfassung": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "offline-artifact-production", "secure-tool-usage"],
+        "focus": "Quellenorientierte Zusammenfassungen, strukturierte Extrakte und Übergabeartefakte absichern.",
+    },
+    "email-kommunikationsassistenz": {
+        "tools": ["json_csv_text_validator", "offline_artifact_workbench"],
+        "skills": ["secure-tool-usage", "offline-artifact-production", "research-grounding"],
+        "focus": "Strukturierte Kontaktdaten, Vorlagen und Anhänge lokal prüfen; sensible Inhalte minimieren.",
+    },
+    "informationsextraktion": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "research-grounding", "secure-tool-usage"],
+        "focus": "Extraktionsschema, JSON/CSV-Ausgabe und Datenqualität vor der finalen Antwort validieren.",
+    },
+    "it-helpdesk-diagnose": {
+        "tools": ["docker_compose_triage", "json_csv_text_validator", "repo_tree_analyzer"],
+        "skills": ["docker-openwebui-troubleshooting", "secure-tool-usage", "offline-use-case-router"],
+        "focus": "Fehlertexte, Konfigurationsauszüge und Diagnosepfade mit passenden lokalen Tools prüfen.",
+    },
+    "json-csv-log-analyse": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "docker_compose_triage", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "docker-openwebui-troubleshooting", "secure-tool-usage"],
+        "focus": "JSON, CSV und Logs immer strukturell validieren, bei Berechnung Jupyter nutzen und Ergebnisse exportierbar machen.",
+    },
+    "meeting-protokoll-auswertung": {
+        "tools": ["json_csv_text_validator", "offline_artifact_workbench", "air_gapped_jupyter_python"],
+        "skills": ["research-grounding", "offline-artifact-production", "data-cleaning-analysis"],
+        "focus": "Beschlüsse, Aufgabenlisten, Tabellen und Übergabedokumente strukturiert prüfen oder erzeugen.",
+    },
+    "offline-workbench-agent": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "parallel_task_planner", "subagent_orchestrator", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "comfyui_workflow_inspector"],
+        "skills": ["offline-use-case-router", "redundant-fallback-tooling", "native-tool-calling-rollout", "parallel-tools-subagents", "visual-toolkit-v3-offline"],
+        "focus": "Neue Aufgaben routen, passende Tools erzwingen, komplexe Arbeit planen und Artefakte lokal erzeugen.",
+    },
+    "prozess-workflow-dokumentation": {
+        "tools": ["parallel_task_planner", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "tool_skill_overlay_planner"],
+        "skills": ["parallel-tools-subagents", "offline-artifact-production", "visual-toolkit-v3-offline", "model-tool-skill-overlays"],
+        "focus": "Prozesse, Workflows, Verantwortlichkeiten und Diagramme toolgestützt planen und dokumentieren.",
+    },
+    "präsentationserstellung": {
+        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "air_gapped_jupyter_python"],
+        "skills": ["offline-artifact-production", "visual-toolkit-v3-offline", "offline-creative-media-workflows"],
+        "focus": "Folien, Visuals, Diagrammdaten und exportierbare Präsentationsartefakte mit Tools erzeugen.",
+    },
+    "refactoring-unterstützung": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["repository-maintenance", "code-review-deep", "secure-tool-usage"],
+        "focus": "Änderungsbereiche, Tests, Risiken und Strukturwirkungen lokal prüfen.",
+    },
+    "report-dashboard-vorbereitung": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "inline_visuals_toolkit_v3", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "visual-toolkit-v3-offline", "offline-artifact-production"],
+        "focus": "Daten prüfen, Kennzahlen berechnen, Visuals erzeugen und Dashboard-Artefakte vorbereiten.",
+    },
+    "support-ticket-vorbereitung": {
+        "tools": ["json_csv_text_validator", "docker_compose_triage", "offline_artifact_workbench"],
+        "skills": ["docker-openwebui-troubleshooting", "secure-tool-usage", "offline-artifact-production"],
+        "focus": "Ticketdaten, Fehlertexte, Priorisierung und Übergabetexte strukturiert prüfen.",
+    },
+    "tabellen-csv-datenanalyse": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3"],
+        "skills": ["data-cleaning-analysis", "visual-toolkit-v3-offline", "offline-artifact-production"],
+        "focus": "Tabellen und CSV immer validieren, Berechnungen mit Jupyter durchführen und Ergebnisse exportierbar machen.",
+    },
+    "testfall-generierung": {
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python"],
+        "skills": ["code-review-deep", "repository-maintenance", "data-cleaning-analysis"],
+        "focus": "Anforderungen, Codepfade, Testdaten und erwartete Ergebnisse mit lokalen Prüfpfaden absichern.",
+    },
+    "übersetzung-lokalisierung": {
+        "tools": ["json_csv_text_validator", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "data-cleaning-analysis", "offline-artifact-production"],
+        "focus": "Terminologielisten, Tabellen, Glossare und zielsprachliche Handover-Artefakte prüfen.",
+    },
 }
 EXCLUDED_MODEL_MARKERS = (
     "embedding",
@@ -438,6 +571,34 @@ def top_p_for_temperature(temperature: float) -> float:
     return 0.95
 
 
+def tool_force_block_for_model(model_id: str) -> str:
+    profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
+    tools = ", ".join(f"`{tool}`" for tool in profile["tools"])
+    skills = ", ".join(f"`{skill}`" for skill in profile["skills"])
+    focus = profile["focus"]
+    return f"""{TOOL_FORCE_SYSTEM_MARKER}
+
+Vor jeder finalen Antwort prüfst du aktiv, ob ein freigegebenes Tool oder ein importierter Skill die Aufgabe belastbarer, reproduzierbarer oder artefaktfähig macht. Wenn einer der folgenden Auslöser zutrifft, MUSST du vor der finalen Antwort mindestens ein passendes Tool nutzen; nur bei reiner Begriffserklärung, fehlenden Eingaben, explizitem Nutzerverbot oder Sicherheits-/Berechtigungsgründen darfst du darauf verzichten und musst den Verzicht kurz begründen.
+
+- Dateien, Tabellen, JSON, CSV, Logs oder strukturierte Texte: `json_csv_text_validator`; bei Berechnung, Transformation oder Stichproben zusätzlich `air_gapped_jupyter_python`.
+- Code, Repository-Strukturen, Diffs, Tests oder Refactoring: `repo_tree_analyzer`; für ausführbare Prüfungen oder Datenaufbereitung `air_gapped_jupyter_python`.
+- HTML, PDF, Präsentationen, ZIPs oder andere Übergabeartefakte: `offline_artifact_workbench`; für Diagramme, Mermaid, SVG-Charts oder Dashboards zusätzlich `inline_visuals_toolkit_v3`.
+- Docker-, Compose-, OpenWebUI- oder Betriebsfehler: `docker_compose_triage`.
+- OpenAPI-, MCP-, Schnittstellen- oder Toolserver-Schemata: `openapi_schema_inspector`.
+- Komplexe mehrstufige Aufgaben, parallele Arbeit oder Subagent-Planung: `parallel_task_planner`; bei Rollen-/Subagent-Aufteilung zusätzlich `subagent_orchestrator`.
+- Modell-, Tool-, Skill- oder Fallback-Zuordnung: `tool_skill_overlay_planner`.
+- ComfyUI-, Bild-, Audio- oder Video-Workflow-JSON: `comfyui_workflow_inspector`.
+- Skill-Entwurf oder Skill-Markdown: `markdown_skill_builder`.
+- Interne MediaWiki-Arbeit: `mediawiki_legacy_crawler` nur bei explizitem Auftrag und vorhandener Konfiguration.
+
+Für dieses Modell sind primär diese Tools vorgesehen: {tools}.
+Wenn Skills importiert oder an das Modell gebunden sind, berücksichtige besonders: {skills}.
+Optimierungsfokus: {focus}
+
+Nutze immer den kleinsten ausreichenden Tool-Satz. Validiere Tool-Ausgaben kritisch, verschweige Fehler nicht und gib keine Secrets, Tokens oder unnötigen Rohdaten aus.
+"""
+
+
 def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
     if not isinstance(system_prompt, str):
         return system_prompt
@@ -455,8 +616,26 @@ def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
     return f"{HIGH_REASONING_SYSTEM_BLOCK}\n\n{system_prompt}"
 
 
+def ensure_tool_force_profile(system_prompt: Any, model_id: str) -> Any:
+    if not isinstance(system_prompt, str):
+        return system_prompt
+    block = tool_force_block_for_model(model_id).rstrip()
+    start = system_prompt.find(TOOL_FORCE_SYSTEM_MARKER)
+    if start != -1:
+        next_heading = re.search(r"\n\n\s+# ", system_prompt[start + len(TOOL_FORCE_SYSTEM_MARKER) :])
+        if next_heading:
+            cut = start + len(TOOL_FORCE_SYSTEM_MARKER) + next_heading.start()
+            return f"{system_prompt[:start]}{block}{system_prompt[cut:]}"
+        return f"{system_prompt[:start]}{block}"
+    insert_before = "\n\n        # Systemprompt"
+    indented_block = block.replace(chr(10), chr(10) + "        ")
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
+    return f"{block}\n\n{system_prompt}"
+
+
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
-    system_prompt = ensure_high_reasoning_profile(params.get("system"))
+    system_prompt = ensure_tool_force_profile(ensure_high_reasoning_profile(params.get("system")), model_id)
     temperature = temperature_for_model(model_id)
     params.clear()
     if system_prompt is not None:
@@ -567,6 +746,11 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "function_calling": model.get("params", {}).get("function_calling") if isinstance(model.get("params"), dict) else None,
                 "runtime_param_keys": sorted(model.get("params", {}).keys()) if isinstance(model.get("params"), dict) else [],
                 "has_systemprompt_mainprompt_fachwissen": has_prompt_sections(model),
+                "has_tool_force_profile": TOOL_FORCE_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
+                if isinstance(model.get("params"), dict)
+                else False,
+                "primary_tool_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("tools", []),
+                "recommended_skill_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("skills", []),
                 "has_embedded_svg_icon": str(model.get("meta", {}).get("profile_image_url", "")).startswith("data:image/svg+xml;base64,")
                 if isinstance(model.get("meta"), dict)
                 else False,
@@ -602,6 +786,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "model_params_summary_file": rel(MODEL_PARAMS_SUMMARY),
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
+        "tool_force_policy": {
+            "system_marker": TOOL_FORCE_SYSTEM_MARKER,
+            "behavior": "Every chat model must use at least one suitable assigned tool before the final answer when a task involves files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals, parallel planning, model/tool/skill overlays, ComfyUI workflows or skill authoring.",
+            "model_profiles": TOOL_FORCE_PROFILES,
+        },
         "model_params_policy": {
             "max_tokens": "omitted",
             "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
@@ -622,6 +811,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "params.temperature",
             "params.top_p",
             "params.stop",
+            "params.system tool-force section",
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
@@ -676,6 +866,12 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             issues.append(f"Chat-Modell {model_id} nutzt top_p nicht passend zur Temperatur")
         if params.get("stop") != []:
             issues.append(f"Chat-Modell {model_id} nutzt stop nicht als leere Liste")
+        system_text = str(params.get("system", ""))
+        if TOOL_FORCE_SYSTEM_MARKER not in system_text:
+            issues.append(f"Chat-Modell {model_id} hat keine verbindliche Tool-Nutzungssektion")
+        missing_profile_tools = sorted(set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(tool_ids))
+        if missing_profile_tools:
+            issues.append(f"Chat-Modell {model_id} nennt Tool-Pflichtprofil mit nicht zugewiesenen Tools: {', '.join(missing_profile_tools)}")
         if caps.get("builtin_tools") is not True:
             issues.append(f"Chat-Modell {model_id} hat builtin_tools nicht aktiv")
         if not isinstance(tool_ids, list) or not tool_ids:

@@ -36,6 +36,18 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "offline_artifact_workbench",
+        "tool_skill_overlay_planner",
+        "json_csv_text_validator",
+        "parallel_task_planner"
+      ],
+      "recommended_skill_ids": [
+        "prompt-to-tool-workflow",
+        "model-tool-skill-overlays",
+        "offline-artifact-production"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -67,6 +79,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "openapi_schema_inspector",
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "api-integration-debugging",
+        "safe-mcp-openapi-import",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -98,6 +121,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "repository-maintenance",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -129,6 +163,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -160,6 +205,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -191,6 +247,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "repository-maintenance",
+        "secure-tool-usage",
+        "openwebui-tool-authoring"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -222,6 +289,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "repo_tree_analyzer",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "secure-tool-usage",
+        "redundant-fallback-tooling"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -253,6 +331,18 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "docker_compose_triage",
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -284,6 +374,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -315,6 +416,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -346,6 +458,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "offline-artifact-production"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -377,6 +500,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -408,6 +542,16 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "secure-tool-usage",
+        "offline-artifact-production",
+        "research-grounding"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -439,6 +583,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -470,6 +625,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "docker_compose_triage",
+        "json_csv_text_validator",
+        "repo_tree_analyzer"
+      ],
+      "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-use-case-router"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -501,6 +667,18 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "docker_compose_triage",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -532,6 +710,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "data-cleaning-analysis"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -563,6 +752,27 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "parallel_task_planner",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "openapi_schema_inspector",
+        "comfyui_workflow_inspector"
+      ],
+      "recommended_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "visual-toolkit-v3-offline"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -594,6 +804,19 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "parallel_task_planner",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "tool_skill_overlay_planner"
+      ],
+      "recommended_skill_ids": [
+        "parallel-tools-subagents",
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "model-tool-skill-overlays"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -625,6 +848,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "offline-creative-media-workflows"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -656,6 +890,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -687,6 +932,18 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "inline_visuals_toolkit_v3",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -718,6 +975,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "docker_compose_triage",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -749,6 +1017,18 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -780,6 +1060,17 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "data-cleaning-analysis"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -811,6 +1102,16 @@
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
+      ],
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
