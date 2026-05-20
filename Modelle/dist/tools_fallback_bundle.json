@@ -1,5 +1,24 @@
 {
   "schema": "openwebui-tool-bundle-fallback/v1",
+  "offline_default_tool_import_order": [
+    "air_gapped_jupyter_python",
+    "comfyui_workflow_inspector",
+    "docker_compose_triage",
+    "inline_visuals_toolkit_v3",
+    "json_csv_text_validator",
+    "markdown_skill_builder",
+    "mediawiki_legacy_crawler",
+    "offline_artifact_workbench",
+    "openapi_schema_inspector",
+    "parallel_task_planner",
+    "repo_tree_analyzer",
+    "subagent_orchestrator",
+    "tool_skill_overlay_planner"
+  ],
+  "optional_network_tools_not_in_offline_default": [
+    "github_repo_inspector",
+    "safe_http_fetcher"
+  ],
   "tools": [
     {
       "id": "air_gapped_jupyter_python",
@@ -20,21 +39,9 @@
       "config_example": null
     },
     {
-      "id": "github_repo_inspector",
-      "name": "GitHub Repo Inspector",
-      "source_file": "Tools/openwebui_ext/tools/github_repo_inspector.py",
-      "config_example": null
-    },
-    {
       "id": "inline_visuals_toolkit_v3",
       "name": "Inline Visuals Toolkit V3 Offline",
       "source_file": "Tools/openwebui_ext/tools/inline_visuals_toolkit_v3.py",
-      "config_example": null
-    },
-    {
-      "id": "internet_research_tool",
-      "name": "Internet Research Tool",
-      "source_file": "Tools/openwebui_ext/tools/internet_research_tool.py",
       "config_example": null
     },
     {
@@ -77,12 +84,6 @@
       "id": "repo_tree_analyzer",
       "name": "Repository Tree Analyzer",
       "source_file": "Tools/openwebui_ext/tools/repo_tree_analyzer.py",
-      "config_example": null
-    },
-    {
-      "id": "safe_http_fetcher",
-      "name": "Safe HTTP Fetcher",
-      "source_file": "Tools/openwebui_ext/tools/safe_http_fetcher.py",
       "config_example": null
     },
     {

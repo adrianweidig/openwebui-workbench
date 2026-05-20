@@ -62,7 +62,8 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
 Der generierte Importplan liegt unter `Modelle/dist/openwebui-registration-plan.json` und erzwingt die Reihenfolge Tools, Filter, Skills, Modelle.
-Die Modellprofile werden dabei auf 256k `max_tokens`, natives Tool-Calling, eingebettete Modellicons und ein High-Reasoning-Systemprofil normalisiert; Systemprompt, Mainprompt und Fachwissen sind im Sammelimport enthalten. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden für Mistral-Medium-3.5-128B-Kompatibilität nicht gesetzt.
+Die Modellprofile werden dabei auf 256k `max_tokens`, natives Offline-Tool-Calling, eingebettete Modellicons und ein High-Reasoning-Systemprofil normalisiert; Systemprompt, Mainprompt und Fachwissen sind im Sammelimport enthalten. Öffentliche Netzwerktools werden nicht zugewiesen. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden für Mistral-Medium-3.5-128B-Kompatibilität nicht gesetzt.
+Die Datei `Modelle/dist/openwebui-model-params-summary.json` listet die Parameter je Modell explizit zur schnellen Kontrolle.
 
 ### Modelle per Volume oder Dateimount
 

@@ -25,8 +25,6 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 | MCP/OpenAPI sicher importieren | `openapi_schema_inspector.py` | Importentscheidung manuell | `safe-mcp-openapi-import` |
 | Docker/OpenWebUI triagieren | `docker_compose_triage.py` | Logauszug im Chat | `docker-openwebui-troubleshooting` |
 | Repository-Struktur prüfen | `repo_tree_analyzer.py` | Dateibaum im Chat | `repository-maintenance` |
-| GitHub read-only prüfen | `github_repo_inspector.py` | eingefügte Metadaten | `research-grounding` |
-| HTTP read-only prüfen | `safe_http_fetcher.py` | bereitgestellter HTML/Text | `research-grounding` |
 | Skills erzeugen | `markdown_skill_builder.py` | Skill-Template manuell | `openwebui-tool-authoring` |
 
 ## Empfohlene Modellprofile
@@ -45,13 +43,13 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 
 ### Integration Agent
 
-- Tools: OpenAPI Inspector, Safe HTTP Fetcher, Docker Compose Triage.
+- Tools: OpenAPI Inspector, Docker Compose Triage.
 - Skills: `safe-mcp-openapi-import`, `api-integration-debugging`, `docker-openwebui-troubleshooting`.
 - Zweck: lokale Schnittstellen und Toolserver sicher anbinden.
 
 ### Review Agent
 
-- Tools: Repo Tree Analyzer, JSON/CSV/Text Validator, GitHub Repo Inspector.
+- Tools: Repo Tree Analyzer, JSON/CSV/Text Validator.
 - Skills: `code-review-deep`, `repository-maintenance`, `secure-tool-usage`.
 - Zweck: Code-, Struktur- und Änderungsprüfung.
 
@@ -60,3 +58,4 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 - Tools mit Shell-, Dateischreib-, Deployment- oder Admin-API-Zugriff.
 - Drittanbieter-Plugins mit Same-Origin-Iframe-Anforderung, Remote-CDNs oder unklarer CSP, solange kein lokaler Review abgeschlossen ist.
 - Externe API-Tools mit Tokenpflicht in einer Air-Gap-Umgebung.
+- `safe_http_fetcher.py` und `github_repo_inspector.py` nur in separaten, bewusst nicht-air-gapped Profilen importieren; sie sind kein Offline-Default und keinem Modell zugewiesen.

@@ -24,7 +24,7 @@ except Exception:  # pragma: no cover
 
 
 DEFAULT_PROFILES = [
-    {"name": "Recherche-Subagent", "capabilities": ["research", "web", "quellen", "internet"], "tools": ["internet_research_tool", "safe_http_fetcher"]},
+    {"name": "Lokale-Recherche-Subagent", "capabilities": ["research", "quellen", "lokal", "dokumente"], "tools": ["repo_tree_analyzer", "json_csv_text_validator"]},
     {"name": "Code-Subagent", "capabilities": ["code", "tests", "debugging", "refactoring"], "tools": ["air_gapped_jupyter_python", "repo_tree_analyzer"]},
     {"name": "Daten-Subagent", "capabilities": ["csv", "json", "daten", "analyse", "tabellen"], "tools": ["json_csv_text_validator", "air_gapped_jupyter_python"]},
     {"name": "Artefakt-Subagent", "capabilities": ["html", "pdf", "zip", "presentation", "diagramm"], "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3"]},

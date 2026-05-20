@@ -11,9 +11,7 @@
     "air_gapped_jupyter_python",
     "comfyui_workflow_inspector",
     "docker_compose_triage",
-    "github_repo_inspector",
     "inline_visuals_toolkit_v3",
-    "internet_research_tool",
     "json_csv_text_validator",
     "markdown_skill_builder",
     "mediawiki_legacy_crawler",
@@ -21,14 +19,33 @@
     "openapi_schema_inspector",
     "parallel_task_planner",
     "repo_tree_analyzer",
-    "safe_http_fetcher",
     "subagent_orchestrator",
     "tool_skill_overlay_planner"
+  ],
+  "offline_default_tools": [
+    "air_gapped_jupyter_python",
+    "comfyui_workflow_inspector",
+    "docker_compose_triage",
+    "inline_visuals_toolkit_v3",
+    "json_csv_text_validator",
+    "markdown_skill_builder",
+    "mediawiki_legacy_crawler",
+    "offline_artifact_workbench",
+    "openapi_schema_inspector",
+    "parallel_task_planner",
+    "repo_tree_analyzer",
+    "subagent_orchestrator",
+    "tool_skill_overlay_planner"
+  ],
+  "optional_network_tools_not_in_offline_default": [
+    "github_repo_inspector",
+    "safe_http_fetcher"
   ],
   "filters_before_models": [
     "context_compressor_filter"
   ],
   "model_import_file": "Modelle/dist/openwebui-models-import.json",
+  "model_params_summary_file": "Modelle/dist/openwebui-model-params-summary.json",
   "generic_icon_manifest": "Modelle/dist/artifacts/icons/openwebui-generic-icons.json",
   "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
   "model_params_policy": {
@@ -95,6 +112,7 @@
     "meta.profile_image_url"
   ],
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
+  "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not assigned to models and are not part of tools_first.",
   "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
   "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
   "chat_models_configured": [

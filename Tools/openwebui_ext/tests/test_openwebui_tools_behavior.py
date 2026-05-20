@@ -51,11 +51,6 @@ class OpenWebUIToolBehaviorTests(unittest.TestCase):
         result = asyncio.run(tool.create_svg_chart("Smoke", '[{"label":"A","value":2},{"label":"B","value":3}]'))
         self.assertIn("<svg", result)
 
-    def test_internet_research_tool_rejects_non_http_without_network(self) -> None:
-        tool = load(TOOLS_DIR / "internet_research_tool.py")
-        result = asyncio.run(tool.fetch_public_page("file:///etc/passwd"))
-        self.assertIn("Fehler", result)
-
     def test_json_csv_text_validator_smoke(self) -> None:
         tool = load(TOOLS_DIR / "json_csv_text_validator.py")
         result = asyncio.run(tool.validate_json('{"ok": true, "items": [1, 2]}'))
@@ -103,7 +98,7 @@ class OpenWebUIToolBehaviorTests(unittest.TestCase):
 
     def test_subagent_orchestrator_smoke(self) -> None:
         tool = load(TOOLS_DIR / "subagent_orchestrator.py")
-        result = asyncio.run(tool.build_subagent_jobs("Smoke", '[{"title":"Recherche","task":"Finde Quellen","capabilities":["research","web"]}]'))
+        result = asyncio.run(tool.build_subagent_jobs("Smoke", '[{"title":"Recherche","task":"Prüfe lokale Quellen","capabilities":["research","lokal"]}]'))
         self.assertIn("Subagent-Arbeitspakete", result)
 
     def test_tool_skill_overlay_planner_smoke(self) -> None:

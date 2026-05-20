@@ -9,9 +9,7 @@
     "air_gapped_jupyter_python",
     "comfyui_workflow_inspector",
     "docker_compose_triage",
-    "github_repo_inspector",
     "inline_visuals_toolkit_v3",
-    "internet_research_tool",
     "json_csv_text_validator",
     "markdown_skill_builder",
     "mediawiki_legacy_crawler",
@@ -19,9 +17,27 @@
     "openapi_schema_inspector",
     "parallel_task_planner",
     "repo_tree_analyzer",
-    "safe_http_fetcher",
     "subagent_orchestrator",
     "tool_skill_overlay_planner"
+  ],
+  "offline_default_tool_import_order": [
+    "air_gapped_jupyter_python",
+    "comfyui_workflow_inspector",
+    "docker_compose_triage",
+    "inline_visuals_toolkit_v3",
+    "json_csv_text_validator",
+    "markdown_skill_builder",
+    "mediawiki_legacy_crawler",
+    "offline_artifact_workbench",
+    "openapi_schema_inspector",
+    "parallel_task_planner",
+    "repo_tree_analyzer",
+    "subagent_orchestrator",
+    "tool_skill_overlay_planner"
+  ],
+  "optional_network_tools_not_in_offline_default": [
+    "github_repo_inspector",
+    "safe_http_fetcher"
   ],
   "tools": [
     {
@@ -75,9 +91,9 @@
       "name": "GitHub Repo Inspector",
       "path": "Tools/openwebui_ext/tools/github_repo_inspector.py",
       "purpose": "Read-only GitHub repository metadata inspection with optional token support through Valves or OpenWebUI OAuth.",
-      "offline": true,
+      "offline": false,
       "configuration": [],
-      "sha256": "89b61ada18cba02d2d1278ed4af03421e23d94688bb794fcbe69a8c482e80642",
+      "sha256": "b348e7b03b05a40d7de0eee980dc23bae97aea31201829a212948d47189b8091",
       "importable": true,
       "methods": [
         "evaluate_tool_candidate",
@@ -98,21 +114,6 @@
         "create_status_dashboard",
         "create_svg_chart",
         "create_visual_brief"
-      ]
-    },
-    {
-      "id": "internet_research_tool",
-      "name": "Internet Research Tool",
-      "path": "Tools/openwebui_ext/tools/internet_research_tool.py",
-      "purpose": "Public web search and page fetching for OpenWebUI with SSRF protections, timeouts and citations.",
-      "offline": false,
-      "configuration": [],
-      "sha256": "9181dbbe4ad4686bcd746a6dcd372aca0a0251e43ccfedc6e1b76b388aa0e83d",
-      "importable": true,
-      "methods": [
-        "build_research_brief",
-        "fetch_public_page",
-        "search_web"
       ]
     },
     {
@@ -223,9 +224,9 @@
       "name": "Safe HTTP Fetcher",
       "path": "Tools/openwebui_ext/tools/safe_http_fetcher.py",
       "purpose": "Bounded HTTP GET and HEAD inspection for public URLs with SSRF protections.",
-      "offline": true,
+      "offline": false,
       "configuration": [],
-      "sha256": "b893b37e785dedd404313dae7515062942aa502aeb5d192d813a6efb2b1acba1",
+      "sha256": "b3cfda54ba841cabd273d99527cbdf32578c6b15d721e44da2e7a973efdd54f9",
       "importable": true,
       "methods": [
         "check_status",
@@ -239,7 +240,7 @@
       "purpose": "Build OpenWebUI-ready subagent rosters, delegation prompts and result merges for agentic offline workflows.",
       "offline": true,
       "configuration": [],
-      "sha256": "b8ee1443c73dc65c2106ae07056380b81cac80ad604a15273f6e116a2f1ec379",
+      "sha256": "9ed7b06bffaf09c9e7969a371571599b4990d2c7a2cee9dca9ae496b85696ce3",
       "importable": true,
       "methods": [
         "build_subagent_jobs",

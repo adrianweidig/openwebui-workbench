@@ -35,7 +35,7 @@
       "name": "GitHub Repo Inspector",
       "path": "Tools/openwebui_ext/tools/github_repo_inspector.py",
       "purpose": "Read-only GitHub repository metadata inspection with optional token support through Valves or OpenWebUI OAuth.",
-      "offline": true,
+      "offline": false,
       "configuration": []
     },
     {
@@ -44,14 +44,6 @@
       "path": "Tools/openwebui_ext/tools/inline_visuals_toolkit_v3.py",
       "purpose": "Offline SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual-Briefs ohne externe Assets erzeugen.",
       "offline": true,
-      "configuration": []
-    },
-    {
-      "id": "internet_research_tool",
-      "name": "Internet Research Tool",
-      "path": "Tools/openwebui_ext/tools/internet_research_tool.py",
-      "purpose": "Public web search and page fetching for OpenWebUI with SSRF protections, timeouts and citations.",
-      "offline": false,
       "configuration": []
     },
     {
@@ -117,7 +109,7 @@
       "name": "Safe HTTP Fetcher",
       "path": "Tools/openwebui_ext/tools/safe_http_fetcher.py",
       "purpose": "Bounded HTTP GET and HEAD inspection for public URLs with SSRF protections.",
-      "offline": true,
+      "offline": false,
       "configuration": []
     },
     {

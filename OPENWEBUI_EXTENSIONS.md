@@ -29,11 +29,10 @@ Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die gesc
 
 ## Tool-Katalog
 
-- `safe_http_fetcher.py`: öffentliche HTTP-GET/HEAD-Prüfung mit SSRF-Schutz.
-- `internet_research_tool.py`: öffentliche Websuche, Recherchebriefs und Seitenabrufe mit SSRF-Schutz.
+- `safe_http_fetcher.py`: optionales Netzwerktool für HTTP-GET/HEAD-Prüfung mit SSRF-Schutz; nicht Teil des Offline-Standardimports.
 - `openapi_schema_inspector.py`: OpenAPI-JSON lokal auswerten.
 - `json_csv_text_validator.py`: JSON, CSV und Text validieren.
-- `github_repo_inspector.py`: GitHub-Repositories read-only prüfen.
+- `github_repo_inspector.py`: optionales Netzwerktool für GitHub-Repositories read-only; nicht Teil des Offline-Standardimports.
 - `docker_compose_triage.py`: Docker-Compose- und OpenWebUI-Fehlertexte analysieren.
 - `repo_tree_analyzer.py`: eingefügte Repository-Bäume auswerten.
 - `markdown_skill_builder.py`: OpenWebUI-Skill-Markdown erzeugen.
@@ -104,7 +103,7 @@ Das Skript arbeitet in dieser Reihenfolge:
 5. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
 6. Optional Offline-ZIP-Pakete neu bauen.
 
-Chat-Modelle erhalten `meta.toolIds`, `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `params.function_calling: "native"`, `params.max_tokens: 262144`, use-case-abhängige `params.temperature`, eingebettete SVG-Icons in `meta.profile_image_url` und ein High-Reasoning-Systemprofil inklusive Systemprompt, Mainprompt und Fachwissen. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden nicht gesetzt, damit die Profile mit Mistral Medium 3.5 128B kompatibel bleiben. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
+Chat-Modelle erhalten nur Offline-Default-Tools in `meta.toolIds`, außerdem `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `params.function_calling: "native"`, `params.max_tokens: 262144`, use-case-abhängige `params.temperature`, eingebettete SVG-Icons in `meta.profile_image_url` und ein High-Reasoning-Systemprofil inklusive Systemprompt, Mainprompt und Fachwissen. Öffentliche Netzwerktools werden im Offline-Standard nicht zugewiesen. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden nicht gesetzt, damit die Profile mit Mistral Medium 3.5 128B kompatibel bleiben. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
 
 ## Wartung
 

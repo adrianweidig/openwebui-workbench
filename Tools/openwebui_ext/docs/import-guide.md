@@ -22,8 +22,8 @@
 - Tools nur Modellen zuordnen, deren Aufgabe den Tool-Zweck benötigt.
 - Skills können modellgebunden werden, wenn sie regelmäßig gebraucht werden.
 - Für Tools Native Function Calling bevorzugen und Status-/Citation-Events nutzen.
-- Der Standard-Workflow ist: zuerst alle Dateien aus `Tools/openwebui_ext/tools/*.py` und `Tools/jupyter/jupyter_tool.py` importieren, danach Functions/Filter und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
-- `internet_research_tool.py` benötigt ausgehenden Internetzugriff des OpenWebUI-Servers; ohne Netzwerk bleibt das Tool importierbar, liefert aber saubere Fehlermeldungen.
+- Der Standard-Workflow ist offline: zuerst nur die Tools aus `Modelle/dist/openwebui-registration-plan.json` unter `tools_first` importieren, danach Functions/Filter und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
+- Öffentliche Netzwerktools wie `safe_http_fetcher.py` und `github_repo_inspector.py` sind nicht Teil des Offline-Standardimports und werden keinem Modellprofil standardmäßig zugewiesen.
 
 ## Rechtevergabe
 

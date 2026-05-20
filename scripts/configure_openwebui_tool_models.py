@@ -26,6 +26,7 @@ TOOLS_FALLBACK_BUNDLE = MODEL_DIST / "tools_fallback_bundle.json"
 FUNCTIONS_FALLBACK_BUNDLE = MODEL_DIST / "functions_fallback_bundle.json"
 MODEL_IMPORT = MODEL_DIST / "openwebui-models-import.json"
 MODEL_FALLBACK = MODEL_DIST / "models_fallback_bundle.json"
+MODEL_PARAMS_SUMMARY = MODEL_DIST / "openwebui-model-params-summary.json"
 MODEL_ARTIFACTS = MODEL_DIST / "artifacts" / "models"
 MODEL_ICONS = ROOT / "Modelle" / "icons"
 MODEL_ICON_MANIFEST = MODEL_ICONS / "openwebui-generic-icons.json"
@@ -40,6 +41,7 @@ CHAT_MODEL_FILTER_MODE = "all_validated_default_filters"
 MAX_MODEL_TOKENS = 262144
 SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "max_tokens", "stop", "function_calling"}
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
+OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
 HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
@@ -233,7 +235,7 @@ def discover_tools() -> List[ToolRecord]:
                 name=str(indexed.get("name") or meta.get("title") or tool_id.replace("_", " ").title()),
                 path=rel(path),
                 purpose=str(indexed.get("purpose") or meta.get("description") or "OpenWebUI Workspace Tool."),
-                offline=parse_bool(indexed.get("offline", meta.get("offline")), True),
+                offline=parse_bool(meta.get("offline", indexed.get("offline")), True),
                 configuration=list(indexed.get("configuration", [])),
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                 importable=importable,
@@ -241,6 +243,10 @@ def discover_tools() -> List[ToolRecord]:
             )
         )
     return records
+
+
+def offline_default_tool_records(records: List[ToolRecord]) -> List[ToolRecord]:
+    return [record for record in records if record.importable and record.id not in OFFLINE_EXCLUDED_TOOL_IDS]
 
 
 def discover_functions() -> List[FunctionRecord]:
@@ -288,14 +294,20 @@ def sync_tools_index(records: List[ToolRecord], write: bool) -> bool:
 
 
 def write_tool_artifacts(records: List[ToolRecord], write: bool) -> bool:
+    offline_records = offline_default_tool_records(records)
+    optional_records = [record for record in records if record.importable and record.id in OFFLINE_EXCLUDED_TOOL_IDS]
     registry = {
         "schema": "openwebui-tool-registry/v1",
         "order": ["tools", "skills", "models"],
-        "tool_import_order": [record.id for record in records if record.importable],
+        "tool_import_order": [record.id for record in offline_records],
+        "offline_default_tool_import_order": [record.id for record in offline_records],
+        "optional_network_tools_not_in_offline_default": [record.id for record in optional_records],
         "tools": [record.__dict__ for record in records],
     }
     fallback = {
         "schema": "openwebui-tool-bundle-fallback/v1",
+        "offline_default_tool_import_order": [record.id for record in offline_records],
+        "optional_network_tools_not_in_offline_default": [record.id for record in optional_records],
         "tools": [
             {
                 "id": record.id,
@@ -303,8 +315,7 @@ def write_tool_artifacts(records: List[ToolRecord], write: bool) -> bool:
                 "source_file": record.path,
                 "config_example": "Tools/jupyter/jupyter_config.example.json" if record.id == "air_gapped_jupyter_python" else None,
             }
-            for record in records
-            if record.importable
+            for record in offline_records
         ],
     }
     changed = (not TOOL_REGISTRY.exists() or read_json(TOOL_REGISTRY) != registry) or read_json(TOOLS_FALLBACK_BUNDLE) != fallback
@@ -496,7 +507,7 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List
 
 
 def apply_model_config(tool_records: List[ToolRecord], function_records: List[FunctionRecord], write: bool) -> Tuple[bool, List[Dict[str, Any]]]:
-    tool_ids = [record.id for record in tool_records if record.importable]
+    tool_ids = [record.id for record in offline_default_tool_records(tool_records)]
     filter_ids = [record.id for record in function_records if record.importable and record.function_type == "filter"]
     changed = False
     configured_models: List[Dict[str, Any]] = []
@@ -518,8 +529,48 @@ def apply_model_config(tool_records: List[ToolRecord], function_records: List[Fu
     return changed, configured_models
 
 
+def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> bool:
+    def has_prompt_sections(model: Dict[str, Any]) -> bool:
+        params = model.get("params", {})
+        if not isinstance(params, dict):
+            return False
+        system_text = str(params.get("system", ""))
+        return all(marker in system_text for marker in ["Systemprompt", "Mainprompt", "Fachwissen"])
+
+    summary = {
+        "schema": "openwebui-model-params-summary/v1",
+        "expected_max_tokens": MAX_MODEL_TOKENS,
+        "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+        "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
+        "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
+        "models": [
+            {
+                "id": model.get("id"),
+                "name": model.get("name"),
+                "max_tokens": model.get("params", {}).get("max_tokens") if isinstance(model.get("params"), dict) else None,
+                "temperature": model.get("params", {}).get("temperature") if isinstance(model.get("params"), dict) else None,
+                "top_p": model.get("params", {}).get("top_p") if isinstance(model.get("params"), dict) else None,
+                "function_calling": model.get("params", {}).get("function_calling") if isinstance(model.get("params"), dict) else None,
+                "runtime_param_keys": sorted(model.get("params", {}).keys()) if isinstance(model.get("params"), dict) else [],
+                "has_systemprompt_mainprompt_fachwissen": has_prompt_sections(model),
+                "has_embedded_svg_icon": str(model.get("meta", {}).get("profile_image_url", "")).startswith("data:image/svg+xml;base64,")
+                if isinstance(model.get("meta"), dict)
+                else False,
+                "assigned_tool_ids": model.get("meta", {}).get("toolIds", []) if isinstance(model.get("meta"), dict) else [],
+            }
+            for model in models
+        ],
+    }
+    changed = not MODEL_PARAMS_SUMMARY.exists() or read_json(MODEL_PARAMS_SUMMARY) != summary
+    if changed and write:
+        write_json(MODEL_PARAMS_SUMMARY, summary)
+    return changed
+
+
 def write_registration_plan(tool_records: List[ToolRecord], function_records: List[FunctionRecord], models: List[Dict[str, Any]], write: bool) -> bool:
     filter_ids = [record.id for record in function_records if record.importable and record.function_type == "filter"]
+    offline_tool_ids = [record.id for record in offline_default_tool_records(tool_records)]
+    optional_network_tool_ids = [record.id for record in tool_records if record.importable and record.id in OFFLINE_EXCLUDED_TOOL_IDS]
     plan = {
         "schema": "openwebui-registration-plan/v1",
         "order": [
@@ -529,9 +580,12 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "4_import_or_update_models",
             "5_enable_user_or_group_access",
         ],
-        "tools_first": [record.id for record in tool_records if record.importable],
+        "tools_first": offline_tool_ids,
+        "offline_default_tools": offline_tool_ids,
+        "optional_network_tools_not_in_offline_default": optional_network_tool_ids,
         "filters_before_models": filter_ids,
         "model_import_file": rel(MODEL_IMPORT),
+        "model_params_summary_file": rel(MODEL_PARAMS_SUMMARY),
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
         "model_params_policy": {
@@ -556,6 +610,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
+        "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not assigned to models and are not part of tools_first.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
@@ -611,6 +666,9 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if not isinstance(tool_ids, list) or not tool_ids:
             issues.append(f"Chat-Modell {model_id} hat keine toolIds")
         else:
+            forbidden = sorted(set(tool_ids).intersection(OFFLINE_EXCLUDED_TOOL_IDS))
+            if forbidden:
+                issues.append(f"Chat-Modell {model_id} referenziert im Offline-Standard ausgeschlossene Tools: {', '.join(forbidden)}")
             missing = sorted(set(tool_ids) - valid_tool_ids)
             if missing:
                 issues.append(f"Chat-Modell {model_id} referenziert unbekannte Tools: {', '.join(missing)}")
@@ -645,6 +703,7 @@ def rebuild_zips() -> None:
             TOOLS_FALLBACK_BUNDLE,
             FUNCTIONS_FALLBACK_BUNDLE,
             REGISTRATION_PLAN,
+            MODEL_PARAMS_SUMMARY,
             MODEL_DIST / "manual_import_checklist.md",
         ]:
             if path.exists():
@@ -668,6 +727,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     changed_function_artifacts = write_function_artifacts(function_records, args.write)
     changed_icon_artifacts = sync_icon_artifacts(args.write)
     changed_models, models = apply_model_config(records, function_records, args.write)
+    changed_model_params_summary = write_model_params_summary(models, args.write)
     changed_plan = write_registration_plan(records, function_records, models, args.write)
     issues = validate(records, function_records, models)
 
@@ -680,7 +740,8 @@ def main(argv: Iterable[str] | None = None) -> int:
     print(f"- Chat-Modelle: {sum(1 for model in models if not is_non_chat_model(model))}")
     print(f"- Non-Chat-Modelle ausgeschlossen: {sum(1 for model in models if is_non_chat_model(model))}")
     print(f"- Icon-Artefakte geändert: {changed_icon_artifacts}")
-    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_icon_artifacts or changed_models or changed_plan}")
+    print(f"- Modellparameter-Zusammenfassung geändert: {changed_model_params_summary}")
+    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_icon_artifacts or changed_models or changed_model_params_summary or changed_plan}")
     if args.write and args.rebuild_zips:
         rebuild_zips()
         print("- ZIP-Artefakte: neu gebaut")

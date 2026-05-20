@@ -3,6 +3,7 @@ title: GitHub Repo Inspector
 description: Read-only GitHub repository metadata inspection with optional token support through Valves or OpenWebUI OAuth.
 version: 1.0.0
 license: MIT
+offline: false
 security: Performs read-only GET requests to api.github.com for explicit owner/repo inputs. Tokens are optional and never returned.
 """
 

@@ -3,6 +3,7 @@ title: Safe HTTP Fetcher
 description: Bounded HTTP GET and HEAD inspection for public URLs with SSRF protections.
 version: 1.0.0
 license: MIT
+offline: false
 security: Only http/https URLs are allowed. Private, loopback, link-local and multicast hosts are blocked by default. No cookies, secrets, POST requests, shell commands or filesystem access are used.
 """
 

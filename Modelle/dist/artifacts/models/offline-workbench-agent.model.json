@@ -23,9 +23,7 @@
         "air_gapped_jupyter_python",
         "comfyui_workflow_inspector",
         "docker_compose_triage",
-        "github_repo_inspector",
         "inline_visuals_toolkit_v3",
-        "internet_research_tool",
         "json_csv_text_validator",
         "markdown_skill_builder",
         "mediawiki_legacy_crawler",
@@ -33,7 +31,6 @@
         "openapi_schema_inspector",
         "parallel_task_planner",
         "repo_tree_analyzer",
-        "safe_http_fetcher",
         "subagent_orchestrator",
         "tool_skill_overlay_planner"
       ],

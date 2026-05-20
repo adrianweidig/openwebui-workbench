@@ -2,11 +2,7 @@
 
 ## safe_http_fetcher.py
 
-Sichere öffentliche HTTP-GET/HEAD-Abfragen mit Timeout, Größenlimit, Redirect-Limit, Header-Redaktion und SSRF-Schutz. Nicht für interne Netzwerkdiagnose gedacht.
-
-## internet_research_tool.py
-
-Öffentliche Websuche, Recherchebriefs und Seitenabrufe mit Timeout, Größenlimit, Citation-Events und SSRF-Schutz. Das Tool nutzt einen konfigurierbaren öffentlichen HTML-Suchendpunkt und blockiert private, lokale oder reservierte Netzwerkziele standardmäßig.
+Optionales Netzwerktool für explizit erlaubte HTTP-GET/HEAD-Abfragen mit Timeout, Größenlimit, Redirect-Limit, Header-Redaktion und SSRF-Schutz. Nicht Teil des Offline-Standardimports und keinem Modellprofil standardmäßig zugewiesen.
 
 ## openapi_schema_inspector.py
 
@@ -18,7 +14,7 @@ Validiert JSON, CSV und Text. Markiert sensible Feldnamen und redigiert offensic
 
 ## github_repo_inspector.py
 
-Liest GitHub-Repository-Metadaten read-only über die GitHub-API. Optionaler Token kommt aus Valves oder OAuth und wird nie ausgegeben.
+Optionales Netzwerktool für GitHub-Repository-Metadaten read-only über die GitHub-API. Optionaler Token kommt aus Valves oder OAuth und wird nie ausgegeben. Nicht Teil des Offline-Standardimports und keinem Modellprofil standardmäßig zugewiesen.
 
 ## docker_compose_triage.py
 
@@ -50,7 +46,7 @@ Zerlegt komplexe Aufgaben in dependency-sichere Parallelwellen, Subagent-Arbeits
 
 ## subagent_orchestrator.py
 
-Erzeugt OpenWebUI-fähige Subagent-Roster, Delegationsprompts und Ergebnis-Merges. Es führt keine Modelle selbst aus, sondern macht agentische Arbeitsschritte reproduzierbar, damit Nutzer Subagent-Jobs mit den importierten Modellprofilen und Tools ausführen können.
+Erzeugt OpenWebUI-fähige Subagent-Roster, Delegationsprompts und Ergebnis-Merges für lokale/offline Arbeitspakete. Es führt keine Modelle selbst aus, sondern macht agentische Arbeitsschritte reproduzierbar, damit Nutzer Subagent-Jobs mit den importierten Modellprofilen und Offline-Tools ausführen können.
 
 ## tool_skill_overlay_planner.py
 
