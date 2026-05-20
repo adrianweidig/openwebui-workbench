@@ -8,6 +8,7 @@ Dieser Ordner enthält die operativ relevanten Tool-Artefakte.
 - `openwebui_ext/`: zusätzliche direkt importierbare OpenWebUI-Tools, Skills, Doku und Tests
 - `dist/`: portables Offline-Paket für Tools und Skills
 - `index.json`: Tool-Index für die lokale Übersicht
+- `import_openwebui_workspace.py`: API-Importer für Tools, Functions/Filter, Skills, Knowledge und Modelle
 
 ## Nutzung
 
@@ -24,3 +25,15 @@ Weitere produktive Tools liegen unter `openwebui_ext/tools/`. Für den Offline-C
 - `openwebui_ext/tools/tool_skill_overlay_planner.py`: Tools und Skills redundant auf Modellprofile verteilen.
 - `openwebui_ext/tools/comfyui_workflow_inspector.py`: ComfyUI-Workflows offline prüfen und Setup-Checklisten erzeugen.
 - `openwebui_ext/tools/mediawiki_legacy_crawler.py`: interne alte MediaWiki-Server per API und Legacy-Login crawlen.
+
+## API-Import
+
+`import_openwebui_workspace.py` importiert den Workspace in eine laufende OpenWebUI-Instanz. Es reicht, einen Admin-API-Token per Umgebungsvariable oder im Skript-Platzhalter zu setzen:
+
+```powershell
+$env:OPENWEBUI_ADMIN_TOKEN="YOUR_OPEN_WEBUI_API_KEY"
+python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
+```
+
+Das Skript nutzt die erzeugten Registries, importiert Tools, Functions/Filter und Skills, lädt `mainprompt.md` und `fachwissen.md` je Modell als Knowledge hoch und importiert anschließend die Modellprofile inklusive eingebetteter Icons.
+Es wird auch in `dist/openwebui-tools-skills-offline.zip` mit ausgeliefert.

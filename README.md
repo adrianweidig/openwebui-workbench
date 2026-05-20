@@ -62,8 +62,11 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
 Der generierte Importplan liegt unter `Modelle/dist/openwebui-registration-plan.json` und erzwingt die Reihenfolge Tools, Filter, Skills, Modelle.
-Die Modellprofile werden dabei auf 256k `max_tokens`, natives Offline-Tool-Calling, eingebettete Modellicons und ein High-Reasoning-Systemprofil normalisiert; Systemprompt, Mainprompt und Fachwissen sind im Sammelimport enthalten. Öffentliche Netzwerktools werden nicht zugewiesen. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden für Mistral-Medium-3.5-128B-Kompatibilität nicht gesetzt.
+Die Modellprofile werden dabei auf natives Offline-Tool-Calling, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte, ein High-Reasoning-Systemprofil und eine verbindliche Tool-Nutzungssektion normalisiert. Systemprompt, Mainprompt und Fachwissen sind im Sammelimport enthalten. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
+Die Tool-Nutzungssektion erzwingt passende Tools, sobald Dateien, strukturierte Daten, Code, Artefakte, APIs, Docker-/OpenWebUI-Fehler, Visuals, Parallelplanung, Modell-/Tool-/Skill-Overlays, ComfyUI-Workflows oder Skill-Erstellung betroffen sind.
 Die Datei `Modelle/dist/openwebui-model-params-summary.json` listet die Parameter je Modell explizit zur schnellen Kontrolle.
+
+Für API-basierten Direktimport kann `Tools/import_openwebui_workspace.py` genutzt werden. Dort nur den OpenWebUI-Admin-API-Token als `OPENWEBUI_ADMIN_TOKEN` setzen oder per Umgebungsvariable übergeben; das Skript importiert Tools, Functions/Filter, Skills, Modellprofile, eingebettete Icons und hängt `mainprompt.md` sowie `fachwissen.md` als Knowledge pro Modell an.
 
 ### Modelle per Volume oder Dateimount
 
