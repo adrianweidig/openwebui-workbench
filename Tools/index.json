@@ -47,6 +47,14 @@
       "configuration": []
     },
     {
+      "id": "internet_research_tool",
+      "name": "Internet Research Tool",
+      "path": "Tools/openwebui_ext/tools/internet_research_tool.py",
+      "purpose": "Public web search and page fetching for OpenWebUI with SSRF protections, timeouts and citations.",
+      "offline": false,
+      "configuration": []
+    },
+    {
       "id": "json_csv_text_validator",
       "name": "JSON CSV Text Validator",
       "path": "Tools/openwebui_ext/tools/json_csv_text_validator.py",
@@ -109,6 +117,14 @@
       "name": "Safe HTTP Fetcher",
       "path": "Tools/openwebui_ext/tools/safe_http_fetcher.py",
       "purpose": "Bounded HTTP GET and HEAD inspection for public URLs with SSRF protections.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "subagent_orchestrator",
+      "name": "Subagent Orchestrator",
+      "path": "Tools/openwebui_ext/tools/subagent_orchestrator.py",
+      "purpose": "Build OpenWebUI-ready subagent rosters, delegation prompts and result merges for agentic offline workflows.",
       "offline": true,
       "configuration": []
     },

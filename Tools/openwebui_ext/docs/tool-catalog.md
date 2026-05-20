@@ -4,6 +4,10 @@
 
 Sichere öffentliche HTTP-GET/HEAD-Abfragen mit Timeout, Größenlimit, Redirect-Limit, Header-Redaktion und SSRF-Schutz. Nicht für interne Netzwerkdiagnose gedacht.
 
+## internet_research_tool.py
+
+Öffentliche Websuche, Recherchebriefs und Seitenabrufe mit Timeout, Größenlimit, Citation-Events und SSRF-Schutz. Das Tool nutzt einen konfigurierbaren öffentlichen HTML-Suchendpunkt und blockiert private, lokale oder reservierte Netzwerkziele standardmäßig.
+
 ## openapi_schema_inspector.py
 
 Analysiert eingefügtes OpenAPI-JSON lokal. Führt keine API-Aufrufe aus und verarbeitet keine Tokens.
@@ -43,6 +47,10 @@ Erzeugt offline nutzbare SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual
 ## parallel_task_planner.py
 
 Zerlegt komplexe Aufgaben in dependency-sichere Parallelwellen, Subagent-Arbeitspakete und konsolidierte Ergebnisberichte. Das Tool führt selbst keine Subagenten oder externen Tools aus; es verhindert damit Race Conditions durch Planung statt verdeckter Ausführung.
+
+## subagent_orchestrator.py
+
+Erzeugt OpenWebUI-fähige Subagent-Roster, Delegationsprompts und Ergebnis-Merges. Es führt keine Modelle selbst aus, sondern macht agentische Arbeitsschritte reproduzierbar, damit Nutzer Subagent-Jobs mit den importierten Modellprofilen und Tools ausführen können.
 
 ## tool_skill_overlay_planner.py
 

@@ -22,6 +22,8 @@
 - Tools nur Modellen zuordnen, deren Aufgabe den Tool-Zweck benötigt.
 - Skills können modellgebunden werden, wenn sie regelmäßig gebraucht werden.
 - Für Tools Native Function Calling bevorzugen und Status-/Citation-Events nutzen.
+- Der Standard-Workflow ist: zuerst alle Dateien aus `Tools/openwebui_ext/tools/*.py` und `Tools/jupyter/jupyter_tool.py` importieren, danach Functions/Filter und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
+- `internet_research_tool.py` benötigt ausgehenden Internetzugriff des OpenWebUI-Servers; ohne Netzwerk bleibt das Tool importierbar, liefert aber saubere Fehlermeldungen.
 
 ## Rechtevergabe
 

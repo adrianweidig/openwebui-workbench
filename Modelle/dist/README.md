@@ -17,13 +17,13 @@
 
 `openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht.
 
+Die Chat-Modelle nutzen 256k `max_tokens`, use-case-abhängige `temperature`, natives Tool-Calling, eingebettete Modellicons und ein High-Reasoning-Systemprofil. Systemprompt, Mainprompt und Fachwissen sind im jeweiligen `params.system` enthalten. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden bewusst nicht gesetzt, damit die Profile mit Mistral Medium 3.5 128B kompatibel bleiben.
+
 ## Manuelle Integration
 
 1. In OpenWebUI entweder `openwebui-models-import.json` oder ein einzelnes `model.json` importieren.
 2. Basismodell `coder` prüfen.
 3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
 4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
-5. Optional ein passendes Profilicon aus `artifacts/icons/generic/` zuweisen; die Zuordnung steht in `artifacts/icons/openwebui-generic-icons.json`.
-6. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.
-7. Vor dem Modellimport Tools und Filter gemäß `openwebui-registration-plan.json` importieren.
-8. Danach `openwebui-models-import.json` importieren. Die Chat-Modelle enthalten bereits `meta.toolIds`, `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`.
+5. Vor dem Modellimport Tools, Filter und Skills gemäß `openwebui-registration-plan.json` importieren; dazu gehören Internet-Recherche, Subagent-Orchestrierung, Parallelplanung, Jupyter und Artefakttools.
+6. Danach `openwebui-models-import.json` importieren. Die Chat-Modelle enthalten bereits Tool-/Filter-Zuordnung, eingebettete Icons, Systemprompt, Mainprompt, Fachwissen, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`.

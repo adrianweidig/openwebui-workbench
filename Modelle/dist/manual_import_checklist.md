@@ -20,6 +20,7 @@
 2. Basismodell `coder` prüfen.
 3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
 4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
-5. Optional ein schlichtes Profilicon aus `artifacts/icons/generic/` setzen; `artifacts/icons/openwebui-generic-icons.json` schlägt passende Icons je Modell-ID vor.
-6. Jupyter-Tool nur bei fachlich passenden Modellen aktivieren.
-7. `context_compressor_filter.py` vor dem Modellimport als OpenWebUI-Function/Filter importieren und bei allen Chat-Modellen aktiv lassen.
+5. Vor dem Modellimport alle Tools aus `Tools/openwebui_ext/tools/*.py` und `Tools/jupyter/jupyter_tool.py` importieren, insbesondere Internet-Recherche, Subagent-Orchestrierung, Parallelplanung, Jupyter und Artefakttools.
+6. `context_compressor_filter.py` vor dem Modellimport als OpenWebUI-Function/Filter importieren und bei allen Chat-Modellen aktiv lassen.
+7. Skills aus `Tools/openwebui_ext/skills/*.md` importieren, falls die OpenWebUI-Instanz Skill-Importe unterstützt.
+8. Danach `openwebui-models-import.json` importieren; Icons, Systemprompt, Mainprompt, Fachwissen und Tool-/Filter-Zuordnung sind in den Modellprofilen enthalten.

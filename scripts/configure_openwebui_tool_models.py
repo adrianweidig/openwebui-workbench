@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import importlib.util
 import inspect
@@ -27,6 +28,7 @@ MODEL_IMPORT = MODEL_DIST / "openwebui-models-import.json"
 MODEL_FALLBACK = MODEL_DIST / "models_fallback_bundle.json"
 MODEL_ARTIFACTS = MODEL_DIST / "artifacts" / "models"
 MODEL_ICONS = ROOT / "Modelle" / "icons"
+MODEL_ICON_MANIFEST = MODEL_ICONS / "openwebui-generic-icons.json"
 MODEL_ICON_ARTIFACTS = MODEL_DIST / "artifacts" / "icons"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 TOOLS_ZIP = TOOLS_DIST / "openwebui-tools-skills-offline.zip"
@@ -35,6 +37,45 @@ MODELS_ZIP = MODEL_DIST / "openwebui-offline-artifacts.zip"
 FUNCTION_CALLING_NATIVE = "native"
 CHAT_MODEL_TOOL_MODE = "all_validated_custom_tools"
 CHAT_MODEL_FILTER_MODE = "all_validated_default_filters"
+MAX_MODEL_TOKENS = 262144
+SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "max_tokens", "stop", "function_calling"}
+OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
+HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
+HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
+
+- Arbeite im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch.
+- Nutze verfügbare Offline-Tools und agentische Arbeitsschritte aktiv, wenn sie die Qualität, Reproduzierbarkeit oder Artefakterzeugung verbessern.
+- Halte Antworten trotzdem aufgabengerecht kompakt; sehr lange Ausgaben oder vollständige Artefakte nur erzeugen, wenn die Nutzeraufgabe das verlangt.
+- Die Modellprofile erlauben bis zu 256k Tokens über `max_tokens`, setzen aber keine nicht unterstützten Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` oder `seed`.
+"""
+MODEL_TEMPERATURES = {
+    "anforderungsanalyse-lastenheft": 0.4,
+    "api-schnittstellenentwurf": 0.35,
+    "code-dokumentation": 0.35,
+    "code-review": 0.2,
+    "codeanalyse": 0.2,
+    "codegenerierung": 0.35,
+    "compliance-richtlinienprüfung": 0.2,
+    "debugging-fehleranalyse": 0.2,
+    "dokumentenanalyse": 0.2,
+    "dokumentengenerierung": 0.7,
+    "dokumentenvergleich": 0.15,
+    "dokumentenzusammenfassung": 0.25,
+    "email-kommunikationsassistenz": 0.7,
+    "informationsextraktion": 0.0,
+    "it-helpdesk-diagnose": 0.25,
+    "json-csv-log-analyse": 0.15,
+    "meeting-protokoll-auswertung": 0.35,
+    "offline-workbench-agent": 0.45,
+    "prozess-workflow-dokumentation": 0.4,
+    "präsentationserstellung": 0.7,
+    "refactoring-unterstützung": 0.25,
+    "report-dashboard-vorbereitung": 0.4,
+    "support-ticket-vorbereitung": 0.35,
+    "tabellen-csv-datenanalyse": 0.15,
+    "testfall-generierung": 0.3,
+    "übersetzung-lokalisierung": 0.35,
+}
 EXCLUDED_MODEL_MARKERS = (
     "embedding",
     "embeddings",
@@ -116,6 +157,16 @@ def parse_doc_metadata(path: Path) -> Dict[str, str]:
     return meta
 
 
+def parse_bool(value: Any, default: bool = True) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() not in {"0", "false", "no", "nein", "off"}
+    if value is None:
+        return default
+    return bool(value)
+
+
 def load_module(path: Path) -> ModuleType:
     module_name = "owui_config_tool_" + re.sub(r"\W+", "_", path.stem)
     spec = importlib.util.spec_from_file_location(module_name, path)
@@ -182,7 +233,7 @@ def discover_tools() -> List[ToolRecord]:
                 name=str(indexed.get("name") or meta.get("title") or tool_id.replace("_", " ").title()),
                 path=rel(path),
                 purpose=str(indexed.get("purpose") or meta.get("description") or "OpenWebUI Workspace Tool."),
-                offline=bool(indexed.get("offline", True)),
+                offline=parse_bool(indexed.get("offline", meta.get("offline")), True),
                 configuration=list(indexed.get("configuration", [])),
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                 importable=importable,
@@ -357,6 +408,55 @@ def merge_unique(existing: Any, required: List[str]) -> List[str]:
     return merged
 
 
+def temperature_for_model(model_id: str) -> float:
+    return MODEL_TEMPERATURES.get(model_id, 0.35)
+
+
+def top_p_for_temperature(temperature: float) -> float:
+    if temperature <= 0.2:
+        return 0.8
+    if temperature <= 0.45:
+        return 0.9
+    return 0.95
+
+
+def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
+    if not isinstance(system_prompt, str) or HIGH_REASONING_SYSTEM_MARKER in system_prompt:
+        return system_prompt
+    insert_before = "\n\n        # Systemprompt"
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {HIGH_REASONING_SYSTEM_BLOCK.replace(chr(10), chr(10) + '        ')}{insert_before}", 1)
+    return f"{HIGH_REASONING_SYSTEM_BLOCK}\n\n{system_prompt}"
+
+
+def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
+    system_prompt = ensure_high_reasoning_profile(params.get("system"))
+    temperature = temperature_for_model(model_id)
+    params.clear()
+    if system_prompt is not None:
+        params["system"] = system_prompt
+    params["temperature"] = temperature
+    params["top_p"] = top_p_for_temperature(temperature)
+    params["max_tokens"] = MAX_MODEL_TOKENS
+    params["stop"] = []
+    params["function_calling"] = FUNCTION_CALLING_NATIVE
+
+
+def icon_data_uri_for_model(model_id: str) -> str:
+    if not MODEL_ICON_MANIFEST.exists():
+        return "/static/favicon.png"
+    manifest = read_json(MODEL_ICON_MANIFEST)
+    icon_id = manifest.get("suggested_model_icons", {}).get(model_id) if isinstance(manifest, dict) else None
+    icons = manifest.get("icons", []) if isinstance(manifest, dict) else []
+    for icon in icons:
+        if isinstance(icon, dict) and icon.get("id") == icon_id:
+            icon_path = ROOT / str(icon.get("path", ""))
+            if icon_path.exists() and icon_path.suffix.lower() == ".svg":
+                encoded = base64.b64encode(icon_path.read_bytes()).decode("ascii")
+                return f"data:image/svg+xml;base64,{encoded}"
+    return "/static/favicon.png"
+
+
 def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List[str]) -> Dict[str, Any]:
     model = json.loads(json.dumps(model, ensure_ascii=False))
     meta = model.setdefault("meta", {})
@@ -376,10 +476,12 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List
         capabilities["code_interpreter"] = False
         return model
 
+    model_id = str(model.get("id", ""))
+    meta["profile_image_url"] = icon_data_uri_for_model(model_id)
     meta["toolIds"] = list(tool_ids)
     meta["filterIds"] = merge_unique(meta.get("filterIds"), filter_ids)
     meta["defaultFilterIds"] = merge_unique(meta.get("defaultFilterIds"), filter_ids)
-    params["function_calling"] = FUNCTION_CALLING_NATIVE
+    configure_runtime_params(model_id, params)
     capabilities["builtin_tools"] = True
     capabilities["file_context"] = bool(capabilities.get("file_context", True))
     capabilities["file_upload"] = bool(capabilities.get("file_upload", True))
@@ -431,13 +533,26 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "filters_before_models": filter_ids,
         "model_import_file": rel(MODEL_IMPORT),
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
-        "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE},
+        "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
+        "model_params_policy": {
+            "target_context_tokens": MAX_MODEL_TOKENS,
+            "max_tokens": MAX_MODEL_TOKENS,
+            "reasoning_profile": "high_prompted_in_system",
+            "reasoning_effort_runtime_param": "omitted_for_mistral_medium_3_5_128b_compatibility",
+            "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+            "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
+            "temperature_by_model": MODEL_TEMPERATURES,
+        },
+        "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE, "max_tokens": MAX_MODEL_TOKENS},
         "verified_model_fields_used": [
             "meta.toolIds",
             "meta.filterIds",
             "meta.defaultFilterIds",
             "meta.capabilities.builtin_tools",
             "params.function_calling",
+            "params.max_tokens",
+            "params.temperature",
+            "params.top_p",
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
@@ -478,6 +593,19 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             continue
         if params.get("function_calling") != FUNCTION_CALLING_NATIVE:
             issues.append(f"Chat-Modell {model_id} hat function_calling nicht auf native")
+        profile_image_url = str(meta.get("profile_image_url", ""))
+        if not profile_image_url.startswith("data:image/svg+xml;base64,"):
+            issues.append(f"Chat-Modell {model_id} hat kein eingebettetes SVG-Icon in meta.profile_image_url")
+        unsupported_params = sorted(set(params) - SUPPORTED_MISTRAL_RUNTIME_PARAMS)
+        if unsupported_params:
+            issues.append(f"Chat-Modell {model_id} setzt nicht freigegebene Runtime-Parameter: {', '.join(unsupported_params)}")
+        if params.get("max_tokens") != MAX_MODEL_TOKENS:
+            issues.append(f"Chat-Modell {model_id} nutzt max_tokens nicht auf {MAX_MODEL_TOKENS}")
+        expected_temperature = temperature_for_model(model_id)
+        if params.get("temperature") != expected_temperature:
+            issues.append(f"Chat-Modell {model_id} nutzt temperature nicht use-case-gerecht auf {expected_temperature}")
+        if params.get("top_p") != top_p_for_temperature(expected_temperature):
+            issues.append(f"Chat-Modell {model_id} nutzt top_p nicht passend zur Temperatur")
         if caps.get("builtin_tools") is not True:
             issues.append(f"Chat-Modell {model_id} hat builtin_tools nicht aktiv")
         if not isinstance(tool_ids, list) or not tool_ids:

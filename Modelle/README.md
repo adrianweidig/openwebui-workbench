@@ -15,3 +15,4 @@ Dieser Ordner enthält die operativ relevanten Modellartefakte.
 - Für Transport in die Zielumgebung oder gebündelte Übergabe `dist/` verwenden.
 - Die Einzelmodell-Indizes liegen nur unter `einzelmodelle/`; direkte Kopien im Ordner `Modelle/` werden nicht versioniert.
 - Für die ChatGPT-ähnliche Offline-Gesamterfahrung zuerst `einzelmodelle/offline-workbench-agent/model.json` importieren und mit Jupyter- sowie Artefakt-Tools koppeln.
+- Laufzeitparameter werden über `scripts/configure_openwebui_tool_models.py` vereinheitlicht: 256k `max_tokens`, use-case-abhängige `temperature`, passendes `top_p`, natives Tool-Calling und High-Reasoning-Anweisung im Systemprompt.

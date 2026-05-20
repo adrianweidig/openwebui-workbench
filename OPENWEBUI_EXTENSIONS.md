@@ -30,6 +30,7 @@ Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die gesc
 ## Tool-Katalog
 
 - `safe_http_fetcher.py`: öffentliche HTTP-GET/HEAD-Prüfung mit SSRF-Schutz.
+- `internet_research_tool.py`: öffentliche Websuche, Recherchebriefs und Seitenabrufe mit SSRF-Schutz.
 - `openapi_schema_inspector.py`: OpenAPI-JSON lokal auswerten.
 - `json_csv_text_validator.py`: JSON, CSV und Text validieren.
 - `github_repo_inspector.py`: GitHub-Repositories read-only prüfen.
@@ -40,6 +41,7 @@ Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die gesc
 - `offline_artifact_workbench.py`: offline HTML-, Präsentations-, PDF- und ZIP-Artefakte erzeugen.
 - `inline_visuals_toolkit_v3.py`: offline SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual-Briefs erzeugen.
 - `parallel_task_planner.py`: komplexe Arbeit in sichere Parallelwellen und Subagent-Arbeitspakete zerlegen.
+- `subagent_orchestrator.py`: Subagent-Roster, Delegationsprompts und Ergebnis-Merges erzeugen.
 - `tool_skill_overlay_planner.py`: Modell-/Tool-/Skill-Overlays mit Redundanz und Fallbacks planen.
 - `comfyui_workflow_inspector.py`: ComfyUI-Workflow-JSON lokal prüfen und Setup-Checklisten erzeugen.
 
@@ -102,7 +104,7 @@ Das Skript arbeitet in dieser Reihenfolge:
 5. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
 6. Optional Offline-ZIP-Pakete neu bauen.
 
-Chat-Modelle erhalten `meta.toolIds`, `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true` und `params.function_calling: "native"`. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
+Chat-Modelle erhalten `meta.toolIds`, `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `params.function_calling: "native"`, `params.max_tokens: 262144`, use-case-abhängige `params.temperature`, eingebettete SVG-Icons in `meta.profile_image_url` und ein High-Reasoning-Systemprofil inklusive Systemprompt, Mainprompt und Fachwissen. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden nicht gesetzt, damit die Profile mit Mistral Medium 3.5 128B kompatibel bleiben. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
 
 ## Wartung
 
