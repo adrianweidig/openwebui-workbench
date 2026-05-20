@@ -303,7 +303,18 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
     for file_path in files:
         uploaded = client.upload_file(file_path)
         file_refs.append({"file_id": uploaded["id"]})
-    client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
+    result = client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
+    if isinstance(result, dict) and result.get("warnings"):
+        raise RuntimeError(f"Knowledge import failed for {name}: {result['warnings']}")
+    if isinstance(result, dict) and "files" in result:
+        linked_file_ids = {
+            str(item.get("id") or item.get("file_id"))
+            for item in result.get("files") or []
+            if isinstance(item, dict)
+        }
+        missing_file_ids = [item["file_id"] for item in file_refs if item["file_id"] not in linked_file_ids]
+        if missing_file_ids:
+            raise RuntimeError(f"Knowledge import did not link all files for {name}: {missing_file_ids}")
     return {"id": knowledge_id, "name": name}
 
 
