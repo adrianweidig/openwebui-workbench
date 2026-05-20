@@ -1,13 +1,9 @@
 {
   "schema": "openwebui-model-params-summary/v1",
-  "expected_max_tokens": 262144,
+  "runtime_defaults_policy": "No fixed generation/runtime values are set in model params; target OpenWebUI/model-server defaults are used.",
   "supported_runtime_params": [
     "function_calling",
-    "max_tokens",
-    "stop",
-    "system",
-    "temperature",
-    "top_p"
+    "system"
   ],
   "omitted_unsupported_runtime_params": [
     "reasoning_effort",
@@ -23,17 +19,10 @@
     {
       "id": "anforderungsanalyse-lastenheft",
       "name": "Anforderungsanalyse und Lastenheft",
-      "max_tokens": 262144,
-      "temperature": 0.4,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -56,17 +45,10 @@
     {
       "id": "api-schnittstellenentwurf",
       "name": "API- und Schnittstellenentwurf",
-      "max_tokens": 262144,
-      "temperature": 0.35,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -89,17 +71,10 @@
     {
       "id": "code-dokumentation",
       "name": "Code-Dokumentation",
-      "max_tokens": 262144,
-      "temperature": 0.35,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -122,17 +97,10 @@
     {
       "id": "code-review",
       "name": "Code-Review",
-      "max_tokens": 262144,
-      "temperature": 0.2,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -155,17 +123,10 @@
     {
       "id": "codeanalyse",
       "name": "Codeanalyse",
-      "max_tokens": 262144,
-      "temperature": 0.2,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -188,17 +149,10 @@
     {
       "id": "codegenerierung",
       "name": "Codegenerierung",
-      "max_tokens": 262144,
-      "temperature": 0.35,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -221,17 +175,10 @@
     {
       "id": "compliance-richtlinienprüfung",
       "name": "Compliance- und Richtlinienprüfung",
-      "max_tokens": 262144,
-      "temperature": 0.2,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -254,17 +201,10 @@
     {
       "id": "debugging-fehleranalyse",
       "name": "Debugging und Fehleranalyse",
-      "max_tokens": 262144,
-      "temperature": 0.2,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -287,17 +227,10 @@
     {
       "id": "dokumentenanalyse",
       "name": "Dokumentenanalyse",
-      "max_tokens": 262144,
-      "temperature": 0.2,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -320,17 +253,10 @@
     {
       "id": "dokumentengenerierung",
       "name": "Dokumentengenerierung",
-      "max_tokens": 262144,
-      "temperature": 0.7,
-      "top_p": 0.95,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -353,17 +279,10 @@
     {
       "id": "dokumentenvergleich",
       "name": "Dokumentenvergleich",
-      "max_tokens": 262144,
-      "temperature": 0.15,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -386,17 +305,10 @@
     {
       "id": "dokumentenzusammenfassung",
       "name": "Dokumentenzusammenfassung",
-      "max_tokens": 262144,
-      "temperature": 0.25,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -419,17 +331,10 @@
     {
       "id": "email-kommunikationsassistenz",
       "name": "E-Mail- und Kommunikationsassistenz",
-      "max_tokens": 262144,
-      "temperature": 0.7,
-      "top_p": 0.95,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -452,17 +357,10 @@
     {
       "id": "informationsextraktion",
       "name": "Informationsextraktion",
-      "max_tokens": 262144,
-      "temperature": 0.0,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -485,17 +383,10 @@
     {
       "id": "it-helpdesk-diagnose",
       "name": "IT-Helpdesk-Diagnose",
-      "max_tokens": 262144,
-      "temperature": 0.25,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -518,17 +409,10 @@
     {
       "id": "json-csv-log-analyse",
       "name": "JSON-, CSV- und Log-Analyse",
-      "max_tokens": 262144,
-      "temperature": 0.15,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -551,17 +435,10 @@
     {
       "id": "meeting-protokoll-auswertung",
       "name": "Meeting-Protokoll-Auswertung",
-      "max_tokens": 262144,
-      "temperature": 0.35,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -584,17 +461,10 @@
     {
       "id": "offline-workbench-agent",
       "name": "Offline Workbench Agent",
-      "max_tokens": 262144,
-      "temperature": 0.45,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -617,17 +487,10 @@
     {
       "id": "prozess-workflow-dokumentation",
       "name": "Prozess- und Workflow-Dokumentation",
-      "max_tokens": 262144,
-      "temperature": 0.4,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -650,17 +513,10 @@
     {
       "id": "präsentationserstellung",
       "name": "Präsentationserstellung",
-      "max_tokens": 262144,
-      "temperature": 0.7,
-      "top_p": 0.95,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -683,17 +539,10 @@
     {
       "id": "refactoring-unterstützung",
       "name": "Refactoring-Unterstützung",
-      "max_tokens": 262144,
-      "temperature": 0.25,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -716,17 +565,10 @@
     {
       "id": "report-dashboard-vorbereitung",
       "name": "Report- und Dashboard-Vorbereitung",
-      "max_tokens": 262144,
-      "temperature": 0.4,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -749,17 +591,10 @@
     {
       "id": "support-ticket-vorbereitung",
       "name": "Support-Ticket-Vorbereitung",
-      "max_tokens": 262144,
-      "temperature": 0.35,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -782,17 +617,10 @@
     {
       "id": "tabellen-csv-datenanalyse",
       "name": "Tabellen- und CSV-Datenanalyse",
-      "max_tokens": 262144,
-      "temperature": 0.15,
-      "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -815,17 +643,10 @@
     {
       "id": "testfall-generierung",
       "name": "Testfall-Generierung",
-      "max_tokens": 262144,
-      "temperature": 0.3,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
@@ -848,17 +669,10 @@
     {
       "id": "übersetzung-lokalisierung",
       "name": "Übersetzung und Lokalisierung",
-      "max_tokens": 262144,
-      "temperature": 0.35,
-      "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
-        "stop",
-        "system",
-        "temperature",
-        "top_p"
+        "system"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_embedded_svg_icon": true,
