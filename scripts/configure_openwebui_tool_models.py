@@ -51,6 +51,7 @@ CHAT_MODEL_FILTER_MODE = "all_validated_default_filters"
 SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "stop", "function_calling"}
 OMITTED_RUNTIME_PARAMS = ["max_tokens"]
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
+PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md"]
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
@@ -1145,13 +1146,17 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "schema": "openwebui-registration-plan/v1",
         "order": [
             "1_import_workspace_tools",
-            "2_apply_tool_valves",
-            "3_import_workspace_filters",
-            "4_apply_function_filter_valves",
-            "5_import_workspace_skills",
-            "6_upload_model_knowledge",
-            "7_import_or_update_models",
-            "8_enable_user_or_group_access",
+            "2_publish_tools_public",
+            "3_apply_tool_valves",
+            "4_import_workspace_filters",
+            "5_enable_functions_global",
+            "6_apply_function_filter_valves",
+            "7_import_workspace_skills",
+            "8_publish_skills_public",
+            "9_upload_model_knowledge",
+            "10_publish_model_knowledge_public",
+            "11_import_or_update_models",
+            "12_publish_models_public",
         ],
         "api_import_script": rel(IMPORT_SCRIPT),
         "api_import_config_file": rel(CONFIG_FILE),
@@ -1170,9 +1175,17 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
                 "function_valves",
                 "import",
             ],
-            "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models.",
+            "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models. Tools, skills, model knowledge and models are published with public read access; functions and filters are enabled and made global.",
         },
         "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override.",
+        "public_access_policy": {
+            "tools": "public_read_grant_after_upsert",
+            "skills": "public_read_grant_after_upsert",
+            "model_knowledge": "public_read_grant_after_upsert",
+            "models": "public_read_grant_after_import",
+            "functions_and_filters": "active_and_global_after_upsert",
+            "grant": PUBLIC_READ_GRANT,
+        },
         "offline_addons_runtime": {
             "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
             "container_data_root": "/app/backend/data",
@@ -1542,7 +1555,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--playwright-browsers-path", default=None, help="One-off override for the Playwright browser cache tool valve.")
     parser.add_argument("--nltk-data-path", default=None, help="One-off override for the NLTK data path tool valve.")
     parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="One-off override to prefer local Playwright/Chromium for artifact PDF conversion.")
-    parser.add_argument("--public-read", action="store_true", help="Grant read access during --import-openwebui where OpenWebUI permits it.")
+    parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced by the importer.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md and fachwissen.md as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")
     parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds for --import-openwebui.")

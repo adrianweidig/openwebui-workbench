@@ -88,6 +88,8 @@ Secrets gehören nie in Git. Für den API-Import ist `scripts/openwebui_workspac
 
 Die Datei bündelt die von der Import-Maschine erreichbare OpenWebUI-Adresse, den Admin-API-Key, backend-sichtbare Artefakt- und Addon-Pfade, Jupyter-Zugangsdaten, `tool_valves` und `function_valves`. Der Importer setzt daraus unter anderem die Valves für `air_gapped_jupyter_python`, `offline_artifact_workbench` und den `context_compressor_filter`. CLI-Parameter sind nur für bewusste Einmal-Overrides gedacht.
 
+Beim API-Import werden die importierten Tools, Skills, modellbezogenen Knowledge-Bases und Modelle automatisch mit Public-Read-Grants veröffentlicht. Functions und Filter werden nach Create/Update aktiviert und global geschaltet, damit sie ohne manuelle Nacharbeit für alle passenden Modelle greifen.
+
 Der Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` kann als lokale OpenWebUI-Erweiterung eingebunden werden. Im Container werden seine Bestandteile über `/app/backend/data/cache`, `/app/backend/data/python`, `/app/backend/data/nltk_data` und `/app/backend/data/cache/ms-playwright` bereitgestellt und in der zentralen YAML abgebildet. Tools und Filter sollen außerdem OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool Calls und Builtins nutzen, wenn die Zielinstanz sie anbietet.
 
 ## Tests

@@ -90,6 +90,9 @@ function_valves:
     show_debug_log: false
 
 import:
-  public_read: false
+  # Workspace imports are published for all OpenWebUI users by default:
+  # Tools, Skills, model Knowledge and Models get public read grants;
+  # Functions/Filters are enabled and set global by the importer.
+  public_read: true
   skip_knowledge: false
   include_optional_network_tools: true

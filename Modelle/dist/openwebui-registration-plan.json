@@ -2,13 +2,17 @@
   "schema": "openwebui-registration-plan/v1",
   "order": [
     "1_import_workspace_tools",
-    "2_apply_tool_valves",
-    "3_import_workspace_filters",
-    "4_apply_function_filter_valves",
-    "5_import_workspace_skills",
-    "6_upload_model_knowledge",
-    "7_import_or_update_models",
-    "8_enable_user_or_group_access"
+    "2_publish_tools_public",
+    "3_apply_tool_valves",
+    "4_import_workspace_filters",
+    "5_enable_functions_global",
+    "6_apply_function_filter_valves",
+    "7_import_workspace_skills",
+    "8_publish_skills_public",
+    "9_upload_model_knowledge",
+    "10_publish_model_knowledge_public",
+    "11_import_or_update_models",
+    "12_publish_models_public"
   ],
   "api_import_script": "Tools/import_openwebui_workspace.py",
   "api_import_config_file": "scripts/openwebui_workspace_config.yaml",
@@ -27,9 +31,21 @@
       "function_valves",
       "import"
     ],
-    "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models."
+    "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models. Tools, skills, model knowledge and models are published with public read access; functions and filters are enabled and made global."
   },
   "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override.",
+  "public_access_policy": {
+    "tools": "public_read_grant_after_upsert",
+    "skills": "public_read_grant_after_upsert",
+    "model_knowledge": "public_read_grant_after_upsert",
+    "models": "public_read_grant_after_import",
+    "functions_and_filters": "active_and_global_after_upsert",
+    "grant": {
+      "principal_type": "user",
+      "principal_id": "*",
+      "permission": "read"
+    }
+  },
   "offline_addons_runtime": {
     "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
     "container_data_root": "/app/backend/data",

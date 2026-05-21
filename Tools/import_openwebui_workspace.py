@@ -44,6 +44,7 @@ REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md")
 DEFAULT_CONFIG_NAME = "openwebui_workspace_config.yaml"
 
 PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEBUI_API_KEY"}
+PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 
 
 @dataclass(frozen=True)
@@ -348,7 +349,11 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         first_config_value(config, ["import.include_optional_network_tools"], True),
         True,
     )
-    public_read = args.public_read or as_bool(first_config_value(config, ["import.public_read"], False))
+    # Workspace imports are intentionally shared by default: imported tools,
+    # skills, model knowledge and model profiles must be visible to all
+    # OpenWebUI users. The legacy config key/CLI flag is kept for compatibility
+    # but no longer disables public workspace publication.
+    public_read = True
     skip_knowledge = args.skip_knowledge or as_bool(first_config_value(config, ["import.skip_knowledge"], False))
     jupyter = {
         "OPENWEBUI_JUPYTER_URL": (
@@ -602,10 +607,156 @@ def get_existing(client: OpenWebUIClient, path: str) -> dict[str, Any] | None:
         raise
 
 
-def public_read_grants(enabled: bool) -> list[dict[str, str]]:
+def public_read_grants(enabled: bool = True) -> list[dict[str, str]]:
     if not enabled:
         return []
-    return [{"principal_type": "user", "principal_id": "*", "permission": "read"}]
+    return [dict(PUBLIC_READ_GRANT)]
+
+
+def access_payload(public: bool = True) -> dict[str, Any]:
+    return {"access_grants": public_read_grants(public)}
+
+
+def has_public_read_access(value: Any) -> bool:
+    grants = value.get("access_grants", []) if isinstance(value, dict) else []
+    return any(
+        isinstance(grant, dict)
+        and grant.get("principal_type") == PUBLIC_READ_GRANT["principal_type"]
+        and grant.get("principal_id") == PUBLIC_READ_GRANT["principal_id"]
+        and grant.get("permission") == PUBLIC_READ_GRANT["permission"]
+        for grant in grants
+    )
+
+
+def require_public_read_access(value: Any, resource_type: str, resource_id: str) -> None:
+    if has_public_read_access(value):
+        return
+    raise RuntimeError(
+        f"OpenWebUI did not keep the public read grant for {resource_type} {resource_id}. "
+        "Enable the matching public sharing permission in OpenWebUI or import with an admin token that may publish workspace resources."
+    )
+
+
+def update_tool_access(client: OpenWebUIClient, tool_id: str, public: bool = True) -> None:
+    value = client.request_any(
+        "POST",
+        [
+            f"/api/v1/tools/id/{tool_id}/access/update",
+            f"/api/tools/id/{tool_id}/access/update",
+        ],
+        access_payload(public),
+    )
+    if public:
+        require_public_read_access(value, "tool", tool_id)
+
+
+def update_skill_access(client: OpenWebUIClient, skill_id: str, public: bool = True) -> None:
+    value = client.request_any(
+        "POST",
+        [
+            f"/api/v1/skills/id/{skill_id}/access/update",
+            f"/api/skills/id/{skill_id}/access/update",
+        ],
+        access_payload(public),
+    )
+    if public:
+        require_public_read_access(value, "skill", skill_id)
+
+
+def update_knowledge_access(client: OpenWebUIClient, knowledge_id: str, public: bool = True) -> None:
+    value = client.request_any(
+        "POST",
+        [
+            f"/api/v1/knowledge/{knowledge_id}/access/update",
+            f"/api/knowledge/{knowledge_id}/access/update",
+        ],
+        access_payload(public),
+    )
+    if public:
+        require_public_read_access(value, "knowledge", knowledge_id)
+
+
+def update_model_access(client: OpenWebUIClient, model_id: str, model_name: str, public: bool = True) -> None:
+    value = client.request_any(
+        "POST",
+        [
+            "/api/v1/models/model/access/update",
+            "/api/models/model/access/update",
+        ],
+        {"id": model_id, "name": model_name or model_id, **access_payload(public)},
+    )
+    if public:
+        require_public_read_access(value, "model", model_id)
+
+
+def function_bool(value: dict[str, Any] | None, names: tuple[str, ...]) -> bool | None:
+    if not isinstance(value, dict):
+        return None
+    for name in names:
+        if name in value:
+            return bool(value[name])
+    return None
+
+
+def get_function(client: OpenWebUIClient, function_id: str) -> dict[str, Any]:
+    value = client.request_any(
+        "GET",
+        [
+            f"/api/v1/functions/id/{function_id}",
+            f"/api/functions/id/{function_id}",
+        ],
+    )
+    return value if isinstance(value, dict) else {}
+
+
+def toggle_function_active(client: OpenWebUIClient, function_id: str) -> dict[str, Any]:
+    value = client.request_any(
+        "POST",
+        [
+            f"/api/v1/functions/id/{function_id}/toggle",
+            f"/api/functions/id/{function_id}/toggle",
+        ],
+    )
+    return value if isinstance(value, dict) else {}
+
+
+def toggle_function_global(client: OpenWebUIClient, function_id: str) -> dict[str, Any]:
+    value = client.request_any(
+        "POST",
+        [
+            f"/api/v1/functions/id/{function_id}/toggle/global",
+            f"/api/functions/id/{function_id}/toggle/global",
+        ],
+    )
+    return value if isinstance(value, dict) else {}
+
+
+def ensure_function_active_and_global(
+    client: OpenWebUIClient,
+    function_id: str,
+    current: dict[str, Any] | None = None,
+) -> None:
+    function = current if isinstance(current, dict) else get_function(client, function_id)
+    active_state = function_bool(function, ("is_active", "active", "enabled"))
+    if active_state is False:
+        function = toggle_function_active(client, function_id)
+
+    global_state = function_bool(function, ("is_global", "global"))
+    if global_state is None:
+        function = get_function(client, function_id)
+        global_state = function_bool(function, ("is_global", "global"))
+    if global_state is None:
+        raise RuntimeError(
+            f"Function {function_id} response does not expose is_global; cannot safely publish it globally."
+        )
+    if global_state is False:
+        toggle_function_global(client, function_id)
+
+    function = get_function(client, function_id)
+    if function_bool(function, ("is_active", "active", "enabled")) is not True:
+        raise RuntimeError(f"Function {function_id} is not active after import.")
+    if function_bool(function, ("is_global", "global")) is not True:
+        raise RuntimeError(f"Function {function_id} is not global after import.")
 
 
 def skill_files() -> list[Path]:
@@ -639,12 +790,17 @@ def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
         required_model_knowledge_files(model_file.parent)
     return [
         ImportResult("tools", skipped=tool_count),
+        ImportResult("tool_public_access", skipped=tool_count),
         ImportResult("tool_valves", skipped=len(configured_tool_valves(runtime))),
         ImportResult("functions", skipped=function_count),
+        ImportResult("function_global_access", skipped=function_count),
         ImportResult("function_valves", skipped=len(configured_function_valves(runtime))),
         ImportResult("skills", skipped=len(skills)),
+        ImportResult("skill_public_access", skipped=len(skills)),
         ImportResult("model_knowledge_collections", skipped=len(model_files)),
+        ImportResult("knowledge_public_access", skipped=0 if runtime.get("skip_knowledge") else len(model_files)),
         ImportResult("models", skipped=len(model_files)),
+        ImportResult("model_public_access", skipped=len(model_files)),
     ]
 
 
@@ -665,12 +821,13 @@ def import_tools(client: OpenWebUIClient, public: bool, include_optional_network
         }
         existing = get_existing(client, f"/api/v1/tools/id/{record['id']}")
         if existing:
-            payload["access_grants"] = existing.get("access_grants") or payload["access_grants"]
             client.request("POST", f"/api/v1/tools/id/{record['id']}/update", payload)
             updated += 1
         else:
             client.request("POST", "/api/v1/tools/create", payload)
             created += 1
+        if public:
+            update_tool_access(client, record["id"], public=True)
     return ImportResult("tools", created, updated)
 
 
@@ -740,13 +897,12 @@ def import_functions(client: OpenWebUIClient) -> ImportResult:
         }
         existing = get_existing(client, f"/api/v1/functions/id/{record['id']}")
         if existing:
-            client.request("POST", f"/api/v1/functions/id/{record['id']}/update", payload)
+            existing = client.request("POST", f"/api/v1/functions/id/{record['id']}/update", payload)
             updated += 1
         else:
             existing = client.request("POST", "/api/v1/functions/create", payload)
             created += 1
-        if isinstance(existing, dict) and existing.get("is_active") is False:
-            client.request("POST", f"/api/v1/functions/id/{record['id']}/toggle")
+        ensure_function_active_and_global(client, record["id"], existing if isinstance(existing, dict) else None)
     return ImportResult("functions", created, updated)
 
 
@@ -766,14 +922,15 @@ def import_skills(client: OpenWebUIClient, public: bool) -> ImportResult:
         }
         existing = get_existing(client, f"/api/v1/skills/id/{skill_id}")
         if existing:
-            payload["access_grants"] = existing.get("access_grants") or payload["access_grants"]
-            client.request("POST", f"/api/v1/skills/id/{skill_id}/update", payload)
-            if existing.get("is_active") is False:
+            existing = client.request("POST", f"/api/v1/skills/id/{skill_id}/update", payload)
+            if isinstance(existing, dict) and existing.get("is_active") is False:
                 client.request("POST", f"/api/v1/skills/id/{skill_id}/toggle")
             updated += 1
         else:
             client.request("POST", "/api/v1/skills/create", payload)
             created += 1
+        if public:
+            update_skill_access(client, skill_id, public=True)
     return ImportResult("skills", created, updated, skipped)
 
 
@@ -795,10 +952,14 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
     if knowledge:
         knowledge_id = knowledge["id"]
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/update", payload)
+        if public:
+            update_knowledge_access(client, knowledge_id, public=True)
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/reset")
     else:
         created = client.request("POST", "/api/v1/knowledge/create", payload)
         knowledge_id = created["id"]
+        if public:
+            update_knowledge_access(client, knowledge_id, public=True)
     file_refs = []
     for file_path in files:
         uploaded = client.upload_file(file_path)
@@ -841,6 +1002,8 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
             meta["knowledge"].append(knowledge)
         else:
             required_model_knowledge_files(model_file.parent)
+        if public:
+            model["access_grants"] = public_read_grants(public)
         models.append(model)
     return models
 
@@ -850,6 +1013,10 @@ def import_models(client: OpenWebUIClient, public: bool, upload_knowledge: bool)
     if not models:
         return ImportResult("models", skipped=1)
     client.request("POST", "/api/v1/models/import", {"models": models})
+    if public:
+        for model in models:
+            model_id = str(model.get("id"))
+            update_model_access(client, model_id, str(model.get("name") or model_id), public=True)
     return ImportResult("models", updated=len(models))
 
 
@@ -868,7 +1035,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--config", default=None, help="Central YAML config file. Defaults to scripts/openwebui_workspace_config.yaml when present.")
     parser.add_argument("--base-url", default=None, help="One-off override for openwebui.base_url from the central config.")
     parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
-    parser.add_argument("--public-read", action="store_true", help="Grant read access to all users where OpenWebUI permits it.")
+    parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md and fachwissen.md files as Knowledge.")
     parser.add_argument(
         "--include-optional-network-tools",
@@ -908,21 +1075,45 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     client = OpenWebUIClient(runtime["base_url"], token, timeout=int(runtime["timeout"]))
     started = time.time()
+    tool_records = load_tool_records(bool(runtime["include_optional_network_tools"]))
+    function_records = load_function_records()
+    skills = skill_files()
+    model_count = len(sorted(SINGLE_MODELS.glob("*/model.json")))
+    tool_import = import_tools(
+        client,
+        public=bool(runtime["public_read"]),
+        include_optional_network_tools=bool(runtime["include_optional_network_tools"]),
+    )
+    tool_valves = import_tool_valves(client, runtime)
+    function_import = import_functions(client)
+    function_valves = import_function_valves(client, runtime)
+    skill_import = import_skills(client, public=bool(runtime["public_read"]))
+    model_import = import_models(
+        client,
+        public=bool(runtime["public_read"]),
+        upload_knowledge=not bool(runtime["skip_knowledge"]),
+    )
     results = [
-        import_tools(
-            client,
-            public=bool(runtime["public_read"]),
-            include_optional_network_tools=bool(runtime["include_optional_network_tools"]),
+        tool_import,
+        ImportResult("tool_public_access", updated=len(tool_records)),
+        tool_valves,
+        function_import,
+        ImportResult("function_global_access", updated=len(function_records)),
+        function_valves,
+        skill_import,
+        ImportResult("skill_public_access", updated=len(skills)),
+        ImportResult(
+            "model_knowledge_collections",
+            updated=0 if runtime["skip_knowledge"] else model_count,
+            skipped=model_count if runtime["skip_knowledge"] else 0,
         ),
-        import_tool_valves(client, runtime),
-        import_functions(client),
-        import_function_valves(client, runtime),
-        import_skills(client, public=bool(runtime["public_read"])),
-        import_models(
-            client,
-            public=bool(runtime["public_read"]),
-            upload_knowledge=not bool(runtime["skip_knowledge"]),
+        ImportResult(
+            "knowledge_public_access",
+            updated=0 if runtime["skip_knowledge"] else model_count,
+            skipped=model_count if runtime["skip_knowledge"] else 0,
         ),
+        model_import,
+        ImportResult("model_public_access", updated=model_count),
     ]
     print_results(results)
     print(f"- duration_seconds: {time.time() - started:.1f}")

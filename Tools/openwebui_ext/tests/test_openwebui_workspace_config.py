@@ -72,12 +72,25 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         self.assertIn("Tools/import_openwebui_workspace.py", plan.get("api_import_script", ""))
         self.assertIn("scripts/openwebui_workspace_config.yaml", plan.get("api_import_config_file", ""))
         self.assertIn("scripts/openwebui_workspace_config.example.yaml", plan.get("api_import_config_example", ""))
-        self.assertIn("6_upload_model_knowledge", plan.get("order", []))
-        self.assertIn("2_apply_tool_valves", plan.get("order", []))
-        self.assertIn("4_apply_function_filter_valves", plan.get("order", []))
+        order = plan.get("order", [])
+        self.assertTrue(any(item.endswith("upload_model_knowledge") for item in order))
+        self.assertTrue(any(item.endswith("apply_tool_valves") for item in order))
+        self.assertTrue(any(item.endswith("apply_function_filter_valves") for item in order))
+        self.assertTrue(any(item.endswith("publish_tools_public") for item in order))
+        self.assertTrue(any(item.endswith("enable_functions_global") for item in order))
+        self.assertTrue(any(item.endswith("publish_models_public") for item in order))
         self.assertEqual(
             plan.get("api_import_config_policy", {}).get("source_of_truth"),
             "scripts/openwebui_workspace_config.yaml",
+        )
+        public_access_policy = plan.get("public_access_policy", {})
+        self.assertEqual(public_access_policy.get("tools"), "public_read_grant_after_upsert")
+        self.assertEqual(public_access_policy.get("skills"), "public_read_grant_after_upsert")
+        self.assertEqual(public_access_policy.get("models"), "public_read_grant_after_import")
+        self.assertEqual(public_access_policy.get("functions_and_filters"), "active_and_global_after_upsert")
+        self.assertEqual(
+            public_access_policy.get("grant"),
+            {"principal_type": "user", "principal_id": "*", "permission": "read"},
         )
         self.assertEqual(plan.get("offline_addons_runtime", {}).get("container_playwright_browsers_path"), "/app/backend/data/cache/ms-playwright")
         self.assertIn(
@@ -104,6 +117,13 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         args = importer.parse_args(["--config", str(CONFIG_EXAMPLE), "--dry-run"])
         runtime = importer.resolve_runtime_config(args)
         self.assertEqual(runtime["base_url"], "http://openwebui.example.local:3000")
+        self.assertTrue(runtime["public_read"])
+        self.assertEqual(
+            importer.public_read_grants(),
+            [{"principal_type": "user", "principal_id": "*", "permission": "read"}],
+        )
+        self.assertTrue(importer.has_public_read_access({"access_grants": importer.public_read_grants()}))
+        self.assertFalse(importer.has_public_read_access({"access_grants": []}))
         self.assertEqual(runtime["jupyter"]["OPENWEBUI_JUPYTER_URL"], "http://jupyter:8888")
         self.assertEqual(runtime["environment"]["PLAYWRIGHT_BROWSERS_PATH"], "/app/backend/data/cache/ms-playwright")
         self.assertEqual(

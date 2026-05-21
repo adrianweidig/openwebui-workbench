@@ -18,7 +18,7 @@ Dieses Verzeichnis ist der Copy/Paste- und Transportbereich für OpenWebUI-Tools
 3. `openwebui-tools-offline-import.json` über `Workspace > Tools > Import` importieren.
 4. `openwebui-functions-import.json` über `Workspace > Functions > Import` importieren.
 5. `.md`-Dateien aus `openwebui_ext/skills/` über `Workspace > Skills` importieren.
-6. Für den vollständigen API-Pfad `scripts/openwebui_workspace_config.yaml` nutzen; sie setzt Jupyter-, Artefakt-, Addon-, Tool- und Function-/Filter-Valves zentral.
+6. Für den vollständigen API-Pfad `scripts/openwebui_workspace_config.yaml` nutzen; sie setzt Jupyter-, Artefakt-, Addon-, Tool- und Function-/Filter-Valves zentral und veröffentlicht Tools, Skills, Knowledge und Modelle automatisch public.
 
 Der empfohlene Offline-Stack bindet `F:\offline-ai-stack\openwebui-offline-addons` in OpenWebUI ein. Die Konfigurationsdatei setzt dafür `addons.*`, `environment.*` und die passenden `tool_valves.*`, sodass Tools lokale Python-Pakete, Tiktoken/NLTK-Caches und Playwright/Chromium ohne Laufzeitdownloads verwenden können. Filterwerte wie das Kontextbudget des `context_compressor_filter` liegen im Abschnitt `function_valves`.
 
@@ -39,4 +39,4 @@ notepad scripts/openwebui_workspace_config.yaml
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
-Ein lokaler Import-Probelauf ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
+Ein lokaler Import-Probelauf ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` möglich. Beim echten API-Import werden Functions/Filter zusätzlich aktiv und global geschaltet.
