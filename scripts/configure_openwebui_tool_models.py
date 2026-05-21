@@ -65,7 +65,14 @@ REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md"]
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
 CUSTOM_GPT_QUALITY_SYSTEM_MARKER = "## CustomGPT-Qualitätsprofil"
+TOOL_CALL_PLAYBOOK_SYSTEM_MARKER = "## Explizite Tool-Aufrufmuster"
 TOOL_FORCE_SYSTEM_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
+MANAGED_SYSTEM_SECTION_MARKERS = [
+    HIGH_REASONING_SYSTEM_MARKER,
+    CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
+    TOOL_CALL_PLAYBOOK_SYSTEM_MARKER,
+    TOOL_FORCE_SYSTEM_MARKER,
+]
 HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
 - Arbeite grundsätzlich im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch. Gib keine verborgene Herleitung aus; liefere nur das fachlich notwendige Ergebnis.
@@ -761,6 +768,30 @@ Nutze immer den kleinsten ausreichenden Tool-Satz. Validiere Tool-Ausgaben kriti
 """
 
 
+def tool_call_playbook_block_for_model(model_id: str) -> str:
+    profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
+    primary_tools = ", ".join(f"`{tool}`" for tool in profile["tools"])
+    return f"""{TOOL_CALL_PLAYBOOK_SYSTEM_MARKER}
+
+Die Zielumgebung arbeitet lokal mit Mistral Medium 128B. Erzwinge High-Reasoning deshalb über Planung, Tool-Nutzung, Validierung und kurze Selbstprüfung im Prompt, nicht über nicht unterstützte Runtime-Parameter. Nutze die folgenden Aufrufmuster ausdrücklich, sobald die jeweilige Situation passt:
+
+- Vor jeder nicht-trivialen Antwort: Prüfe, ob mindestens eines der primären Modelltools passt. Primäre Tools dieses Modells: {primary_tools}.
+- Bei zwei oder mehr unabhängigen Teilaufgaben: zuerst `parallel_task_planner.build_parallel_execution_plan(goal, tasks_json)` nutzen, die Abhängigkeiten prüfen und dann in Wellen arbeiten.
+- Bei mehreren bereits bekannten unabhängigen Toolaufrufen: `parallel_tools.run_tools_parallel(tool_calls)` mit `tool_calls` als JSON-Array wie `[{{"name":"validate_json","args":{{"text":"..."}}}}, {{"name":"analyze_tree","args":{{"tree_text":"..."}}}}]` verwenden. Nicht für abhängige, riskante oder schreibende Schritte einsetzen.
+- Bei komplexer Analyse mit klar trennbaren Rollen: `subagent_orchestrator.build_subagent_roster(available_models_json, available_tools_json)`, danach `subagent_orchestrator.build_subagent_jobs(goal, workstreams_json, subagent_profiles_json)` und für die Ausführung `sub_agent.run_sub_agent(description, prompt)` oder bei mehreren unabhängigen Rollen `sub_agent.run_parallel_sub_agents(tasks)` nutzen. Ergebnisse mit `subagent_orchestrator.merge_subagent_results(results_json)` oder `parallel_task_planner.merge_parallel_results(results_json)` zusammenführen.
+- Bei JSON, CSV, Logs oder strukturiertem Text: `json_csv_text_validator.validate_json(text)`, `json_csv_text_validator.validate_csv(text, delimiter)` oder `json_csv_text_validator.inspect_text(text)` vor der inhaltlichen Schlussfolgerung nutzen.
+- Bei Berechnungen, Stichproben, Transformationen oder reproduzierbarer lokaler Prüfung: `air_gapped_jupyter_python.run_python(code)` nutzen und Ausgaben kritisch plausibilisieren.
+- Bei Repository-, Code-, Diff- oder Refactoring-Fragen: `repo_tree_analyzer.analyze_tree(tree_text)` und bei ausführbarer Prüfung zusätzlich `air_gapped_jupyter_python.run_python(code)` einsetzen.
+- Bei HTML, PDF, Präsentation, ZIP oder Übergabeartefakt: `offline_artifact_workbench.create_html_document(...)`, `offline_artifact_workbench.create_slide_deck(...)`, `offline_artifact_workbench.convert_html_to_pdf(...)` oder `offline_artifact_workbench.bundle_artifacts(...)` nutzen.
+- Bei OpenAPI-, MCP- oder Toolserver-Schemata: `openapi_schema_inspector.inspect_openapi_json(schema_json)` nutzen.
+- Bei Docker-, Compose-, OpenWebUI- oder Betriebsfehlern: `docker_compose_triage.analyze_compose(compose_text)` oder `docker_compose_triage.analyze_error_text(error_text)` nutzen.
+- Bei Modell-/Tool-/Skill-Zuordnung, Fallbacks oder Capability-Lücken: `tool_skill_overlay_planner.build_overlay_matrix(...)`, `tool_skill_overlay_planner.compare_capability_coverage(...)` oder `tool_skill_overlay_planner.suggest_fallback_stack(objective, candidates_json)` nutzen.
+- Bei unsicherer fachlicher Abwägung oder Bedarf an einer zweiten Modellmeinung: `llm_council.consult_council(topic)` nutzen, sofern die lokale OpenWebUI-API-Konfiguration vorhanden ist.
+
+Parallelisierung und Subagenten sind bei komplexen, mehrteiligen Aufgaben der Standardweg. Verzichte nur, wenn die Aufgabe trivial einstufig ist, ein Tool fehlt, der Nutzer Tool-Nutzung untersagt, Abhängigkeiten Parallelität unsicher machen oder ein Berechtigungs-/Sicherheitsgrund dagegen spricht; benenne diese Grenze knapp.
+"""
+
+
 def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
     if not isinstance(system_prompt, str):
         return system_prompt
@@ -778,7 +809,7 @@ def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
             .replace(previous_default_line, tuned_line)
             .replace(current_line, upgraded_line)
         )
-    for marker in [CUSTOM_GPT_QUALITY_SYSTEM_MARKER, TOOL_FORCE_SYSTEM_MARKER]:
+    for marker in [CUSTOM_GPT_QUALITY_SYSTEM_MARKER, TOOL_CALL_PLAYBOOK_SYSTEM_MARKER, TOOL_FORCE_SYSTEM_MARKER]:
         marker_index = system_prompt.find(marker)
         if marker_index != -1:
             insert_index = system_prompt.rfind("\n\n", 0, marker_index)
@@ -800,9 +831,33 @@ def ensure_custom_gpt_quality_profile(system_prompt: Any) -> Any:
     block = CUSTOM_GPT_QUALITY_SYSTEM_BLOCK.rstrip()
     start = system_prompt.find(CUSTOM_GPT_QUALITY_SYSTEM_MARKER)
     if start != -1:
-        next_heading = re.search(r"\n\n\s+## ", system_prompt[start + len(CUSTOM_GPT_QUALITY_SYSTEM_MARKER) :])
+        next_heading = re.search(r"\n\n[ \t]*## ", system_prompt[start + len(CUSTOM_GPT_QUALITY_SYSTEM_MARKER) :])
         if next_heading:
             cut = start + len(CUSTOM_GPT_QUALITY_SYSTEM_MARKER) + next_heading.start()
+            return f"{system_prompt[:start]}{block}{system_prompt[cut:]}"
+        return f"{system_prompt[:start]}{block}"
+    insert_before = f"\n\n        {TOOL_CALL_PLAYBOOK_SYSTEM_MARKER}"
+    indented_block = block.replace(chr(10), chr(10) + "        ")
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
+    insert_before = f"\n\n        {TOOL_FORCE_SYSTEM_MARKER}"
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
+    insert_before = "\n\n        # Systemprompt"
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
+    return f"{block}\n\n{system_prompt}"
+
+
+def ensure_tool_call_playbook(system_prompt: Any, model_id: str) -> Any:
+    if not isinstance(system_prompt, str):
+        return system_prompt
+    block = tool_call_playbook_block_for_model(model_id).rstrip()
+    start = system_prompt.find(TOOL_CALL_PLAYBOOK_SYSTEM_MARKER)
+    if start != -1:
+        next_heading = re.search(r"\n\n[ \t]*#", system_prompt[start + len(TOOL_CALL_PLAYBOOK_SYSTEM_MARKER) :])
+        if next_heading:
+            cut = start + len(TOOL_CALL_PLAYBOOK_SYSTEM_MARKER) + next_heading.start()
             return f"{system_prompt[:start]}{block}{system_prompt[cut:]}"
         return f"{system_prompt[:start]}{block}"
     insert_before = f"\n\n        {TOOL_FORCE_SYSTEM_MARKER}"
@@ -821,7 +876,7 @@ def ensure_tool_force_profile(system_prompt: Any, model_id: str) -> Any:
     block = tool_force_block_for_model(model_id).rstrip()
     start = system_prompt.find(TOOL_FORCE_SYSTEM_MARKER)
     if start != -1:
-        next_heading = re.search(r"\n\n\s+# ", system_prompt[start + len(TOOL_FORCE_SYSTEM_MARKER) :])
+        next_heading = re.search(r"\n\n[ \t]*#", system_prompt[start + len(TOOL_FORCE_SYSTEM_MARKER) :])
         if next_heading:
             cut = start + len(TOOL_FORCE_SYSTEM_MARKER) + next_heading.start()
             return f"{system_prompt[:start]}{block}{system_prompt[cut:]}"
@@ -831,6 +886,43 @@ def ensure_tool_force_profile(system_prompt: Any, model_id: str) -> Any:
     if insert_before in system_prompt:
         return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
     return f"{block}\n\n{system_prompt}"
+
+
+def strip_markdown_formatting_marker(system_prompt: str) -> str:
+    stripped = system_prompt.lstrip()
+    if not stripped.startswith(MARKDOWN_FORMATTING_MARKER):
+        return system_prompt
+    return stripped[len(MARKDOWN_FORMATTING_MARKER) :].lstrip()
+
+
+def strip_managed_system_sections(system_prompt: str) -> str:
+    lines = system_prompt.splitlines()
+    cleaned: List[str] = []
+    skip_managed_section = False
+    for line in lines:
+        is_heading = bool(re.match(r"^\s*#", line))
+        is_managed_heading = any(marker in line for marker in MANAGED_SYSTEM_SECTION_MARKERS)
+        if is_managed_heading:
+            skip_managed_section = True
+            while cleaned and not cleaned[-1].strip():
+                cleaned.pop()
+            continue
+        if skip_managed_section and is_heading:
+            skip_managed_section = False
+        if skip_managed_section:
+            continue
+        cleaned.append(line)
+    return "\n".join(cleaned).strip()
+
+
+def managed_system_profile_for_model(model_id: str) -> str:
+    sections = [
+        HIGH_REASONING_SYSTEM_BLOCK.rstrip(),
+        CUSTOM_GPT_QUALITY_SYSTEM_BLOCK.rstrip(),
+        tool_call_playbook_block_for_model(model_id).rstrip(),
+        tool_force_block_for_model(model_id).rstrip(),
+    ]
+    return "\n\n".join(sections)
 
 
 def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
@@ -843,9 +935,15 @@ def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
 
 
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
-    system_prompt = ensure_high_reasoning_profile(params.get("system"))
-    system_prompt = ensure_custom_gpt_quality_profile(system_prompt)
-    system_prompt = ensure_tool_force_profile(system_prompt, model_id)
+    raw_system_prompt = params.get("system")
+    if isinstance(raw_system_prompt, str):
+        base_prompt = strip_managed_system_sections(strip_markdown_formatting_marker(raw_system_prompt))
+        system_parts = [managed_system_profile_for_model(model_id)]
+        if base_prompt:
+            system_parts.append(base_prompt)
+        system_prompt = "\n\n".join(system_parts)
+    else:
+        system_prompt = raw_system_prompt
     system_prompt = ensure_markdown_formatting_enabled(system_prompt)
     temperature = temperature_for_model(model_id)
     params.clear()
@@ -983,6 +1081,7 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
         "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
         "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
         "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
+        "mistral_medium_128b_policy": "High reasoning is prompt-enforced with explicit tool-call playbooks; unsupported runtime parameters stay omitted.",
         "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
         "models": [
             {
@@ -1001,6 +1100,9 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 if isinstance(model.get("params"), dict)
                 else False,
                 "has_custom_gpt_quality_profile": CUSTOM_GPT_QUALITY_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
+                if isinstance(model.get("params"), dict)
+                else False,
+                "has_explicit_tool_call_playbook": TOOL_CALL_PLAYBOOK_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
                 "has_tool_force_profile": TOOL_FORCE_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
@@ -1072,6 +1174,21 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "behavior": "Every chat model must use at least one suitable assigned tool before the final answer when a task involves files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals, parallel planning, model/tool/skill overlays, ComfyUI workflows or skill authoring.",
             "model_profiles": TOOL_FORCE_PROFILES,
         },
+        "tool_call_playbook_policy": {
+            "system_marker": TOOL_CALL_PLAYBOOK_SYSTEM_MARKER,
+            "target_model_runtime": "local Mistral Medium 128B",
+            "behavior": "Every chat model receives concrete tool call patterns for parallel planning, true parallel tool execution, subagents, validation, Jupyter checks, artifact creation, API schema inspection, Docker/OpenWebUI diagnostics, model/tool/skill overlays and council review where configured.",
+            "required_call_patterns": [
+                "parallel_task_planner.build_parallel_execution_plan(goal, tasks_json)",
+                "parallel_tools.run_tools_parallel(tool_calls)",
+                "sub_agent.run_sub_agent(description, prompt)",
+                "sub_agent.run_parallel_sub_agents(tasks)",
+                "air_gapped_jupyter_python.run_python(code)",
+                "json_csv_text_validator.validate_json(text)",
+                "offline_artifact_workbench.create_slide_deck(...)",
+                "tool_skill_overlay_planner.build_overlay_matrix(...)",
+            ],
+        },
         "custom_gpt_quality_policy": {
             "formatting_marker": MARKDOWN_FORMATTING_MARKER,
             "system_marker": CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
@@ -1081,7 +1198,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "max_tokens": "omitted",
             "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
             "reasoning_profile": "high_prompted_in_system",
-            "reasoning_effort_runtime_param": "omitted_for_mistral_medium_3_5_128b_compatibility",
+            "reasoning_effort_runtime_param": "omitted_for_mistral_medium_128b_compatibility",
             "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
             "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
             "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
@@ -1103,6 +1220,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "params.system markdown formatting marker",
             "params.system high-reasoning section",
             "params.system custom-gpt quality section",
+            "params.system explicit tool-call playbook section",
             "params.system tool-force section",
             "meta.profile_image_url",
         ],
@@ -1178,6 +1296,20 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         ]:
             if required_phrase not in system_text:
                 issues.append(f"Chat-Modell {model_id} fehlt CustomGPT-Qualitätskriterium: {required_phrase}")
+        if TOOL_CALL_PLAYBOOK_SYSTEM_MARKER not in system_text:
+            issues.append(f"Chat-Modell {model_id} hat keine expliziten Tool-Aufrufmuster")
+        for required_phrase in [
+            "Mistral Medium 128B",
+            "parallel_task_planner.build_parallel_execution_plan",
+            "parallel_tools.run_tools_parallel",
+            "sub_agent.run_parallel_sub_agents",
+            "air_gapped_jupyter_python.run_python",
+            "json_csv_text_validator.validate_json",
+            "offline_artifact_workbench.create_slide_deck",
+            "tool_skill_overlay_planner.build_overlay_matrix",
+        ]:
+            if required_phrase not in system_text:
+                issues.append(f"Chat-Modell {model_id} fehlt explizites Tool-Aufrufmuster: {required_phrase}")
         if TOOL_FORCE_SYSTEM_MARKER not in system_text:
             issues.append(f"Chat-Modell {model_id} hat keine verbindliche Tool-Nutzungssektion")
         if "Tool-/Skill-Inventur" not in system_text:

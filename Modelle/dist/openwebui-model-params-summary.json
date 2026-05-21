@@ -17,6 +17,7 @@
     "top_k",
     "seed"
   ],
+  "mistral_medium_128b_policy": "High reasoning is prompt-enforced with explicit tool-call playbooks; unsupported runtime parameters stay omitted.",
   "offline_excluded_tool_ids": [
     "github_repo_inspector",
     "safe_http_fetcher"
@@ -39,6 +40,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "air_gapped_jupyter_python",
@@ -163,6 +165,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -247,6 +250,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "openapi_schema_inspector",
@@ -325,6 +329,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -405,6 +410,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -485,6 +491,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -565,6 +572,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -645,6 +653,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -725,6 +734,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -809,6 +819,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -887,6 +898,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "offline_artifact_workbench",
@@ -967,6 +979,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1045,6 +1058,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1123,6 +1137,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1199,6 +1214,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1277,6 +1293,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1357,6 +1374,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1437,6 +1455,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1515,6 +1534,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1601,6 +1621,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1709,6 +1730,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1799,6 +1821,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1885,6 +1908,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "parallel_task_planner",
@@ -1973,6 +1997,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2057,6 +2082,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -2135,6 +2161,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2217,6 +2244,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2295,6 +2323,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2375,6 +2404,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -2455,6 +2485,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_explicit_tool_call_playbook": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
