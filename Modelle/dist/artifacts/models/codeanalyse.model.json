@@ -64,24 +64,31 @@
       ],
       "toolIds": [
         "air_gapped_jupyter_python",
+        "ask_user",
         "comfyui_workflow_inspector",
         "docker_compose_triage",
         "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
+        "llm_council",
         "markdown_skill_builder",
         "mediawiki_legacy_crawler",
         "offline_artifact_workbench",
         "openapi_schema_inspector",
         "parallel_task_planner",
+        "parallel_tools",
         "repo_tree_analyzer",
+        "sub_agent",
         "subagent_orchestrator",
-        "tool_skill_overlay_planner"
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
       ],
       "filterIds": [
-        "context_compressor_filter"
+        "context_compressor_filter",
+        "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "context_compressor_filter"
+        "context_compressor_filter",
+        "markdown_normalizer"
       ]
     },
     "params": {

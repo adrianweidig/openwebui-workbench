@@ -1,4 +1,3 @@
-
 """
 title: Air-Gapped Jupyter Python Executor
 description: Execute restricted Python code on a configured local or internal Jupyter server.

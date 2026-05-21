@@ -1,11 +1,19 @@
 {
   "schema": "openwebui-function-bundle-fallback/v1",
+  "gui_import_file": "Tools/dist/openwebui-functions-import.json",
   "functions": [
     {
       "id": "context_compressor_filter",
       "name": "Context Compressor Filter",
       "type": "filter",
       "source_file": "Tools/openwebui_ext/filters/context_compressor_filter.py",
+      "default_enabled_for_chat_models": true
+    },
+    {
+      "id": "markdown_normalizer",
+      "name": "Markdown Normalizer",
+      "type": "filter",
+      "source_file": "Tools/openwebui_ext/filters/markdown_normalizer.py",
       "default_enabled_for_chat_models": true
     }
   ]

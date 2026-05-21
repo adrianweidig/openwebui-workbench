@@ -23,6 +23,13 @@
 
 Vor Übernahme Drittanbieter-Code vollständig lesen, Lizenz kopieren oder verlinken, konkrete Version oder Commit festhalten und Änderungen dokumentieren. Ohne klare Lizenz oder bei riskanten Mustern nicht integrieren.
 
+Übernommene öffentliche Tool-Exports müssen im Air-Gap-Review mindestens diese Änderungen behalten:
+
+- Öffentliche API-Fallbacks deaktivieren.
+- Remote-CDNs durch lokale Pfade oder Offline-Fallbacks ersetzen.
+- Public-Web-Suche/Crawling standardmäßig deaktivieren oder auf lokale/private Allowlists begrenzen.
+- Optionale Zusatzabhängigkeiten mit Fallback importieren, damit der OpenWebUI-GUI-Import nicht an fehlenden Paketen scheitert.
+
 ## SSRF und Netzwerk
 
 HTTP-Tools müssen Schema, Host, DNS-Auflösung, private IP-Bereiche, Redirects und Antwortgrößen kontrollieren. Interne Ziele nur bei expliziter lokaler Freigabe zulassen.

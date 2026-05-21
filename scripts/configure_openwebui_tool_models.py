@@ -19,7 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 TOOLS_INDEX = ROOT / "Tools" / "index.json"
 TOOLS_DIST = ROOT / "Tools" / "dist"
 TOOL_REGISTRY = TOOLS_DIST / "openwebui-tool-registry.json"
+TOOL_IMPORT = TOOLS_DIST / "openwebui-tools-import.json"
+OFFLINE_TOOL_IMPORT = TOOLS_DIST / "openwebui-tools-offline-import.json"
 FUNCTION_REGISTRY = TOOLS_DIST / "openwebui-function-registry.json"
+FUNCTION_IMPORT = TOOLS_DIST / "openwebui-functions-import.json"
 MODEL_DIST = ROOT / "Modelle" / "dist"
 REGISTRATION_PLAN = MODEL_DIST / "openwebui-registration-plan.json"
 TOOLS_FALLBACK_BUNDLE = MODEL_DIST / "tools_fallback_bundle.json"
@@ -101,6 +104,7 @@ class ToolRecord:
     sha256: str
     importable: bool
     methods: List[str]
+    source: str
 
 
 @dataclass(frozen=True)
@@ -113,6 +117,7 @@ class FunctionRecord:
     sha256: str
     importable: bool
     hooks: List[str]
+    source: str
 
 
 def read_json(path: Path) -> Any:
@@ -157,6 +162,19 @@ def parse_doc_metadata(path: Path) -> Dict[str, str]:
             key, value = line.split(":", 1)
             meta[key.strip().lower()] = value.strip()
     return meta
+
+
+def parse_doc_manifest(path: Path) -> Dict[str, str]:
+    text = path.read_text(encoding="utf-8")
+    match = re.match(r'\s*"""(.*?)"""', text, flags=re.S)
+    manifest: Dict[str, str] = {}
+    if not match:
+        return manifest
+    for line in match.group(1).splitlines():
+        if ":" in line:
+            key, value = line.split(":", 1)
+            manifest[key.strip()] = value.strip()
+    return manifest
 
 
 def parse_bool(value: Any, default: bool = True) -> bool:
@@ -240,13 +258,66 @@ def discover_tools() -> List[ToolRecord]:
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                 importable=importable,
                 methods=methods,
+                source=path.read_text(encoding="utf-8"),
             )
         )
     return records
 
 
 def offline_default_tool_records(records: List[ToolRecord]) -> List[ToolRecord]:
-    return [record for record in records if record.importable and record.id not in OFFLINE_EXCLUDED_TOOL_IDS]
+    return [record for record in records if record.importable and record.offline and record.id not in OFFLINE_EXCLUDED_TOOL_IDS]
+
+
+def tool_record_metadata(record: ToolRecord) -> Dict[str, Any]:
+    return {
+        "id": record.id,
+        "name": record.name,
+        "path": record.path,
+        "purpose": record.purpose,
+        "offline": record.offline,
+        "configuration": record.configuration,
+        "sha256": record.sha256,
+        "importable": record.importable,
+        "methods": record.methods,
+    }
+
+
+def function_record_metadata(record: FunctionRecord) -> Dict[str, Any]:
+    return {
+        "id": record.id,
+        "name": record.name,
+        "path": record.path,
+        "purpose": record.purpose,
+        "function_type": record.function_type,
+        "sha256": record.sha256,
+        "importable": record.importable,
+        "hooks": record.hooks,
+    }
+
+
+def tool_import_payload(record: ToolRecord) -> Dict[str, Any]:
+    return {
+        "id": record.id,
+        "name": record.name,
+        "meta": {
+            "description": record.purpose,
+            "manifest": parse_doc_manifest(ROOT / record.path),
+        },
+        "content": record.source,
+    }
+
+
+def function_import_payload(record: FunctionRecord) -> Dict[str, Any]:
+    return {
+        "id": record.id,
+        "name": record.name,
+        "type": record.function_type,
+        "meta": {
+            "description": record.purpose,
+            "manifest": parse_doc_manifest(ROOT / record.path),
+        },
+        "content": record.source,
+    }
 
 
 def discover_functions() -> List[FunctionRecord]:
@@ -266,6 +337,7 @@ def discover_functions() -> List[FunctionRecord]:
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                 importable=importable,
                 hooks=hooks,
+                source=path.read_text(encoding="utf-8"),
             )
         )
     return records
@@ -295,17 +367,22 @@ def sync_tools_index(records: List[ToolRecord], write: bool) -> bool:
 
 def write_tool_artifacts(records: List[ToolRecord], write: bool) -> bool:
     offline_records = offline_default_tool_records(records)
-    optional_records = [record for record in records if record.importable and record.id in OFFLINE_EXCLUDED_TOOL_IDS]
+    optional_records = [record for record in records if record.importable and record not in offline_records]
+    importable_records = [record for record in records if record.importable]
     registry = {
         "schema": "openwebui-tool-registry/v1",
         "order": ["tools", "skills", "models"],
+        "gui_import_file": rel(TOOL_IMPORT),
+        "gui_offline_import_file": rel(OFFLINE_TOOL_IMPORT),
         "tool_import_order": [record.id for record in offline_records],
         "offline_default_tool_import_order": [record.id for record in offline_records],
         "optional_network_tools_not_in_offline_default": [record.id for record in optional_records],
-        "tools": [record.__dict__ for record in records],
+        "tools": [tool_record_metadata(record) for record in records],
     }
     fallback = {
         "schema": "openwebui-tool-bundle-fallback/v1",
+        "gui_import_file": rel(TOOL_IMPORT),
+        "gui_offline_import_file": rel(OFFLINE_TOOL_IMPORT),
         "offline_default_tool_import_order": [record.id for record in offline_records],
         "optional_network_tools_not_in_offline_default": [record.id for record in optional_records],
         "tools": [
@@ -318,22 +395,37 @@ def write_tool_artifacts(records: List[ToolRecord], write: bool) -> bool:
             for record in offline_records
         ],
     }
-    changed = (not TOOL_REGISTRY.exists() or read_json(TOOL_REGISTRY) != registry) or read_json(TOOLS_FALLBACK_BUNDLE) != fallback
+    import_payload = [tool_import_payload(record) for record in importable_records]
+    offline_import_payload = [tool_import_payload(record) for record in offline_records]
+    changed = (
+        (not TOOL_REGISTRY.exists() or read_json(TOOL_REGISTRY) != registry)
+        or not TOOLS_FALLBACK_BUNDLE.exists()
+        or read_json(TOOLS_FALLBACK_BUNDLE) != fallback
+        or not TOOL_IMPORT.exists()
+        or read_json(TOOL_IMPORT) != import_payload
+        or not OFFLINE_TOOL_IMPORT.exists()
+        or read_json(OFFLINE_TOOL_IMPORT) != offline_import_payload
+    )
     if changed and write:
         write_json(TOOL_REGISTRY, registry)
         write_json(TOOLS_FALLBACK_BUNDLE, fallback)
+        write_json(TOOL_IMPORT, import_payload)
+        write_json(OFFLINE_TOOL_IMPORT, offline_import_payload)
     return changed
 
 
 def write_function_artifacts(records: List[FunctionRecord], write: bool) -> bool:
+    importable_records = [record for record in records if record.importable]
     registry = {
         "schema": "openwebui-function-registry/v1",
         "order": ["filters", "tools", "models"],
+        "gui_import_file": rel(FUNCTION_IMPORT),
         "filter_import_order": [record.id for record in records if record.importable and record.function_type == "filter"],
-        "functions": [record.__dict__ for record in records],
+        "functions": [function_record_metadata(record) for record in records],
     }
     fallback = {
         "schema": "openwebui-function-bundle-fallback/v1",
+        "gui_import_file": rel(FUNCTION_IMPORT),
         "functions": [
             {
                 "id": record.id,
@@ -346,15 +438,19 @@ def write_function_artifacts(records: List[FunctionRecord], write: bool) -> bool
             if record.importable
         ],
     }
+    import_payload = [function_import_payload(record) for record in importable_records]
     changed = (
         not FUNCTION_REGISTRY.exists()
         or read_json(FUNCTION_REGISTRY) != registry
         or not FUNCTIONS_FALLBACK_BUNDLE.exists()
         or read_json(FUNCTIONS_FALLBACK_BUNDLE) != fallback
+        or not FUNCTION_IMPORT.exists()
+        or read_json(FUNCTION_IMPORT) != import_payload
     )
     if changed and write:
         write_json(FUNCTION_REGISTRY, registry)
         write_json(FUNCTIONS_FALLBACK_BUNDLE, fallback)
+        write_json(FUNCTION_IMPORT, import_payload)
     return changed
 
 
@@ -570,7 +666,8 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
 def write_registration_plan(tool_records: List[ToolRecord], function_records: List[FunctionRecord], models: List[Dict[str, Any]], write: bool) -> bool:
     filter_ids = [record.id for record in function_records if record.importable and record.function_type == "filter"]
     offline_tool_ids = [record.id for record in offline_default_tool_records(tool_records)]
-    optional_network_tool_ids = [record.id for record in tool_records if record.importable and record.id in OFFLINE_EXCLUDED_TOOL_IDS]
+    offline_tool_id_set = set(offline_tool_ids)
+    optional_network_tool_ids = [record.id for record in tool_records if record.importable and record.id not in offline_tool_id_set]
     plan = {
         "schema": "openwebui-registration-plan/v1",
         "order": [
@@ -581,8 +678,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "5_enable_user_or_group_access",
         ],
         "tools_first": offline_tool_ids,
+        "tool_gui_import_file": rel(TOOL_IMPORT),
+        "tool_gui_offline_import_file": rel(OFFLINE_TOOL_IMPORT),
         "offline_default_tools": offline_tool_ids,
         "optional_network_tools_not_in_offline_default": optional_network_tool_ids,
+        "function_gui_import_file": rel(FUNCTION_IMPORT),
         "filters_before_models": filter_ids,
         "model_import_file": rel(MODEL_IMPORT),
         "model_params_summary_file": rel(MODEL_PARAMS_SUMMARY),
@@ -666,7 +766,8 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if not isinstance(tool_ids, list) or not tool_ids:
             issues.append(f"Chat-Modell {model_id} hat keine toolIds")
         else:
-            forbidden = sorted(set(tool_ids).intersection(OFFLINE_EXCLUDED_TOOL_IDS))
+            non_offline_tool_ids = {record.id for record in tool_records if record.importable and not record.offline}
+            forbidden = sorted(set(tool_ids).intersection(OFFLINE_EXCLUDED_TOOL_IDS | non_offline_tool_ids))
             if forbidden:
                 issues.append(f"Chat-Modell {model_id} referenziert im Offline-Standard ausgeschlossene Tools: {', '.join(forbidden)}")
             missing = sorted(set(tool_ids) - valid_tool_ids)
@@ -692,7 +793,15 @@ def rebuild_zips() -> None:
             for path in item.rglob("*"):
                 if path.is_file() and should_archive(path):
                     archive.write(path, rel(path))
-        for path in [TOOLS_INDEX, ROOT / "Tools" / "README.md", TOOL_REGISTRY, FUNCTION_REGISTRY]:
+        for path in [
+            TOOLS_INDEX,
+            ROOT / "Tools" / "README.md",
+            TOOL_REGISTRY,
+            OFFLINE_TOOL_IMPORT,
+            TOOL_IMPORT,
+            FUNCTION_REGISTRY,
+            FUNCTION_IMPORT,
+        ]:
             if path.exists():
                 archive.write(path, rel(path))
     with zipfile.ZipFile(MODELS_ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
@@ -702,6 +811,9 @@ def rebuild_zips() -> None:
             MODEL_FALLBACK,
             TOOLS_FALLBACK_BUNDLE,
             FUNCTIONS_FALLBACK_BUNDLE,
+            OFFLINE_TOOL_IMPORT,
+            TOOL_IMPORT,
+            FUNCTION_IMPORT,
             REGISTRATION_PLAN,
             MODEL_PARAMS_SUMMARY,
             MODEL_DIST / "manual_import_checklist.md",

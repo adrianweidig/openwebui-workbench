@@ -5,17 +5,22 @@ Dieses Repository enthält zusätzliche OpenWebUI-Erweiterungen unter `Tools/ope
 ## Tools importieren
 
 1. OpenWebUI als Administrator öffnen.
-2. `Workspace > Tools > Create Tool` wählen.
-3. Inhalt einer Datei aus `Tools/openwebui_ext/tools/*.py` einfügen.
-4. Speichern, Valves prüfen und Tool gezielt für passende Modelle aktivieren.
+2. `Workspace > Tools > Import` wählen.
+3. Für den Offline-Standard `Tools/dist/openwebui-tools-offline-import.json` importieren. Dieses Bundle enthält nur Tools mit Air-Gap-sicheren Defaults.
+4. Falls optionale Tools bewusst erlaubt sind, stattdessen `Tools/dist/openwebui-tools-import.json` importieren. Darin liegen zusätzlich Public-Network-/Rich-UI-Tools, die lokale Endpunkte oder statische Assets benötigen.
+5. Speichern, Valves prüfen und Tools gezielt für passende Modelle aktivieren.
+
+Fallback für einzelne Tools: `Workspace > Tools > Create Tool` öffnen und den Inhalt einer Datei aus `Tools/openwebui_ext/tools/*.py` oder `Tools/jupyter/jupyter_tool.py` einfügen.
 
 Tools führen serverseitig Python aus. Nur vertrauenswürdige Administratoren sollten Tools importieren oder ändern.
+
+Die öffentlichen Tool-Exports aus `Tools/openwebui_ext/third_party/public_openwebui_tools/` wurden nicht roh als Default übernommen. Produktive Kopien liegen unter `Tools/openwebui_ext/tools/` und wurden für Air-Gap-Betrieb angepasst: keine öffentlichen API-Fallbacks, keine öffentlichen CDN-Defaults im Offline-Standard und Public-Web-Crawling nur mit lokaler/private Host-Allowlist.
 
 ## Filter importieren
 
 1. OpenWebUI als Administrator öffnen.
-2. `Workspace > Functions > Create Function` oder den passenden Importdialog für Functions/Filter wählen.
-3. Inhalt einer Datei aus `Tools/openwebui_ext/filters/*.py` einfügen.
+2. `Workspace > Functions > Import` wählen und `Tools/dist/openwebui-functions-import.json` importieren.
+3. Falls der Function-Importdialog nicht verfügbar ist, `Workspace > Functions > Create Function` wählen und den Inhalt aus `Tools/openwebui_ext/filters/context_compressor_filter.py` einfügen.
 4. Speichern, Valves prüfen und Filter für Modelle aktivieren.
 
 Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die geschätzten Kontexttokens. Sobald der konfigurierte Schwellwert erreicht ist, sendet er eine Statusmeldung, erzeugt eine kompakte Zusammenfassung älterer Chatteile und injiziert diese als Systemkontext in denselben Chatrequest. Einen neuen Chat legt der Filter bewusst nicht selbst an, weil OpenWebUI-Filter dafür keine stabile versionsübergreifende API garantieren; der robuste Default ist die Zusammenfassung im aktuellen Chatkontext.
@@ -98,7 +103,7 @@ Das Skript arbeitet in dieser Reihenfolge:
 
 1. Tool-Dateien aus `Tools/jupyter/` und `Tools/openwebui_ext/tools/` entdecken und importierbar prüfen.
 2. Filter-Dateien aus `Tools/openwebui_ext/filters/` entdecken und importierbar prüfen.
-3. `Tools/index.json`, `Tools/dist/openwebui-tool-registry.json`, `Tools/dist/openwebui-function-registry.json`, `Modelle/dist/tools_fallback_bundle.json` und `Modelle/dist/functions_fallback_bundle.json` erzeugen.
+3. `Tools/dist/openwebui-tools-offline-import.json`, `Tools/dist/openwebui-tools-import.json`, `Tools/dist/openwebui-functions-import.json`, `Tools/index.json`, die Registries und die Fallback-Bundles erzeugen.
 4. Chat-Modelle in `Modelle/einzelmodelle/*/model.json` konfigurieren.
 5. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
 6. Optional Offline-ZIP-Pakete neu bauen.

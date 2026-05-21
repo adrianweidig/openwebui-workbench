@@ -5,39 +5,53 @@
     "skills",
     "models"
   ],
+  "gui_import_file": "Tools/dist/openwebui-tools-import.json",
+  "gui_offline_import_file": "Tools/dist/openwebui-tools-offline-import.json",
   "tool_import_order": [
     "air_gapped_jupyter_python",
+    "ask_user",
     "comfyui_workflow_inspector",
     "docker_compose_triage",
     "inline_visuals_toolkit_v3",
     "json_csv_text_validator",
+    "llm_council",
     "markdown_skill_builder",
     "mediawiki_legacy_crawler",
     "offline_artifact_workbench",
     "openapi_schema_inspector",
     "parallel_task_planner",
+    "parallel_tools",
     "repo_tree_analyzer",
+    "sub_agent",
     "subagent_orchestrator",
-    "tool_skill_overlay_planner"
+    "tool_skill_overlay_planner",
+    "visuals_toolkit_v4"
   ],
   "offline_default_tool_import_order": [
     "air_gapped_jupyter_python",
+    "ask_user",
     "comfyui_workflow_inspector",
     "docker_compose_triage",
     "inline_visuals_toolkit_v3",
     "json_csv_text_validator",
+    "llm_council",
     "markdown_skill_builder",
     "mediawiki_legacy_crawler",
     "offline_artifact_workbench",
     "openapi_schema_inspector",
     "parallel_task_planner",
+    "parallel_tools",
     "repo_tree_analyzer",
+    "sub_agent",
     "subagent_orchestrator",
-    "tool_skill_overlay_planner"
+    "tool_skill_overlay_planner",
+    "visuals_toolkit_v4"
   ],
   "optional_network_tools_not_in_offline_default": [
     "github_repo_inspector",
-    "safe_http_fetcher"
+    "openui_generative_ui",
+    "safe_http_fetcher",
+    "web_search_and_crawl"
   ],
   "tools": [
     {
@@ -52,10 +66,23 @@
         "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
         "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR"
       ],
-      "sha256": "1d93597a3b01a107f260e260e88bdb926312cb217f676111dc53001bfaea1014",
+      "sha256": "415a4827140858409080a366eaad0a32c1eb1db72a01642401c86bb27f432926",
       "importable": true,
       "methods": [
         "run_python"
+      ]
+    },
+    {
+      "id": "ask_user",
+      "name": "Ask User",
+      "path": "Tools/openwebui_ext/tools/ask_user.py",
+      "purpose": "Allows the LLM to autonomously trigger 1-5 interactive pop-up questions to gather missing project details.",
+      "offline": true,
+      "configuration": [],
+      "sha256": "5073a6a54691edbf09438b4c89a20bb7d3836059ea221af1b6e85825f6cc653d",
+      "importable": true,
+      "methods": [
+        "get_user_clarification"
       ]
     },
     {
@@ -132,6 +159,19 @@
       ]
     },
     {
+      "id": "llm_council",
+      "name": "LLM Council Tool",
+      "path": "Tools/openwebui_ext/tools/llm_council.py",
+      "purpose": "OpenWebUI Workspace Tool.",
+      "offline": true,
+      "configuration": [],
+      "sha256": "cc6ce0c679affe27a58d7066b8c2c21109e7d192a68d6fda17c8776d665056d1",
+      "importable": true,
+      "methods": [
+        "consult_council"
+      ]
+    },
+    {
       "id": "markdown_skill_builder",
       "name": "Markdown Skill Builder",
       "path": "Tools/openwebui_ext/tools/markdown_skill_builder.py",
@@ -192,6 +232,19 @@
       ]
     },
     {
+      "id": "openui_generative_ui",
+      "name": "OpenUI - Generative UI",
+      "path": "Tools/openwebui_ext/tools/openui_generative_ui.py",
+      "purpose": "Renders interactive generative UI components (charts, forms, tables, cards, follow-ups) in chat using OpenUI Lang.",
+      "offline": false,
+      "configuration": [],
+      "sha256": "caca210e8f52c33a16252305914b14a4e4f63888781fd52824da8c84758580b8",
+      "importable": true,
+      "methods": [
+        "render_openui"
+      ]
+    },
+    {
       "id": "parallel_task_planner",
       "name": "Offline Parallel Task Planner",
       "path": "Tools/openwebui_ext/tools/parallel_task_planner.py",
@@ -204,6 +257,19 @@
         "build_parallel_execution_plan",
         "merge_parallel_results",
         "split_for_subagents"
+      ]
+    },
+    {
+      "id": "parallel_tools",
+      "name": "Parallel Tools",
+      "path": "Tools/openwebui_ext/tools/parallel_tools.py",
+      "purpose": "Execute multiple independent tool calls in parallel for faster results.",
+      "offline": true,
+      "configuration": [],
+      "sha256": "17ab111ab54ed055d5042cd7280c1284b07cc9b5296883ebfe1094dd21e2c986",
+      "importable": true,
+      "methods": [
+        "run_tools_parallel"
       ]
     },
     {
@@ -234,6 +300,20 @@
       ]
     },
     {
+      "id": "sub_agent",
+      "name": "Sub Agent",
+      "path": "Tools/openwebui_ext/tools/sub_agent.py",
+      "purpose": "Run autonomous, tool-heavy tasks in a sub-agent and keep the main chat context clean.",
+      "offline": true,
+      "configuration": [],
+      "sha256": "422e73b5815f4e4b44920448d146cadf0e045c6305142e7f10442b0a2937a765",
+      "importable": true,
+      "methods": [
+        "run_parallel_sub_agents",
+        "run_sub_agent"
+      ]
+    },
+    {
       "id": "subagent_orchestrator",
       "name": "Subagent Orchestrator",
       "path": "Tools/openwebui_ext/tools/subagent_orchestrator.py",
@@ -261,6 +341,50 @@
         "build_overlay_matrix",
         "compare_capability_coverage",
         "suggest_fallback_stack"
+      ]
+    },
+    {
+      "id": "visuals_toolkit_v4",
+      "name": "Visuals Toolkit V4",
+      "path": "Tools/openwebui_ext/tools/visuals_toolkit_v4.py",
+      "purpose": "Tables, charts, heatmaps, timelines, flowcharts, trees, dashboards, metric grids, pie/donut charts, gauges, Gantt charts, Sankey diagrams, radar charts, waterfall charts, funnels, and candlestick charts. Dark-mode-safe HTML with Plotly, auto-resizing iframes, and fullscreen support. Pure ASCII/Markdown fallback when HTML is unavailable.",
+      "offline": true,
+      "configuration": [],
+      "sha256": "9c1b54339bc2d59a79fb986fabb2cb6988d53d267147ca1155e78fd8439ff48b",
+      "importable": true,
+      "methods": [
+        "render_candlestick",
+        "render_chart",
+        "render_comparison_table",
+        "render_dashboard",
+        "render_flowchart",
+        "render_funnel",
+        "render_gantt",
+        "render_gauge",
+        "render_heatmap",
+        "render_metrics_grid",
+        "render_multi_chart",
+        "render_pie_chart",
+        "render_radar",
+        "render_sankey",
+        "render_table",
+        "render_timeline",
+        "render_tree",
+        "render_waterfall"
+      ]
+    },
+    {
+      "id": "web_search_and_crawl",
+      "name": "Web Search and Crawl",
+      "path": "Tools/openwebui_ext/tools/web_search_and_crawl.py",
+      "purpose": "Search and crawl local/self-hosted sources using SearXNG, OpenWebUI Native Search, and Crawl4AI. Public network access is blocked by default for Air-Gap operation.",
+      "offline": false,
+      "configuration": [],
+      "sha256": "2b448f8cd10d889cdadc86fcebc83c5c133e40a776f2c09b82ce74826a812310",
+      "importable": true,
+      "methods": [
+        "get_request",
+        "search_and_crawl"
       ]
     }
   ]

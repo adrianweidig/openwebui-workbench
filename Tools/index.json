@@ -15,6 +15,14 @@
       ]
     },
     {
+      "id": "ask_user",
+      "name": "Ask User",
+      "path": "Tools/openwebui_ext/tools/ask_user.py",
+      "purpose": "Allows the LLM to autonomously trigger 1-5 interactive pop-up questions to gather missing project details.",
+      "offline": true,
+      "configuration": []
+    },
+    {
       "id": "comfyui_workflow_inspector",
       "name": "ComfyUI Workflow Inspector Offline",
       "path": "Tools/openwebui_ext/tools/comfyui_workflow_inspector.py",
@@ -55,6 +63,14 @@
       "configuration": []
     },
     {
+      "id": "llm_council",
+      "name": "LLM Council Tool",
+      "path": "Tools/openwebui_ext/tools/llm_council.py",
+      "purpose": "OpenWebUI Workspace Tool.",
+      "offline": true,
+      "configuration": []
+    },
+    {
       "id": "markdown_skill_builder",
       "name": "Markdown Skill Builder",
       "path": "Tools/openwebui_ext/tools/markdown_skill_builder.py",
@@ -89,10 +105,26 @@
       "configuration": []
     },
     {
+      "id": "openui_generative_ui",
+      "name": "OpenUI - Generative UI",
+      "path": "Tools/openwebui_ext/tools/openui_generative_ui.py",
+      "purpose": "Renders interactive generative UI components (charts, forms, tables, cards, follow-ups) in chat using OpenUI Lang.",
+      "offline": false,
+      "configuration": []
+    },
+    {
       "id": "parallel_task_planner",
       "name": "Offline Parallel Task Planner",
       "path": "Tools/openwebui_ext/tools/parallel_task_planner.py",
       "purpose": "Komplexe Arbeit in dependency-sichere parallele Tool-Wellen und Subagent-Arbeitspakete zerlegen.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "parallel_tools",
+      "name": "Parallel Tools",
+      "path": "Tools/openwebui_ext/tools/parallel_tools.py",
+      "purpose": "Execute multiple independent tool calls in parallel for faster results.",
       "offline": true,
       "configuration": []
     },
@@ -113,6 +145,14 @@
       "configuration": []
     },
     {
+      "id": "sub_agent",
+      "name": "Sub Agent",
+      "path": "Tools/openwebui_ext/tools/sub_agent.py",
+      "purpose": "Run autonomous, tool-heavy tasks in a sub-agent and keep the main chat context clean.",
+      "offline": true,
+      "configuration": []
+    },
+    {
       "id": "subagent_orchestrator",
       "name": "Subagent Orchestrator",
       "path": "Tools/openwebui_ext/tools/subagent_orchestrator.py",
@@ -126,6 +166,22 @@
       "path": "Tools/openwebui_ext/tools/tool_skill_overlay_planner.py",
       "purpose": "Modellbezogene Tool-/Skill-Overlays, Redundanz und Fallback-Abdeckung planen.",
       "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "visuals_toolkit_v4",
+      "name": "Visuals Toolkit V4",
+      "path": "Tools/openwebui_ext/tools/visuals_toolkit_v4.py",
+      "purpose": "Tables, charts, heatmaps, timelines, flowcharts, trees, dashboards, metric grids, pie/donut charts, gauges, Gantt charts, Sankey diagrams, radar charts, waterfall charts, funnels, and candlestick charts. Dark-mode-safe HTML with Plotly, auto-resizing iframes, and fullscreen support. Pure ASCII/Markdown fallback when HTML is unavailable.",
+      "offline": true,
+      "configuration": []
+    },
+    {
+      "id": "web_search_and_crawl",
+      "name": "Web Search and Crawl",
+      "path": "Tools/openwebui_ext/tools/web_search_and_crawl.py",
+      "purpose": "Search and crawl local/self-hosted sources using SearXNG, OpenWebUI Native Search, and Crawl4AI. Public network access is blocked by default for Air-Gap operation.",
+      "offline": false,
       "configuration": []
     }
   ]

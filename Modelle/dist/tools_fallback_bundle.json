@@ -1,23 +1,32 @@
 {
   "schema": "openwebui-tool-bundle-fallback/v1",
+  "gui_import_file": "Tools/dist/openwebui-tools-import.json",
+  "gui_offline_import_file": "Tools/dist/openwebui-tools-offline-import.json",
   "offline_default_tool_import_order": [
     "air_gapped_jupyter_python",
+    "ask_user",
     "comfyui_workflow_inspector",
     "docker_compose_triage",
     "inline_visuals_toolkit_v3",
     "json_csv_text_validator",
+    "llm_council",
     "markdown_skill_builder",
     "mediawiki_legacy_crawler",
     "offline_artifact_workbench",
     "openapi_schema_inspector",
     "parallel_task_planner",
+    "parallel_tools",
     "repo_tree_analyzer",
+    "sub_agent",
     "subagent_orchestrator",
-    "tool_skill_overlay_planner"
+    "tool_skill_overlay_planner",
+    "visuals_toolkit_v4"
   ],
   "optional_network_tools_not_in_offline_default": [
     "github_repo_inspector",
-    "safe_http_fetcher"
+    "openui_generative_ui",
+    "safe_http_fetcher",
+    "web_search_and_crawl"
   ],
   "tools": [
     {
@@ -25,6 +34,12 @@
       "name": "Air-Gapped Jupyter Python",
       "source_file": "Tools/jupyter/jupyter_tool.py",
       "config_example": "Tools/jupyter/jupyter_config.example.json"
+    },
+    {
+      "id": "ask_user",
+      "name": "Ask User",
+      "source_file": "Tools/openwebui_ext/tools/ask_user.py",
+      "config_example": null
     },
     {
       "id": "comfyui_workflow_inspector",
@@ -48,6 +63,12 @@
       "id": "json_csv_text_validator",
       "name": "JSON CSV Text Validator",
       "source_file": "Tools/openwebui_ext/tools/json_csv_text_validator.py",
+      "config_example": null
+    },
+    {
+      "id": "llm_council",
+      "name": "LLM Council Tool",
+      "source_file": "Tools/openwebui_ext/tools/llm_council.py",
       "config_example": null
     },
     {
@@ -81,9 +102,21 @@
       "config_example": null
     },
     {
+      "id": "parallel_tools",
+      "name": "Parallel Tools",
+      "source_file": "Tools/openwebui_ext/tools/parallel_tools.py",
+      "config_example": null
+    },
+    {
       "id": "repo_tree_analyzer",
       "name": "Repository Tree Analyzer",
       "source_file": "Tools/openwebui_ext/tools/repo_tree_analyzer.py",
+      "config_example": null
+    },
+    {
+      "id": "sub_agent",
+      "name": "Sub Agent",
+      "source_file": "Tools/openwebui_ext/tools/sub_agent.py",
       "config_example": null
     },
     {
@@ -96,6 +129,12 @@
       "id": "tool_skill_overlay_planner",
       "name": "Tool Skill Overlay Planner",
       "source_file": "Tools/openwebui_ext/tools/tool_skill_overlay_planner.py",
+      "config_example": null
+    },
+    {
+      "id": "visuals_toolkit_v4",
+      "name": "Visuals Toolkit V4",
+      "source_file": "Tools/openwebui_ext/tools/visuals_toolkit_v4.py",
       "config_example": null
     }
   ]

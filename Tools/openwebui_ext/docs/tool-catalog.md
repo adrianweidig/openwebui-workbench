@@ -16,6 +16,34 @@ Validiert JSON, CSV und Text. Markiert sensible Feldnamen und redigiert offensic
 
 Optionales Netzwerktool für GitHub-Repository-Metadaten read-only über die GitHub-API. Optionaler Token kommt aus Valves oder OAuth und wird nie ausgegeben. Nicht Teil des Offline-Standardimports und keinem Modellprofil standardmäßig zugewiesen.
 
+## ask_user.py
+
+Drittanbieter-Tool für interaktive Rückfragen über OpenWebUI-Pop-up-Events. Es ruft keine externen Dienste auf und ist im Offline-Standardimport enthalten. Die Air-Gap-Variante nutzt `asyncio.sleep`, damit der Event-Loop nicht durch blockierendes Warten angehalten wird.
+
+## llm_council.py
+
+Drittanbieter-Tool für lokale Multi-Modell-Abstimmungen über die OpenWebUI-API. Die Air-Gap-Variante nutzt standardmäßig nur lokale Modell-IDs (`coder`) und deaktiviert öffentliche OpenAI-/OpenRouter-Fallbacks vollständig.
+
+## parallel_tools.py
+
+Drittanbieter-Tool zum parallelen Ausführen bereits in OpenWebUI aktivierter Tools. Es ruft keine öffentlichen Dienste direkt auf; die tatsächliche Reichweite wird durch die im Chat aktivierten Tools und die OpenWebUI-Instanz begrenzt.
+
+## sub_agent.py
+
+Drittanbieter-Tool für isolierte OpenWebUI-Subagenten. Die Air-Gap-Variante deaktiviert Web-, Image-, Automation- und Calendar-Builtin-Kategorien standardmäßig; lokale Knowledge-, Memory-, Notes-, Chat- und Tool-Funktionen bleiben nutzbar, sofern OpenWebUI sie bereitstellt.
+
+## visuals_toolkit_v4.py
+
+Drittanbieter-Visualisierungstool mit Tabellen, Charts, Dashboards und Diagrammen. Die Air-Gap-Variante lädt Plotly nicht aus einem CDN und fällt standardmäßig auf Text-/ASCII-Ausgaben zurück; für vollständig offline-interaktive Visuals bleibt `inline_visuals_toolkit_v3.py` der robuste Default.
+
+## openui_generative_ui.py
+
+Optionales Drittanbieter-Rich-UI-Tool. Nicht Teil des Offline-Standardimports, weil das benötigte OpenUI-Browser-Bundle lokal als statische OpenWebUI-Datei bereitgestellt werden muss. Der Default zeigt auf `/static/openui/dist` statt auf ein öffentliches CDN.
+
+## web_search_and_crawl.py
+
+Optionales Drittanbieter-Such- und Crawl-Tool für lokale/self-hosted SearXNG- und Crawl4AI-Setups. Nicht Teil des Offline-Standardimports. Öffentliche Netzwerke sind per `ALLOW_PUBLIC_NETWORK=false` blockiert; erlaubt sind nur lokale/private/allowlistete Hosts.
+
 ## docker_compose_triage.py
 
 Analysiert eingefügte Compose-Dateien und Fehlertexte. Startet keine Container und führt keine Shell-Befehle aus.

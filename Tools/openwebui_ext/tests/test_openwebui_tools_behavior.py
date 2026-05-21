@@ -33,6 +33,23 @@ class OpenWebUIToolBehaviorTests(unittest.TestCase):
         self.assertFalse(result["ok"])
         self.assertEqual(result["status"], "blocked")
 
+    def test_ask_user_collects_popup_answers(self) -> None:
+        tool = load(TOOLS_DIR / "ask_user.py")
+        events = []
+
+        async def event_call(payload):
+            events.append(payload)
+            return "Blau"
+
+        async def event_emitter(payload):
+            events.append(payload)
+
+        result = asyncio.run(tool.get_user_clarification(["Welche Farbe?"], event_call, event_emitter))
+        self.assertIn("USER CLARIFICATION RECEIVED", result)
+        self.assertIn("Welche Farbe?", result)
+        self.assertIn("Blau", result)
+        self.assertTrue(any(event.get("type") == "input" for event in events))
+
     def test_comfyui_workflow_inspector_smoke(self) -> None:
         tool = load(TOOLS_DIR / "comfyui_workflow_inspector.py")
         self.assert_ok_text(asyncio.run(tool.inspect_workflow('{"1":{"class_type":"CheckpointLoaderSimple","inputs":{"ckpt_name":"model.safetensors"}}}')))

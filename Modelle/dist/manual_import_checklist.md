@@ -4,6 +4,9 @@
 
 - `openwebui-models-import.json`: alle Modelle als direkt importierbare OpenWebUI-JSON-Datei
 - `models_fallback_bundle.json`: Kompatibilitätskopie desselben Modellimports
+- `Tools/dist/openwebui-tools-offline-import.json`: direkt importierbares GUI-Bundle für alle Offline-Default-Tools
+- `Tools/dist/openwebui-tools-import.json`: direkt importierbares GUI-Bundle inklusive optionaler Netzwerk-, Rich-UI- und lokaler Crawl-Tools
+- `Tools/dist/openwebui-functions-import.json`: direkt importierbares GUI-Bundle für Functions/Filter
 - `tools_fallback_bundle.json`: Tool-Metadaten und Pfad zum Jupyter-Tool
 - `functions_fallback_bundle.json`: Filter-Metadaten für den Kontextkomprimierer
 - `openwebui-model-params-summary.json`: Prüfübersicht für Modellparameter und Tool-Zuordnung je Modell
@@ -17,11 +20,11 @@
 
 ## Manuelle Integration
 
-1. In OpenWebUI entweder `openwebui-models-import.json` oder ein einzelnes `model.json` importieren.
-2. Basismodell `coder` prüfen.
-3. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
-4. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
-5. Vor dem Modellimport nur die Offline-Tools aus `openwebui-registration-plan.json` unter `tools_first` importieren, insbesondere Subagent-Orchestrierung, Parallelplanung, Jupyter und Artefakttools.
-6. `context_compressor_filter.py` vor dem Modellimport als OpenWebUI-Function/Filter importieren und bei allen Chat-Modellen aktiv lassen.
-7. Skills aus `Tools/openwebui_ext/skills/*.md` importieren, falls die OpenWebUI-Instanz Skill-Importe unterstützt.
-8. Danach `openwebui-models-import.json` importieren; Icons, Systemprompt, Mainprompt, Fachwissen und Tool-/Filter-Zuordnung sind in den Modellprofilen enthalten.
+1. `Tools/dist/openwebui-tools-offline-import.json` über `Workspace > Tools > Import` importieren.
+2. `Tools/dist/openwebui-functions-import.json` über `Workspace > Functions > Import` importieren.
+3. Skills aus `Tools/openwebui_ext/skills/*.md` importieren, falls die OpenWebUI-Instanz Skill-Importe unterstützt.
+4. Danach in OpenWebUI entweder `openwebui-models-import.json` oder ein einzelnes `model.json` importieren.
+5. Basismodell `coder` prüfen.
+6. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
+7. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
+8. Icons, Systemprompt, Mainprompt, Fachwissen und Tool-/Filter-Zuordnung sind in den Modellprofilen enthalten.

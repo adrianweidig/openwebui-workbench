@@ -64,6 +64,22 @@ class OpenWebUIFilterImportTests(unittest.TestCase):
         self.assertTrue(result["metadata"]["context_compressor_filter"]["compressed"])
         self.assertLess(len(result["messages"]), 15)
 
+    def test_markdown_normalizer_repairs_common_markdown(self) -> None:
+        path = FILTERS_DIR / "markdown_normalizer.py"
+        spec = importlib.util.spec_from_file_location("test_markdown_normalizer", path)
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader if spec else None)
+        module = importlib.util.module_from_spec(spec)
+        assert spec and spec.loader
+        spec.loader.exec_module(module)
+        filter_obj = module.Filter()
+        body = {"messages": [{"role": "assistant", "content": "#Titel\n| A | B\n```python\nprint('ok')"}]}
+        result = asyncio.run(filter_obj.outlet(body))
+        content = result["messages"][-1]["content"]
+        self.assertIn("# Titel", content)
+        self.assertIn("| A | B|", content)
+        self.assertEqual(content.count("```"), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -42,7 +42,9 @@ Dieses Repository verwaltet den lokalen Arbeitsbereich unter `E:\OpenWebUI`.
 
 Die Erweiterungen unter `Tools/openwebui_ext/` sind direkt für OpenWebUI vorbereitet:
 
-- `.py`-Dateien aus `Tools/openwebui_ext/tools/` über `Workspace > Tools > Create Tool` importieren.
+- `Tools/dist/openwebui-tools-offline-import.json` über `Workspace > Tools > Import` importieren.
+- Optional mit Netzwerk-/Rich-UI-/lokalen Crawl-Tools: `Tools/dist/openwebui-tools-import.json` über `Workspace > Tools > Import` importieren.
+- Einzelne `.py`-Dateien aus `Tools/openwebui_ext/tools/` nur als Fallback über `Workspace > Tools > Create Tool` einfügen.
 - `.md`-Dateien aus `Tools/openwebui_ext/skills/` über `Workspace > Skills > Import` importieren.
 - Details, Sicherheitsgrenzen und Testbefehle stehen in `OPENWEBUI_EXTENSIONS.md`.
 

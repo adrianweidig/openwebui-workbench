@@ -45,6 +45,21 @@ Abrufdatum: 2026-05-19
 - Zweck: Community-Tool-Sammlung aus dem OpenWebUI-Ökosystem.
 - Entscheidung: Nicht integriert. Im aktuellen Lauf wurde keine belastbare Lizenz- und Einzeldatei-Prüfung abgeschlossen. Ohne klare lokale Review-Basis wird kein serverseitig ausführbarer Drittanbieter-Code übernommen.
 
+### Öffentliche OpenWebUI-Tool-Exports aus lokalem Download
+
+- Quelle: `C:\Users\adrian.TOP\Downloads\öffentliche tools`
+- Abruf-/Übernahmedatum: 2026-05-20
+- Enthaltene Exports: Ask User, OpenUI, LLM Council, Parallel Tools, Sub Agent, Visuals Toolkit V4, Web Search and Crawl.
+- Lizenzangaben laut Tool-Metadaten: `llm_council`, `parallel_tools`, `sub_agent`, `visuals_toolkit_v4` und `web_search_and_crawl` nennen MIT; `ask_user`, `openui` und `markdown_normalizer` nennen keine explizite Lizenz im Export.
+- Entscheidung: Integriert, aber nicht roh als Produktivdefault. Original-Exports liegen unverändert unter `Tools/openwebui_ext/third_party/public_openwebui_tools/`. Produktive Kopien liegen unter `Tools/openwebui_ext/tools/` und enthalten Air-Gap-Anpassungen.
+
 ## Übernommener Drittanbieter-Code
 
-Keiner.
+- `Tools/openwebui_ext/tools/openui_generative_ui.py`: aus `generative_ui_plugin_for_open_webui.json`, optionales Rich-UI-Tool. Nicht Offline-Default; CDN-Default auf lokalen Pfad `/static/openui/dist` geändert.
+- `Tools/openwebui_ext/tools/ask_user.py`: aus `ask_user_tool🧩_—_smart_follow-up_questions_before_the_ai_responds.json`. Keine öffentlichen Dienste; blockierendes Warten durch `asyncio.sleep` ersetzt und Event-Emitter defensiv geprüft.
+- `Tools/openwebui_ext/tools/llm_council.py`: aus `llm_council.json`, MIT laut Export. Öffentliche OpenAI-/OpenRouter-Fallbacks deaktiviert; Default-Modell auf lokal `coder` gesetzt.
+- `Tools/openwebui_ext/tools/parallel_tools.py`: aus `parallel_tools.json`, MIT laut Export. Keine öffentlichen Defaults ergänzt; Reichweite bleibt durch aktivierte OpenWebUI-Tools begrenzt.
+- `Tools/openwebui_ext/tools/sub_agent.py`: aus `sub_agent_tool.json`, MIT laut Export. Web-, Image-, Automation- und Calendar-Builtin-Kategorien standardmäßig deaktiviert.
+- `Tools/openwebui_ext/tools/visuals_toolkit_v4.py`: aus `visuals_toolkit_v4.json`, MIT laut Export. Public-CDN-Default deaktiviert; Auto-Modus fällt auf Text/ASCII zurück.
+- `Tools/openwebui_ext/tools/web_search_and_crawl.py`: aus `web_search_and_crawl_tool.json`, MIT laut Export. Nicht Offline-Default; Public-Network-Guard ergänzt, lokale/private/allowlistete Hosts erlaubt, OpenRouter-Default entfernt, optionale `orjson`/`loguru`-Fallbacks ergänzt.
+- `Tools/openwebui_ext/filters/markdown_normalizer.py`: aus `markdown_normalizer.json`. Der Export nennt `type: action`, der Code implementiert aber eine `Filter`-Klasse mit `outlet`; im Repo wird er als Filter importiert. Keine externen Netzaufrufe.

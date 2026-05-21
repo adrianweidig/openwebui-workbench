@@ -17,8 +17,13 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 | JSON/CSV/Text prüfen | `json_csv_text_validator.py` | Jupyter | `data-cleaning-analysis` |
 | Artefakte erzeugen | `offline_artifact_workbench.py` | Jupyter/HTML manuell | `offline-artifact-production` |
 | Visuals/Charts/Dashboards | `inline_visuals_toolkit_v3.py` | Mermaid/Texttabelle | `visual-toolkit-v3-offline` |
+| Erweiterte Tabellen/Charts ohne CDN | `visuals_toolkit_v4.py` im Text-/ASCII-Modus | `inline_visuals_toolkit_v3.py` | `visual-toolkit-v3-offline` |
 | ComfyUI-Bild/Audio/Video vorbereiten | `comfyui_workflow_inspector.py` | Prompt-/Parameter-Checkliste | `offline-creative-media-workflows` |
 | Parallelisierung/Subagents | `parallel_task_planner.py` | manuelle Wellenplanung | `parallel-tools-subagents` |
+| Direkte OpenWebUI-Subagenten | `sub_agent.py` mit deaktivierten Public-Builtins | `subagent_orchestrator.py` | `parallel-tools-subagents` |
+| Parallele Tool-Ausführung | `parallel_tools.py` | `parallel_task_planner.py` | `parallel-tools-subagents` |
+| Gezielte Rückfragen | `ask_user.py` | direkte Chat-Rückfrage | `prompt-to-tool-workflow` |
+| Lokaler Modellrat | `llm_council.py` über lokale OpenWebUI-API | mehrere Modellläufe manuell | `offline-use-case-router` |
 | Modell-Tool-Zuordnung | `tool_skill_overlay_planner.py` | Markdown-Matrix | `model-tool-skill-overlays` |
 | Redundante Fallbacks | `tool_skill_overlay_planner.py` | manuelle Checkliste | `redundant-fallback-tooling` |
 | OpenAPI prüfen | `openapi_schema_inspector.py` | Schemaauszug in Chat | `api-integration-debugging` |
@@ -59,3 +64,5 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 - Drittanbieter-Plugins mit Same-Origin-Iframe-Anforderung, Remote-CDNs oder unklarer CSP, solange kein lokaler Review abgeschlossen ist.
 - Externe API-Tools mit Tokenpflicht in einer Air-Gap-Umgebung.
 - `safe_http_fetcher.py` und `github_repo_inspector.py` nur in separaten, bewusst nicht-air-gapped Profilen importieren; sie sind kein Offline-Default und keinem Modell zugewiesen.
+- `openui_generative_ui.py` nur aktivieren, wenn das OpenUI-Browser-Bundle lokal unter `/static/openui/dist` bereitsteht.
+- `web_search_and_crawl.py` nur aktivieren, wenn SearXNG/Crawl4AI lokal oder intern erreichbar sind und `ALLOW_PUBLIC_NETWORK` ausgeschaltet bleibt.

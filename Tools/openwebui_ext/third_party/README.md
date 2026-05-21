@@ -1,7 +1,18 @@
 # Third-Party OpenWebUI Tools
 
-Dieses Verzeichnis ist für geprüfte Drittanbieter-Tools vorgesehen.
+Dieses Verzeichnis enthält Original-Exports geprüfter Drittanbieter-Tools als Referenzmaterial.
 
-Aktueller Stand: Es wurde kein Drittanbieter-Code übernommen. Die geprüften Quellen und Entscheidungen stehen in `THIRD_PARTY_NOTICES.md`.
+Produktiv importierbare, air-gap-angepasste Kopien liegen unter `Tools/openwebui_ext/tools/`. Die Originaldateien bleiben hier unverändert nachvollziehbar, damit Herkunft, Lizenzangaben und lokale Änderungen prüfbar bleiben.
 
-Vor einer späteren Übernahme müssen mindestens Lizenz, Wartungsstand, Abhängigkeiten, Sicherheitsverhalten, Importierbarkeit und konkrete Änderungen dokumentiert werden.
+Übernommene Exports:
+
+- `public_openwebui_tools/ask_user_tool🧩_—_smart_follow-up_questions_before_the_ai_responds.json` -> `ask_user.py`
+- `public_openwebui_tools/generative_ui_plugin_for_open_webui.json` -> `openui_generative_ui.py`
+- `public_openwebui_tools/llm_council.json` -> `llm_council.py`
+- `public_openwebui_tools/parallel_tools.json` -> `parallel_tools.py`
+- `public_openwebui_tools/sub_agent_tool.json` -> `sub_agent.py`
+- `public_openwebui_tools/visuals_toolkit_v4.json` -> `visuals_toolkit_v4.py`
+- `public_openwebui_tools/web_search_and_crawl_tool.json` -> `web_search_and_crawl.py`
+- `public_openwebui_functions/markdown_normalizer.json` -> `filters/markdown_normalizer.py`
+
+Air-Gap-Änderungen sind in den produktiven Tool-Dateien dokumentiert. Insbesondere wurden öffentliche API-Fallbacks deaktiviert, CDN-Defaults entfernt oder zu lokalen Pfaden geändert und Public-Web-Crawling auf lokale/private/allowlistete Hosts begrenzt.
