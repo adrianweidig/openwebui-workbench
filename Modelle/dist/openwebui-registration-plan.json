@@ -31,9 +31,10 @@
       "function_valves",
       "import"
     ],
+    "auth": "Default is Authorization: Bearer <token>. For OpenWebUI CUSTOM_API_KEY_HEADER setups use openwebui.auth_header and openwebui.auth_scheme in the central YAML.",
     "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models. Tools, skills, model knowledge and models are published with public read access; functions and filters are enabled and made global."
   },
-  "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override.",
+  "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override. The token must be an OpenWebUI API key or JWT for an admin user.",
   "public_access_policy": {
     "tools": "public_read_grant_after_upsert",
     "skills": "public_read_grant_after_upsert",

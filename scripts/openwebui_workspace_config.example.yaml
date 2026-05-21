@@ -10,6 +10,10 @@ openwebui:
   base_url: "http://openwebui.example.local:3000"
   # Admin API key from OpenWebUI. Keep this file local and do not commit it.
   admin_token: "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE"
+  # Usually Authorization + Bearer. If a gateway consumes Authorization, set
+  # auth_header to x-api-key or your CUSTOM_API_KEY_HEADER and auth_scheme to "".
+  auth_header: "Authorization"
+  auth_scheme: "Bearer"
   timeout_seconds: 120
 
 jupyter:

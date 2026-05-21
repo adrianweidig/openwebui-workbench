@@ -57,11 +57,21 @@ class ImportResult:
 
 
 class OpenWebUIClient:
-    def __init__(self, base_url: str, token: str, timeout: int = 120) -> None:
-        self.base_url = base_url.rstrip("/")
+    def __init__(
+        self,
+        base_url: str,
+        token: str,
+        timeout: int = 120,
+        auth_header: str = "Authorization",
+        auth_scheme: str | None = "Bearer",
+    ) -> None:
+        self.base_url = normalize_openwebui_base_url(base_url)
         self.timeout = timeout
+        self.auth_header = auth_header.strip() or "Authorization"
+        self.auth_scheme = "" if auth_scheme is None else str(auth_scheme).strip()
+        auth_value = token if not self.auth_scheme else f"{self.auth_scheme} {token}"
         self.headers = {
-            "Authorization": f"Bearer {token}",
+            self.auth_header: auth_value,
             "Accept": "application/json",
         }
 
@@ -79,9 +89,10 @@ class OpenWebUIClient:
         query: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
         expected: tuple[int, ...] = (200,),
+        auth: bool = True,
     ) -> Any:
         body = None
-        request_headers = dict(self.headers)
+        request_headers = dict(self.headers if auth else {"Accept": "application/json"})
         if payload is not None:
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             request_headers["Content-Type"] = "application/json"
@@ -161,6 +172,24 @@ class OpenWebUIClient:
         except HTTPError as exc:
             raw = exc.read().decode("utf-8", errors="replace")
             raise RuntimeError(f"Upload failed for {path}: HTTP {exc.code}: {raw[:1000]}") from exc
+
+
+def normalize_openwebui_base_url(base_url: str) -> str:
+    """The importer appends /api paths itself; config must point at the WebUI root."""
+    normalized = str(base_url).strip().rstrip("/")
+    for suffix in ("/api/v1", "/api"):
+        if normalized.lower().endswith(suffix):
+            return normalized[: -len(suffix)].rstrip("/")
+    return normalized
+
+
+def auth_header_defaults(auth_header: str | None, auth_scheme: str | None = None) -> tuple[str, str]:
+    header = (auth_header or "Authorization").strip() or "Authorization"
+    if auth_scheme is not None:
+        return header, str(auth_scheme).strip()
+    if header.lower() == "authorization":
+        return header, "Bearer"
+    return header, ""
 
 
 def read_json(path: Path) -> Any:
@@ -340,6 +369,30 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         or environment.get("OPENWEBUI_ADMIN_TOKEN")
         or OPENWEBUI_ADMIN_TOKEN
     )
+    auth_header, auth_scheme = auth_header_defaults(
+        args.auth_header
+        or first_config_value(
+            config,
+            [
+                "openwebui.auth_header",
+                "openwebui.api_key_header",
+                "openwebui.custom_api_key_header",
+                "environment.OPENWEBUI_AUTH_HEADER",
+                "environment.CUSTOM_API_KEY_HEADER",
+            ],
+        ),
+        args.auth_scheme
+        if args.auth_scheme is not None
+        else first_config_value(
+            config,
+            [
+                "openwebui.auth_scheme",
+                "openwebui.token_scheme",
+                "environment.OPENWEBUI_AUTH_SCHEME",
+            ],
+            None,
+        ),
+    )
     timeout = as_int(
         args.timeout
         if args.timeout is not None
@@ -496,8 +549,10 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
     }
     return {
         "config_path": config_path,
-        "base_url": str(base_url).rstrip("/"),
+        "base_url": normalize_openwebui_base_url(str(base_url)),
         "token": str(token).strip(),
+        "auth_header": auth_header,
+        "auth_scheme": auth_scheme,
         "timeout": timeout,
         "include_optional_network_tools": include_optional,
         "public_read": public_read,
@@ -603,8 +658,41 @@ def get_existing(client: OpenWebUIClient, path: str) -> dict[str, Any] | None:
         value = client.request("GET", path)
         return value if isinstance(value, dict) else None
     except RuntimeError as exc:
-        if "HTTP 404" in str(exc) or "HTTP 401" in str(exc):
+        if "HTTP 404" in str(exc):
             return None
+        raise
+
+
+def check_openwebui_auth(client: OpenWebUIClient) -> None:
+    try:
+        client.request("GET", "/api/version", auth=False)
+    except RuntimeError as exc:
+        raise RuntimeError(
+            f"OpenWebUI is not reachable at {client.base_url}. "
+            "Set openwebui.base_url to the externally reachable WebUI root, not an /api or /api/v1 URL. "
+            f"Probe failed: {exc}"
+        ) from exc
+    try:
+        client.request("GET", "/api/models")
+    except RuntimeError as exc:
+        message = str(exc)
+        if "HTTP 401" in message:
+            header_hint = (
+                "If a reverse proxy, SSO gateway or Basic Auth layer consumes the Authorization header, "
+                "configure openwebui.auth_header: \"x-api-key\" and openwebui.auth_scheme: \"\" "
+                "or match the OpenWebUI CUSTOM_API_KEY_HEADER setting."
+            )
+            if client.auth_header.lower() == "authorization":
+                used = "Authorization: Bearer <token>"
+            else:
+                used = f"{client.auth_header}: <token>"
+            raise RuntimeError(
+                "OpenWebUI rejected the configured API credential with HTTP 401 before import started. "
+                f"The importer used {used} against {client.base_url}/api/models. "
+                "Verify that the token is an OpenWebUI API key or JWT for an admin user, that API keys are enabled, "
+                "and that API key endpoint restrictions allow /api/models and the required /api/v1 workspace routes. "
+                f"{header_hint}"
+            ) from exc
         raise
 
 
@@ -1051,6 +1139,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--config", default=None, help="Central YAML config file. Defaults to scripts/openwebui_workspace_config.yaml when present.")
     parser.add_argument("--base-url", default=None, help="One-off override for openwebui.base_url from the central config.")
     parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
+    parser.add_argument("--auth-header", default=None, help="One-off override for the OpenWebUI API key header. Defaults to Authorization; use x-api-key or CUSTOM_API_KEY_HEADER when a proxy consumes Authorization.")
+    parser.add_argument("--auth-scheme", default=None, help="One-off override for the auth scheme. Defaults to Bearer for Authorization and empty for custom API-key headers.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ files as Knowledge.")
     parser.add_argument(
@@ -1059,6 +1149,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Also import optional network-capable tools. This is the default unless import.include_optional_network_tools is false in the YAML config.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Validate payload files and print counts without calling OpenWebUI.")
+    parser.add_argument("--auth-check", action="store_true", help="Only probe OpenWebUI reachability and API-key authentication, then exit.")
     parser.add_argument("--jupyter-url", default=None, help="One-off override for the Jupyter tool valve. Prefer tool_valves.air_gapped_jupyter_python in the config.")
     parser.add_argument("--jupyter-token", default=None, help="One-off override for the Jupyter token tool valve.")
     parser.add_argument("--jupyter-timeout-seconds", type=int, default=None, help="One-off override for the Jupyter execution timeout tool valve.")
@@ -1089,7 +1180,17 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
         return 2
-    client = OpenWebUIClient(runtime["base_url"], token, timeout=int(runtime["timeout"]))
+    client = OpenWebUIClient(
+        runtime["base_url"],
+        token,
+        timeout=int(runtime["timeout"]),
+        auth_header=str(runtime["auth_header"]),
+        auth_scheme=str(runtime["auth_scheme"]),
+    )
+    check_openwebui_auth(client)
+    if args.auth_check:
+        print(f"OpenWebUI auth check OK: {client.base_url} using header {client.auth_header}")
+        return 0
     started = time.time()
     tool_records = load_tool_records(bool(runtime["include_optional_network_tools"]))
     function_records = load_function_records()

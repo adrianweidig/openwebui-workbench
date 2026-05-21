@@ -131,6 +131,9 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         args = importer.parse_args(["--config", str(CONFIG_EXAMPLE), "--dry-run"])
         runtime = importer.resolve_runtime_config(args)
         self.assertEqual(runtime["base_url"], "http://openwebui.example.local:3000")
+        self.assertEqual(runtime["auth_header"], "Authorization")
+        self.assertEqual(runtime["auth_scheme"], "Bearer")
+        self.assertEqual(importer.normalize_openwebui_base_url("http://openwebui.example.local:3000/api"), "http://openwebui.example.local:3000")
         self.assertTrue(runtime["public_read"])
         self.assertEqual(
             importer.public_read_grants(),

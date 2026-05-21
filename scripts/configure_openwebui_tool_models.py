@@ -1211,9 +1211,10 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
                 "function_valves",
                 "import",
             ],
+            "auth": "Default is Authorization: Bearer <token>. For OpenWebUI CUSTOM_API_KEY_HEADER setups use openwebui.auth_header and openwebui.auth_scheme in the central YAML.",
             "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models. Tools, skills, model knowledge and models are published with public read access; functions and filters are enabled and made global.",
         },
-        "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override.",
+        "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override. The token must be an OpenWebUI API key or JWT for an admin user.",
         "public_access_policy": {
             "tools": "public_read_grant_after_upsert",
             "skills": "public_read_grant_after_upsert",
@@ -1551,6 +1552,10 @@ def run_workspace_import(args: argparse.Namespace) -> int:
         import_args.extend(["--base-url", str(args.base_url)])
     if args.token:
         import_args.extend(["--token", str(args.token)])
+    if args.auth_header:
+        import_args.extend(["--auth-header", str(args.auth_header)])
+    if args.auth_scheme is not None:
+        import_args.extend(["--auth-scheme", str(args.auth_scheme)])
     if args.jupyter_url:
         import_args.extend(["--jupyter-url", str(args.jupyter_url)])
     if args.jupyter_token:
@@ -1594,6 +1599,8 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--config", default=None, help="Central YAML config for OpenWebUI endpoint, tokens, backend paths and valves. Defaults to scripts/openwebui_workspace_config.yaml when present.")
     parser.add_argument("--base-url", default=None, help="One-off override for openwebui.base_url from the central config.")
     parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
+    parser.add_argument("--auth-header", default=None, help="One-off override for OpenWebUI API key header. Use x-api-key or CUSTOM_API_KEY_HEADER if Authorization is unavailable.")
+    parser.add_argument("--auth-scheme", default=None, help="One-off override for auth scheme. Defaults to Bearer for Authorization and empty for custom API-key headers.")
     parser.add_argument("--jupyter-url", default=None, help="One-off override for the Jupyter tool valve. Prefer tool_valves.air_gapped_jupyter_python in the config.")
     parser.add_argument("--jupyter-token", default=None, help="One-off override for the Jupyter token tool valve.")
     parser.add_argument("--jupyter-timeout-seconds", default=None, help="One-off override for the Jupyter timeout tool valve.")
