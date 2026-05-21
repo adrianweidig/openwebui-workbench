@@ -5,7 +5,7 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 ## Grundregeln
 
 - Native Tool Calling für toolfähige Modelle nutzen.
-- OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter und Builtins nutzen, wenn die Zielinstanz sie bereitstellt.
+- OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Vision/Image-Input, Citations, Statusmeldungen, Code Interpreter und Builtins nutzen, wenn die Zielinstanz sie bereitstellt.
 - Den gemounteten Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` als lokale Laufzeit für Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete einplanen.
 - Kritische Use Cases mindestens doppelt abdecken: Tool plus Skill oder Tool plus Jupyter/Checkliste.
 - Riskante Tools nicht global aktivieren.

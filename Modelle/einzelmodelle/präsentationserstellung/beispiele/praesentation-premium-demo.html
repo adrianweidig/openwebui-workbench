@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Premium Offline Keynote Demo</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090f;
+      --panel: rgba(255,255,255,.075);
+      --text: #f8fafc;
+      --muted: #a7b0c0;
+      --accent: #5eead4;
+      --accent2: #f59e0b;
+      --line: rgba(255,255,255,.18);
+    }
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --panel: rgba(15,23,42,.07);
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0f766e;
+      --accent2: #b45309;
+      --line: rgba(15,23,42,.18);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; background: var(--bg); color: var(--text); }
+    body::before {
+      content: ""; position: fixed; inset: -20%; pointer-events: none;
+      background: radial-gradient(circle at 20% 25%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 30%),
+                  radial-gradient(circle at 78% 20%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 34%),
+                  linear-gradient(135deg, transparent 0 35%, color-mix(in srgb, var(--panel) 80%, transparent) 35% 36%, transparent 36% 100%);
+      filter: blur(2px); opacity: .95;
+    }
+    .deck { position: relative; width: 100vw; height: 100vh; }
+    .slide { position: absolute; inset: 0; display: grid; place-items: center; padding: clamp(32px, 5vw, 88px); opacity: 0; transform: translateX(5%) scale(.98); transition: opacity .55s ease, transform .55s ease; }
+    .slide.active { opacity: 1; transform: translateX(0) scale(1); z-index: 2; }
+    .frame { width: min(1180px, 100%); aspect-ratio: 16 / 9; display: grid; align-content: center; gap: 28px; position: relative; }
+    .eyebrow { color: var(--accent); font-size: 14px; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; }
+    h1, h2 { margin: 0; letter-spacing: 0; line-height: .96; }
+    h1 { font-size: clamp(52px, 8vw, 112px); max-width: 920px; }
+    h2 { font-size: clamp(42px, 6vw, 84px); max-width: 960px; }
+    p { margin: 0; color: var(--muted); font-size: clamp(18px, 2vw, 28px); line-height: 1.45; max-width: 860px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .card { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 24px; min-height: 160px; backdrop-filter: blur(12px); }
+    .card strong { display: block; font-size: 22px; margin-bottom: 12px; }
+    .metric { font-size: clamp(42px, 7vw, 96px); font-weight: 900; color: var(--accent); line-height: 1; }
+    .progress { position: fixed; left: 0; bottom: 0; height: 4px; width: calc((var(--i) + 1) / var(--n) * 100%); background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 5; transition: width .35s ease; }
+    .toolbar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(24px); display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(16px); opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; z-index: 10; }
+    body:hover .toolbar, .toolbar:focus-within { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+    button { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: var(--panel); color: var(--text); font-size: 18px; cursor: pointer; }
+    button:hover, button:focus-visible { outline: 2px solid var(--accent); }
+    .counter { min-width: 76px; text-align: center; color: var(--muted); font-weight: 700; }
+    @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } .frame { aspect-ratio: auto; } }
+    @media (prefers-reduced-motion: reduce) { .slide { transition: none; transform: none; } }
+  </style>
+</head>
+<body data-theme="dark">
+  <main class="deck" aria-live="polite">
+    <section class="slide active"><div class="frame"><div class="eyebrow">Offline Keynote</div><h1>Aus Stichpunkten wird ein Erlebnis.</h1><p>Eine einzelne HTML-Datei mit Designsystem, Navigation, Dark Mode, Hover-Toolbar und praesentationstauglicher Dramaturgie.</p></div></section>
+    <section class="slide"><div class="frame"><div class="eyebrow">Problem</div><h2>Langweilige PDF-Folien verlieren Aufmerksamkeit.</h2><div class="grid"><div class="card"><strong>Zu statisch</strong>Keine Interaktion, kein Rhythmus.</div><div class="card"><strong>Zu generisch</strong>Keine visuelle Signatur.</div><div class="card"><strong>Zu schwer zu aendern</strong>Layouts brechen bei Anpassungen.</div></div></div></section>
+    <section class="slide"><div class="frame"><div class="eyebrow">Loesung</div><h2>HTML als Premium-Praesentationsformat.</h2><p>Offline lauffaehig, schnell anpassbar, animierbar und per Browser sofort pruefbar.</p><div class="metric">1 Datei</div></div></section>
+    <section class="slide"><div class="frame"><div class="eyebrow">Abnahme</div><h2>Qualitaet wird sichtbar getestet.</h2><div class="grid"><div class="card"><strong>Navigation</strong>Pfeile, Space, Touch und Buttons.</div><div class="card"><strong>Dark Mode</strong>Kontraststabil, sofort umschaltbar.</div><div class="card"><strong>Toolbar</strong>Stoert nicht, erscheint bei Hover/Fokus.</div></div></div></section>
+    <section class="slide"><div class="frame"><div class="eyebrow">Call to Action</div><h2>Briefing rein. Keynote raus.</h2><p>Diese Datei ist bewusst als Vorlage gebaut: Texte, Farben, Karten und Folien koennen direkt ersetzt werden.</p></div></section>
+  </main>
+  <div class="toolbar" role="toolbar" aria-label="Praesentationssteuerung">
+    <button id="prev" title="Zurueck">‹</button>
+    <span class="counter"><span id="now">1</span>/<span id="total">5</span></span>
+    <button id="next" title="Weiter">›</button>
+    <button id="theme" title="Dark Mode umschalten">◐</button>
+  </div>
+  <div class="progress"></div>
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const total = document.getElementById('total');
+    const now = document.getElementById('now');
+    let i = 0;
+    total.textContent = slides.length;
+    function show(next) {
+      i = (next + slides.length) % slides.length;
+      slides.forEach((s, index) => s.classList.toggle('active', index === i));
+      now.textContent = i + 1;
+      document.documentElement.style.setProperty('--i', i);
+      document.documentElement.style.setProperty('--n', slides.length);
+    }
+    document.getElementById('next').onclick = () => show(i + 1);
+    document.getElementById('prev').onclick = () => show(i - 1);
+    document.getElementById('theme').onclick = () => document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+    addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
+      if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) show(i - 1);
+    });
+    let startX = 0;
+    addEventListener('touchstart', (e) => startX = e.changedTouches[0].clientX, {passive: true});
+    addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - startX; if (Math.abs(dx) > 48) show(i + (dx < 0 ? 1 : -1)); }, {passive: true});
+    show(0);
+  </script>
+</body>
+</html>

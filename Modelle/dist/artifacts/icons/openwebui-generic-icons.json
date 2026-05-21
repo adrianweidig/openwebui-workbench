@@ -122,6 +122,7 @@
     "it-helpdesk-diagnose": "generic-tools",
     "json-csv-log-analyse": "generic-data-table",
     "meeting-protokoll-auswertung": "generic-chat",
+    "mistral-vision-workbench": "generic-search",
     "n8n-workflow-architect": "generic-workflow",
     "offline-workbench-agent": "generic-tools",
     "openwebui-model-builder": "generic-tools",

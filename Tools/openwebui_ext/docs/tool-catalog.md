@@ -62,7 +62,7 @@ Crawlt interne MediaWiki-Instanzen über `api.php`. Das Tool unterstützt modern
 
 ## offline_artifact_workbench.py
 
-Erzeugt offline HTML-Dokumente, 16:9-HTML-Präsentationen, optionale PDFs und ZIP-Pakete unterhalb des konfigurierten Artefaktverzeichnisses. PDF-Konvertierung nutzt bevorzugt lokales Playwright/Chromium aus `F:\offline-ai-stack\openwebui-offline-addons`, danach lokal vorhandenes `weasyprint` oder optional `wkhtmltopdf`; fehlt ein Konverter, bleibt das HTML-Artefakt nutzbar und der Fehler nennt die lokal bereitzustellende Abhängigkeit.
+Erzeugt offline HTML-Dokumente, 16:9-HTML-Präsentationen, optionale PDFs und ZIP-Pakete unterhalb des konfigurierten Artefaktverzeichnisses. PDF-Konvertierung nutzt bevorzugt lokales Playwright/Chromium aus `F:\offline-ai-stack\openwebui-offline-addons`, danach lokal vorhandenes `weasyprint` oder optional `wkhtmltopdf`; fehlt ein Konverter, bleibt das HTML-Artefakt nutzbar und der Fehler nennt die lokal bereitzustellende Abhängigkeit. Für Präsentationen dient `Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html` als Offline-Referenz für Navigation, Hover-Toolbar, Dark Mode und Effekte.
 
 ## inline_visuals_toolkit_v3.py
 

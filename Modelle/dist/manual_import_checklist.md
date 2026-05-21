@@ -26,6 +26,6 @@ Für vollständige Funktion inklusive Tool-Valves, Function-/Filter-Valves, Jupy
 3. Skills aus `Tools/openwebui_ext/skills/*.md` importieren, falls die OpenWebUI-Instanz Skill-Importe unterstützt.
 4. Danach in OpenWebUI entweder `openwebui-models-import.json` oder ein einzelnes `model.json` importieren.
 5. Basismodell `coder` prüfen.
-6. Optional `systemprompt.md`, `mainprompt.md` und `fachwissen.md` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
+6. Optional `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien aus `beispiele/` im Repository für Pflege oder lokale Knowledge-Nutzung heranziehen.
 7. Web Search deaktiviert lassen, falls die Instanz Default-Werte überschreibt.
 8. Icons, Systemprompt, Mainprompt, Fachwissen, Tool-/Filter-Zuordnung sowie Builtin-/Addon-Nutzungshinweise sind in den Modellprofilen enthalten.

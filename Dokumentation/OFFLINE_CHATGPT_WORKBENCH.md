@@ -6,7 +6,7 @@ Dieses Repository soll OpenWebUI so vorbereiten, dass Nutzer offline eine ChatGP
 
 ## Komponenten
 
-- `Modelle/`: direkt importierbare OpenWebUI-Modellprofile für die Problemfälle plus `Allgemein` als Fallbackmodell sowie Custom-GPT-nahe Modelle für `PromptForge`, `n8n Workflow Architect`, `OpenWebUI Model Builder` und den browserbasierten `Präsentationscreator`.
+- `Modelle/`: direkt importierbare OpenWebUI-Modellprofile für die Problemfälle plus `Allgemein` als Fallbackmodell sowie Custom-GPT-nahe Modelle für `PromptForge`, `n8n Workflow Architect`, `OpenWebUI Model Builder`, `Mistral Vision Workbench` und den browserbasierten `Präsentationscreator`.
 - `Tools/jupyter/`: kontrollierte Python-Ausführung über einen lokalen oder internen Jupyter-Server.
 - `Tools/openwebui_ext/tools/`: zusätzliche direkt importierbare Tools.
 - `Tools/openwebui_ext/skills/`: wiederverwendbare Arbeitsanweisungen für Modelle.
@@ -26,7 +26,11 @@ Dieses Repository soll OpenWebUI so vorbereiten, dass Nutzer offline eine ChatGP
 
 ## Präsentationen
 
-Präsentationen werden als selbstständige 16:9-HTML-Dateien erzeugt. Das ist offline robust, versionierbar und kann bei lokal vorhandenem PDF-Konverter in PDF gewandelt werden. Externe CDNs, Fonts und Remote-Bilder sind nicht erlaubt.
+Präsentationen werden als selbstständige 16:9-HTML-Dateien erzeugt. Das ist offline robust, versionierbar und kann bei lokal vorhandenem PDF-Konverter in PDF gewandelt werden. Externe CDNs, Fonts und Remote-Bilder sind nicht erlaubt. Das Beispiel `Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html` zeigt die Zielqualität: Navigation per Tastatur/Maus/Touch, Dark Mode, Hover-/Focus-Toolbar, Progressbar, Effekte und Reduced-Motion-Fallback.
+
+## Vision und UI-QA
+
+Alle Chat-Modelle aktivieren Vision-Fähigkeit und enthalten Regeln für Bild-, Screenshot-, Diagramm-, Scan- und Artefaktanalyse. Das Modell `Mistral Vision Workbench` ist der dedizierte Einstieg für UI-Tests, visuelle Regressionen, Folienkritik und Screenshot-QA. Wenn die OpenWebUI-Zielinstanz Bildinhalte nicht an Mistral weitergibt, arbeiten die Modelle mit OCR-Text, exportierten Dateien oder Nutzerbeschreibung weiter und markieren die Grenze klar.
 
 ## PDF-Dokumente
 

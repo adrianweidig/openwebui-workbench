@@ -46,6 +46,18 @@
       "permission": "read"
     }
   },
+  "vision_policy": {
+    "enabled_for_chat_models": true,
+    "specialist_model_id": "mistral-vision-workbench",
+    "system_marker": "## Vision- und UI-Bildanalyse",
+    "behavior": "Use Mistral-Medium vision when OpenWebUI forwards image inputs. Apply it to screenshots, UI tests, scans, charts, presentations and visual artifact QA; fall back to OCR, files or user descriptions when image input is unavailable."
+  },
+  "model_example_policy": {
+    "required_knowledge_file": "beispielergebnis.md",
+    "example_dir": "beispiele",
+    "dist_examples_dir": "Modelle/dist/artifacts/examples",
+    "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and beispielergebnis.md."
+  },
   "offline_addons_runtime": {
     "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
     "container_data_root": "/app/backend/data",
@@ -190,7 +202,8 @@
   "skill_source_dir": "Tools/openwebui_ext/skills",
   "model_knowledge_files_required": [
     "mainprompt.md",
-    "fachwissen.md"
+    "fachwissen.md",
+    "beispielergebnis.md"
   ],
   "knowledge_before_models": {
     "allgemein": {
@@ -205,6 +218,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 2233
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/allgemein/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1988
+      },
+      "allgemein-arbeitsauftrag-vorlage.md": {
+        "path": "Modelle/einzelmodelle/allgemein/beispiele/allgemein-arbeitsauftrag-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1692
       }
     },
     "anforderungsanalyse-lastenheft": {
@@ -219,6 +244,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5060
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1853
+      },
+      "lastenheft-vorlage.md": {
+        "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/beispiele/lastenheft-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1609
       }
     },
     "api-schnittstellenentwurf": {
@@ -233,6 +270,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4972
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1821
+      },
+      "api-design-vorlage.md": {
+        "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/beispiele/api-design-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1583
       }
     },
     "code-dokumentation": {
@@ -247,6 +296,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4972
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/code-dokumentation/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1833
+      },
+      "code-dokumentation-vorlage.md": {
+        "path": "Modelle/einzelmodelle/code-dokumentation/beispiele/code-dokumentation-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1574
       }
     },
     "code-review": {
@@ -261,6 +322,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4933
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/code-review/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1838
+      },
+      "code-review-finding-vorlage.md": {
+        "path": "Modelle/einzelmodelle/code-review/beispiele/code-review-finding-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1594
       }
     },
     "codeanalyse": {
@@ -275,6 +348,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5019
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/codeanalyse/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1803
+      },
+      "codeanalyse-bericht-vorlage.md": {
+        "path": "Modelle/einzelmodelle/codeanalyse/beispiele/codeanalyse-bericht-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1560
       }
     },
     "codegenerierung": {
@@ -289,6 +374,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4976
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/codegenerierung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1802
+      },
+      "implementierungsplan-vorlage.md": {
+        "path": "Modelle/einzelmodelle/codegenerierung/beispiele/implementierungsplan-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1552
       }
     },
     "compliance-richtlinienprüfung": {
@@ -303,6 +400,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5061
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1834
+      },
+      "compliance-pruefbericht-vorlage.md": {
+        "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/beispiele/compliance-pruefbericht-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1563
       }
     },
     "debugging-fehleranalyse": {
@@ -317,6 +426,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4953
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/debugging-fehleranalyse/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1845
+      },
+      "debugging-runbook-vorlage.md": {
+        "path": "Modelle/einzelmodelle/debugging-fehleranalyse/beispiele/debugging-runbook-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1600
       }
     },
     "dokumentenanalyse": {
@@ -331,6 +452,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5522
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/dokumentenanalyse/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1792
+      },
+      "dokumentenanalyse-vorlage.md": {
+        "path": "Modelle/einzelmodelle/dokumentenanalyse/beispiele/dokumentenanalyse-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1539
       }
     },
     "dokumentengenerierung": {
@@ -345,6 +478,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5151
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/dokumentengenerierung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1824
+      },
+      "dokument-generator-vorlage.md": {
+        "path": "Modelle/einzelmodelle/dokumentengenerierung/beispiele/dokument-generator-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1560
       }
     },
     "dokumentenvergleich": {
@@ -359,6 +504,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5160
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/dokumentenvergleich/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1843
+      },
+      "dokumentenvergleich-matrix-vorlage.md": {
+        "path": "Modelle/einzelmodelle/dokumentenvergleich/beispiele/dokumentenvergleich-matrix-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1553
       }
     },
     "dokumentenzusammenfassung": {
@@ -373,6 +530,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5123
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1832
+      },
+      "executive-summary-vorlage.md": {
+        "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/beispiele/executive-summary-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1567
       }
     },
     "email-kommunikationsassistenz": {
@@ -387,6 +556,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5068
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1821
+      },
+      "email-antwort-vorlage.md": {
+        "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/beispiele/email-antwort-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1585
       }
     },
     "informationsextraktion": {
@@ -401,6 +582,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5130
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/informationsextraktion/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1797
+      },
+      "extraktionsschema-vorlage.md": {
+        "path": "Modelle/einzelmodelle/informationsextraktion/beispiele/extraktionsschema-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1554
       }
     },
     "it-helpdesk-diagnose": {
@@ -415,6 +608,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4955
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1786
+      },
+      "helpdesk-diagnose-vorlage.md": {
+        "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/beispiele/helpdesk-diagnose-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1560
       }
     },
     "json-csv-log-analyse": {
@@ -429,6 +634,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4998
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/json-csv-log-analyse/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1836
+      },
+      "loganalyse-vorlage.md": {
+        "path": "Modelle/einzelmodelle/json-csv-log-analyse/beispiele/loganalyse-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1603
       }
     },
     "meeting-protokoll-auswertung": {
@@ -443,6 +660,50 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5030
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1806
+      },
+      "meeting-auswertung-vorlage.md": {
+        "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/beispiele/meeting-auswertung-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1542
+      }
+    },
+    "mistral-vision-workbench": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/mistral-vision-workbench/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 2351
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/mistral-vision-workbench/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 2423
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1881
+      },
+      "vision-ui-qa-demo.html": {
+        "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1491
+      },
+      "vision-ui-qa-vorlage.md": {
+        "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1642
       }
     },
     "n8n-workflow-architect": {
@@ -457,6 +718,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 25929
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1827
+      },
+      "n8n-workflow-vorlage.md": {
+        "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispiele/n8n-workflow-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1565
       }
     },
     "offline-workbench-agent": {
@@ -471,6 +744,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 1396
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/offline-workbench-agent/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1857
+      },
+      "offline-workbench-auftrag-vorlage.md": {
+        "path": "Modelle/einzelmodelle/offline-workbench-agent/beispiele/offline-workbench-auftrag-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1570
       }
     },
     "openwebui-model-builder": {
@@ -485,6 +770,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 32398
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/openwebui-model-builder/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1811
+      },
+      "modellpaket-vorlage.md": {
+        "path": "Modelle/einzelmodelle/openwebui-model-builder/beispiele/modellpaket-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1590
       }
     },
     "promptforge": {
@@ -499,6 +796,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 21197
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/promptforge/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1833
+      },
+      "promptforge-vorlage.md": {
+        "path": "Modelle/einzelmodelle/promptforge/beispiele/promptforge-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1602
       }
     },
     "prozess-workflow-dokumentation": {
@@ -513,6 +822,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5063
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1859
+      },
+      "prozessdokumentation-vorlage.md": {
+        "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/beispiele/prozessdokumentation-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1575
       }
     },
     "präsentationserstellung": {
@@ -527,6 +848,24 @@
         "exists": true,
         "non_empty": true,
         "bytes": 20213
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/präsentationserstellung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1908
+      },
+      "praesentation-briefing-vorlage.md": {
+        "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-briefing-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1643
+      },
+      "praesentation-premium-demo.html": {
+        "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 7530
       }
     },
     "refactoring-unterstützung": {
@@ -541,6 +880,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4998
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/refactoring-unterstützung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1781
+      },
+      "refactoring-plan-vorlage.md": {
+        "path": "Modelle/einzelmodelle/refactoring-unterstützung/beispiele/refactoring-plan-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1554
       }
     },
     "report-dashboard-vorbereitung": {
@@ -555,6 +906,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5042
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1829
+      },
+      "dashboard-briefing-vorlage.md": {
+        "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/beispiele/dashboard-briefing-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1579
       }
     },
     "support-ticket-vorbereitung": {
@@ -569,6 +932,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5094
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1809
+      },
+      "support-ticket-vorlage.md": {
+        "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/beispiele/support-ticket-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1575
       }
     },
     "tabellen-csv-datenanalyse": {
@@ -583,6 +958,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 5057
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1881
+      },
+      "datenanalyse-notebook-plan-vorlage.md": {
+        "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/beispiele/datenanalyse-notebook-plan-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1612
       }
     },
     "testfall-generierung": {
@@ -597,6 +984,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4919
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/testfall-generierung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1816
+      },
+      "testfallkatalog-vorlage.md": {
+        "path": "Modelle/einzelmodelle/testfall-generierung/beispiele/testfallkatalog-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1573
       }
     },
     "übersetzung-lokalisierung": {
@@ -611,6 +1010,18 @@
         "exists": true,
         "non_empty": true,
         "bytes": 4984
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1834
+      },
+      "lokalisierungsauftrag-vorlage.md": {
+        "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/beispiele/lokalisierungsauftrag-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1581
       }
     }
   },
@@ -890,6 +1301,32 @@
         ],
         "focus": "Beschlüsse, Aufgabenlisten, Tabellen und Übergabedokumente strukturiert prüfen oder erzeugen."
       },
+      "mistral-vision-workbench": {
+        "tools": [
+          "ask_user",
+          "offline_artifact_workbench",
+          "inline_visuals_toolkit_v3",
+          "visuals_toolkit_v4",
+          "air_gapped_jupyter_python",
+          "json_csv_text_validator",
+          "repo_tree_analyzer",
+          "docker_compose_triage",
+          "parallel_task_planner",
+          "parallel_tools",
+          "sub_agent",
+          "subagent_orchestrator",
+          "tool_skill_overlay_planner",
+          "llm_council"
+        ],
+        "skills": [
+          "visual-toolkit-v3-offline",
+          "offline-artifact-production",
+          "data-cleaning-analysis",
+          "parallel-tools-subagents",
+          "secure-tool-usage"
+        ],
+        "focus": "Mistral-Medium-Vision fuer Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern."
+      },
       "offline-workbench-agent": {
         "tools": [
           "ask_user",
@@ -1149,6 +1586,7 @@
       "it-helpdesk-diagnose": 0.25,
       "json-csv-log-analyse": 0.15,
       "meeting-protokoll-auswertung": 0.35,
+      "mistral-vision-workbench": 0.25,
       "n8n-workflow-architect": 0.25,
       "offline-workbench-agent": 0.45,
       "openwebui-model-builder": 0.35,
@@ -1171,6 +1609,7 @@
     "meta.filterIds",
     "meta.defaultFilterIds",
     "meta.capabilities.builtin_tools",
+    "meta.capabilities.vision",
     "meta.primaryToolIds",
     "meta.recommendedSkillIds",
     "meta.requiredKnowledgeFiles",
@@ -1181,6 +1620,7 @@
     "params.system markdown formatting marker",
     "params.system high-reasoning section",
     "params.system custom-gpt quality section",
+    "params.system vision and UI image analysis section",
     "params.system explicit tool-call playbook section",
     "params.system tool-force section",
     "meta.profile_image_url"
@@ -1188,7 +1628,7 @@
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
   "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
   "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
-  "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
+  "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, beispielergebnis.md and files under beispiele/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
   "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
   "chat_models_configured": [
     "allgemein",
@@ -1209,6 +1649,7 @@
     "it-helpdesk-diagnose",
     "json-csv-log-analyse",
     "meeting-protokoll-auswertung",
+    "mistral-vision-workbench",
     "n8n-workflow-architect",
     "offline-workbench-agent",
     "openwebui-model-builder",

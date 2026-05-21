@@ -37,6 +37,7 @@ MODEL_IMPORT = MODEL_DIST / "openwebui-models-import.json"
 MODEL_FALLBACK = MODEL_DIST / "models_fallback_bundle.json"
 MODEL_PARAMS_SUMMARY = MODEL_DIST / "openwebui-model-params-summary.json"
 MODEL_ARTIFACTS = MODEL_DIST / "artifacts" / "models"
+MODEL_EXAMPLE_ARTIFACTS = MODEL_DIST / "artifacts" / "examples"
 MODEL_ICONS = ROOT / "Modelle" / "icons"
 MODEL_ICON_MANIFEST = MODEL_ICONS / "openwebui-generic-icons.json"
 MODEL_ICON_ARTIFACTS = MODEL_DIST / "artifacts" / "icons"
@@ -53,15 +54,18 @@ OMITTED_RUNTIME_PARAMS = ["max_tokens"]
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
 PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
-REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md"]
+REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
+MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
 CUSTOM_GPT_QUALITY_SYSTEM_MARKER = "## CustomGPT-Qualitätsprofil"
+VISION_SYSTEM_MARKER = "## Vision- und UI-Bildanalyse"
 TOOL_CALL_PLAYBOOK_SYSTEM_MARKER = "## Explizite Tool-Aufrufmuster"
 TOOL_FORCE_SYSTEM_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
 MANAGED_SYSTEM_SECTION_MARKERS = [
     HIGH_REASONING_SYSTEM_MARKER,
     CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
+    VISION_SYSTEM_MARKER,
     TOOL_CALL_PLAYBOOK_SYSTEM_MARKER,
     TOOL_FORCE_SYSTEM_MARKER,
 ]
@@ -77,8 +81,8 @@ CUSTOM_GPT_QUALITY_SYSTEM_BLOCK = f"""{CUSTOM_GPT_QUALITY_SYSTEM_MARKER}
 
 Behandle diese Modellkonfiguration wie einen professionell gepflegten Custom GPT:
 
-- Rolle, Ziel, Zielgruppe, erlaubte Aufgaben, Nicht-Aufgaben, Eingaben, Ausgaben und Erfolgskriterien müssen aus `systemprompt.md`, `mainprompt.md` und `fachwissen.md` aktiv angewendet werden.
-- Nutze die vorhandenen Prompt Suggestions, Tool-Profile, Skill-Hinweise und Knowledge-Dateien als konkrete Verhaltensmuster; erfinde keine Tool-, Skill-, Datei-, Knowledge- oder Quellen-IDs.
+- Rolle, Ziel, Zielgruppe, erlaubte Aufgaben, Nicht-Aufgaben, Eingaben, Ausgaben und Erfolgskriterien müssen aus `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und den Dateien unter `beispiele/` aktiv angewendet werden.
+- Nutze die vorhandenen Prompt Suggestions, Tool-Profile, Skill-Hinweise, Beispielartefakte und Knowledge-Dateien als konkrete Verhaltensmuster; erfinde keine Tool-, Skill-, Datei-, Knowledge- oder Quellen-IDs.
 - Trenne strikt zwischen Nutzerquellen, hochgeladenen Dateien, Knowledge-Inhalten, Tool-Ausgaben, eigener Analyse, Annahmen und Empfehlungen.
 - Stelle höchstens drei gezielte Rückfragen, wenn das Ziel ohne Antwort wesentlich unklar bleibt. Wenn belastbare Annahmen möglich sind, arbeite weiter und markiere sie knapp.
 - Bei komplexen Aufgaben definierst du intern Erfolgskriterien, zerlegst die Arbeit in sinnvolle Teilschritte und prüfst vor der finalen Antwort, ob Ziel, Format, Quellenklarheit, Tool-Nutzung, Sicherheitsgrenzen und Vollständigkeit erfüllt sind.
@@ -86,6 +90,16 @@ Behandle diese Modellkonfiguration wie einen professionell gepflegten Custom GPT
 - Bei aktuellen, rechtlichen, medizinischen, finanziellen, sicherheitskritischen oder produktionsrelevanten Aussagen kennzeichne Prüfpflichten und Aktualitätsgrenzen. Ohne freigegebenes Recherchetool keine externen Fakten behaupten.
 - Secrets, Tokens, private URLs und personenbezogene Daten minimieren, nicht unnötig wiederholen und niemals in Artefakte, Beispiele oder Logs übernehmen.
 - Produktive Änderungen, riskante Aktionen, externe Aufrufe oder irreversible Schritte nur nach ausdrücklicher Nutzerfreigabe und mit klarem Risiko-/Rollback-Hinweis.
+"""
+VISION_SYSTEM_BLOCK = f"""{VISION_SYSTEM_MARKER}
+
+Nutze die Vision-/Multimodal-Faehigkeit der Zielinstanz aktiv, wenn der Nutzer Bilder, Screenshots, gescannte Dokumente, Folien, Diagramme, UI-Zustaende, Vorher-/Nachher-Vergleiche oder visuelle Artefakte bereitstellt.
+
+- Pruefe zuerst, ob OpenWebUI die Bildteile tatsaechlich an das Basismodell weitergibt. Wenn nicht, fordere gezielt Screenshot, OCR-Text, HTML/PDF-Export oder eine klare Beschreibung an und nutze lokale Offline-Tools als Fallback.
+- Bei UI-Tests und visueller Artefakt-QA: bewerte Layout, Responsiveness, Overlaps, Lesbarkeit, Kontrast, Fokus-/Hover-/Touch-Zustaende, Interaktionsleisten, Dark Mode, reduzierte Bewegung und sichtbare Fehlermeldungen.
+- Bei Dokumentbildern, Tabellen, Charts oder Scans: trenne sicher lesbaren Text, visuelle Struktur, erkannte Daten, Unsicherheiten und notwendige Validierung.
+- Bei Praesentationen, Dashboards, HTML/PDF und visuellen Ergebnissen: nutze nach Moeglichkeit `offline_artifact_workbench`, lokale Playwright-/Chromium-Faehigkeiten aus `openwebui-offline-addons` und die Beispielartefakte aus `beispielergebnis.md`, um hochwertige offline lauffaehige Ergebnisse zu erzeugen oder zu pruefen.
+- Behaupte keine nicht sichtbaren Details. Markiere Bildbereiche, die unscharf, abgeschnitten, verdeckt oder nicht sicher interpretierbar sind.
 """
 MODEL_TEMPERATURES = {
     "allgemein": 0.45,
@@ -106,6 +120,7 @@ MODEL_TEMPERATURES = {
     "it-helpdesk-diagnose": 0.25,
     "json-csv-log-analyse": 0.15,
     "meeting-protokoll-auswertung": 0.35,
+    "mistral-vision-workbench": 0.25,
     "n8n-workflow-architect": 0.25,
     "offline-workbench-agent": 0.45,
     "openwebui-model-builder": 0.35,
@@ -209,6 +224,11 @@ TOOL_FORCE_PROFILES = {
         "tools": ["json_csv_text_validator", "offline_artifact_workbench", "air_gapped_jupyter_python"],
         "skills": ["research-grounding", "offline-artifact-production", "data-cleaning-analysis"],
         "focus": "Beschlüsse, Aufgabenlisten, Tabellen und Übergabedokumente strukturiert prüfen oder erzeugen.",
+    },
+    "mistral-vision-workbench": {
+        "tools": ["ask_user", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python", "json_csv_text_validator", "repo_tree_analyzer", "docker_compose_triage", "parallel_task_planner", "parallel_tools", "sub_agent", "subagent_orchestrator", "tool_skill_overlay_planner", "llm_council"],
+        "skills": ["visual-toolkit-v3-offline", "offline-artifact-production", "data-cleaning-analysis", "parallel-tools-subagents", "secure-tool-usage"],
+        "focus": "Mistral-Medium-Vision fuer Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern.",
     },
     "offline-workbench-agent": {
         "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "parallel_task_planner", "parallel_tools", "subagent_orchestrator", "sub_agent", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "llm_council", "comfyui_workflow_inspector"],
@@ -682,6 +702,39 @@ def sync_icon_artifacts(write: bool) -> bool:
     return changed
 
 
+def sync_model_example_artifacts(write: bool) -> bool:
+    source_files: List[Tuple[str, Path, Path]] = []
+    for model_dir in sorted(path for path in SINGLE_MODELS.iterdir() if path.is_dir()):
+        examples_dir = model_dir / MODEL_EXAMPLES_DIR_NAME
+        if examples_dir.exists():
+            source_files.extend(
+                (model_dir.name, path, path.relative_to(examples_dir))
+                for path in sorted(examples_dir.rglob("*"))
+                if path.is_file() and should_archive(path)
+            )
+
+    expected_targets = {
+        MODEL_EXAMPLE_ARTIFACTS / model_id / relative_path
+        for model_id, _, relative_path in source_files
+    }
+    existing_targets = sorted(path for path in MODEL_EXAMPLE_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_EXAMPLE_ARTIFACTS.exists() else []
+    changed = any(path not in expected_targets for path in existing_targets)
+    if not changed:
+        for model_id, source, relative_path in source_files:
+            target = MODEL_EXAMPLE_ARTIFACTS / model_id / relative_path
+            if not target.exists() or target.read_bytes() != source.read_bytes():
+                changed = True
+                break
+    if changed and write:
+        if MODEL_EXAMPLE_ARTIFACTS.exists():
+            shutil.rmtree(MODEL_EXAMPLE_ARTIFACTS)
+        for model_id, source, relative_path in source_files:
+            target = MODEL_EXAMPLE_ARTIFACTS / model_id / relative_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+    return changed
+
+
 def model_files() -> List[Path]:
     return sorted(SINGLE_MODELS.glob("*/model.json"))
 
@@ -922,6 +975,7 @@ def managed_system_profile_for_model(model_id: str) -> str:
     sections = [
         HIGH_REASONING_SYSTEM_BLOCK.rstrip(),
         CUSTOM_GPT_QUALITY_SYSTEM_BLOCK.rstrip(),
+        VISION_SYSTEM_BLOCK.rstrip(),
         tool_call_playbook_block_for_model(model_id).rstrip(),
         tool_force_block_for_model(model_id).rstrip(),
     ]
@@ -937,10 +991,23 @@ def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
     return f"{MARKDOWN_FORMATTING_MARKER}\n\n{system_prompt}"
 
 
+def normalize_base_prompt_text(system_prompt: str) -> str:
+    replacements = {
+        "`systemprompt.md`, `mainprompt.md` und `fachwissen.md`": "`systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`",
+        "`mainprompt.md` und `fachwissen.md`": "`mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`",
+        "Systemprompt, Mainprompt und Fachwissen": "Systemprompt, Mainprompt, Fachwissen und Beispielwissen",
+        "systemprompt.md, mainprompt.md und fachwissen.md": "systemprompt.md, mainprompt.md, fachwissen.md, beispielergebnis.md und beispiele/",
+    }
+    normalized = system_prompt
+    for old, new in replacements.items():
+        normalized = normalized.replace(old, new)
+    return normalized
+
+
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
     raw_system_prompt = params.get("system")
     if isinstance(raw_system_prompt, str):
-        base_prompt = strip_managed_system_sections(strip_markdown_formatting_marker(raw_system_prompt))
+        base_prompt = normalize_base_prompt_text(strip_managed_system_sections(strip_markdown_formatting_marker(raw_system_prompt)))
         system_parts = [managed_system_profile_for_model(model_id)]
         if base_prompt:
             system_parts.append(base_prompt)
@@ -1010,6 +1077,7 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
     configure_runtime_params(model_id, params)
     capabilities["builtin_tools"] = True
     capabilities["file_context"] = bool(capabilities.get("file_context", True))
+    capabilities["vision"] = True
     capabilities["file_upload"] = bool(capabilities.get("file_upload", True))
     capabilities["code_interpreter"] = bool(capabilities.get("code_interpreter", True))
     capabilities["status_updates"] = bool(capabilities.get("status_updates", True))
@@ -1029,7 +1097,16 @@ def skill_ids() -> List[str]:
 
 def model_knowledge_files(model_id: str) -> List[Path]:
     model_dir = SINGLE_MODELS / model_id
-    return [model_dir / name for name in REQUIRED_MODEL_KNOWLEDGE_FILES]
+    files = [model_dir / name for name in REQUIRED_MODEL_KNOWLEDGE_FILES]
+    files.extend(model_example_files(model_id))
+    return files
+
+
+def model_example_files(model_id: str) -> List[Path]:
+    examples_dir = SINGLE_MODELS / model_id / MODEL_EXAMPLES_DIR_NAME
+    if not examples_dir.exists():
+        return []
+    return sorted(path for path in examples_dir.rglob("*") if path.is_file() and should_archive(path))
 
 
 def model_knowledge_status(model_id: str) -> Dict[str, Dict[str, Any]]:
@@ -1085,6 +1162,7 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
         "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
         "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
         "mistral_medium_128b_policy": "High reasoning is prompt-enforced with explicit tool-call playbooks; unsupported runtime parameters stay omitted.",
+        "mistral_medium_vision_policy": "All chat model profiles enable OpenWebUI vision capability and include prompt rules for screenshot, UI, chart, scan, presentation and visual artifact analysis when the backing Mistral deployment supports image inputs.",
         "openwebui_builtin_and_addon_policy": "Chat models prefer standard OpenWebUI builtins and the mounted openwebui-offline-addons runtime for local caches, Playwright/Chromium, Tiktoken, NLTK and Python packages when available.",
         "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
         "models": [
@@ -1106,6 +1184,9 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "has_custom_gpt_quality_profile": CUSTOM_GPT_QUALITY_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
+                "has_vision_profile": VISION_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
+                if isinstance(model.get("params"), dict)
+                else False,
                 "has_explicit_tool_call_playbook": TOOL_CALL_PLAYBOOK_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
@@ -1120,6 +1201,11 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "recommended_skill_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("skills", []),
                 "required_knowledge_files": REQUIRED_MODEL_KNOWLEDGE_FILES,
                 "knowledge_files": model_knowledge_status(str(model.get("id"))),
+                "vision_enabled": bool(
+                    model.get("meta", {}).get("capabilities", {}).get("vision")
+                    if isinstance(model.get("meta"), dict) and isinstance(model.get("meta", {}).get("capabilities"), dict)
+                    else False
+                ),
                 "has_embedded_svg_icon": str(model.get("meta", {}).get("profile_image_url", "")).startswith("data:image/svg+xml;base64,")
                 if isinstance(model.get("meta"), dict)
                 else False,
@@ -1185,6 +1271,18 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "models": "public_read_grant_after_import",
             "functions_and_filters": "active_and_global_after_upsert",
             "grant": PUBLIC_READ_GRANT,
+        },
+        "vision_policy": {
+            "enabled_for_chat_models": True,
+            "specialist_model_id": "mistral-vision-workbench",
+            "system_marker": VISION_SYSTEM_MARKER,
+            "behavior": "Use Mistral-Medium vision when OpenWebUI forwards image inputs. Apply it to screenshots, UI tests, scans, charts, presentations and visual artifact QA; fall back to OCR, files or user descriptions when image input is unavailable.",
+        },
+        "model_example_policy": {
+            "required_knowledge_file": "beispielergebnis.md",
+            "example_dir": MODEL_EXAMPLES_DIR_NAME,
+            "dist_examples_dir": rel(MODEL_EXAMPLE_ARTIFACTS),
+            "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and beispielergebnis.md.",
         },
         "offline_addons_runtime": {
             "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
@@ -1291,6 +1389,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.filterIds",
             "meta.defaultFilterIds",
             "meta.capabilities.builtin_tools",
+            "meta.capabilities.vision",
             "meta.primaryToolIds",
             "meta.recommendedSkillIds",
             "meta.requiredKnowledgeFiles",
@@ -1301,6 +1400,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "params.system markdown formatting marker",
             "params.system high-reasoning section",
             "params.system custom-gpt quality section",
+            "params.system vision and UI image analysis section",
             "params.system explicit tool-call playbook section",
             "params.system tool-force section",
             "meta.profile_image_url",
@@ -1308,7 +1408,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
-        "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
+        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, beispielergebnis.md and files under beispiele/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
@@ -1380,6 +1480,8 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         ]:
             if required_phrase not in system_text:
                 issues.append(f"Chat-Modell {model_id} fehlt CustomGPT-Qualitätskriterium: {required_phrase}")
+        if VISION_SYSTEM_MARKER not in system_text:
+            issues.append(f"Chat-Modell {model_id} hat keine Vision-/UI-Bildanalyse-Sektion")
         if TOOL_CALL_PLAYBOOK_SYSTEM_MARKER not in system_text:
             issues.append(f"Chat-Modell {model_id} hat keine expliziten Tool-Aufrufmuster")
         for required_phrase in [
@@ -1420,8 +1522,12 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
                 issues.append(f"Chat-Modell {model_id} fehlt Knowledge-Datei {rel(path)}")
             elif path.stat().st_size == 0:
                 issues.append(f"Chat-Modell {model_id} hat leere Knowledge-Datei {rel(path)}")
+        if not model_example_files(model_id):
+            issues.append(f"Chat-Modell {model_id} hat kein nutzbares Beispielartefakt unter {rel(SINGLE_MODELS / model_id / MODEL_EXAMPLES_DIR_NAME)}")
         if caps.get("builtin_tools") is not True:
             issues.append(f"Chat-Modell {model_id} hat builtin_tools nicht aktiv")
+        if caps.get("vision") is not True:
+            issues.append(f"Chat-Modell {model_id} hat Vision nicht aktiv")
         if not isinstance(tool_ids, list) or not tool_ids:
             issues.append(f"Chat-Modell {model_id} hat keine toolIds")
         else:
@@ -1556,7 +1662,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--nltk-data-path", default=None, help="One-off override for the NLTK data path tool valve.")
     parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="One-off override to prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced by the importer.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md and fachwissen.md as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")
     parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds for --import-openwebui.")
     args = parser.parse_args(list(argv) if argv is not None else None)
@@ -1571,6 +1677,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     changed_tool_artifacts = write_tool_artifacts(records, args.write)
     changed_function_artifacts = write_function_artifacts(function_records, args.write)
     changed_icon_artifacts = sync_icon_artifacts(args.write)
+    changed_example_artifacts = sync_model_example_artifacts(args.write)
     changed_models, models = apply_model_config(records, function_records, args.write)
     changed_model_params_summary = write_model_params_summary(models, args.write)
     changed_plan = write_registration_plan(records, function_records, models, args.write)
@@ -1585,6 +1692,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     print(f"- Chat-Modelle: {sum(1 for model in models if not is_non_chat_model(model))}")
     print(f"- Non-Chat-Modelle ausgeschlossen: {sum(1 for model in models if is_non_chat_model(model))}")
     print(f"- Icon-Artefakte geändert: {changed_icon_artifacts}")
+    print(f"- Beispielartefakte geändert: {changed_example_artifacts}")
     print(f"- Modellparameter-Zusammenfassung geändert: {changed_model_params_summary}")
     print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_icon_artifacts or changed_models or changed_model_params_summary or changed_plan}")
     if args.write and args.rebuild_zips:

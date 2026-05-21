@@ -40,7 +40,8 @@ TOOLS_REGISTRY = TOOLS_DIR / "dist" / "openwebui-tool-registry.json"
 FUNCTION_REGISTRY = TOOLS_DIR / "dist" / "openwebui-function-registry.json"
 SKILLS_DIR = OPENWEBUI_EXT / "skills"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
-REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md")
+REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md", "beispielergebnis.md")
+MODEL_EXAMPLES_DIR_NAME = "beispiele"
 DEFAULT_CONFIG_NAME = "openwebui_workspace_config.yaml"
 
 PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEBUI_API_KEY"}
@@ -777,6 +778,21 @@ def required_model_knowledge_files(model_dir: Path) -> list[Path]:
     return files
 
 
+def model_example_files(model_dir: Path) -> list[Path]:
+    examples_dir = model_dir / MODEL_EXAMPLES_DIR_NAME
+    if not examples_dir.exists():
+        return []
+    return sorted(path for path in examples_dir.rglob("*") if path.is_file() and path.suffix.lower() not in {".pyc", ".pyo", ".pyd"})
+
+
+def model_knowledge_files(model_dir: Path) -> list[Path]:
+    files = required_model_knowledge_files(model_dir)
+    examples = model_example_files(model_dir)
+    if not examples:
+        raise RuntimeError(f"Model {model_dir.name} has no reusable example artifact under {model_dir / MODEL_EXAMPLES_DIR_NAME}")
+    return [*files, *examples]
+
+
 def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
     include_optional_network_tools = bool(runtime.get("include_optional_network_tools"))
     tool_count = len(load_tool_records(include_optional_network_tools))
@@ -787,7 +803,7 @@ def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
         data = read_json(model_file)
         if not isinstance(data, list) or not data or not isinstance(data[0], dict):
             raise RuntimeError(f"{model_file.relative_to(ROOT)} is not an importable OpenWebUI model JSON array")
-        required_model_knowledge_files(model_file.parent)
+        model_knowledge_files(model_file.parent)
     return [
         ImportResult("tools", skipped=tool_count),
         ImportResult("tool_public_access", skipped=tool_count),
@@ -988,7 +1004,7 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
         model = data[0]
         model_id = str(model.get("id"))
         if upload_knowledge:
-            prompt_files = required_model_knowledge_files(model_file.parent)
+            prompt_files = model_knowledge_files(model_file.parent)
             knowledge = upsert_knowledge_with_files(
                 client,
                 model_id,
@@ -1036,7 +1052,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--base-url", default=None, help="One-off override for openwebui.base_url from the central config.")
     parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md and fachwissen.md files as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ files as Knowledge.")
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",

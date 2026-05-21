@@ -18,6 +18,7 @@
     "seed"
   ],
   "mistral_medium_128b_policy": "High reasoning is prompt-enforced with explicit tool-call playbooks; unsupported runtime parameters stay omitted.",
+  "mistral_medium_vision_policy": "All chat model profiles enable OpenWebUI vision capability and include prompt rules for screenshot, UI, chart, scan, presentation and visual artifact analysis when the backing Mistral deployment supports image inputs.",
   "openwebui_builtin_and_addon_policy": "Chat models prefer standard OpenWebUI builtins and the mounted openwebui-offline-addons runtime for local caches, Playwright/Chromium, Tiktoken, NLTK and Python packages when available.",
   "offline_excluded_tool_ids": [
     "github_repo_inspector",
@@ -41,6 +42,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -77,7 +79,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -91,8 +94,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 2233
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/allgemein/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1988
+        },
+        "allgemein-arbeitsauftrag-vorlage.md": {
+          "path": "Modelle/einzelmodelle/allgemein/beispiele/allgemein-arbeitsauftrag-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1692
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -167,6 +183,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -185,7 +202,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -199,8 +217,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5060
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1853
+        },
+        "lastenheft-vorlage.md": {
+          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/beispiele/lastenheft-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1609
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -253,6 +284,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -268,7 +300,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -282,8 +315,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4972
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1821
+        },
+        "api-design-vorlage.md": {
+          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/beispiele/api-design-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1583
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -333,6 +379,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -349,7 +396,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -363,8 +411,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4972
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/code-dokumentation/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1833
+        },
+        "code-dokumentation-vorlage.md": {
+          "path": "Modelle/einzelmodelle/code-dokumentation/beispiele/code-dokumentation-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1574
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -415,6 +476,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -431,7 +493,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -445,8 +508,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4933
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/code-review/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1838
+        },
+        "code-review-finding-vorlage.md": {
+          "path": "Modelle/einzelmodelle/code-review/beispiele/code-review-finding-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1594
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -497,6 +573,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -513,7 +590,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -527,8 +605,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5019
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/codeanalyse/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1803
+        },
+        "codeanalyse-bericht-vorlage.md": {
+          "path": "Modelle/einzelmodelle/codeanalyse/beispiele/codeanalyse-bericht-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1560
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -579,6 +670,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -595,7 +687,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -609,8 +702,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4976
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/codegenerierung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1802
+        },
+        "implementierungsplan-vorlage.md": {
+          "path": "Modelle/einzelmodelle/codegenerierung/beispiele/implementierungsplan-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1552
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -661,6 +767,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -677,7 +784,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -691,8 +799,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5061
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1834
+        },
+        "compliance-pruefbericht-vorlage.md": {
+          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/beispiele/compliance-pruefbericht-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1563
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -743,6 +864,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -761,7 +883,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -775,8 +898,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4953
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1845
+        },
+        "debugging-runbook-vorlage.md": {
+          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/beispiele/debugging-runbook-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1600
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -829,6 +965,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -844,7 +981,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -858,8 +996,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5522
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/dokumentenanalyse/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1792
+        },
+        "dokumentenanalyse-vorlage.md": {
+          "path": "Modelle/einzelmodelle/dokumentenanalyse/beispiele/dokumentenanalyse-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1539
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -909,6 +1060,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -925,7 +1077,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -939,8 +1092,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5151
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/dokumentengenerierung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1824
+        },
+        "dokument-generator-vorlage.md": {
+          "path": "Modelle/einzelmodelle/dokumentengenerierung/beispiele/dokument-generator-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1560
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -991,6 +1157,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1006,7 +1173,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1020,8 +1188,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5160
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/dokumentenvergleich/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1843
+        },
+        "dokumentenvergleich-matrix-vorlage.md": {
+          "path": "Modelle/einzelmodelle/dokumentenvergleich/beispiele/dokumentenvergleich-matrix-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1553
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1071,6 +1252,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1086,7 +1268,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1100,8 +1283,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5123
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1832
+        },
+        "executive-summary-vorlage.md": {
+          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/beispiele/executive-summary-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1567
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1151,6 +1347,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1165,7 +1362,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1179,8 +1377,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5068
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1821
+        },
+        "email-antwort-vorlage.md": {
+          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/beispiele/email-antwort-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1585
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1229,6 +1440,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1244,7 +1456,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1258,8 +1471,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5130
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/informationsextraktion/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1797
+        },
+        "extraktionsschema-vorlage.md": {
+          "path": "Modelle/einzelmodelle/informationsextraktion/beispiele/extraktionsschema-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1554
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1309,6 +1535,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1325,7 +1552,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1339,8 +1567,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4955
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1786
+        },
+        "helpdesk-diagnose-vorlage.md": {
+          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/beispiele/helpdesk-diagnose-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1560
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1391,6 +1632,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1407,7 +1649,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1421,8 +1664,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4998
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/json-csv-log-analyse/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1836
+        },
+        "loganalyse-vorlage.md": {
+          "path": "Modelle/einzelmodelle/json-csv-log-analyse/beispiele/loganalyse-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1603
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1473,6 +1729,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1488,7 +1745,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1502,8 +1760,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5030
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1806
+        },
+        "meeting-auswertung-vorlage.md": {
+          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/beispiele/meeting-auswertung-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1542
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1537,6 +1808,133 @@
       ]
     },
     {
+      "id": "mistral-vision-workbench",
+      "name": "Mistral Vision Workbench",
+      "temperature": 0.25,
+      "top_p": 0.9,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_markdown_formatting_enabled": true,
+      "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
+      "has_explicit_tool_call_playbook": true,
+      "has_openwebui_builtin_and_addon_policy": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "ask_user",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "visuals_toolkit_v4",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "parallel_task_planner",
+        "parallel_tools",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "llm_council"
+      ],
+      "recommended_skill_ids": [
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production",
+        "data-cleaning-analysis",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/mistral-vision-workbench/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2351
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/mistral-vision-workbench/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2423
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1881
+        },
+        "vision-ui-qa-demo.html": {
+          "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1491
+        },
+        "vision-ui-qa-vorlage.md": {
+          "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1642
+        }
+      },
+      "vision_enabled": true,
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "ask_user",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "visuals_toolkit_v4",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "parallel_task_planner",
+        "parallel_tools",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "llm_council"
+      ],
+      "meta_recommended_skill_ids": [
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production",
+        "data-cleaning-analysis",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ]
+    },
+    {
       "id": "n8n-workflow-architect",
       "name": "n8n Workflow Architect",
       "temperature": 0.25,
@@ -1553,6 +1951,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1572,7 +1971,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1586,8 +1986,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 25929
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1827
+        },
+        "n8n-workflow-vorlage.md": {
+          "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispiele/n8n-workflow-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1565
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1641,6 +2054,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1671,7 +2085,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1685,8 +2100,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1396
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/offline-workbench-agent/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1857
+        },
+        "offline-workbench-auftrag-vorlage.md": {
+          "path": "Modelle/einzelmodelle/offline-workbench-agent/beispiele/offline-workbench-auftrag-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1570
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1751,6 +2179,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1772,7 +2201,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1786,8 +2216,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 32398
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/openwebui-model-builder/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1811
+        },
+        "modellpaket-vorlage.md": {
+          "path": "Modelle/einzelmodelle/openwebui-model-builder/beispiele/modellpaket-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1590
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1843,6 +2286,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1862,7 +2306,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1876,8 +2321,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 21197
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/promptforge/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1833
+        },
+        "promptforge-vorlage.md": {
+          "path": "Modelle/einzelmodelle/promptforge/beispiele/promptforge-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1602
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1931,6 +2389,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -1951,7 +2410,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -1965,8 +2425,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5063
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1859
+        },
+        "prozessdokumentation-vorlage.md": {
+          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/beispiele/prozessdokumentation-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1575
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -2021,6 +2494,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -2039,7 +2513,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -2053,8 +2528,27 @@
           "exists": true,
           "non_empty": true,
           "bytes": 20213
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1908
+        },
+        "praesentation-briefing-vorlage.md": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-briefing-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1643
+        },
+        "praesentation-premium-demo.html": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 7530
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -2107,6 +2601,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -2122,7 +2617,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -2136,8 +2632,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4998
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/refactoring-unterstützung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1781
+        },
+        "refactoring-plan-vorlage.md": {
+          "path": "Modelle/einzelmodelle/refactoring-unterstützung/beispiele/refactoring-plan-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1554
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -2187,6 +2696,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -2204,7 +2714,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -2218,8 +2729,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5042
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1829
+        },
+        "dashboard-briefing-vorlage.md": {
+          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/beispiele/dashboard-briefing-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1579
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -2271,6 +2795,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -2286,7 +2811,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -2300,8 +2826,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5094
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1809
+        },
+        "support-ticket-vorlage.md": {
+          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/beispiele/support-ticket-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1575
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -2351,6 +2890,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -2367,7 +2907,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -2381,8 +2922,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 5057
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1881
+        },
+        "datenanalyse-notebook-plan-vorlage.md": {
+          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/beispiele/datenanalyse-notebook-plan-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1612
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -2433,6 +2987,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -2449,7 +3004,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -2463,8 +3019,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4919
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/testfall-generierung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1816
+        },
+        "testfallkatalog-vorlage.md": {
+          "path": "Modelle/einzelmodelle/testfall-generierung/beispiele/testfallkatalog-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1573
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -2515,6 +3084,7 @@
       "has_systemprompt_mainprompt_fachwissen": true,
       "has_high_reasoning_profile": true,
       "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
       "has_tool_force_profile": true,
@@ -2529,7 +3099,8 @@
       ],
       "required_knowledge_files": [
         "mainprompt.md",
-        "fachwissen.md"
+        "fachwissen.md",
+        "beispielergebnis.md"
       ],
       "knowledge_files": {
         "mainprompt.md": {
@@ -2543,8 +3114,21 @@
           "exists": true,
           "non_empty": true,
           "bytes": 4984
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1834
+        },
+        "lokalisierungsauftrag-vorlage.md": {
+          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/beispiele/lokalisierungsauftrag-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1581
         }
       },
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",

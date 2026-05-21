@@ -8,4 +8,4 @@ Alle Offline-Default-Tools sind aktiviert. Das Modell entscheidet anhand der Auf
 
 ## Import
 
-`model.json` ist ein OpenWebUI-kompatibles JSON-Array mit genau einem Modellobjekt. `mainprompt.md` und `fachwissen.md` werden beim API-Import als Knowledge fuer dieses Modell hinterlegt.
+`model.json` ist ein OpenWebUI-kompatibles JSON-Array mit genau einem Modellobjekt. `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/` werden beim API-Import als Knowledge fuer dieses Modell hinterlegt.

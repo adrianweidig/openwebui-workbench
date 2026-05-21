@@ -16,8 +16,9 @@ SKILLS_DIR = ROOT / "Tools" / "openwebui_ext" / "skills"
 IMPORT_SCRIPT = ROOT / "Tools" / "import_openwebui_workspace.py"
 CONFIG_EXAMPLE = ROOT / "scripts" / "openwebui_workspace_config.example.yaml"
 
-REQUIRED_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md"]
+REQUIRED_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 TOOL_FORCE_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
+VISION_MARKER = "## Vision- und UI-Bildanalyse"
 
 
 def read_json(path: Path):
@@ -57,11 +58,15 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 system = params.get("system", "")
 
                 self.assertIn(TOOL_FORCE_MARKER, system)
+                self.assertIn(VISION_MARKER, system)
                 self.assertIn("Tool-/Skill-Inventur", system)
                 self.assertEqual(meta.get("requiredKnowledgeFiles"), REQUIRED_KNOWLEDGE_FILES)
+                self.assertTrue(meta.get("capabilities", {}).get("vision"))
                 self.assertGreater(len(meta.get("primaryToolIds", [])), 0)
                 self.assertGreater(len(meta.get("recommendedSkillIds", [])), 0)
                 self.assertTrue(set(meta["recommendedSkillIds"]).issubset(skill_ids))
+                self.assertTrue((model_file.parent / "beispiele").exists())
+                self.assertGreater(len(list((model_file.parent / "beispiele").glob("*"))), 0)
 
     def test_generated_plan_and_summary_track_import_requirements(self) -> None:
         plan = read_json(REGISTRATION_PLAN)
@@ -92,6 +97,8 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
             public_access_policy.get("grant"),
             {"principal_type": "user", "principal_id": "*", "permission": "read"},
         )
+        self.assertEqual(plan.get("vision_policy", {}).get("specialist_model_id"), "mistral-vision-workbench")
+        self.assertEqual(plan.get("model_example_policy", {}).get("required_knowledge_file"), "beispielergebnis.md")
         self.assertEqual(plan.get("offline_addons_runtime", {}).get("container_playwright_browsers_path"), "/app/backend/data/cache/ms-playwright")
         self.assertIn(
             "function_valves.context_compressor_filter.reserved_output_tokens",
@@ -106,6 +113,8 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         for model in summary.get("models", []):
             with self.subTest(model=model.get("id")):
                 self.assertTrue(model.get("has_tool_force_profile"))
+                self.assertTrue(model.get("has_vision_profile"))
+                self.assertTrue(model.get("vision_enabled"))
                 self.assertTrue(model.get("has_openwebui_builtin_and_addon_policy"))
                 self.assertEqual(model.get("required_knowledge_files"), REQUIRED_KNOWLEDGE_FILES)
                 for info in model.get("knowledge_files", {}).values():
