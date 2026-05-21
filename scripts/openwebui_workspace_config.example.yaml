@@ -25,4 +25,4 @@ artifacts:
 import:
   public_read: false
   skip_knowledge: false
-  include_optional_network_tools: false
+  include_optional_network_tools: true

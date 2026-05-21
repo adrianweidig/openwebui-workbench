@@ -33,6 +33,30 @@
     "tool_skill_overlay_planner",
     "visuals_toolkit_v4"
   ],
+  "allgemein_model_tools": [
+    "air_gapped_jupyter_python",
+    "ask_user",
+    "comfyui_workflow_inspector",
+    "docker_compose_triage",
+    "github_repo_inspector",
+    "inline_visuals_toolkit_v3",
+    "json_csv_text_validator",
+    "llm_council",
+    "markdown_skill_builder",
+    "mediawiki_legacy_crawler",
+    "offline_artifact_workbench",
+    "openapi_schema_inspector",
+    "openui_generative_ui",
+    "parallel_task_planner",
+    "parallel_tools",
+    "repo_tree_analyzer",
+    "safe_http_fetcher",
+    "sub_agent",
+    "subagent_orchestrator",
+    "tool_skill_overlay_planner",
+    "visuals_toolkit_v4",
+    "web_search_and_crawl"
+  ],
   "tool_gui_import_file": "Tools/dist/openwebui-tools-import.json",
   "tool_gui_offline_import_file": "Tools/dist/openwebui-tools-offline-import.json",
   "offline_default_tools": [
@@ -98,13 +122,13 @@
         "path": "Modelle/einzelmodelle/allgemein/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2051
+        "bytes": 2102
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/allgemein/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2192
+        "bytes": 2233
       }
     },
     "anforderungsanalyse-lastenheft": {
@@ -345,6 +369,20 @@
         "bytes": 5030
       }
     },
+    "n8n-workflow-architect": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/n8n-workflow-architect/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4923
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/n8n-workflow-architect/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 25929
+      }
+    },
     "offline-workbench-agent": {
       "mainprompt.md": {
         "path": "Modelle/einzelmodelle/offline-workbench-agent/mainprompt.md",
@@ -359,18 +397,32 @@
         "bytes": 1396
       }
     },
+    "openwebui-model-builder": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/openwebui-model-builder/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 7776
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/openwebui-model-builder/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 32398
+      }
+    },
     "promptforge": {
       "mainprompt.md": {
         "path": "Modelle/einzelmodelle/promptforge/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2129
+        "bytes": 4812
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/promptforge/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4362
+        "bytes": 21197
       }
     },
     "prozess-workflow-dokumentation": {
@@ -392,13 +444,13 @@
         "path": "Modelle/einzelmodelle/präsentationserstellung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5461
+        "bytes": 5418
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5165
+        "bytes": 20213
       }
     },
     "refactoring-unterstützung": {
@@ -496,24 +548,28 @@
     "model_profiles": {
       "allgemein": {
         "tools": [
-          "ask_user",
-          "json_csv_text_validator",
           "air_gapped_jupyter_python",
-          "offline_artifact_workbench",
+          "ask_user",
+          "comfyui_workflow_inspector",
+          "docker_compose_triage",
+          "github_repo_inspector",
           "inline_visuals_toolkit_v3",
-          "visuals_toolkit_v4",
+          "json_csv_text_validator",
+          "llm_council",
+          "markdown_skill_builder",
+          "mediawiki_legacy_crawler",
+          "offline_artifact_workbench",
+          "openapi_schema_inspector",
+          "openui_generative_ui",
           "parallel_task_planner",
           "parallel_tools",
-          "subagent_orchestrator",
-          "sub_agent",
-          "tool_skill_overlay_planner",
           "repo_tree_analyzer",
-          "docker_compose_triage",
-          "openapi_schema_inspector",
-          "llm_council",
-          "comfyui_workflow_inspector",
-          "markdown_skill_builder",
-          "mediawiki_legacy_crawler"
+          "safe_http_fetcher",
+          "sub_agent",
+          "subagent_orchestrator",
+          "tool_skill_overlay_planner",
+          "visuals_toolkit_v4",
+          "web_search_and_crawl"
         ],
         "skills": [
           "offline-use-case-router",
@@ -522,7 +578,7 @@
           "parallel-tools-subagents",
           "secure-tool-usage"
         ],
-        "focus": "Freie oder gemischte Nutzerprobleme mit dem Basismodell `coder` bearbeiten, passende Spezialmodelle empfehlen und alle Offline-Tools fallbezogen aktiv nutzen."
+        "focus": "Freie oder gemischte Nutzerprobleme mit dem Basismodell `coder` bearbeiten, passende Spezialmodelle empfehlen und alle importierbaren Tools sowie alle Standardfilter fallbezogen aktiv nutzen."
       },
       "anforderungsanalyse-lastenheft": {
         "tools": [
@@ -819,21 +875,59 @@
           "model-tool-skill-overlays",
           "native-tool-calling-rollout"
         ],
-        "focus": "Den ersten Nutzerprompt nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Ausgabeformat optimieren."
+        "focus": "Vollstaendige direkt kopierbare Markdown-Promptvorlagen nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Zielsystem erzeugen."
+      },
+      "n8n-workflow-architect": {
+        "tools": [
+          "ask_user",
+          "json_csv_text_validator",
+          "openapi_schema_inspector",
+          "offline_artifact_workbench",
+          "air_gapped_jupyter_python",
+          "tool_skill_overlay_planner"
+        ],
+        "skills": [
+          "safe-mcp-openapi-import",
+          "api-integration-debugging",
+          "secure-tool-usage",
+          "offline-use-case-router"
+        ],
+        "focus": "Importierbare n8n-Workflow-JSONs wie der Custom GPT n8n Workflow Architect planen, pruefen, validieren und mit Test- sowie Sicherheitshinweisen ausgeben."
+      },
+      "openwebui-model-builder": {
+        "tools": [
+          "ask_user",
+          "tool_skill_overlay_planner",
+          "markdown_skill_builder",
+          "json_csv_text_validator",
+          "offline_artifact_workbench",
+          "repo_tree_analyzer",
+          "openapi_schema_inspector"
+        ],
+        "skills": [
+          "openwebui-tool-authoring",
+          "prompt-to-tool-workflow",
+          "model-tool-skill-overlays",
+          "secure-tool-usage",
+          "native-tool-calling-rollout"
+        ],
+        "focus": "Vollstaendige OpenWebUI-Modellpakete mit JSON, Systemprompt, Mainprompt, Fachwissen, Tool-/Skill-Zuordnung, Knowledge und Import-QA erzeugen."
       },
       "präsentationserstellung": {
         "tools": [
+          "ask_user",
           "offline_artifact_workbench",
           "inline_visuals_toolkit_v3",
           "visuals_toolkit_v4",
-          "air_gapped_jupyter_python"
+          "air_gapped_jupyter_python",
+          "json_csv_text_validator"
         ],
         "skills": [
           "offline-artifact-production",
           "visual-toolkit-v3-offline",
           "offline-creative-media-workflows"
         ],
-        "focus": "Folien, Visuals, Diagrammdaten und exportierbare Präsentationsartefakte mit Tools erzeugen."
+        "focus": "Hochwertige browserbasierte Keynote-Präsentationen wie der Custom GPT Präsentationscreator als einzelne `präsentation.html` erzeugen; PDF/PPTX nur auf expliziten Wunsch oder als Fallback."
       },
       "refactoring-unterstützung": {
         "tools": [
@@ -958,7 +1052,9 @@
       "it-helpdesk-diagnose": 0.25,
       "json-csv-log-analyse": 0.15,
       "meeting-protokoll-auswertung": 0.35,
+      "n8n-workflow-architect": 0.25,
       "offline-workbench-agent": 0.45,
+      "openwebui-model-builder": 0.35,
       "promptforge": 0.35,
       "prozess-workflow-dokumentation": 0.4,
       "präsentationserstellung": 0.7,
@@ -989,7 +1085,7 @@
     "meta.profile_image_url"
   ],
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
-  "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not assigned to models and are not part of tools_first.",
+  "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
   "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
   "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
   "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
@@ -1012,7 +1108,9 @@
     "it-helpdesk-diagnose",
     "json-csv-log-analyse",
     "meeting-protokoll-auswertung",
+    "n8n-workflow-architect",
     "offline-workbench-agent",
+    "openwebui-model-builder",
     "promptforge",
     "prozess-workflow-dokumentation",
     "präsentationserstellung",

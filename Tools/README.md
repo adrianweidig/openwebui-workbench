@@ -50,7 +50,7 @@ notepad scripts/openwebui_workspace_config.yaml
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
-Die Konfigurationsdatei trennt die extern erreichbare OpenWebUI-Adresse von der Docker-internen Jupyter-Adresse. `openwebui.base_url` muss von der Maschine erreichbar sein, auf der das Python-Skript läuft; `jupyter.url` muss aus Sicht des OpenWebUI-Backends erreichbar sein, z. B. `http://jupyter:8888`.
+Die Konfigurationsdatei trennt die extern erreichbare OpenWebUI-Adresse von der Docker-internen Jupyter-Adresse. `openwebui.base_url` muss von der Maschine erreichbar sein, auf der das Python-Skript läuft; `jupyter.url` muss aus Sicht des OpenWebUI-Backends erreichbar sein, z. B. `http://jupyter:8888`. Standardmäßig importiert der API-Importer alle importierbaren Tools aus dem Repo; `import.include_optional_network_tools: false` schränkt dies lokal auf die Offline-Default-Tools ein.
 
 `import_openwebui_workspace.py` bleibt als Fallback direkt ausführbar und nutzt die erzeugten Registries. Es importiert Tools, Functions/Filter und Skills, setzt Jupyter-/Artefakt-Valves, lädt `mainprompt.md` und `fachwissen.md` je Modell als Knowledge hoch und importiert anschließend die Modellprofile inklusive eingebetteter Icons. Vor einem echten Import kann `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` die lokalen Payloads prüfen.
 Es wird auch in `dist/openwebui-tools-skills-offline.zip` mit ausgeliefert.

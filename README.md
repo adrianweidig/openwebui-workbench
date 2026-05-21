@@ -60,8 +60,12 @@ Für visuelle Offline-Ausgaben, parallele Tool-/Subagent-Planung und robuste Mod
 
 Zusätzlich zu den Problemfallmodellen gibt es zwei Querschnittsmodelle:
 
-- `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme, die nicht eindeutig zu einem Spezialmodell passen; nutzt das Basismodell `coder` mit allen Offline-Default-Tools und allen Standardfiltern.
-- `Promptforge`: optimiert den ersten Nutzerprompt nach dokumentierten Prompting-Best-Practices und bereitet ihn für toolfähige OpenWebUI-Modelle vor; `fachwissen.md` enthält die kuratierte Best-Practice-Wissensbasis.
+- `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme, die nicht eindeutig zu einem Spezialmodell passen; nutzt das Basismodell `coder` mit allen importierbaren Tools und allen Standardfiltern.
+- `PromptForge`: arbeitet wie der Custom GPT `PromptForge` aus `adrianweidig/custom-gpts` und erzeugt vollständige Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows.
+- `n8n Workflow Architect`: arbeitet wie der Custom GPT `n8n Workflow Architect` und erstellt oder prüft importierbare n8n-Workflow-JSONs.
+- `OpenWebUI Model Builder`: arbeitet wie der Custom GPT `OpenWebUI Model Builder` und erzeugt vollständige OpenWebUI-Modellpakete.
+
+Das Modell `Präsentationserstellung` ist an den Custom GPT `Präsentationscreator` angeglichen. Standardziel ist eine hochwertige, animierte und interaktive Browser-Keynote als `präsentation.html`; PDF/PPTX sind nur noch Fallbacks oder explizite Sonderwünsche.
 
 Die Tool-Registry und die Modell-Tool-Zuweisungen können reproduzierbar erzeugt und geprüft werden. Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus den ZIP-Paketen aus:
 
@@ -74,7 +78,7 @@ Die Modellprofile werden dabei auf natives Offline-Tool-Calling, eingebettete Mo
 Die Tool-Nutzungssektion erzwingt am Aufgabenanfang eine Tool-/Skill-Inventur und passende Tools, sobald Dateien, strukturierte Daten, Code, Artefakte, APIs, Docker-/OpenWebUI-Fehler, Visuals, Parallelplanung, Subagenten, Modellrat, Modell-/Tool-/Skill-Overlays, ComfyUI-Workflows oder Skill-Erstellung betroffen sind. Der Filter `auto_tool_selector` unterstützt diese Vorgabe, indem er passende verfügbare Tool-IDs vor dem Modellaufruf ergänzt; `markdown_normalizer` und `context_compressor_filter` bleiben ebenfalls standardmäßig als Filter verfügbar.
 Die Datei `Modelle/dist/openwebui-model-params-summary.json` listet die Parameter je Modell explizit zur schnellen Kontrolle.
 
-Für API-basierten Direktimport kann eine lokale Konfigurationsdatei genutzt werden. Dazu `scripts/openwebui_workspace_config.example.yaml` nach `scripts/openwebui_workspace_config.yaml` kopieren und dort die von der Import-Maschine erreichbare OpenWebUI-Adresse, den OpenWebUI-Admin-API-Key sowie die aus dem OpenWebUI-Container erreichbare Jupyter-Adresse und den Jupyter-Token eintragen. Die echte `openwebui_workspace_config.yaml` wird nicht versioniert.
+Für API-basierten Direktimport kann eine lokale Konfigurationsdatei genutzt werden. Dazu `scripts/openwebui_workspace_config.example.yaml` nach `scripts/openwebui_workspace_config.yaml` kopieren und dort die von der Import-Maschine erreichbare OpenWebUI-Adresse, den OpenWebUI-Admin-API-Key sowie die aus dem OpenWebUI-Container erreichbare Jupyter-Adresse und den Jupyter-Token eintragen. Die echte `openwebui_workspace_config.yaml` wird nicht versioniert. Der API-Importer importiert standardmäßig alle importierbaren Tools aus dem Repo; `import.include_optional_network_tools: false` reduziert den Import auf den Offline-Default-Satz.
 
 ```powershell
 Copy-Item scripts/openwebui_workspace_config.example.yaml scripts/openwebui_workspace_config.yaml

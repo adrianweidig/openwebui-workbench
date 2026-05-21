@@ -8,6 +8,7 @@
 | `04_informationsextraktion.md` | Informationsextraktion | `informationsextraktion` | enabled |
 | `05_dokumentengenerierung.md` | Dokumentengenerierung | `dokumentengenerierung` | enabled |
 | `06_präsentationserstellung.md` | Präsentationserstellung | `präsentationserstellung` | enabled |
+| Custom GPT Präsentationscreator | Präsentationserstellung | `präsentationserstellung` | enabled |
 | `07_tabellen-csv-datenanalyse.md` | Tabellen- und CSV-Datenanalyse | `tabellen-csv-datenanalyse` | required |
 | `08_report-dashboard-vorbereitung.md` | Report- und Dashboard-Vorbereitung | `report-dashboard-vorbereitung` | enabled |
 | `09_codegenerierung.md` | Codegenerierung | `codegenerierung` | enabled |
@@ -29,5 +30,7 @@
 | `25_compliance-richtlinienprüfung.md` | Compliance- und Richtlinienprüfung | `compliance-richtlinienprüfung` | optional |
 | Sammelmodell Offline Workbench | Offline Workbench Agent | `offline-workbench-agent` | required |
 | Allgemeines Fallbackmodell | Allgemein | `allgemein` | required |
-| Prompt-Optimierung | Promptforge | `promptforge` | optional |
+| Custom GPT PromptForge | PromptForge | `promptforge` | optional |
+| Custom GPT n8n Workflow Architect | n8n Workflow Architect | `n8n-workflow-architect` | optional |
+| Custom GPT OpenWebUI Model Builder | OpenWebUI Model Builder | `openwebui-model-builder` | optional |
 | `26_bewerbungsunterlagen-optimierung.md` | nicht erzeugt | n/a | Datei fehlt, nur im Index genannt |

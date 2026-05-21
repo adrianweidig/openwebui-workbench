@@ -304,7 +304,8 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         120,
     )
     include_optional = args.include_optional_network_tools or as_bool(
-        first_config_value(config, ["import.include_optional_network_tools"], False)
+        first_config_value(config, ["import.include_optional_network_tools"], True),
+        True,
     )
     public_read = args.public_read or as_bool(first_config_value(config, ["import.public_read"], False))
     skip_knowledge = args.skip_knowledge or as_bool(first_config_value(config, ["import.skip_knowledge"], False))
@@ -666,7 +667,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",
-        help="Also import optional network-capable tools. They remain unassigned unless model JSON references them.",
+        help="Also import optional network-capable tools. This is the default unless import.include_optional_network_tools is false in the YAML config.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Validate payload files and print counts without calling OpenWebUI.")
     parser.add_argument("--jupyter-url", default=None, help="Jupyter URL as seen from the OpenWebUI backend/container.")

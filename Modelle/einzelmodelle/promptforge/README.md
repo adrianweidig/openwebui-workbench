@@ -1,6 +1,14 @@
-# Promptforge
+# PromptForge
 
-Promptforge optimiert den ersten Nutzerprompt nach dokumentierten Prompting-Best-Practices und bereitet ihn für OpenWebUI-Modelle mit Tool- und Filter-Nutzung auf.
+OpenWebUI-Modellumsetzung des Custom GPT `PromptForge` / `Promptgenerator` aus `adrianweidig/custom-gpts`.
+
+## Zweck
+
+Erstellt vollständige, direkt kopierbare Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows. Die Arbeitsweise folgt den Referenzdateien `systemprompt.md`, `bootloader.md` und `fachwissen.md` aus dem Custom-GPT-Repo.
+
+## Referenz
+
+Quelle: `https://github.com/adrianweidig/custom-gpts/tree/main/Promptgenerator`
 
 ## Vorgesehene Tools
 

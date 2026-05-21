@@ -90,7 +90,9 @@ MODEL_TEMPERATURES = {
     "it-helpdesk-diagnose": 0.25,
     "json-csv-log-analyse": 0.15,
     "meeting-protokoll-auswertung": 0.35,
+    "n8n-workflow-architect": 0.25,
     "offline-workbench-agent": 0.45,
+    "openwebui-model-builder": 0.35,
     "promptforge": 0.35,
     "prozess-workflow-dokumentation": 0.4,
     "präsentationserstellung": 0.7,
@@ -103,9 +105,9 @@ MODEL_TEMPERATURES = {
 }
 TOOL_FORCE_PROFILES = {
     "allgemein": {
-        "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "parallel_task_planner", "parallel_tools", "subagent_orchestrator", "sub_agent", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "llm_council", "comfyui_workflow_inspector", "markdown_skill_builder", "mediawiki_legacy_crawler"],
+        "tools": ["air_gapped_jupyter_python", "ask_user", "comfyui_workflow_inspector", "docker_compose_triage", "github_repo_inspector", "inline_visuals_toolkit_v3", "json_csv_text_validator", "llm_council", "markdown_skill_builder", "mediawiki_legacy_crawler", "offline_artifact_workbench", "openapi_schema_inspector", "openui_generative_ui", "parallel_task_planner", "parallel_tools", "repo_tree_analyzer", "safe_http_fetcher", "sub_agent", "subagent_orchestrator", "tool_skill_overlay_planner", "visuals_toolkit_v4", "web_search_and_crawl"],
         "skills": ["offline-use-case-router", "redundant-fallback-tooling", "native-tool-calling-rollout", "parallel-tools-subagents", "secure-tool-usage"],
-        "focus": "Freie oder gemischte Nutzerprobleme mit dem Basismodell `coder` bearbeiten, passende Spezialmodelle empfehlen und alle Offline-Tools fallbezogen aktiv nutzen.",
+        "focus": "Freie oder gemischte Nutzerprobleme mit dem Basismodell `coder` bearbeiten, passende Spezialmodelle empfehlen und alle importierbaren Tools sowie alle Standardfilter fallbezogen aktiv nutzen.",
     },
     "anforderungsanalyse-lastenheft": {
         "tools": ["ask_user", "offline_artifact_workbench", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner", "llm_council"],
@@ -205,12 +207,22 @@ TOOL_FORCE_PROFILES = {
     "promptforge": {
         "tools": ["ask_user", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner", "llm_council", "markdown_skill_builder"],
         "skills": ["prompt-to-tool-workflow", "secure-tool-usage", "model-tool-skill-overlays", "native-tool-calling-rollout"],
-        "focus": "Den ersten Nutzerprompt nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Ausgabeformat optimieren.",
+        "focus": "Vollstaendige direkt kopierbare Markdown-Promptvorlagen nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Zielsystem erzeugen.",
+    },
+    "n8n-workflow-architect": {
+        "tools": ["ask_user", "json_csv_text_validator", "openapi_schema_inspector", "offline_artifact_workbench", "air_gapped_jupyter_python", "tool_skill_overlay_planner"],
+        "skills": ["safe-mcp-openapi-import", "api-integration-debugging", "secure-tool-usage", "offline-use-case-router"],
+        "focus": "Importierbare n8n-Workflow-JSONs wie der Custom GPT n8n Workflow Architect planen, pruefen, validieren und mit Test- sowie Sicherheitshinweisen ausgeben.",
+    },
+    "openwebui-model-builder": {
+        "tools": ["ask_user", "tool_skill_overlay_planner", "markdown_skill_builder", "json_csv_text_validator", "offline_artifact_workbench", "repo_tree_analyzer", "openapi_schema_inspector"],
+        "skills": ["openwebui-tool-authoring", "prompt-to-tool-workflow", "model-tool-skill-overlays", "secure-tool-usage", "native-tool-calling-rollout"],
+        "focus": "Vollstaendige OpenWebUI-Modellpakete mit JSON, Systemprompt, Mainprompt, Fachwissen, Tool-/Skill-Zuordnung, Knowledge und Import-QA erzeugen.",
     },
     "präsentationserstellung": {
-        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python"],
+        "tools": ["ask_user", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python", "json_csv_text_validator"],
         "skills": ["offline-artifact-production", "visual-toolkit-v3-offline", "offline-creative-media-workflows"],
-        "focus": "Folien, Visuals, Diagrammdaten und exportierbare Präsentationsartefakte mit Tools erzeugen.",
+        "focus": "Hochwertige browserbasierte Keynote-Präsentationen wie der Custom GPT Präsentationscreator als einzelne `präsentation.html` erzeugen; PDF/PPTX nur auf expliziten Wunsch oder als Fallback.",
     },
     "refactoring-unterstützung": {
         "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
@@ -795,7 +807,13 @@ def icon_data_uri_for_model(model_id: str) -> str:
     return "/static/favicon.png"
 
 
-def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List[str]) -> Dict[str, Any]:
+def tool_ids_for_model(model_id: str, offline_tool_ids: List[str], all_tool_ids: List[str]) -> List[str]:
+    if model_id == "allgemein":
+        return list(all_tool_ids)
+    return list(offline_tool_ids)
+
+
+def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_ids: List[str], all_tool_ids: List[str]) -> Dict[str, Any]:
     model = json.loads(json.dumps(model, ensure_ascii=False))
     meta = model.setdefault("meta", {})
     params = model.setdefault("params", {})
@@ -817,7 +835,7 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List
     model_id = str(model.get("id", ""))
     profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
     meta["profile_image_url"] = icon_data_uri_for_model(model_id)
-    meta["toolIds"] = list(tool_ids)
+    meta["toolIds"] = tool_ids_for_model(model_id, offline_tool_ids, all_tool_ids)
     meta["filterIds"] = merge_unique(filter_ids, meta.get("filterIds"))
     meta["defaultFilterIds"] = merge_unique(filter_ids, meta.get("defaultFilterIds"))
     meta["primaryToolIds"] = list(profile["tools"])
@@ -863,13 +881,14 @@ def model_knowledge_status(model_id: str) -> Dict[str, Dict[str, Any]]:
 
 
 def apply_model_config(tool_records: List[ToolRecord], function_records: List[FunctionRecord], write: bool) -> Tuple[bool, List[Dict[str, Any]]]:
-    tool_ids = [record.id for record in offline_default_tool_records(tool_records)]
+    offline_tool_ids = [record.id for record in offline_default_tool_records(tool_records)]
+    all_tool_ids = [record.id for record in tool_records if record.importable]
     filter_ids = [record.id for record in function_records if record.importable and record.function_type == "filter"]
     changed = False
     configured_models: List[Dict[str, Any]] = []
     for path in model_files():
         data, original = load_model(path)
-        configured = configure_model(original, tool_ids, filter_ids)
+        configured = configure_model(original, offline_tool_ids, filter_ids, all_tool_ids)
         configured_models.append(configured)
         new_data = [configured]
         if new_data != data:
@@ -954,6 +973,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml",
         "api_import_token": "openwebui.admin_token in config YAML, OPENWEBUI_ADMIN_TOKEN environment variable, or --token CLI argument",
         "tools_first": offline_tool_ids,
+        "allgemein_model_tools": sorted(tool_ids_for_model("allgemein", offline_tool_ids, [record.id for record in tool_records if record.importable])),
         "tool_gui_import_file": rel(TOOL_IMPORT),
         "tool_gui_offline_import_file": rel(OFFLINE_TOOL_IMPORT),
         "offline_default_tools": offline_tool_ids,
@@ -1004,7 +1024,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
-        "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not assigned to models and are not part of tools_first.",
+        "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
         "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
@@ -1090,10 +1110,11 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if not isinstance(tool_ids, list) or not tool_ids:
             issues.append(f"Chat-Modell {model_id} hat keine toolIds")
         else:
-            non_offline_tool_ids = {record.id for record in tool_records if record.importable and not record.offline}
-            forbidden = sorted(set(tool_ids).intersection(OFFLINE_EXCLUDED_TOOL_IDS | non_offline_tool_ids))
-            if forbidden:
-                issues.append(f"Chat-Modell {model_id} referenziert im Offline-Standard ausgeschlossene Tools: {', '.join(forbidden)}")
+            if model_id != "allgemein":
+                non_offline_tool_ids = {record.id for record in tool_records if record.importable and not record.offline}
+                forbidden = sorted(set(tool_ids).intersection(OFFLINE_EXCLUDED_TOOL_IDS | non_offline_tool_ids))
+                if forbidden:
+                    issues.append(f"Chat-Modell {model_id} referenziert im Offline-Standard ausgeschlossene Tools: {', '.join(forbidden)}")
             missing = sorted(set(tool_ids) - valid_tool_ids)
             if missing:
                 issues.append(f"Chat-Modell {model_id} referenziert unbekannte Tools: {', '.join(missing)}")

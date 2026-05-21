@@ -18,6 +18,9 @@
 - `artifacts/models/offline-workbench-agent.model.json`: Sammelmodell für ChatGPT-ähnliche Offline-Nutzung mit Jupyter- und Artefakt-Workflow
 - `artifacts/models/allgemein.model.json`: allgemeines Fallbackmodell für freie oder gemischte Nutzerprobleme mit allen Offline-Tools und Standardfiltern
 - `artifacts/models/promptforge.model.json`: Prompt-Optimierungsmodell mit kuratiertem Prompting-Best-Practice-Fachwissen
+- `artifacts/models/n8n-workflow-architect.model.json`: Custom-GPT-nahe n8n-Workflow-Erstellung und -Prüfung
+- `artifacts/models/openwebui-model-builder.model.json`: Custom-GPT-nahe Erstellung vollständiger OpenWebUI-Modellpakete
+- `artifacts/models/präsentationserstellung.model.json`: Custom-GPT-nahe Browser-Keynote-Erstellung als `präsentation.html`
 
 ## Direktimport
 

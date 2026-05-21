@@ -2,11 +2,13 @@
 
 ## Zweck
 
-Nutzer möchten aus Informationen, Dokumenten oder Stichpunkten eine Präsentationsstruktur oder direkt eine PPTX-Datei erzeugen.
+OpenWebUI-Modellumsetzung des Custom GPT `Präsentationscreator` aus `adrianweidig/custom-gpts`.
+
+Das Ziel ist nicht mehr eine langweilige PDF- oder PPTX-Folienausgabe, sondern eine hochwertige browserbasierte Web-Keynote als `präsentation.html`: 16:9, modern gestaltet, animiert, interaktiv, PowerPoint-ähnlich bedienbar und direkt im Browser lauffähig.
 
 ## Quelle
 
-Erzeugt aus `06_präsentationserstellung.md`.
+Referenz: `https://github.com/adrianweidig/custom-gpts/tree/main/Pr%C3%A4sentationscreator`
 
 ## OpenWebUI-Basis
 
@@ -19,9 +21,10 @@ Erzeugt aus `06_präsentationserstellung.md`.
 ## Dateien
 
 - `model.json`: direkt importierbare OpenWebUI-JSON-Datei im Exportschema, als Array mit genau einem Modellobjekt
-- `systemprompt.md`: kompakter Systemprompt
-- `mainprompt.md`: operative Arbeitslogik
-- `fachwissen.md`: domänenspezifische Regeln
+- `systemprompt.md`: Custom-GPT-Systemprompt des Präsentationscreator
+- `mainprompt.md`: Bootloader-/Operationslogik für OpenWebUI
+- `fachwissen.md`: verbindliche Präsentations-, Design-, HTML-/CSS-/JS- und Qualitätsregeln
+- `customgpt_infos.md`: Referenzinformationen zum ursprünglichen Custom GPT
 
 ## Hinweis
 
