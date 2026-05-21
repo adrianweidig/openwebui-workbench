@@ -1,13 +1,15 @@
 {
   "schema": "openwebui-model-params-summary/v1",
-  "expected_max_tokens": 262144,
+  "max_tokens_policy": "omitted; target OpenWebUI/model-server limits are used.",
   "supported_runtime_params": [
     "function_calling",
-    "max_tokens",
     "stop",
     "system",
     "temperature",
     "top_p"
+  ],
+  "omitted_runtime_params": [
+    "max_tokens"
   ],
   "omitted_unsupported_runtime_params": [
     "reasoning_effort",
@@ -23,19 +25,47 @@
     {
       "id": "anforderungsanalyse-lastenheft",
       "name": "Anforderungsanalyse und Lastenheft",
-      "max_tokens": 262144,
       "temperature": 0.4,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "offline_artifact_workbench",
+        "tool_skill_overlay_planner",
+        "json_csv_text_validator",
+        "parallel_task_planner"
+      ],
+      "recommended_skill_ids": [
+        "prompt-to-tool-workflow",
+        "model-tool-skill-overlays",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5285
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5060
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -56,24 +86,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "offline_artifact_workbench",
+        "tool_skill_overlay_planner",
+        "json_csv_text_validator",
+        "parallel_task_planner"
+      ],
+      "meta_recommended_skill_ids": [
+        "prompt-to-tool-workflow",
+        "model-tool-skill-overlays",
+        "offline-artifact-production"
       ]
     },
     {
       "id": "api-schnittstellenentwurf",
       "name": "API- und Schnittstellenentwurf",
-      "max_tokens": 262144,
       "temperature": 0.35,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "openapi_schema_inspector",
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "api-integration-debugging",
+        "safe-mcp-openapi-import",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5247
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4972
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -94,24 +162,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "openapi_schema_inspector",
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "api-integration-debugging",
+        "safe-mcp-openapi-import",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "code-dokumentation",
       "name": "Code-Dokumentation",
-      "max_tokens": 262144,
       "temperature": 0.35,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "repository-maintenance",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/code-dokumentation/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5235
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/code-dokumentation/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4972
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -132,24 +237,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "repository-maintenance",
+        "offline-artifact-production",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "code-review",
       "name": "Code-Review",
-      "max_tokens": 262144,
       "temperature": 0.2,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/code-review/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5211
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/code-review/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4933
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -170,24 +312,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python"
+      ],
+      "meta_recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "codeanalyse",
       "name": "Codeanalyse",
-      "max_tokens": 262144,
       "temperature": 0.2,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/codeanalyse/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5270
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/codeanalyse/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5019
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -208,24 +387,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "meta_recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "codegenerierung",
       "name": "Codegenerierung",
-      "max_tokens": 262144,
       "temperature": 0.35,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "repository-maintenance",
+        "secure-tool-usage",
+        "openwebui-tool-authoring"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/codegenerierung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5248
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/codegenerierung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4976
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -246,24 +462,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "meta_recommended_skill_ids": [
+        "repository-maintenance",
+        "secure-tool-usage",
+        "openwebui-tool-authoring"
       ]
     },
     {
       "id": "compliance-richtlinienprüfung",
       "name": "Compliance- und Richtlinienprüfung",
-      "max_tokens": 262144,
       "temperature": 0.2,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "repo_tree_analyzer",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "secure-tool-usage",
+        "redundant-fallback-tooling"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5305
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5061
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -284,24 +537,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "repo_tree_analyzer",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "research-grounding",
+        "secure-tool-usage",
+        "redundant-fallback-tooling"
       ]
     },
     {
       "id": "debugging-fehleranalyse",
       "name": "Debugging und Fehleranalyse",
-      "max_tokens": 262144,
       "temperature": 0.2,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "docker_compose_triage",
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5200
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4953
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -322,24 +613,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "docker_compose_triage",
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "meta_recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "repository-maintenance",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "dokumentenanalyse",
       "name": "Dokumentenanalyse",
-      "max_tokens": 262144,
       "temperature": 0.2,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/dokumentenanalyse/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5836
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/dokumentenanalyse/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5522
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -360,24 +689,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
       ]
     },
     {
       "id": "dokumentengenerierung",
       "name": "Dokumentengenerierung",
-      "max_tokens": 262144,
       "temperature": 0.7,
       "top_p": 0.95,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/dokumentengenerierung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5457
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/dokumentengenerierung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5151
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -398,24 +764,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator"
+      ],
+      "meta_recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "dokumentenvergleich",
       "name": "Dokumentenvergleich",
-      "max_tokens": 262144,
       "temperature": 0.15,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/dokumentenvergleich/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5447
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/dokumentenvergleich/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5160
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -436,24 +839,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "offline-artifact-production"
       ]
     },
     {
       "id": "dokumentenzusammenfassung",
       "name": "Dokumentenzusammenfassung",
-      "max_tokens": 262144,
       "temperature": 0.25,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5386
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5123
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -474,24 +914,60 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "email-kommunikationsassistenz",
       "name": "E-Mail- und Kommunikationsassistenz",
-      "max_tokens": 262144,
       "temperature": 0.7,
       "top_p": 0.95,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "secure-tool-usage",
+        "offline-artifact-production",
+        "research-grounding"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5324
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5068
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -512,24 +988,60 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "secure-tool-usage",
+        "offline-artifact-production",
+        "research-grounding"
       ]
     },
     {
       "id": "informationsextraktion",
       "name": "Informationsextraktion",
-      "max_tokens": 262144,
       "temperature": 0.0,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/informationsextraktion/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5389
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/informationsextraktion/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5130
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -550,24 +1062,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "it-helpdesk-diagnose",
       "name": "IT-Helpdesk-Diagnose",
-      "max_tokens": 262144,
       "temperature": 0.25,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "docker_compose_triage",
+        "json_csv_text_validator",
+        "repo_tree_analyzer"
+      ],
+      "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-use-case-router"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5156
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4955
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -588,24 +1137,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "docker_compose_triage",
+        "json_csv_text_validator",
+        "repo_tree_analyzer"
+      ],
+      "meta_recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-use-case-router"
       ]
     },
     {
       "id": "json-csv-log-analyse",
       "name": "JSON-, CSV- und Log-Analyse",
-      "max_tokens": 262144,
       "temperature": 0.15,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "docker_compose_triage",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/json-csv-log-analyse/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5175
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/json-csv-log-analyse/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4998
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -626,24 +1213,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "docker_compose_triage",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "meeting-protokoll-auswertung",
       "name": "Meeting-Protokoll-Auswertung",
-      "max_tokens": 262144,
       "temperature": 0.35,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "data-cleaning-analysis"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5221
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5030
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -664,24 +1289,71 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench",
+        "air_gapped_jupyter_python"
+      ],
+      "meta_recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "data-cleaning-analysis"
       ]
     },
     {
       "id": "offline-workbench-agent",
       "name": "Offline Workbench Agent",
-      "max_tokens": 262144,
       "temperature": 0.45,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "parallel_task_planner",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "openapi_schema_inspector",
+        "comfyui_workflow_inspector"
+      ],
+      "recommended_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "visual-toolkit-v3-offline"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/offline-workbench-agent/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2349
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/offline-workbench-agent/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1396
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -702,24 +1374,73 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "parallel_task_planner",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "openapi_schema_inspector",
+        "comfyui_workflow_inspector"
+      ],
+      "meta_recommended_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "visual-toolkit-v3-offline"
       ]
     },
     {
       "id": "prozess-workflow-dokumentation",
       "name": "Prozess- und Workflow-Dokumentation",
-      "max_tokens": 262144,
       "temperature": 0.4,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "parallel_task_planner",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "tool_skill_overlay_planner"
+      ],
+      "recommended_skill_ids": [
+        "parallel-tools-subagents",
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "model-tool-skill-overlays"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5347
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5063
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -740,24 +1461,63 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "parallel_task_planner",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "tool_skill_overlay_planner"
+      ],
+      "meta_recommended_skill_ids": [
+        "parallel-tools-subagents",
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "model-tool-skill-overlays"
       ]
     },
     {
       "id": "präsentationserstellung",
       "name": "Präsentationserstellung",
-      "max_tokens": 262144,
       "temperature": 0.7,
       "top_p": 0.95,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "offline-creative-media-workflows"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5461
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5165
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -778,24 +1538,61 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "air_gapped_jupyter_python"
+      ],
+      "meta_recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "offline-creative-media-workflows"
       ]
     },
     {
       "id": "refactoring-unterstützung",
       "name": "Refactoring-Unterstützung",
-      "max_tokens": 262144,
       "temperature": 0.25,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "recommended_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/refactoring-unterstützung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5237
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/refactoring-unterstützung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4998
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -816,24 +1613,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator"
+      ],
+      "meta_recommended_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage"
       ]
     },
     {
       "id": "report-dashboard-vorbereitung",
       "name": "Report- und Dashboard-Vorbereitung",
-      "max_tokens": 262144,
       "temperature": 0.4,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "inline_visuals_toolkit_v3",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5306
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5042
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -854,24 +1689,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "inline_visuals_toolkit_v3",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
       ]
     },
     {
       "id": "support-ticket-vorbereitung",
       "name": "Support-Ticket-Vorbereitung",
-      "max_tokens": 262144,
       "temperature": 0.35,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "docker_compose_triage",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5305
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5094
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -892,24 +1765,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "docker_compose_triage",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-artifact-production"
       ]
     },
     {
       "id": "tabellen-csv-datenanalyse",
       "name": "Tabellen- und CSV-Datenanalyse",
-      "max_tokens": 262144,
       "temperature": 0.15,
       "top_p": 0.8,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5285
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5057
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -930,24 +1841,62 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3"
+      ],
+      "meta_recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
       ]
     },
     {
       "id": "testfall-generierung",
       "name": "Testfall-Generierung",
-      "max_tokens": 262144,
       "temperature": 0.3,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python"
+      ],
+      "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "data-cleaning-analysis"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/testfall-generierung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5155
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/testfall-generierung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4919
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -968,24 +1917,60 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python"
+      ],
+      "meta_recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "data-cleaning-analysis"
       ]
     },
     {
       "id": "übersetzung-lokalisierung",
       "name": "Übersetzung und Lokalisierung",
-      "max_tokens": 262144,
       "temperature": 0.35,
       "top_p": 0.9,
       "function_calling": "native",
       "runtime_param_keys": [
         "function_calling",
-        "max_tokens",
         "stop",
         "system",
         "temperature",
         "top_p"
       ],
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5200
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4984
+        }
+      },
       "has_embedded_svg_icon": true,
       "assigned_tool_ids": [
         "air_gapped_jupyter_python",
@@ -1006,6 +1991,15 @@
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
         "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "json_csv_text_validator",
+        "offline_artifact_workbench"
+      ],
+      "meta_recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
       ]
     }
   ]

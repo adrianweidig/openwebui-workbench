@@ -8,6 +8,7 @@ import inspect
 import json
 import re
 import shutil
+import sys
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,11 +19,13 @@ from typing import Any, Dict, Iterable, List, Tuple
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS_INDEX = ROOT / "Tools" / "index.json"
 TOOLS_DIST = ROOT / "Tools" / "dist"
+IMPORT_SCRIPT = ROOT / "Tools" / "import_openwebui_workspace.py"
 TOOL_REGISTRY = TOOLS_DIST / "openwebui-tool-registry.json"
 TOOL_IMPORT = TOOLS_DIST / "openwebui-tools-import.json"
 OFFLINE_TOOL_IMPORT = TOOLS_DIST / "openwebui-tools-offline-import.json"
 FUNCTION_REGISTRY = TOOLS_DIST / "openwebui-function-registry.json"
 FUNCTION_IMPORT = TOOLS_DIST / "openwebui-functions-import.json"
+SKILLS_DIR = ROOT / "Tools" / "openwebui_ext" / "skills"
 MODEL_DIST = ROOT / "Modelle" / "dist"
 REGISTRATION_PLAN = MODEL_DIST / "openwebui-registration-plan.json"
 TOOLS_FALLBACK_BUNDLE = MODEL_DIST / "tools_fallback_bundle.json"
@@ -41,17 +44,19 @@ MODELS_ZIP = MODEL_DIST / "openwebui-offline-artifacts.zip"
 FUNCTION_CALLING_NATIVE = "native"
 CHAT_MODEL_TOOL_MODE = "all_validated_custom_tools"
 CHAT_MODEL_FILTER_MODE = "all_validated_default_filters"
-MAX_MODEL_TOKENS = 262144
-SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "max_tokens", "stop", "function_calling"}
+SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "stop", "function_calling"}
+OMITTED_RUNTIME_PARAMS = ["max_tokens"]
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
+REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md"]
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
+TOOL_FORCE_SYSTEM_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
 HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
 - Arbeite im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch.
 - Nutze verfügbare Offline-Tools und agentische Arbeitsschritte aktiv, wenn sie die Qualität, Reproduzierbarkeit oder Artefakterzeugung verbessern.
 - Halte Antworten trotzdem aufgabengerecht kompakt; sehr lange Ausgaben oder vollständige Artefakte nur erzeugen, wenn die Nutzeraufgabe das verlangt.
-- Die Modellprofile erlauben bis zu 256k Tokens über `max_tokens`, setzen aber keine nicht unterstützten Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` oder `seed`.
+- Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits.
 """
 MODEL_TEMPERATURES = {
     "anforderungsanalyse-lastenheft": 0.4,
@@ -80,6 +85,138 @@ MODEL_TEMPERATURES = {
     "tabellen-csv-datenanalyse": 0.15,
     "testfall-generierung": 0.3,
     "übersetzung-lokalisierung": 0.35,
+}
+TOOL_FORCE_PROFILES = {
+    "anforderungsanalyse-lastenheft": {
+        "tools": ["offline_artifact_workbench", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner"],
+        "skills": ["prompt-to-tool-workflow", "model-tool-skill-overlays", "offline-artifact-production"],
+        "focus": "Anforderungen, Akzeptanzkriterien, Tool-/Skill-Abdeckung und Handover-Artefakte strukturiert validieren.",
+    },
+    "api-schnittstellenentwurf": {
+        "tools": ["openapi_schema_inspector", "json_csv_text_validator", "offline_artifact_workbench"],
+        "skills": ["api-integration-debugging", "safe-mcp-openapi-import", "secure-tool-usage"],
+        "focus": "OpenAPI-/JSON-Schemata prüfen, API-Verträge konsistent halten und Schnittstellenartefakte erzeugen.",
+    },
+    "code-dokumentation": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["repository-maintenance", "offline-artifact-production", "secure-tool-usage"],
+        "focus": "Repository-Struktur, Codeauszüge und Dokumentationsartefakte mit lokalen Prüfpfaden absichern.",
+    },
+    "code-review": {
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python"],
+        "skills": ["code-review-deep", "repository-maintenance", "secure-tool-usage"],
+        "focus": "Diffs, Dateibäume, Findings, Tests und strukturierte Review-Ergebnisse toolgestützt prüfen.",
+    },
+    "codeanalyse": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["code-review-deep", "repository-maintenance", "secure-tool-usage"],
+        "focus": "Code- und Strukturfragen mit Dateibaum-, Parsing- oder Testhilfen belegen.",
+    },
+    "codegenerierung": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["repository-maintenance", "secure-tool-usage", "openwebui-tool-authoring"],
+        "focus": "Vorhandene Struktur prüfen, erzeugten Code lokal plausibilisieren und strukturierte Daten validieren.",
+    },
+    "compliance-richtlinienprüfung": {
+        "tools": ["json_csv_text_validator", "repo_tree_analyzer", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "secure-tool-usage", "redundant-fallback-tooling"],
+        "focus": "Bereitgestellte Richtlinien, Tabellen, Dateibäume und Nachweisartefakte nachvollziehbar prüfen.",
+    },
+    "debugging-fehleranalyse": {
+        "tools": ["docker_compose_triage", "repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["docker-openwebui-troubleshooting", "repository-maintenance", "secure-tool-usage"],
+        "focus": "Logs, Compose-Auszüge, Codepfade und Reproduktionsdaten toolgestützt eingrenzen.",
+    },
+    "dokumentenanalyse": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "data-cleaning-analysis", "offline-artifact-production"],
+        "focus": "Bereitgestellte Dokumentinhalte, Tabellen und Extrakte lokal prüfen und bei Bedarf als Artefakt ausgeben.",
+    },
+    "dokumentengenerierung": {
+        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "json_csv_text_validator"],
+        "skills": ["offline-artifact-production", "visual-toolkit-v3-offline", "secure-tool-usage"],
+        "focus": "HTML/PDF/ZIP-fähige Ergebnisse mit Artefakt- und Visual-Tools erzeugen.",
+    },
+    "dokumentenvergleich": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "research-grounding", "offline-artifact-production"],
+        "focus": "Vergleichstabellen, Differenzen und Belegstellen mit lokalen Prüf- oder Tabellenpfaden absichern.",
+    },
+    "dokumentenzusammenfassung": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "offline-artifact-production", "secure-tool-usage"],
+        "focus": "Quellenorientierte Zusammenfassungen, strukturierte Extrakte und Übergabeartefakte absichern.",
+    },
+    "email-kommunikationsassistenz": {
+        "tools": ["json_csv_text_validator", "offline_artifact_workbench"],
+        "skills": ["secure-tool-usage", "offline-artifact-production", "research-grounding"],
+        "focus": "Strukturierte Kontaktdaten, Vorlagen und Anhänge lokal prüfen; sensible Inhalte minimieren.",
+    },
+    "informationsextraktion": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "research-grounding", "secure-tool-usage"],
+        "focus": "Extraktionsschema, JSON/CSV-Ausgabe und Datenqualität vor der finalen Antwort validieren.",
+    },
+    "it-helpdesk-diagnose": {
+        "tools": ["docker_compose_triage", "json_csv_text_validator", "repo_tree_analyzer"],
+        "skills": ["docker-openwebui-troubleshooting", "secure-tool-usage", "offline-use-case-router"],
+        "focus": "Fehlertexte, Konfigurationsauszüge und Diagnosepfade mit passenden lokalen Tools prüfen.",
+    },
+    "json-csv-log-analyse": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "docker_compose_triage", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "docker-openwebui-troubleshooting", "secure-tool-usage"],
+        "focus": "JSON, CSV und Logs immer strukturell validieren, bei Berechnung Jupyter nutzen und Ergebnisse exportierbar machen.",
+    },
+    "meeting-protokoll-auswertung": {
+        "tools": ["json_csv_text_validator", "offline_artifact_workbench", "air_gapped_jupyter_python"],
+        "skills": ["research-grounding", "offline-artifact-production", "data-cleaning-analysis"],
+        "focus": "Beschlüsse, Aufgabenlisten, Tabellen und Übergabedokumente strukturiert prüfen oder erzeugen.",
+    },
+    "offline-workbench-agent": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "parallel_task_planner", "subagent_orchestrator", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "comfyui_workflow_inspector"],
+        "skills": ["offline-use-case-router", "redundant-fallback-tooling", "native-tool-calling-rollout", "parallel-tools-subagents", "visual-toolkit-v3-offline"],
+        "focus": "Neue Aufgaben routen, passende Tools erzwingen, komplexe Arbeit planen und Artefakte lokal erzeugen.",
+    },
+    "prozess-workflow-dokumentation": {
+        "tools": ["parallel_task_planner", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "tool_skill_overlay_planner"],
+        "skills": ["parallel-tools-subagents", "offline-artifact-production", "visual-toolkit-v3-offline", "model-tool-skill-overlays"],
+        "focus": "Prozesse, Workflows, Verantwortlichkeiten und Diagramme toolgestützt planen und dokumentieren.",
+    },
+    "präsentationserstellung": {
+        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "air_gapped_jupyter_python"],
+        "skills": ["offline-artifact-production", "visual-toolkit-v3-offline", "offline-creative-media-workflows"],
+        "focus": "Folien, Visuals, Diagrammdaten und exportierbare Präsentationsartefakte mit Tools erzeugen.",
+    },
+    "refactoring-unterstützung": {
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "skills": ["repository-maintenance", "code-review-deep", "secure-tool-usage"],
+        "focus": "Änderungsbereiche, Tests, Risiken und Strukturwirkungen lokal prüfen.",
+    },
+    "report-dashboard-vorbereitung": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "inline_visuals_toolkit_v3", "offline_artifact_workbench"],
+        "skills": ["data-cleaning-analysis", "visual-toolkit-v3-offline", "offline-artifact-production"],
+        "focus": "Daten prüfen, Kennzahlen berechnen, Visuals erzeugen und Dashboard-Artefakte vorbereiten.",
+    },
+    "support-ticket-vorbereitung": {
+        "tools": ["json_csv_text_validator", "docker_compose_triage", "offline_artifact_workbench"],
+        "skills": ["docker-openwebui-troubleshooting", "secure-tool-usage", "offline-artifact-production"],
+        "focus": "Ticketdaten, Fehlertexte, Priorisierung und Übergabetexte strukturiert prüfen.",
+    },
+    "tabellen-csv-datenanalyse": {
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3"],
+        "skills": ["data-cleaning-analysis", "visual-toolkit-v3-offline", "offline-artifact-production"],
+        "focus": "Tabellen und CSV immer validieren, Berechnungen mit Jupyter durchführen und Ergebnisse exportierbar machen.",
+    },
+    "testfall-generierung": {
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python"],
+        "skills": ["code-review-deep", "repository-maintenance", "data-cleaning-analysis"],
+        "focus": "Anforderungen, Codepfade, Testdaten und erwartete Ergebnisse mit lokalen Prüfpfaden absichern.",
+    },
+    "übersetzung-lokalisierung": {
+        "tools": ["json_csv_text_validator", "offline_artifact_workbench"],
+        "skills": ["research-grounding", "data-cleaning-analysis", "offline-artifact-production"],
+        "focus": "Terminologielisten, Tabellen, Glossare und zielsprachliche Handover-Artefakte prüfen.",
+    },
 }
 EXCLUDED_MODEL_MARKERS = (
     "embedding",
@@ -127,6 +264,13 @@ def read_json(path: Path) -> Any:
 def write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def stable_text_bytes(path: Path) -> bytes:
+    data = path.read_bytes()
+    if path.suffix.lower() in {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml"}:
+        return data.replace(b"\r\n", b"\n")
+    return data
 
 
 def rel(path: Path) -> str:
@@ -255,7 +399,7 @@ def discover_tools() -> List[ToolRecord]:
                 purpose=str(indexed.get("purpose") or meta.get("description") or "OpenWebUI Workspace Tool."),
                 offline=parse_bool(meta.get("offline", indexed.get("offline")), True),
                 configuration=list(indexed.get("configuration", [])),
-                sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                sha256=hashlib.sha256(stable_text_bytes(path)).hexdigest(),
                 importable=importable,
                 methods=methods,
                 source=path.read_text(encoding="utf-8"),
@@ -334,7 +478,7 @@ def discover_functions() -> List[FunctionRecord]:
                 path=rel(path),
                 purpose=str(meta.get("description") or "OpenWebUI Workspace Filter."),
                 function_type=str(meta.get("type") or "filter"),
-                sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                sha256=hashlib.sha256(stable_text_bytes(path)).hexdigest(),
                 importable=importable,
                 hooks=hooks,
                 source=path.read_text(encoding="utf-8"),
@@ -527,24 +671,81 @@ def top_p_for_temperature(temperature: float) -> float:
     return 0.95
 
 
+def tool_force_block_for_model(model_id: str) -> str:
+    profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
+    tools = ", ".join(f"`{tool}`" for tool in profile["tools"])
+    skills = ", ".join(f"`{skill}`" for skill in profile["skills"])
+    focus = profile["focus"]
+    return f"""{TOOL_FORCE_SYSTEM_MARKER}
+
+Zu Beginn jeder nicht-trivialen Aufgabe MUSST du eine kurze Tool-/Skill-Inventur durchführen: Prüfe anhand der tatsächlich verfügbaren Tool-IDs, importierten Skills, Nutzerdateien und des gewünschten Ergebnisses, welche Tools oder Skills für diesen Use Case passen. Nutze nur wirklich verfügbare Tools; wenn ein empfohlenes Tool oder ein Skill in der Zielinstanz fehlt, erfinde ihn nicht, sondern arbeite mit dem besten verfügbaren Fallback und benenne die Grenze knapp.
+
+Wenn ein passendes Tool verfügbar ist, nutze es früh im Arbeitsablauf und nicht erst nach einer fertigen Antwort. Bei mehreren unabhängigen Teilprüfungen prüfe, ob `parallel_task_planner`, `parallel_tools` oder `subagent_orchestrator` die Arbeit robuster machen.
+
+Vor jeder finalen Antwort prüfst du aktiv, ob ein freigegebenes Tool oder ein importierter Skill die Aufgabe belastbarer, reproduzierbarer oder artefaktfähig macht. Wenn einer der folgenden Auslöser zutrifft, MUSST du vor der finalen Antwort mindestens ein passendes Tool nutzen; nur bei reiner Begriffserklärung, fehlenden Eingaben, explizitem Nutzerverbot oder Sicherheits-/Berechtigungsgründen darfst du darauf verzichten und musst den Verzicht kurz begründen.
+
+- Dateien, Tabellen, JSON, CSV, Logs oder strukturierte Texte: `json_csv_text_validator`; bei Berechnung, Transformation oder Stichproben zusätzlich `air_gapped_jupyter_python`.
+- Code, Repository-Strukturen, Diffs, Tests oder Refactoring: `repo_tree_analyzer`; für ausführbare Prüfungen oder Datenaufbereitung `air_gapped_jupyter_python`.
+- HTML, PDF, Präsentationen, ZIPs oder andere Übergabeartefakte: `offline_artifact_workbench`; für Diagramme, Mermaid, SVG-Charts oder Dashboards zusätzlich `inline_visuals_toolkit_v3`.
+- Docker-, Compose-, OpenWebUI- oder Betriebsfehler: `docker_compose_triage`.
+- OpenAPI-, MCP-, Schnittstellen- oder Toolserver-Schemata: `openapi_schema_inspector`.
+- Komplexe mehrstufige Aufgaben, parallele Arbeit oder Subagent-Planung: `parallel_task_planner`; bei Rollen-/Subagent-Aufteilung zusätzlich `subagent_orchestrator`.
+- Modell-, Tool-, Skill- oder Fallback-Zuordnung: `tool_skill_overlay_planner`.
+- ComfyUI-, Bild-, Audio- oder Video-Workflow-JSON: `comfyui_workflow_inspector`.
+- Skill-Entwurf oder Skill-Markdown: `markdown_skill_builder`.
+- Interne MediaWiki-Arbeit: `mediawiki_legacy_crawler` nur bei explizitem Auftrag und vorhandener Konfiguration.
+
+Für dieses Modell sind primär diese Tools vorgesehen: {tools}.
+Wenn Skills importiert oder an das Modell gebunden sind, berücksichtige besonders: {skills}.
+Optimierungsfokus: {focus}
+
+Nutze immer den kleinsten ausreichenden Tool-Satz. Validiere Tool-Ausgaben kritisch, verschweige Fehler nicht und gib keine Secrets, Tokens oder unnötigen Rohdaten aus.
+"""
+
+
 def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
-    if not isinstance(system_prompt, str) or HIGH_REASONING_SYSTEM_MARKER in system_prompt:
+    if not isinstance(system_prompt, str):
         return system_prompt
+    legacy_line = (
+        "- Die Modellprofile erlauben bis zu " + "256" + "k Tokens über `max_tokens`, "
+        "setzen aber keine nicht unterstützten Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` oder `seed`."
+    )
+    previous_default_line = "- Die Modellprofile setzen keine festen Laufzeitwerte wie `max_tokens`, `temperature`, `top_p`, `reasoning_effort`, `num_ctx`, `top_k` oder `seed`; die Zielinstanz verwendet ihre eigenen Defaults."
+    tuned_line = "- Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits."
+    if HIGH_REASONING_SYSTEM_MARKER in system_prompt:
+        return system_prompt.replace(legacy_line, tuned_line).replace(previous_default_line, tuned_line)
     insert_before = "\n\n        # Systemprompt"
     if insert_before in system_prompt:
         return system_prompt.replace(insert_before, f"\n\n        {HIGH_REASONING_SYSTEM_BLOCK.replace(chr(10), chr(10) + '        ')}{insert_before}", 1)
     return f"{HIGH_REASONING_SYSTEM_BLOCK}\n\n{system_prompt}"
 
 
+def ensure_tool_force_profile(system_prompt: Any, model_id: str) -> Any:
+    if not isinstance(system_prompt, str):
+        return system_prompt
+    block = tool_force_block_for_model(model_id).rstrip()
+    start = system_prompt.find(TOOL_FORCE_SYSTEM_MARKER)
+    if start != -1:
+        next_heading = re.search(r"\n\n\s+# ", system_prompt[start + len(TOOL_FORCE_SYSTEM_MARKER) :])
+        if next_heading:
+            cut = start + len(TOOL_FORCE_SYSTEM_MARKER) + next_heading.start()
+            return f"{system_prompt[:start]}{block}{system_prompt[cut:]}"
+        return f"{system_prompt[:start]}{block}"
+    insert_before = "\n\n        # Systemprompt"
+    indented_block = block.replace(chr(10), chr(10) + "        ")
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
+    return f"{block}\n\n{system_prompt}"
+
+
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
-    system_prompt = ensure_high_reasoning_profile(params.get("system"))
+    system_prompt = ensure_tool_force_profile(ensure_high_reasoning_profile(params.get("system")), model_id)
     temperature = temperature_for_model(model_id)
     params.clear()
     if system_prompt is not None:
         params["system"] = system_prompt
     params["temperature"] = temperature
     params["top_p"] = top_p_for_temperature(temperature)
-    params["max_tokens"] = MAX_MODEL_TOKENS
     params["stop"] = []
     params["function_calling"] = FUNCTION_CALLING_NATIVE
 
@@ -559,7 +760,7 @@ def icon_data_uri_for_model(model_id: str) -> str:
         if isinstance(icon, dict) and icon.get("id") == icon_id:
             icon_path = ROOT / str(icon.get("path", ""))
             if icon_path.exists() and icon_path.suffix.lower() == ".svg":
-                encoded = base64.b64encode(icon_path.read_bytes()).decode("ascii")
+                encoded = base64.b64encode(stable_text_bytes(icon_path)).decode("ascii")
                 return f"data:image/svg+xml;base64,{encoded}"
     return "/static/favicon.png"
 
@@ -584,10 +785,14 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List
         return model
 
     model_id = str(model.get("id", ""))
+    profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
     meta["profile_image_url"] = icon_data_uri_for_model(model_id)
     meta["toolIds"] = list(tool_ids)
     meta["filterIds"] = merge_unique(meta.get("filterIds"), filter_ids)
     meta["defaultFilterIds"] = merge_unique(meta.get("defaultFilterIds"), filter_ids)
+    meta["primaryToolIds"] = list(profile["tools"])
+    meta["recommendedSkillIds"] = list(profile["skills"])
+    meta["requiredKnowledgeFiles"] = list(REQUIRED_MODEL_KNOWLEDGE_FILES)
     configure_runtime_params(model_id, params)
     capabilities["builtin_tools"] = True
     capabilities["file_context"] = bool(capabilities.get("file_context", True))
@@ -600,6 +805,31 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List
         if isinstance(features, list) and "code_interpreter" not in features:
             features.append("code_interpreter")
     return model
+
+
+def skill_ids() -> List[str]:
+    if not SKILLS_DIR.exists():
+        return []
+    return sorted(path.stem for path in SKILLS_DIR.glob("*.md") if path.name.upper() != "README.MD")
+
+
+def model_knowledge_files(model_id: str) -> List[Path]:
+    model_dir = SINGLE_MODELS / model_id
+    return [model_dir / name for name in REQUIRED_MODEL_KNOWLEDGE_FILES]
+
+
+def model_knowledge_status(model_id: str) -> Dict[str, Dict[str, Any]]:
+    status: Dict[str, Dict[str, Any]] = {}
+    for path in model_knowledge_files(model_id):
+        exists = path.exists()
+        size = path.stat().st_size if exists else 0
+        status[path.name] = {
+            "path": rel(path),
+            "exists": exists,
+            "non_empty": size > 0,
+            "bytes": size,
+        }
+    return status
 
 
 def apply_model_config(tool_records: List[ToolRecord], function_records: List[FunctionRecord], write: bool) -> Tuple[bool, List[Dict[str, Any]]]:
@@ -635,24 +865,33 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
 
     summary = {
         "schema": "openwebui-model-params-summary/v1",
-        "expected_max_tokens": MAX_MODEL_TOKENS,
+        "max_tokens_policy": "omitted; target OpenWebUI/model-server limits are used.",
         "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+        "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
         "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
         "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
         "models": [
             {
                 "id": model.get("id"),
                 "name": model.get("name"),
-                "max_tokens": model.get("params", {}).get("max_tokens") if isinstance(model.get("params"), dict) else None,
                 "temperature": model.get("params", {}).get("temperature") if isinstance(model.get("params"), dict) else None,
                 "top_p": model.get("params", {}).get("top_p") if isinstance(model.get("params"), dict) else None,
                 "function_calling": model.get("params", {}).get("function_calling") if isinstance(model.get("params"), dict) else None,
                 "runtime_param_keys": sorted(model.get("params", {}).keys()) if isinstance(model.get("params"), dict) else [],
                 "has_systemprompt_mainprompt_fachwissen": has_prompt_sections(model),
+                "has_tool_force_profile": TOOL_FORCE_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
+                if isinstance(model.get("params"), dict)
+                else False,
+                "primary_tool_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("tools", []),
+                "recommended_skill_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("skills", []),
+                "required_knowledge_files": REQUIRED_MODEL_KNOWLEDGE_FILES,
+                "knowledge_files": model_knowledge_status(str(model.get("id"))),
                 "has_embedded_svg_icon": str(model.get("meta", {}).get("profile_image_url", "")).startswith("data:image/svg+xml;base64,")
                 if isinstance(model.get("meta"), dict)
                 else False,
                 "assigned_tool_ids": model.get("meta", {}).get("toolIds", []) if isinstance(model.get("meta"), dict) else [],
+                "meta_primary_tool_ids": model.get("meta", {}).get("primaryToolIds", []) if isinstance(model.get("meta"), dict) else [],
+                "meta_recommended_skill_ids": model.get("meta", {}).get("recommendedSkillIds", []) if isinstance(model.get("meta"), dict) else [],
             }
             for model in models
         ],
@@ -668,15 +907,20 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
     offline_tool_ids = [record.id for record in offline_default_tool_records(tool_records)]
     offline_tool_id_set = set(offline_tool_ids)
     optional_network_tool_ids = [record.id for record in tool_records if record.importable and record.id not in offline_tool_id_set]
+    workspace_skill_ids = skill_ids()
     plan = {
         "schema": "openwebui-registration-plan/v1",
         "order": [
             "1_import_workspace_tools",
             "2_import_workspace_filters",
             "3_import_workspace_skills",
-            "4_import_or_update_models",
-            "5_enable_user_or_group_access",
+            "4_upload_model_knowledge",
+            "5_import_or_update_models",
+            "6_enable_user_or_group_access",
         ],
+        "api_import_script": rel(IMPORT_SCRIPT),
+        "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000",
+        "api_import_token": "OPENWEBUI_ADMIN_TOKEN environment variable or --token CLI argument",
         "tools_first": offline_tool_ids,
         "tool_gui_import_file": rel(TOOL_IMPORT),
         "tool_gui_offline_import_file": rel(OFFLINE_TOOL_IMPORT),
@@ -684,34 +928,53 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "optional_network_tools_not_in_offline_default": optional_network_tool_ids,
         "function_gui_import_file": rel(FUNCTION_IMPORT),
         "filters_before_models": filter_ids,
+        "skills_before_models": workspace_skill_ids,
+        "skill_source_dir": rel(SKILLS_DIR),
+        "model_knowledge_files_required": REQUIRED_MODEL_KNOWLEDGE_FILES,
+        "knowledge_before_models": {
+            str(model.get("id")): model_knowledge_status(str(model.get("id")))
+            for model in models
+            if not is_non_chat_model(model)
+        },
         "model_import_file": rel(MODEL_IMPORT),
         "model_params_summary_file": rel(MODEL_PARAMS_SUMMARY),
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
+        "tool_force_policy": {
+            "system_marker": TOOL_FORCE_SYSTEM_MARKER,
+            "behavior": "Every chat model must use at least one suitable assigned tool before the final answer when a task involves files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals, parallel planning, model/tool/skill overlays, ComfyUI workflows or skill authoring.",
+            "model_profiles": TOOL_FORCE_PROFILES,
+        },
         "model_params_policy": {
-            "target_context_tokens": MAX_MODEL_TOKENS,
-            "max_tokens": MAX_MODEL_TOKENS,
+            "max_tokens": "omitted",
+            "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
             "reasoning_profile": "high_prompted_in_system",
             "reasoning_effort_runtime_param": "omitted_for_mistral_medium_3_5_128b_compatibility",
             "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+            "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
             "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
             "temperature_by_model": MODEL_TEMPERATURES,
         },
-        "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE, "max_tokens": MAX_MODEL_TOKENS},
+        "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE},
         "verified_model_fields_used": [
             "meta.toolIds",
             "meta.filterIds",
             "meta.defaultFilterIds",
             "meta.capabilities.builtin_tools",
+            "meta.primaryToolIds",
+            "meta.recommendedSkillIds",
+            "meta.requiredKnowledgeFiles",
             "params.function_calling",
-            "params.max_tokens",
             "params.temperature",
             "params.top_p",
+            "params.stop",
+            "params.system tool-force section",
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not assigned to models and are not part of tools_first.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
+        "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
@@ -728,6 +991,7 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
     issues: List[str] = []
     valid_tool_ids = {record.id for record in tool_records if record.importable}
     valid_filter_ids = {record.id for record in function_records if record.importable and record.function_type == "filter"}
+    valid_skill_ids = set(skill_ids())
     for record in tool_records:
         if not record.importable:
             issues.append(f"Tool nicht importierbar: {record.id} ({record.path})")
@@ -754,13 +1018,39 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         unsupported_params = sorted(set(params) - SUPPORTED_MISTRAL_RUNTIME_PARAMS)
         if unsupported_params:
             issues.append(f"Chat-Modell {model_id} setzt nicht freigegebene Runtime-Parameter: {', '.join(unsupported_params)}")
-        if params.get("max_tokens") != MAX_MODEL_TOKENS:
-            issues.append(f"Chat-Modell {model_id} nutzt max_tokens nicht auf {MAX_MODEL_TOKENS}")
         expected_temperature = temperature_for_model(model_id)
         if params.get("temperature") != expected_temperature:
             issues.append(f"Chat-Modell {model_id} nutzt temperature nicht use-case-gerecht auf {expected_temperature}")
         if params.get("top_p") != top_p_for_temperature(expected_temperature):
             issues.append(f"Chat-Modell {model_id} nutzt top_p nicht passend zur Temperatur")
+        if params.get("stop") != []:
+            issues.append(f"Chat-Modell {model_id} nutzt stop nicht als leere Liste")
+        system_text = str(params.get("system", ""))
+        if TOOL_FORCE_SYSTEM_MARKER not in system_text:
+            issues.append(f"Chat-Modell {model_id} hat keine verbindliche Tool-Nutzungssektion")
+        if "Tool-/Skill-Inventur" not in system_text:
+            issues.append(f"Chat-Modell {model_id} erzwingt keine Tool-/Skill-Inventur am Aufgabenanfang")
+        missing_profile_tools = sorted(set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(tool_ids))
+        if missing_profile_tools:
+            issues.append(f"Chat-Modell {model_id} nennt Tool-Pflichtprofil mit nicht zugewiesenen Tools: {', '.join(missing_profile_tools)}")
+        profile_skills = set(TOOL_FORCE_PROFILES.get(model_id, {}).get("skills", []))
+        missing_skill_files = sorted(profile_skills - valid_skill_ids)
+        if missing_skill_files:
+            issues.append(f"Chat-Modell {model_id} nennt Skill-Profil ohne lokale Skill-Datei: {', '.join(missing_skill_files)}")
+        meta_primary_tools = meta.get("primaryToolIds", [])
+        if not isinstance(meta_primary_tools, list) or set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(meta_primary_tools):
+            issues.append(f"Chat-Modell {model_id} hat meta.primaryToolIds nicht passend zum Tool-Profil")
+        meta_skills = meta.get("recommendedSkillIds", [])
+        if not isinstance(meta_skills, list) or profile_skills - set(meta_skills):
+            issues.append(f"Chat-Modell {model_id} hat meta.recommendedSkillIds nicht passend zum Skill-Profil")
+        required_knowledge = meta.get("requiredKnowledgeFiles", [])
+        if required_knowledge != REQUIRED_MODEL_KNOWLEDGE_FILES:
+            issues.append(f"Chat-Modell {model_id} hat meta.requiredKnowledgeFiles nicht vollständig")
+        for path in model_knowledge_files(model_id):
+            if not path.exists():
+                issues.append(f"Chat-Modell {model_id} fehlt Knowledge-Datei {rel(path)}")
+            elif path.stat().st_size == 0:
+                issues.append(f"Chat-Modell {model_id} hat leere Knowledge-Datei {rel(path)}")
         if caps.get("builtin_tools") is not True:
             issues.append(f"Chat-Modell {model_id} hat builtin_tools nicht aktiv")
         if not isinstance(tool_ids, list) or not tool_ids:
@@ -796,6 +1086,7 @@ def rebuild_zips() -> None:
         for path in [
             TOOLS_INDEX,
             ROOT / "Tools" / "README.md",
+            IMPORT_SCRIPT,
             TOOL_REGISTRY,
             OFFLINE_TOOL_IMPORT,
             TOOL_IMPORT,
@@ -825,12 +1116,49 @@ def rebuild_zips() -> None:
                 archive.write(path, rel(path))
 
 
+def run_workspace_import(args: argparse.Namespace) -> int:
+    spec = importlib.util.spec_from_file_location("openwebui_workspace_import", IMPORT_SCRIPT)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Importer konnte nicht geladen werden: {rel(IMPORT_SCRIPT)}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    import_args: List[str] = []
+    if args.base_url:
+        import_args.extend(["--base-url", args.base_url])
+    if args.token:
+        import_args.extend(["--token", args.token])
+    if args.public_read:
+        import_args.append("--public-read")
+    if args.skip_knowledge:
+        import_args.append("--skip-knowledge")
+    if args.include_optional_network_tools:
+        import_args.append("--include-optional-network-tools")
+    if args.import_dry_run:
+        import_args.append("--dry-run")
+    if args.timeout is not None:
+        import_args.extend(["--timeout", str(args.timeout)])
+    return int(module.main(import_args))
+
+
 def main(argv: Iterable[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Configure OpenWebUI tools before model tool bindings.")
     parser.add_argument("--write", action="store_true", help="Write generated registry and model JSON changes.")
     parser.add_argument("--check", action="store_true", help="Validate current/generated state and fail on issues.")
     parser.add_argument("--rebuild-zips", action="store_true", help="Rebuild portable offline ZIP artifacts after writing.")
+    parser.add_argument("--import-openwebui", action="store_true", help="After a successful write/check pass, import tools, functions, skills, knowledge and models into an OpenWebUI instance.")
+    parser.add_argument("--import-dry-run", action="store_true", help="Run the importer's local payload validation through this script without calling OpenWebUI.")
+    parser.add_argument("--base-url", default=None, help="OpenWebUI base URL for --import-openwebui, for example http://localhost:3000.")
+    parser.add_argument("--token", default=None, help="OpenWebUI admin API token for --import-openwebui. Prefer OPENWEBUI_ADMIN_TOKEN.")
+    parser.add_argument("--public-read", action="store_true", help="Grant read access during --import-openwebui where OpenWebUI permits it.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md and fachwissen.md as Knowledge.")
+    parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")
+    parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds for --import-openwebui.")
     args = parser.parse_args(list(argv) if argv is not None else None)
+    if args.import_openwebui and args.import_dry_run:
+        parser.error("--import-openwebui and --import-dry-run are mutually exclusive.")
+    if (args.import_openwebui or args.import_dry_run) and not args.write:
+        parser.error("--import-openwebui/--import-dry-run require --write so generated artifacts cannot be stale.")
 
     records = discover_tools()
     function_records = discover_functions()
@@ -861,9 +1189,12 @@ def main(argv: Iterable[str] | None = None) -> int:
         print("\n## Befunde")
         for issue in issues:
             print(f"- {issue}")
-        return 1 if args.check else 0
+        return 1 if args.check or args.import_openwebui or args.import_dry_run else 0
     print("\n## Ergebnis")
     print("Tool-/Filter-Registry, Importplan und Modell-Konfiguration sind konsistent.")
+    if args.import_openwebui or args.import_dry_run:
+        print("\n## API-Import")
+        return run_workspace_import(args)
     return 0
 
 

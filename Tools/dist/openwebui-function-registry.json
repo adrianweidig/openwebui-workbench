@@ -17,7 +17,7 @@
       "path": "Tools/openwebui_ext/filters/context_compressor_filter.py",
       "purpose": "Counts chat-context tokens before model calls and compresses older messages when the configured context window is nearly exhausted.",
       "function_type": "filter",
-      "sha256": "71bbd1d7a040cba6147a8ec126d64050e5757a4b1cc0f02623156086ba2bea19",
+      "sha256": "af16ebf1e6c77b924b6df91a3b4406b346e7d0ff9efa05e005a05580515a9954",
       "importable": true,
       "hooks": [
         "inlet"
@@ -29,7 +29,7 @@
       "path": "Tools/openwebui_ext/filters/markdown_normalizer.py",
       "purpose": "A content normalizer filter that fixes common Markdown formatting issues in LLM outputs, such as broken code blocks, LaTeX formulas, and list formatting. Including LaTeX command protection.",
       "function_type": "filter",
-      "sha256": "39b0e7bc34fbc2be285043242326490301af251fee8a63ee43797eaff4e32485",
+      "sha256": "e4795efcce1e9350a5a69e909958d81a235adda8640cf5a2532fdd279d1d6a37",
       "importable": true,
       "hooks": [
         "outlet"

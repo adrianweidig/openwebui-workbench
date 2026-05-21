@@ -108,7 +108,16 @@ Das Skript arbeitet in dieser Reihenfolge:
 5. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
 6. Optional Offline-ZIP-Pakete neu bauen.
 
-Chat-Modelle erhalten nur Offline-Default-Tools in `meta.toolIds`, außerdem `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `params.function_calling: "native"`, `params.max_tokens: 262144`, use-case-abhängige `params.temperature`, eingebettete SVG-Icons in `meta.profile_image_url` und ein High-Reasoning-Systemprofil inklusive Systemprompt, Mainprompt und Fachwissen. Öffentliche Netzwerktools werden im Offline-Standard nicht zugewiesen. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden nicht gesetzt, damit die Profile mit Mistral Medium 3.5 128B kompatibel bleiben. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
+Chat-Modelle erhalten nur Offline-Default-Tools in `meta.toolIds`, außerdem `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `meta.primaryToolIds`, `meta.recommendedSkillIds`, `meta.requiredKnowledgeFiles`, `params.function_calling: "native"`, use-case-spezifische `params.temperature`-/`params.top_p`-Werte, eingebettete SVG-Icons in `meta.profile_image_url`, ein High-Reasoning-Systemprofil und eine verbindliche Tool-/Skill-Nutzungssektion inklusive Systemprompt, Mainprompt und Fachwissen. Diese Sektion nennt pro Modell primäre Tools und passende Skills aus der Offline-Capability-Map, erzwingt am Aufgabenanfang eine Tool-/Skill-Inventur und verpflichtet das Modell, bei passenden Auslösern vor der finalen Antwort ein geeignetes freigegebenes Tool zu nutzen. `params.max_tokens` wird nicht gesetzt, damit OpenWebUI und der jeweilige Modellserver ihre eigenen Kontext- und Antwortlimits verwenden. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt. Öffentliche Netzwerktools werden im Offline-Standard nicht zugewiesen. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
+
+Der API-basierte Import kann direkt über den Generator ausgeführt werden:
+
+```powershell
+$env:OPENWEBUI_ADMIN_TOKEN="YOUR_OPEN_WEBUI_API_KEY"
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000
+```
+
+Der Generator validiert zuerst alle lokalen Artefakte und startet danach `Tools/import_openwebui_workspace.py`. Der Importer importiert beziehungsweise aktualisiert Tools, Functions/Filter, Skills und Modelle. Standardmäßig lädt er zusätzlich `mainprompt.md` und `fachwissen.md` jedes Modellpakets als Knowledge-Basis hoch und verknüpft diese Knowledge im jeweiligen Modellprofil. Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run` oder direkt mit `python Tools/import_openwebui_workspace.py --dry-run` möglich.
 
 ## Wartung
 

@@ -4,9 +4,13 @@
     "1_import_workspace_tools",
     "2_import_workspace_filters",
     "3_import_workspace_skills",
-    "4_import_or_update_models",
-    "5_enable_user_or_group_access"
+    "4_upload_model_knowledge",
+    "5_import_or_update_models",
+    "6_enable_user_or_group_access"
   ],
+  "api_import_script": "Tools/import_openwebui_workspace.py",
+  "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000",
+  "api_import_token": "OPENWEBUI_ADMIN_TOKEN environment variable or --token CLI argument",
   "tools_first": [
     "air_gapped_jupyter_python",
     "ask_user",
@@ -60,22 +64,774 @@
     "context_compressor_filter",
     "markdown_normalizer"
   ],
+  "skills_before_models": [
+    "api-integration-debugging",
+    "code-review-deep",
+    "data-cleaning-analysis",
+    "docker-openwebui-troubleshooting",
+    "model-tool-skill-overlays",
+    "native-tool-calling-rollout",
+    "offline-artifact-production",
+    "offline-creative-media-workflows",
+    "offline-use-case-router",
+    "openwebui-tool-authoring",
+    "parallel-tools-subagents",
+    "prompt-to-tool-workflow",
+    "redundant-fallback-tooling",
+    "repository-maintenance",
+    "research-grounding",
+    "safe-mcp-openapi-import",
+    "secure-tool-usage",
+    "visual-toolkit-v3-offline"
+  ],
+  "skill_source_dir": "Tools/openwebui_ext/skills",
+  "model_knowledge_files_required": [
+    "mainprompt.md",
+    "fachwissen.md"
+  ],
+  "knowledge_before_models": {
+    "anforderungsanalyse-lastenheft": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5285
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5060
+      }
+    },
+    "api-schnittstellenentwurf": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5247
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4972
+      }
+    },
+    "code-dokumentation": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/code-dokumentation/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5235
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/code-dokumentation/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4972
+      }
+    },
+    "code-review": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/code-review/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5211
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/code-review/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4933
+      }
+    },
+    "codeanalyse": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/codeanalyse/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5270
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/codeanalyse/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5019
+      }
+    },
+    "codegenerierung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/codegenerierung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5248
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/codegenerierung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4976
+      }
+    },
+    "compliance-richtlinienprüfung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5305
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5061
+      }
+    },
+    "debugging-fehleranalyse": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/debugging-fehleranalyse/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5200
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/debugging-fehleranalyse/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4953
+      }
+    },
+    "dokumentenanalyse": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/dokumentenanalyse/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5836
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/dokumentenanalyse/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5522
+      }
+    },
+    "dokumentengenerierung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/dokumentengenerierung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5457
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/dokumentengenerierung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5151
+      }
+    },
+    "dokumentenvergleich": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/dokumentenvergleich/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5447
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/dokumentenvergleich/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5160
+      }
+    },
+    "dokumentenzusammenfassung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5386
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5123
+      }
+    },
+    "email-kommunikationsassistenz": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5324
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5068
+      }
+    },
+    "informationsextraktion": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/informationsextraktion/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5389
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/informationsextraktion/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5130
+      }
+    },
+    "it-helpdesk-diagnose": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5156
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4955
+      }
+    },
+    "json-csv-log-analyse": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/json-csv-log-analyse/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5175
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/json-csv-log-analyse/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4998
+      }
+    },
+    "meeting-protokoll-auswertung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5221
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5030
+      }
+    },
+    "offline-workbench-agent": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/offline-workbench-agent/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 2349
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/offline-workbench-agent/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1396
+      }
+    },
+    "prozess-workflow-dokumentation": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5347
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5063
+      }
+    },
+    "präsentationserstellung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/präsentationserstellung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5461
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/präsentationserstellung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5165
+      }
+    },
+    "refactoring-unterstützung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/refactoring-unterstützung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5237
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/refactoring-unterstützung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4998
+      }
+    },
+    "report-dashboard-vorbereitung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5306
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5042
+      }
+    },
+    "support-ticket-vorbereitung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5305
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5094
+      }
+    },
+    "tabellen-csv-datenanalyse": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5285
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5057
+      }
+    },
+    "testfall-generierung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/testfall-generierung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5155
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/testfall-generierung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4919
+      }
+    },
+    "übersetzung-lokalisierung": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 5200
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 4984
+      }
+    }
+  },
   "model_import_file": "Modelle/dist/openwebui-models-import.json",
   "model_params_summary_file": "Modelle/dist/openwebui-model-params-summary.json",
   "generic_icon_manifest": "Modelle/dist/artifacts/icons/openwebui-generic-icons.json",
   "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
+  "tool_force_policy": {
+    "system_marker": "## Verbindliche Tool- und Skill-Nutzung",
+    "behavior": "Every chat model must use at least one suitable assigned tool before the final answer when a task involves files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals, parallel planning, model/tool/skill overlays, ComfyUI workflows or skill authoring.",
+    "model_profiles": {
+      "anforderungsanalyse-lastenheft": {
+        "tools": [
+          "offline_artifact_workbench",
+          "tool_skill_overlay_planner",
+          "json_csv_text_validator",
+          "parallel_task_planner"
+        ],
+        "skills": [
+          "prompt-to-tool-workflow",
+          "model-tool-skill-overlays",
+          "offline-artifact-production"
+        ],
+        "focus": "Anforderungen, Akzeptanzkriterien, Tool-/Skill-Abdeckung und Handover-Artefakte strukturiert validieren."
+      },
+      "api-schnittstellenentwurf": {
+        "tools": [
+          "openapi_schema_inspector",
+          "json_csv_text_validator",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "api-integration-debugging",
+          "safe-mcp-openapi-import",
+          "secure-tool-usage"
+        ],
+        "focus": "OpenAPI-/JSON-Schemata prüfen, API-Verträge konsistent halten und Schnittstellenartefakte erzeugen."
+      },
+      "code-dokumentation": {
+        "tools": [
+          "repo_tree_analyzer",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "repository-maintenance",
+          "offline-artifact-production",
+          "secure-tool-usage"
+        ],
+        "focus": "Repository-Struktur, Codeauszüge und Dokumentationsartefakte mit lokalen Prüfpfaden absichern."
+      },
+      "code-review": {
+        "tools": [
+          "repo_tree_analyzer",
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python"
+        ],
+        "skills": [
+          "code-review-deep",
+          "repository-maintenance",
+          "secure-tool-usage"
+        ],
+        "focus": "Diffs, Dateibäume, Findings, Tests und strukturierte Review-Ergebnisse toolgestützt prüfen."
+      },
+      "codeanalyse": {
+        "tools": [
+          "repo_tree_analyzer",
+          "air_gapped_jupyter_python",
+          "json_csv_text_validator"
+        ],
+        "skills": [
+          "code-review-deep",
+          "repository-maintenance",
+          "secure-tool-usage"
+        ],
+        "focus": "Code- und Strukturfragen mit Dateibaum-, Parsing- oder Testhilfen belegen."
+      },
+      "codegenerierung": {
+        "tools": [
+          "repo_tree_analyzer",
+          "air_gapped_jupyter_python",
+          "json_csv_text_validator"
+        ],
+        "skills": [
+          "repository-maintenance",
+          "secure-tool-usage",
+          "openwebui-tool-authoring"
+        ],
+        "focus": "Vorhandene Struktur prüfen, erzeugten Code lokal plausibilisieren und strukturierte Daten validieren."
+      },
+      "compliance-richtlinienprüfung": {
+        "tools": [
+          "json_csv_text_validator",
+          "repo_tree_analyzer",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "research-grounding",
+          "secure-tool-usage",
+          "redundant-fallback-tooling"
+        ],
+        "focus": "Bereitgestellte Richtlinien, Tabellen, Dateibäume und Nachweisartefakte nachvollziehbar prüfen."
+      },
+      "debugging-fehleranalyse": {
+        "tools": [
+          "docker_compose_triage",
+          "repo_tree_analyzer",
+          "air_gapped_jupyter_python",
+          "json_csv_text_validator"
+        ],
+        "skills": [
+          "docker-openwebui-troubleshooting",
+          "repository-maintenance",
+          "secure-tool-usage"
+        ],
+        "focus": "Logs, Compose-Auszüge, Codepfade und Reproduktionsdaten toolgestützt eingrenzen."
+      },
+      "dokumentenanalyse": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "research-grounding",
+          "data-cleaning-analysis",
+          "offline-artifact-production"
+        ],
+        "focus": "Bereitgestellte Dokumentinhalte, Tabellen und Extrakte lokal prüfen und bei Bedarf als Artefakt ausgeben."
+      },
+      "dokumentengenerierung": {
+        "tools": [
+          "offline_artifact_workbench",
+          "inline_visuals_toolkit_v3",
+          "json_csv_text_validator"
+        ],
+        "skills": [
+          "offline-artifact-production",
+          "visual-toolkit-v3-offline",
+          "secure-tool-usage"
+        ],
+        "focus": "HTML/PDF/ZIP-fähige Ergebnisse mit Artefakt- und Visual-Tools erzeugen."
+      },
+      "dokumentenvergleich": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "data-cleaning-analysis",
+          "research-grounding",
+          "offline-artifact-production"
+        ],
+        "focus": "Vergleichstabellen, Differenzen und Belegstellen mit lokalen Prüf- oder Tabellenpfaden absichern."
+      },
+      "dokumentenzusammenfassung": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "research-grounding",
+          "offline-artifact-production",
+          "secure-tool-usage"
+        ],
+        "focus": "Quellenorientierte Zusammenfassungen, strukturierte Extrakte und Übergabeartefakte absichern."
+      },
+      "email-kommunikationsassistenz": {
+        "tools": [
+          "json_csv_text_validator",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "secure-tool-usage",
+          "offline-artifact-production",
+          "research-grounding"
+        ],
+        "focus": "Strukturierte Kontaktdaten, Vorlagen und Anhänge lokal prüfen; sensible Inhalte minimieren."
+      },
+      "informationsextraktion": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "data-cleaning-analysis",
+          "research-grounding",
+          "secure-tool-usage"
+        ],
+        "focus": "Extraktionsschema, JSON/CSV-Ausgabe und Datenqualität vor der finalen Antwort validieren."
+      },
+      "it-helpdesk-diagnose": {
+        "tools": [
+          "docker_compose_triage",
+          "json_csv_text_validator",
+          "repo_tree_analyzer"
+        ],
+        "skills": [
+          "docker-openwebui-troubleshooting",
+          "secure-tool-usage",
+          "offline-use-case-router"
+        ],
+        "focus": "Fehlertexte, Konfigurationsauszüge und Diagnosepfade mit passenden lokalen Tools prüfen."
+      },
+      "json-csv-log-analyse": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "docker_compose_triage",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "data-cleaning-analysis",
+          "docker-openwebui-troubleshooting",
+          "secure-tool-usage"
+        ],
+        "focus": "JSON, CSV und Logs immer strukturell validieren, bei Berechnung Jupyter nutzen und Ergebnisse exportierbar machen."
+      },
+      "meeting-protokoll-auswertung": {
+        "tools": [
+          "json_csv_text_validator",
+          "offline_artifact_workbench",
+          "air_gapped_jupyter_python"
+        ],
+        "skills": [
+          "research-grounding",
+          "offline-artifact-production",
+          "data-cleaning-analysis"
+        ],
+        "focus": "Beschlüsse, Aufgabenlisten, Tabellen und Übergabedokumente strukturiert prüfen oder erzeugen."
+      },
+      "offline-workbench-agent": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench",
+          "inline_visuals_toolkit_v3",
+          "parallel_task_planner",
+          "subagent_orchestrator",
+          "tool_skill_overlay_planner",
+          "repo_tree_analyzer",
+          "docker_compose_triage",
+          "openapi_schema_inspector",
+          "comfyui_workflow_inspector"
+        ],
+        "skills": [
+          "offline-use-case-router",
+          "redundant-fallback-tooling",
+          "native-tool-calling-rollout",
+          "parallel-tools-subagents",
+          "visual-toolkit-v3-offline"
+        ],
+        "focus": "Neue Aufgaben routen, passende Tools erzwingen, komplexe Arbeit planen und Artefakte lokal erzeugen."
+      },
+      "prozess-workflow-dokumentation": {
+        "tools": [
+          "parallel_task_planner",
+          "offline_artifact_workbench",
+          "inline_visuals_toolkit_v3",
+          "tool_skill_overlay_planner"
+        ],
+        "skills": [
+          "parallel-tools-subagents",
+          "offline-artifact-production",
+          "visual-toolkit-v3-offline",
+          "model-tool-skill-overlays"
+        ],
+        "focus": "Prozesse, Workflows, Verantwortlichkeiten und Diagramme toolgestützt planen und dokumentieren."
+      },
+      "präsentationserstellung": {
+        "tools": [
+          "offline_artifact_workbench",
+          "inline_visuals_toolkit_v3",
+          "air_gapped_jupyter_python"
+        ],
+        "skills": [
+          "offline-artifact-production",
+          "visual-toolkit-v3-offline",
+          "offline-creative-media-workflows"
+        ],
+        "focus": "Folien, Visuals, Diagrammdaten und exportierbare Präsentationsartefakte mit Tools erzeugen."
+      },
+      "refactoring-unterstützung": {
+        "tools": [
+          "repo_tree_analyzer",
+          "air_gapped_jupyter_python",
+          "json_csv_text_validator"
+        ],
+        "skills": [
+          "repository-maintenance",
+          "code-review-deep",
+          "secure-tool-usage"
+        ],
+        "focus": "Änderungsbereiche, Tests, Risiken und Strukturwirkungen lokal prüfen."
+      },
+      "report-dashboard-vorbereitung": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "inline_visuals_toolkit_v3",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "data-cleaning-analysis",
+          "visual-toolkit-v3-offline",
+          "offline-artifact-production"
+        ],
+        "focus": "Daten prüfen, Kennzahlen berechnen, Visuals erzeugen und Dashboard-Artefakte vorbereiten."
+      },
+      "support-ticket-vorbereitung": {
+        "tools": [
+          "json_csv_text_validator",
+          "docker_compose_triage",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "docker-openwebui-troubleshooting",
+          "secure-tool-usage",
+          "offline-artifact-production"
+        ],
+        "focus": "Ticketdaten, Fehlertexte, Priorisierung und Übergabetexte strukturiert prüfen."
+      },
+      "tabellen-csv-datenanalyse": {
+        "tools": [
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench",
+          "inline_visuals_toolkit_v3"
+        ],
+        "skills": [
+          "data-cleaning-analysis",
+          "visual-toolkit-v3-offline",
+          "offline-artifact-production"
+        ],
+        "focus": "Tabellen und CSV immer validieren, Berechnungen mit Jupyter durchführen und Ergebnisse exportierbar machen."
+      },
+      "testfall-generierung": {
+        "tools": [
+          "repo_tree_analyzer",
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python"
+        ],
+        "skills": [
+          "code-review-deep",
+          "repository-maintenance",
+          "data-cleaning-analysis"
+        ],
+        "focus": "Anforderungen, Codepfade, Testdaten und erwartete Ergebnisse mit lokalen Prüfpfaden absichern."
+      },
+      "übersetzung-lokalisierung": {
+        "tools": [
+          "json_csv_text_validator",
+          "offline_artifact_workbench"
+        ],
+        "skills": [
+          "research-grounding",
+          "data-cleaning-analysis",
+          "offline-artifact-production"
+        ],
+        "focus": "Terminologielisten, Tabellen, Glossare und zielsprachliche Handover-Artefakte prüfen."
+      }
+    }
+  },
   "model_params_policy": {
-    "target_context_tokens": 262144,
-    "max_tokens": 262144,
+    "max_tokens": "omitted",
+    "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
     "reasoning_profile": "high_prompted_in_system",
     "reasoning_effort_runtime_param": "omitted_for_mistral_medium_3_5_128b_compatibility",
     "supported_runtime_params": [
       "function_calling",
-      "max_tokens",
       "stop",
       "system",
       "temperature",
       "top_p"
+    ],
+    "omitted_runtime_params": [
+      "max_tokens"
     ],
     "omitted_unsupported_runtime_params": [
       "reasoning_effort",
@@ -113,23 +869,27 @@
     }
   },
   "global_model_params_recommendation": {
-    "function_calling": "native",
-    "max_tokens": 262144
+    "function_calling": "native"
   },
   "verified_model_fields_used": [
     "meta.toolIds",
     "meta.filterIds",
     "meta.defaultFilterIds",
     "meta.capabilities.builtin_tools",
+    "meta.primaryToolIds",
+    "meta.recommendedSkillIds",
+    "meta.requiredKnowledgeFiles",
     "params.function_calling",
-    "params.max_tokens",
     "params.temperature",
     "params.top_p",
+    "params.stop",
+    "params.system tool-force section",
     "meta.profile_image_url"
   ],
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
   "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not assigned to models and are not part of tools_first.",
   "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
+  "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
   "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
   "chat_models_configured": [
     "anforderungsanalyse-lastenheft",

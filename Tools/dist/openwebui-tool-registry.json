@@ -66,7 +66,7 @@
         "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
         "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR"
       ],
-      "sha256": "415a4827140858409080a366eaad0a32c1eb1db72a01642401c86bb27f432926",
+      "sha256": "fccab6d5652e30dc2cb64ad65696898b3d2db545087c9c3ee72f1d03bae48a5d",
       "importable": true,
       "methods": [
         "run_python"
@@ -79,7 +79,7 @@
       "purpose": "Allows the LLM to autonomously trigger 1-5 interactive pop-up questions to gather missing project details.",
       "offline": true,
       "configuration": [],
-      "sha256": "5073a6a54691edbf09438b4c89a20bb7d3836059ea221af1b6e85825f6cc653d",
+      "sha256": "cb501f07bc46fa9ee7789652b0e3298fc004c11776b84708d22362fb4d82eb4f",
       "importable": true,
       "methods": [
         "get_user_clarification"
@@ -92,7 +92,7 @@
       "purpose": "ComfyUI-Workflow-JSON lokal prüfen und Offline-Setup-Checklisten für Visual-/Audio-/Video-Tools erzeugen.",
       "offline": true,
       "configuration": [],
-      "sha256": "1b88831056a1c406d4ee3bb06caf7aefad3ed93558ff4a7043b6e63cbdb9e3fb",
+      "sha256": "79296223df26edb700cb9a268cffb188fcb8394db49bde52d275aedec0162e22",
       "importable": true,
       "methods": [
         "build_setup_checklist",
@@ -106,7 +106,7 @@
       "purpose": "Docker-Compose- und OpenWebUI-Fehlertexte ohne Containerzugriff analysieren.",
       "offline": true,
       "configuration": [],
-      "sha256": "7372b87e498924a9ac75fd1b6f4e430a0324efd2a08966a3a363ddd9fa6dc9c0",
+      "sha256": "93e675df1c4f694f8e7250660ec5831c18d5b1b85d3226f91b6f0ed444286e6c",
       "importable": true,
       "methods": [
         "analyze_compose",
@@ -120,7 +120,7 @@
       "purpose": "Read-only GitHub repository metadata inspection with optional token support through Valves or OpenWebUI OAuth.",
       "offline": false,
       "configuration": [],
-      "sha256": "b348e7b03b05a40d7de0eee980dc23bae97aea31201829a212948d47189b8091",
+      "sha256": "479b14c20d90e2ef69644141eeac503f9984a229d81a5521bda72204f11083dc",
       "importable": true,
       "methods": [
         "evaluate_tool_candidate",
@@ -134,7 +134,7 @@
       "purpose": "Offline SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual-Briefs ohne externe Assets erzeugen.",
       "offline": true,
       "configuration": [],
-      "sha256": "0cd4f8530bed30334eac4783a85a8c3d36d494509e5a6e430e605cc44a340530",
+      "sha256": "c193ace8ffe00182690283dd0b46d5222f7b32ac2e947f41a242731021facf80",
       "importable": true,
       "methods": [
         "create_mermaid_block",
@@ -150,7 +150,7 @@
       "purpose": "JSON, CSV und strukturierte Texte lokal validieren und sensible Felder markieren.",
       "offline": true,
       "configuration": [],
-      "sha256": "49aa6bb2ab75cd33d2718c014cf415d6c51ce81ece3982c67a663da4add0579f",
+      "sha256": "f1c494164748fb7d263d8cc39ab5184d239bcdde93f89892be96fae3f5529e34",
       "importable": true,
       "methods": [
         "inspect_text",
@@ -165,7 +165,7 @@
       "purpose": "OpenWebUI Workspace Tool.",
       "offline": true,
       "configuration": [],
-      "sha256": "cc6ce0c679affe27a58d7066b8c2c21109e7d192a68d6fda17c8776d665056d1",
+      "sha256": "3688942bc0db89e748c65a3a968d34f55fa81d403e85bb4964be397eca4e8141",
       "importable": true,
       "methods": [
         "consult_council"
@@ -178,7 +178,7 @@
       "purpose": "Generate importable OpenWebUI Skill Markdown from safe user goals.",
       "offline": true,
       "configuration": [],
-      "sha256": "adf5dd0f6a0d21499f0aa0251a1f233062fe4a26d5a305a92cf7a3dbc2074ad9",
+      "sha256": "afcfd2057c8d58cbdbf7e37eac7f228463c3743589df6741e43d16471598a300",
       "importable": true,
       "methods": [
         "build_skill"
@@ -191,7 +191,7 @@
       "purpose": "Crawl an internal MediaWiki instance through the MediaWiki API with support for legacy username/password login flows.",
       "offline": true,
       "configuration": [],
-      "sha256": "51c6a087e4ead6425898c3555456931ee12cff2b6936e0bba457c55a93ee7c13",
+      "sha256": "9714bb733d13bb617c3cc6bcb4c20395edc9088b8db2c08de04abd36d0a6e37e",
       "importable": true,
       "methods": [
         "check_mediawiki",
@@ -209,7 +209,7 @@
       "configuration": [
         "OPENWEBUI_ARTIFACT_ROOT"
       ],
-      "sha256": "4e3f310497785d4ee7c4987ba71ed292b66e81329b373f0c4d5a71c5ed240f06",
+      "sha256": "49517647d7dfa7e75e62358a51c05465b6d69d62b1e790e39f065c04362462d3",
       "importable": true,
       "methods": [
         "bundle_artifacts",
@@ -225,7 +225,7 @@
       "purpose": "Eingefügte OpenAPI-JSON-Schemas lokal analysieren.",
       "offline": true,
       "configuration": [],
-      "sha256": "d409ab8ffacaeae84b0a24ad52e94faeab2f9e482911565a68496cbb2a98d0d3",
+      "sha256": "de28552554a3c61c706aa4084287c14a3a4b5ad3f70182a7d021d93587ccdcae",
       "importable": true,
       "methods": [
         "inspect_openapi_json"
@@ -238,7 +238,7 @@
       "purpose": "Renders interactive generative UI components (charts, forms, tables, cards, follow-ups) in chat using OpenUI Lang.",
       "offline": false,
       "configuration": [],
-      "sha256": "caca210e8f52c33a16252305914b14a4e4f63888781fd52824da8c84758580b8",
+      "sha256": "88bc2d7f02e223170f1420975dde3723399412b6db29aa8c66287c7814a6e440",
       "importable": true,
       "methods": [
         "render_openui"
@@ -251,7 +251,7 @@
       "purpose": "Komplexe Arbeit in dependency-sichere parallele Tool-Wellen und Subagent-Arbeitspakete zerlegen.",
       "offline": true,
       "configuration": [],
-      "sha256": "975b1e3034b0111ec8eefe009db19c9462dc0c2d05189420cc1fccd89d2f3575",
+      "sha256": "cdfb393c5a4ad8a9014c695b74f259cec140f4eca07e7e5f4d8c0115639732e1",
       "importable": true,
       "methods": [
         "build_parallel_execution_plan",
@@ -266,7 +266,7 @@
       "purpose": "Execute multiple independent tool calls in parallel for faster results.",
       "offline": true,
       "configuration": [],
-      "sha256": "17ab111ab54ed055d5042cd7280c1284b07cc9b5296883ebfe1094dd21e2c986",
+      "sha256": "2e98dab654afaa26f2b756f8c4dca203dd4707b6968d984d22f48b221fee9af6",
       "importable": true,
       "methods": [
         "run_tools_parallel"
@@ -279,7 +279,7 @@
       "purpose": "Analyze a pasted repository tree or file list without server-side filesystem reads.",
       "offline": true,
       "configuration": [],
-      "sha256": "84a8a53778dfad611dc0ac9b271448cd313ab4eb5f11f31017077a84263bf62c",
+      "sha256": "1e203c719ddddbfd7f06494fd55ff6996311d90735000310793a46b8111429d9",
       "importable": true,
       "methods": [
         "analyze_tree"
@@ -292,7 +292,7 @@
       "purpose": "Bounded HTTP GET and HEAD inspection for public URLs with SSRF protections.",
       "offline": false,
       "configuration": [],
-      "sha256": "b3cfda54ba841cabd273d99527cbdf32578c6b15d721e44da2e7a973efdd54f9",
+      "sha256": "ad93abb42caad40f85ad03aba0727d7904dd125d6c71c1db0d176b4fd39432a5",
       "importable": true,
       "methods": [
         "check_status",
@@ -306,7 +306,7 @@
       "purpose": "Run autonomous, tool-heavy tasks in a sub-agent and keep the main chat context clean.",
       "offline": true,
       "configuration": [],
-      "sha256": "422e73b5815f4e4b44920448d146cadf0e045c6305142e7f10442b0a2937a765",
+      "sha256": "3aaf083a42061c34cf6fc55dbf63397a8d59ba41e5e8f09b67a4e78d365b2170",
       "importable": true,
       "methods": [
         "run_parallel_sub_agents",
@@ -335,7 +335,7 @@
       "purpose": "Modellbezogene Tool-/Skill-Overlays, Redundanz und Fallback-Abdeckung planen.",
       "offline": true,
       "configuration": [],
-      "sha256": "9ecf5b2956850bfcceaeba0bf76d6fe6a2ad0c1da17a9aa000743879afcce388",
+      "sha256": "3c738820ac39d55583a2e5889884f56b67ade4d5bff025e3573a2a7e394e10c2",
       "importable": true,
       "methods": [
         "build_overlay_matrix",
@@ -350,7 +350,7 @@
       "purpose": "Tables, charts, heatmaps, timelines, flowcharts, trees, dashboards, metric grids, pie/donut charts, gauges, Gantt charts, Sankey diagrams, radar charts, waterfall charts, funnels, and candlestick charts. Dark-mode-safe HTML with Plotly, auto-resizing iframes, and fullscreen support. Pure ASCII/Markdown fallback when HTML is unavailable.",
       "offline": true,
       "configuration": [],
-      "sha256": "9c1b54339bc2d59a79fb986fabb2cb6988d53d267147ca1155e78fd8439ff48b",
+      "sha256": "c32a5baa6fc3f0f65dae953141866bb8ba4a1a924a5ac073025bc34d65253b4e",
       "importable": true,
       "methods": [
         "render_candlestick",
@@ -380,7 +380,7 @@
       "purpose": "Search and crawl local/self-hosted sources using SearXNG, OpenWebUI Native Search, and Crawl4AI. Public network access is blocked by default for Air-Gap operation.",
       "offline": false,
       "configuration": [],
-      "sha256": "2b448f8cd10d889cdadc86fcebc83c5c133e40a776f2c09b82ce74826a812310",
+      "sha256": "7ab2d726c12d4d984f5a6efc46eed294185a103a197fb9476a377776be0e9dcc",
       "importable": true,
       "methods": [
         "get_request",

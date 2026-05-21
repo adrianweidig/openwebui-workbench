@@ -4,7 +4,7 @@ Dieses Verzeichnis ist der Copy/Paste- und Transportbereich für OpenWebUI-Tools
 
 ## Enthalten
 
-- `openwebui-tools-skills-offline.zip`: ZIP-Paket aus `Tools/jupyter`, `Tools/openwebui_ext`, `Tools/index.json` und `Tools/README.md`.
+- `openwebui-tools-skills-offline.zip`: ZIP-Paket aus `Tools/jupyter`, `Tools/openwebui_ext`, `Tools/index.json`, `Tools/import_openwebui_workspace.py` und `Tools/README.md`.
 - `openwebui-tools-offline-import.json`: direkt importierbares GUI-Bundle für alle Offline-Default-Tools.
 - `openwebui-tools-import.json`: direkt importierbares GUI-Bundle inklusive optionaler Netzwerk-, Rich-UI- und lokaler Crawl-Tools.
 - `openwebui-functions-import.json`: direkt importierbares GUI-Bundle für Functions/Filter.
@@ -27,3 +27,12 @@ Optionale Tools aus `openwebui-tools-import.json`, die nicht im Offline-Default 
 ```powershell
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
+
+Für einen direkten API-Import in eine laufende OpenWebUI-Instanz:
+
+```powershell
+$env:OPENWEBUI_ADMIN_TOKEN="YOUR_OPEN_WEBUI_API_KEY"
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000
+```
+
+Ein lokaler Import-Probelauf ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run` möglich.
