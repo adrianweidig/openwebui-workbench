@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import json
 import mimetypes
-import os
 import re
 import sys
 import time
@@ -17,8 +16,9 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
-# Paste values here only if you do not want to use scripts/openwebui_workspace_config.yaml
-# or environment variables. Do not commit real tokens.
+# Compatibility fallbacks only. Real deployments should use the ignored
+# scripts/openwebui_workspace_config.yaml so endpoints, tokens, paths and valves
+# stay in one local file. Do not commit real tokens.
 OPENWEBUI_ADMIN_TOKEN = "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE"
 OPENWEBUI_BASE_URL = "http://localhost:3000"
 JUPYTER_URL = ""
@@ -264,6 +264,11 @@ def config_get(config: dict[str, Any], dotted_path: str, default: Any = None) ->
     return value
 
 
+def config_section(config: dict[str, Any], dotted_path: str) -> dict[str, Any]:
+    value = config_get(config, dotted_path, {})
+    return value if isinstance(value, dict) else {}
+
+
 def first_config_value(config: dict[str, Any], dotted_paths: list[str], default: Any = None) -> Any:
     for dotted_path in dotted_paths:
         value = config_get(config, dotted_path, None)
@@ -288,18 +293,49 @@ def as_int(value: Any, default: int) -> int:
     return int(value)
 
 
+def clean_mapping(mapping: dict[str, Any]) -> dict[str, Any]:
+    return {str(key): value for key, value in mapping.items() if value not in (None, "")}
+
+
+def nested_clean_mapping(mapping: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    cleaned: dict[str, dict[str, Any]] = {}
+    for key, value in mapping.items():
+        if not isinstance(value, dict):
+            continue
+        cleaned_value = clean_mapping(value)
+        if cleaned_value:
+            cleaned[str(key)] = cleaned_value
+    return cleaned
+
+
+def merge_valves(
+    base: dict[str, dict[str, Any]],
+    overrides: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    merged = {tool_id: dict(valves) for tool_id, valves in base.items()}
+    for item_id, valves in overrides.items():
+        current = merged.setdefault(item_id, {})
+        current.update(clean_mapping(valves))
+        if not current:
+            merged.pop(item_id, None)
+    return merged
+
+
 def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
     config, config_path = load_config(args.config)
+    environment = clean_mapping(config_section(config, "environment"))
+    explicit_tool_valves = nested_clean_mapping(config_section(config, "tool_valves"))
+    explicit_function_valves = nested_clean_mapping(config_section(config, "function_valves"))
     base_url = (
         args.base_url
-        or os.getenv("OPENWEBUI_BASE_URL")
         or first_config_value(config, ["openwebui.base_url", "openwebui.url"])
+        or environment.get("OPENWEBUI_BASE_URL")
         or OPENWEBUI_BASE_URL
     )
     token = (
         args.token
-        or os.getenv("OPENWEBUI_ADMIN_TOKEN")
         or first_config_value(config, ["openwebui.admin_token", "openwebui.api_key", "openwebui.token"])
+        or environment.get("OPENWEBUI_ADMIN_TOKEN")
         or OPENWEBUI_ADMIN_TOKEN
     )
     timeout = as_int(
@@ -317,63 +353,138 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
     jupyter = {
         "OPENWEBUI_JUPYTER_URL": (
             args.jupyter_url
-            or os.getenv("OPENWEBUI_JUPYTER_URL")
-            or first_config_value(config, ["jupyter.url", "jupyter.base_url"], JUPYTER_URL)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.air_gapped_jupyter_python.OPENWEBUI_JUPYTER_URL",
+                    "jupyter.url",
+                    "jupyter.base_url",
+                    "environment.OPENWEBUI_JUPYTER_URL",
+                ],
+            )
+            or JUPYTER_URL
         ),
         "OPENWEBUI_JUPYTER_TOKEN": (
             args.jupyter_token
-            or os.getenv("OPENWEBUI_JUPYTER_TOKEN")
-            or first_config_value(config, ["jupyter.token", "jupyter.api_token"], JUPYTER_TOKEN)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.air_gapped_jupyter_python.OPENWEBUI_JUPYTER_TOKEN",
+                    "jupyter.token",
+                    "jupyter.api_token",
+                    "environment.OPENWEBUI_JUPYTER_TOKEN",
+                ],
+            )
+            or JUPYTER_TOKEN
         ),
         "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS": (
             args.jupyter_timeout_seconds
-            or os.getenv("OPENWEBUI_JUPYTER_TIMEOUT_SECONDS")
-            or first_config_value(config, ["jupyter.timeout_seconds"], JUPYTER_TIMEOUT_SECONDS)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.air_gapped_jupyter_python.OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
+                    "jupyter.timeout_seconds",
+                    "environment.OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
+                ],
+            )
+            or JUPYTER_TIMEOUT_SECONDS
         ),
         "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR": (
             args.jupyter_allowed_workdir
-            or os.getenv("OPENWEBUI_JUPYTER_ALLOWED_WORKDIR")
-            or first_config_value(config, ["jupyter.allowed_workdir", "jupyter.workdir"], JUPYTER_ALLOWED_WORKDIR)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.air_gapped_jupyter_python.OPENWEBUI_JUPYTER_ALLOWED_WORKDIR",
+                    "jupyter.allowed_workdir",
+                    "jupyter.workdir",
+                    "environment.OPENWEBUI_JUPYTER_ALLOWED_WORKDIR",
+                ],
+            )
+            or JUPYTER_ALLOWED_WORKDIR
         ),
     }
     artifact_root = (
         args.artifact_root
-        or os.getenv("OPENWEBUI_ARTIFACT_ROOT")
         or first_config_value(
             config,
-            ["artifacts.root", "artifact_root", "tools.offline_artifact_workbench.artifact_root"],
-            ARTIFACT_ROOT,
+            [
+                "tool_valves.offline_artifact_workbench.artifact_root",
+                "artifacts.root",
+                "artifact_root",
+                "environment.OPENWEBUI_ARTIFACT_ROOT",
+                "tools.offline_artifact_workbench.artifact_root",
+            ],
         )
+        or ARTIFACT_ROOT
     )
     prefer_playwright_pdf = (
         args.prefer_playwright_pdf
         if args.prefer_playwright_pdf is not None
         else first_config_value(
             config,
-            ["addons.prefer_playwright_pdf", "offline_addons.prefer_playwright_pdf", "tools.offline_artifact_workbench.prefer_playwright_pdf"],
+            [
+                "tool_valves.offline_artifact_workbench.prefer_playwright_pdf",
+                "addons.prefer_playwright_pdf",
+                "offline_addons.prefer_playwright_pdf",
+                "tools.offline_artifact_workbench.prefer_playwright_pdf",
+            ],
             PREFER_PLAYWRIGHT_PDF,
         )
     )
     addons = {
         "offline_addons_root": (
             args.offline_addons_root
-            or os.getenv("OPENWEBUI_OFFLINE_ADDONS_ROOT")
-            or first_config_value(config, ["addons.root", "offline_addons.root"], OFFLINE_ADDONS_ROOT)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.offline_artifact_workbench.offline_addons_root",
+                    "addons.root",
+                    "offline_addons.root",
+                    "environment.OPENWEBUI_OFFLINE_ADDONS_ROOT",
+                ],
+            )
+            or OFFLINE_ADDONS_ROOT
         ),
         "offline_addons_python_path": (
             args.offline_addons_python_path
-            or os.getenv("OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH")
-            or first_config_value(config, ["addons.python_path", "addons.python_dir", "offline_addons.python_path"], OFFLINE_ADDONS_PYTHON_PATH)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.offline_artifact_workbench.offline_addons_python_path",
+                    "addons.python_path",
+                    "addons.python_dir",
+                    "offline_addons.python_path",
+                    "environment.OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH",
+                ],
+            )
+            or OFFLINE_ADDONS_PYTHON_PATH
         ),
         "playwright_browsers_path": (
             args.playwright_browsers_path
-            or os.getenv("PLAYWRIGHT_BROWSERS_PATH")
-            or first_config_value(config, ["addons.playwright_browsers_path", "offline_addons.playwright_browsers_path"], PLAYWRIGHT_BROWSERS_PATH)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.offline_artifact_workbench.playwright_browsers_path",
+                    "addons.playwright_browsers_path",
+                    "offline_addons.playwright_browsers_path",
+                    "environment.PLAYWRIGHT_BROWSERS_PATH",
+                ],
+            )
+            or PLAYWRIGHT_BROWSERS_PATH
         ),
         "nltk_data_path": (
             args.nltk_data_path
-            or os.getenv("NLTK_DATA")
-            or first_config_value(config, ["addons.nltk_data", "addons.nltk_data_path", "offline_addons.nltk_data_path"], NLTK_DATA_PATH)
+            or first_config_value(
+                config,
+                [
+                    "tool_valves.offline_artifact_workbench.nltk_data_path",
+                    "addons.nltk_data",
+                    "addons.nltk_data_path",
+                    "offline_addons.nltk_data_path",
+                    "environment.NLTK_DATA",
+                ],
+            )
+            or NLTK_DATA_PATH
         ),
         "prefer_playwright_pdf": as_bool(prefer_playwright_pdf, True),
     }
@@ -388,6 +499,9 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         "jupyter": jupyter,
         "artifact_root": str(artifact_root or ""),
         "addons": addons,
+        "environment": environment,
+        "tool_valves": explicit_tool_valves,
+        "function_valves": explicit_function_valves,
     }
 
 
@@ -419,7 +533,12 @@ def configured_tool_valves(runtime: dict[str, Any]) -> dict[str, dict[str, Any]]
             artifact_valves["prefer_playwright_pdf"] = as_bool(addons.get("prefer_playwright_pdf"), True)
     if artifact_valves:
         valves["offline_artifact_workbench"] = artifact_valves
-    return valves
+    return merge_valves(valves, runtime.get("tool_valves", {}))
+
+
+def configured_function_valves(runtime: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    value = runtime.get("function_valves", {})
+    return nested_clean_mapping(value) if isinstance(value, dict) else {}
 
 
 def slugify(value: str) -> str:
@@ -520,9 +639,10 @@ def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
         required_model_knowledge_files(model_file.parent)
     return [
         ImportResult("tools", skipped=tool_count),
-        ImportResult("functions", skipped=function_count),
-        ImportResult("skills", skipped=len(skills)),
         ImportResult("tool_valves", skipped=len(configured_tool_valves(runtime))),
+        ImportResult("functions", skipped=function_count),
+        ImportResult("function_valves", skipped=len(configured_function_valves(runtime))),
+        ImportResult("skills", skipped=len(skills)),
         ImportResult("model_knowledge_collections", skipped=len(model_files)),
         ImportResult("models", skipped=len(model_files)),
     ]
@@ -571,9 +691,41 @@ def import_tool_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> Impo
         if not valves:
             skipped += 1
             continue
-        update_tool_valves(client, tool_id, valves)
-        updated += 1
+        try:
+            update_tool_valves(client, tool_id, valves)
+            updated += 1
+        except RuntimeError as exc:
+            if "HTTP 404" not in str(exc):
+                raise
+            skipped += 1
     return ImportResult("tool_valves", updated=updated, skipped=skipped)
+
+
+def update_function_valves(client: OpenWebUIClient, function_id: str, valves: dict[str, Any]) -> None:
+    client.request_any(
+        "POST",
+        [
+            f"/api/v1/functions/id/{function_id}/valves/update",
+            f"/api/functions/id/{function_id}/valves/update",
+        ],
+        valves,
+    )
+
+
+def import_function_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> ImportResult:
+    updated = skipped = 0
+    for function_id, valves in configured_function_valves(runtime).items():
+        if not valves:
+            skipped += 1
+            continue
+        try:
+            update_function_valves(client, function_id, valves)
+            updated += 1
+        except RuntimeError as exc:
+            if "HTTP 404" not in str(exc):
+                raise
+            skipped += 1
+    return ImportResult("function_valves", updated=updated, skipped=skipped)
 
 
 def import_functions(client: OpenWebUIClient) -> ImportResult:
@@ -713,9 +865,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Import this repository's OpenWebUI tools, functions, skills, knowledge and models."
     )
-    parser.add_argument("--config", default=None, help="YAML config file. Defaults to scripts/openwebui_workspace_config.yaml when present.")
-    parser.add_argument("--base-url", default=None)
-    parser.add_argument("--token", default=None)
+    parser.add_argument("--config", default=None, help="Central YAML config file. Defaults to scripts/openwebui_workspace_config.yaml when present.")
+    parser.add_argument("--base-url", default=None, help="One-off override for openwebui.base_url from the central config.")
+    parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
     parser.add_argument("--public-read", action="store_true", help="Grant read access to all users where OpenWebUI permits it.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md and fachwissen.md files as Knowledge.")
     parser.add_argument(
@@ -724,16 +876,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Also import optional network-capable tools. This is the default unless import.include_optional_network_tools is false in the YAML config.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Validate payload files and print counts without calling OpenWebUI.")
-    parser.add_argument("--jupyter-url", default=None, help="Jupyter URL as seen from the OpenWebUI backend/container.")
-    parser.add_argument("--jupyter-token", default=None, help="Jupyter token for the air_gapped_jupyter_python tool valve.")
-    parser.add_argument("--jupyter-timeout-seconds", type=int, default=None, help="Jupyter execution timeout tool valve.")
-    parser.add_argument("--jupyter-allowed-workdir", default=None, help="Allowed workdir as seen by the Jupyter host/container.")
-    parser.add_argument("--artifact-root", default=None, help="Artifact root as seen by the OpenWebUI backend/container.")
-    parser.add_argument("--offline-addons-root", default=None, help="Root of the mounted offline add-ons tree as seen by OpenWebUI.")
-    parser.add_argument("--offline-addons-python-path", default=None, help="Offline add-ons Python package path as seen by OpenWebUI.")
-    parser.add_argument("--playwright-browsers-path", default=None, help="Local Playwright browser cache path as seen by OpenWebUI.")
-    parser.add_argument("--nltk-data-path", default=None, help="Local NLTK data path as seen by OpenWebUI.")
-    parser.add_argument("--prefer-playwright-pdf", action="store_true", default=None, help="Prefer local Playwright/Chromium for artifact PDF conversion.")
+    parser.add_argument("--jupyter-url", default=None, help="One-off override for the Jupyter tool valve. Prefer tool_valves.air_gapped_jupyter_python in the config.")
+    parser.add_argument("--jupyter-token", default=None, help="One-off override for the Jupyter token tool valve.")
+    parser.add_argument("--jupyter-timeout-seconds", type=int, default=None, help="One-off override for the Jupyter execution timeout tool valve.")
+    parser.add_argument("--jupyter-allowed-workdir", default=None, help="One-off override for the allowed workdir tool valve.")
+    parser.add_argument("--artifact-root", default=None, help="One-off override for the artifact root tool valve.")
+    parser.add_argument("--offline-addons-root", default=None, help="One-off override for the offline add-ons root tool valve.")
+    parser.add_argument("--offline-addons-python-path", default=None, help="One-off override for the offline add-ons Python path tool valve.")
+    parser.add_argument("--playwright-browsers-path", default=None, help="One-off override for the Playwright browser cache tool valve.")
+    parser.add_argument("--nltk-data-path", default=None, help="One-off override for the NLTK data path tool valve.")
+    parser.add_argument("--prefer-playwright-pdf", action="store_true", default=None, help="One-off override to prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--timeout", type=int, default=None)
     return parser.parse_args(argv)
 
@@ -750,7 +902,7 @@ def main(argv: list[str] | None = None) -> int:
     token = str(runtime["token"]).strip()
     if token in PLACEHOLDER_TOKENS:
         print(
-            "Set OPENWEBUI_ADMIN_TOKEN, paste OPENWEBUI_ADMIN_TOKEN in this script, or configure openwebui.admin_token in scripts/openwebui_workspace_config.yaml.",
+            "Configure openwebui.admin_token in scripts/openwebui_workspace_config.yaml or pass --token.",
             file=sys.stderr,
         )
         return 2
@@ -764,6 +916,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         import_tool_valves(client, runtime),
         import_functions(client),
+        import_function_valves(client, runtime),
         import_skills(client, public=bool(runtime["public_read"])),
         import_models(
             client,

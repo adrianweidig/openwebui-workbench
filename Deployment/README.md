@@ -23,7 +23,15 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 - `F:\offline-ai-stack\openwebui-offline-addons\python\openwebui_offline_addons.pth` nach `/usr/local/lib/python3.11/site-packages/openwebui_offline_addons.pth`
 - `F:\offline-ai-stack\openwebui-offline-addons\bin\start-offline.sh` nach `/app/backend/start-offline.sh`
 
-## Wichtige Variablen
+## Zentrale Import-Konfiguration
+
+Für den reproduzierbaren Remote-Import ist die lokale Datei `scripts/openwebui_workspace_config.yaml` maßgeblich. Dort wird `openwebui.base_url` auf die von der Import-Maschine erreichbare Adresse gesetzt, während `jupyter.url`, `artifacts.root`, `addons.*`, `tool_valves.*` und `function_valves.*` die aus dem OpenWebUI-Backend erreichbaren Adressen und Pfade enthalten. Der Importbefehl setzt daraus die passenden Tool- und Function-/Filter-Valves:
+
+```powershell
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
+```
+
+Diese Namen sind in der zentralen YAML dokumentiert und werden vom Importer in OpenWebUI-Valves gemappt, soweit die jeweilige Function oder das jeweilige Tool Valves anbietet:
 
 ```text
 OPENWEBUI_JUPYTER_URL
@@ -39,12 +47,6 @@ SENTENCE_TRANSFORMERS_HOME
 TIKTOKEN_CACHE_DIR
 WHISPER_MODEL_DIR
 PLAYWRIGHT_BROWSERS_PATH
-```
-
-Für den reproduzierbaren Remote-Import ist stattdessen die lokale Datei `scripts/openwebui_workspace_config.yaml` vorgesehen. Dort wird `openwebui.base_url` auf die von der Import-Maschine erreichbare Adresse gesetzt, während `jupyter.url` und die `addons.*`-Pfade die aus dem OpenWebUI-Container erreichbaren Docker-internen Adressen enthalten. Der Importbefehl setzt die passenden Tool-Valves automatisch:
-
-```powershell
-python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
 ## PDF-Konvertierung

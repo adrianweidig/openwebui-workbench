@@ -6,7 +6,9 @@
 
 ## Konfiguration
 
-Bevorzugte Umgebungsvariablen:
+Für den Repo-Import werden die Werte zentral in `scripts/openwebui_workspace_config.yaml` gepflegt. Der API-Importer setzt sie danach als Tool-Valves für `air_gapped_jupyter_python`; die Jupyter-URL muss aus Sicht des OpenWebUI-Backends erreichbar sein, etwa `http://jupyter:8888` im Docker-Netz.
+
+Relevante Valve-/Umgebungsnamen:
 
 ```text
 OPENWEBUI_JUPYTER_URL
@@ -15,7 +17,7 @@ OPENWEBUI_JUPYTER_TIMEOUT_SECONDS
 OPENWEBUI_JUPYTER_ALLOWED_WORKDIR
 ```
 
-Alternativ können dieselben Werte in OpenWebUI als Tool-Valves gepflegt werden. Beim API-Import liest `scripts/configure_openwebui_tool_models.py` die Werte aus `scripts/openwebui_workspace_config.yaml` und setzt sie automatisch für das Tool `air_gapped_jupyter_python`. Die dortige Jupyter-URL muss aus Sicht des OpenWebUI-Backends erreichbar sein, etwa `http://jupyter:8888` im Docker-Netz. Die Beispieldateien `.env.example`, `jupyter_config.example.json` und `scripts/openwebui_workspace_config.example.yaml` enthalten keine echten Geheimnisse.
+Die Beispieldateien `.env.example`, `jupyter_config.example.json` und `scripts/openwebui_workspace_config.example.yaml` enthalten keine echten Geheimnisse. Für die produktive OpenWebUI-Integration ist die zentrale YAML der maßgebliche Pfad; direkte Tool-Valve- oder Env-Pflege ist nur ein Fallback, wenn der API-Importer nicht genutzt wird.
 
 ## Sicherheitsgrenzen
 
@@ -34,4 +36,4 @@ python dist/tests/validate_artifacts.py
 python dist/tests/test_jupyter_tool_static.py
 ```
 
-Der statische Test benötigt keinen laufenden Jupyter Server. Eine echte Ausführungsprüfung erfordert lokale Werte für `OPENWEBUI_JUPYTER_URL` und optional `OPENWEBUI_JUPYTER_TOKEN`.
+Der statische Test benötigt keinen laufenden Jupyter Server. Eine echte Ausführungsprüfung erfordert lokale Werte in `scripts/openwebui_workspace_config.yaml` oder direkt gesetzte OpenWebUI-Tool-Valves für `OPENWEBUI_JUPYTER_URL` und optional `OPENWEBUI_JUPYTER_TOKEN`.

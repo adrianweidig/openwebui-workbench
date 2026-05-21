@@ -11,8 +11,9 @@ Dieses Repository soll OpenWebUI so vorbereiten, dass Nutzer offline eine ChatGP
 - `Tools/openwebui_ext/tools/`: zusätzliche direkt importierbare Tools.
 - `Tools/openwebui_ext/skills/`: wiederverwendbare Arbeitsanweisungen für Modelle.
 - `Artefakte/`: lokaler Bereich für erzeugte HTML-, PDF-, ZIP- und Datendateien.
-- `Deployment/`: Vorlagen für Container-Volumes und Umgebungsvariablen.
-- `F:\offline-ai-stack\openwebui-offline-addons`: lokaler Addon-Stack für OpenWebUI-Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete.
+- `Deployment/`: optionale Vorlagen für Container-Volumes; der Repo-Import selbst wird über `scripts/openwebui_workspace_config.yaml` konfiguriert.
+- `scripts/openwebui_workspace_config.yaml`: zentrale lokale Konfiguration für OpenWebUI-URL, Admin-Token, Jupyter, Backend-Pfade, Tool-Valves und Function-/Filter-Valves.
+- `F:\offline-ai-stack\openwebui-offline-addons`: optionaler lokaler Addon-Stack für OpenWebUI-Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete.
 
 ## Typischer Ablauf
 

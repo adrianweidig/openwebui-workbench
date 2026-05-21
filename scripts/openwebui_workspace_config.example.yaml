@@ -1,5 +1,9 @@
-# Copy this file to scripts/openwebui_workspace_config.yaml and fill in the
-# values on the target machine. The real config file is ignored by git.
+# Copy this file to scripts/openwebui_workspace_config.yaml and fill in all
+# target-instance values there. The real config file is ignored by git.
+#
+# This YAML is the central configuration source for the Python importer.
+# Put OpenWebUI endpoint, tokens, backend-visible paths, tool valves and filter
+# valves here instead of editing Python files or relying on shell env vars.
 
 openwebui:
   # Externally reachable URL from the machine where you run the import script.
@@ -23,14 +27,67 @@ artifacts:
   root: "/app/backend/data/offline_artifacts"
 
 addons:
-  # F:\offline-ai-stack\openwebui-offline-addons is mounted into OpenWebUI
-  # through the offline stack override. These paths are seen by the OpenWebUI
-  # backend/container, not by the remote machine running this importer.
+  # These paths are seen by the OpenWebUI backend/container, not by the remote
+  # machine running this importer. Leave empty if you do not use local addons.
   root: "/app/backend/data"
   python_path: "/app/backend/data/python"
   playwright_browsers_path: "/app/backend/data/cache/ms-playwright"
   nltk_data: "/app/backend/data/nltk_data"
   prefer_playwright_pdf: true
+
+environment:
+  # Backend/tool-runtime values documented centrally. The importer maps the
+  # relevant values into tool valves where OpenWebUI exposes valves.
+  OPENWEBUI_ARTIFACT_ROOT: "/app/backend/data/offline_artifacts"
+  OPENWEBUI_OFFLINE_ADDONS_ROOT: "/app/backend/data"
+  OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH: "/app/backend/data/python"
+  PLAYWRIGHT_BROWSERS_PATH: "/app/backend/data/cache/ms-playwright"
+  NLTK_DATA: "/app/backend/data/nltk_data"
+  TIKTOKEN_CACHE_DIR: "/app/backend/data/cache/tiktoken"
+
+tool_valves:
+  # Explicit valves are applied after the convenience sections above and can
+  # override them. Add more tools here without changing Python code.
+  air_gapped_jupyter_python:
+    OPENWEBUI_JUPYTER_URL: "http://jupyter:8888"
+    OPENWEBUI_JUPYTER_TOKEN: "PASTE_JUPYTER_TOKEN_HERE"
+    OPENWEBUI_JUPYTER_TIMEOUT_SECONDS: 30
+    OPENWEBUI_JUPYTER_ALLOWED_WORKDIR: "/app/backend/data/offline_artifacts"
+  offline_artifact_workbench:
+    artifact_root: "/app/backend/data/offline_artifacts"
+    offline_addons_root: "/app/backend/data"
+    offline_addons_python_path: "/app/backend/data/python"
+    playwright_browsers_path: "/app/backend/data/cache/ms-playwright"
+    nltk_data_path: "/app/backend/data/nltk_data"
+    prefer_playwright_pdf: true
+
+function_valves:
+  # Filter/function valves are updated after functions are imported.
+  auto_tool_selector:
+    priority: 50
+    enable_local_tool_selection: true
+    enable_mcp_tool_selection: true
+    max_selected_local_tools: 8
+    max_selected_mcp_servers: 6
+    strict_available_tools_only: true
+    emit_status: true
+  context_compressor_filter:
+    priority: 900
+    default_context_window_tokens: 131072
+    reserved_output_tokens: 4096
+    safety_margin_tokens: 2048
+    hard_guard_enabled: true
+    emit_status: true
+    inject_notice_message: true
+  markdown_normalizer:
+    priority: 50
+    enable_code_block_fix: true
+    enable_latex_fix: true
+    enable_mermaid_fix: true
+    enable_heading_fix: true
+    enable_table_fix: true
+    show_status: true
+    show_debug_log: false
 
 import:
   public_read: false

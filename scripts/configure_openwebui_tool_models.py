@@ -20,21 +20,6 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG_FILE = Path(__file__).with_name("openwebui_workspace_config.yaml")
 CONFIG_EXAMPLE = Path(__file__).with_name("openwebui_workspace_config.example.yaml")
 
-# Optional local defaults. Prefer scripts/openwebui_workspace_config.yaml for real
-# deployments so secrets never need to be committed.
-SCRIPT_OPENWEBUI_BASE_URL = ""
-SCRIPT_OPENWEBUI_ADMIN_TOKEN = ""
-SCRIPT_JUPYTER_URL = ""
-SCRIPT_JUPYTER_TOKEN = ""
-SCRIPT_JUPYTER_TIMEOUT_SECONDS = ""
-SCRIPT_JUPYTER_ALLOWED_WORKDIR = ""
-SCRIPT_ARTIFACT_ROOT = ""
-SCRIPT_OFFLINE_ADDONS_ROOT = ""
-SCRIPT_OFFLINE_ADDONS_PYTHON_PATH = ""
-SCRIPT_PLAYWRIGHT_BROWSERS_PATH = ""
-SCRIPT_NLTK_DATA_PATH = ""
-SCRIPT_PREFER_PLAYWRIGHT_PDF = ""
-
 TOOLS_INDEX = ROOT / "Tools" / "index.json"
 TOOLS_DIST = ROOT / "Tools" / "dist"
 IMPORT_SCRIPT = ROOT / "Tools" / "import_openwebui_workspace.py"
@@ -1160,17 +1145,34 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "schema": "openwebui-registration-plan/v1",
         "order": [
             "1_import_workspace_tools",
-            "2_import_workspace_filters",
-            "3_import_workspace_skills",
-            "4_upload_model_knowledge",
-            "5_import_or_update_models",
-            "6_enable_user_or_group_access",
+            "2_apply_tool_valves",
+            "3_import_workspace_filters",
+            "4_apply_function_filter_valves",
+            "5_import_workspace_skills",
+            "6_upload_model_knowledge",
+            "7_import_or_update_models",
+            "8_enable_user_or_group_access",
         ],
         "api_import_script": rel(IMPORT_SCRIPT),
         "api_import_config_file": rel(CONFIG_FILE),
         "api_import_config_example": rel(CONFIG_EXAMPLE),
         "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml",
-        "api_import_token": "openwebui.admin_token in config YAML, OPENWEBUI_ADMIN_TOKEN environment variable, or --token CLI argument",
+        "api_import_config_policy": {
+            "source_of_truth": "scripts/openwebui_workspace_config.yaml",
+            "example": rel(CONFIG_EXAMPLE),
+            "sections": [
+                "openwebui",
+                "jupyter",
+                "artifacts",
+                "addons",
+                "environment",
+                "tool_valves",
+                "function_valves",
+                "import",
+            ],
+            "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models.",
+        },
+        "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override.",
         "offline_addons_runtime": {
             "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
             "container_data_root": "/app/backend/data",
@@ -1184,6 +1186,28 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
                 "addons.playwright_browsers_path",
                 "addons.nltk_data",
                 "addons.prefer_playwright_pdf",
+                "environment.OPENWEBUI_ARTIFACT_ROOT",
+                "environment.OPENWEBUI_OFFLINE_ADDONS_ROOT",
+                "environment.OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH",
+                "environment.PLAYWRIGHT_BROWSERS_PATH",
+                "environment.NLTK_DATA",
+                "environment.TIKTOKEN_CACHE_DIR",
+                "tool_valves.offline_artifact_workbench.artifact_root",
+                "tool_valves.offline_artifact_workbench.offline_addons_root",
+                "tool_valves.offline_artifact_workbench.offline_addons_python_path",
+                "tool_valves.offline_artifact_workbench.playwright_browsers_path",
+                "tool_valves.offline_artifact_workbench.nltk_data_path",
+                "tool_valves.offline_artifact_workbench.prefer_playwright_pdf",
+                "function_valves.auto_tool_selector.enable_local_tool_selection",
+                "function_valves.auto_tool_selector.enable_mcp_tool_selection",
+                "function_valves.auto_tool_selector.strict_available_tools_only",
+                "function_valves.context_compressor_filter.default_context_window_tokens",
+                "function_valves.context_compressor_filter.reserved_output_tokens",
+                "function_valves.context_compressor_filter.safety_margin_tokens",
+                "function_valves.context_compressor_filter.hard_guard_enabled",
+                "function_valves.markdown_normalizer.enable_code_block_fix",
+                "function_valves.markdown_normalizer.enable_latex_fix",
+                "function_valves.markdown_normalizer.enable_mermaid_fix",
             ],
             "preferred_uses": [
                 "OpenWebUI built-in caches and offline model assets",
@@ -1270,7 +1294,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
-        "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
+        "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
         "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
@@ -1461,41 +1485,29 @@ def run_workspace_import(args: argparse.Namespace) -> int:
     import_args: List[str] = []
     if args.config:
         import_args.extend(["--config", args.config])
-    base_url = args.base_url or SCRIPT_OPENWEBUI_BASE_URL
-    token = args.token or SCRIPT_OPENWEBUI_ADMIN_TOKEN
-    jupyter_url = args.jupyter_url or SCRIPT_JUPYTER_URL
-    jupyter_token = args.jupyter_token or SCRIPT_JUPYTER_TOKEN
-    jupyter_timeout = args.jupyter_timeout_seconds or SCRIPT_JUPYTER_TIMEOUT_SECONDS
-    jupyter_allowed_workdir = args.jupyter_allowed_workdir or SCRIPT_JUPYTER_ALLOWED_WORKDIR
-    artifact_root = args.artifact_root or SCRIPT_ARTIFACT_ROOT
-    offline_addons_root = args.offline_addons_root or SCRIPT_OFFLINE_ADDONS_ROOT
-    offline_addons_python_path = args.offline_addons_python_path or SCRIPT_OFFLINE_ADDONS_PYTHON_PATH
-    playwright_browsers_path = args.playwright_browsers_path or SCRIPT_PLAYWRIGHT_BROWSERS_PATH
-    nltk_data_path = args.nltk_data_path or SCRIPT_NLTK_DATA_PATH
-    prefer_playwright_pdf = args.prefer_playwright_pdf or SCRIPT_PREFER_PLAYWRIGHT_PDF
-    if base_url:
-        import_args.extend(["--base-url", str(base_url)])
-    if token:
-        import_args.extend(["--token", str(token)])
-    if jupyter_url:
-        import_args.extend(["--jupyter-url", str(jupyter_url)])
-    if jupyter_token:
-        import_args.extend(["--jupyter-token", str(jupyter_token)])
-    if jupyter_timeout:
-        import_args.extend(["--jupyter-timeout-seconds", str(jupyter_timeout)])
-    if jupyter_allowed_workdir:
-        import_args.extend(["--jupyter-allowed-workdir", str(jupyter_allowed_workdir)])
-    if artifact_root:
-        import_args.extend(["--artifact-root", str(artifact_root)])
-    if offline_addons_root:
-        import_args.extend(["--offline-addons-root", str(offline_addons_root)])
-    if offline_addons_python_path:
-        import_args.extend(["--offline-addons-python-path", str(offline_addons_python_path)])
-    if playwright_browsers_path:
-        import_args.extend(["--playwright-browsers-path", str(playwright_browsers_path)])
-    if nltk_data_path:
-        import_args.extend(["--nltk-data-path", str(nltk_data_path)])
-    if str(prefer_playwright_pdf).strip().lower() in {"1", "true", "yes", "on"}:
+    if args.base_url:
+        import_args.extend(["--base-url", str(args.base_url)])
+    if args.token:
+        import_args.extend(["--token", str(args.token)])
+    if args.jupyter_url:
+        import_args.extend(["--jupyter-url", str(args.jupyter_url)])
+    if args.jupyter_token:
+        import_args.extend(["--jupyter-token", str(args.jupyter_token)])
+    if args.jupyter_timeout_seconds:
+        import_args.extend(["--jupyter-timeout-seconds", str(args.jupyter_timeout_seconds)])
+    if args.jupyter_allowed_workdir:
+        import_args.extend(["--jupyter-allowed-workdir", str(args.jupyter_allowed_workdir)])
+    if args.artifact_root:
+        import_args.extend(["--artifact-root", str(args.artifact_root)])
+    if args.offline_addons_root:
+        import_args.extend(["--offline-addons-root", str(args.offline_addons_root)])
+    if args.offline_addons_python_path:
+        import_args.extend(["--offline-addons-python-path", str(args.offline_addons_python_path)])
+    if args.playwright_browsers_path:
+        import_args.extend(["--playwright-browsers-path", str(args.playwright_browsers_path)])
+    if args.nltk_data_path:
+        import_args.extend(["--nltk-data-path", str(args.nltk_data_path)])
+    if args.prefer_playwright_pdf:
         import_args.append("--prefer-playwright-pdf")
     if args.public_read:
         import_args.append("--public-read")
@@ -1517,19 +1529,19 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--rebuild-zips", action="store_true", help="Rebuild portable offline ZIP artifacts after writing.")
     parser.add_argument("--import-openwebui", action="store_true", help="After a successful write/check pass, import tools, functions, skills, knowledge and models into an OpenWebUI instance.")
     parser.add_argument("--import-dry-run", action="store_true", help="Run the importer's local payload validation through this script without calling OpenWebUI.")
-    parser.add_argument("--config", default=None, help="YAML config for OpenWebUI/Jupyter endpoints and tokens. Defaults to scripts/openwebui_workspace_config.yaml when present.")
-    parser.add_argument("--base-url", default=None, help="OpenWebUI base URL for --import-openwebui, for example http://localhost:3000.")
-    parser.add_argument("--token", default=None, help="OpenWebUI admin API token for --import-openwebui. Prefer OPENWEBUI_ADMIN_TOKEN.")
-    parser.add_argument("--jupyter-url", default=None, help="Jupyter URL as seen from the OpenWebUI backend/container.")
-    parser.add_argument("--jupyter-token", default=None, help="Jupyter token for the air_gapped_jupyter_python tool valve.")
-    parser.add_argument("--jupyter-timeout-seconds", default=None, help="Jupyter execution timeout tool valve.")
-    parser.add_argument("--jupyter-allowed-workdir", default=None, help="Allowed workdir as seen by the Jupyter host/container.")
-    parser.add_argument("--artifact-root", default=None, help="Artifact root as seen by the OpenWebUI backend/container.")
-    parser.add_argument("--offline-addons-root", default=None, help="Root of the mounted offline add-ons tree as seen by OpenWebUI.")
-    parser.add_argument("--offline-addons-python-path", default=None, help="Offline add-ons Python package path as seen by OpenWebUI.")
-    parser.add_argument("--playwright-browsers-path", default=None, help="Local Playwright browser cache path as seen by OpenWebUI.")
-    parser.add_argument("--nltk-data-path", default=None, help="Local NLTK data path as seen by OpenWebUI.")
-    parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="Prefer local Playwright/Chromium for artifact PDF conversion.")
+    parser.add_argument("--config", default=None, help="Central YAML config for OpenWebUI endpoint, tokens, backend paths and valves. Defaults to scripts/openwebui_workspace_config.yaml when present.")
+    parser.add_argument("--base-url", default=None, help="One-off override for openwebui.base_url from the central config.")
+    parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
+    parser.add_argument("--jupyter-url", default=None, help="One-off override for the Jupyter tool valve. Prefer tool_valves.air_gapped_jupyter_python in the config.")
+    parser.add_argument("--jupyter-token", default=None, help="One-off override for the Jupyter token tool valve.")
+    parser.add_argument("--jupyter-timeout-seconds", default=None, help="One-off override for the Jupyter timeout tool valve.")
+    parser.add_argument("--jupyter-allowed-workdir", default=None, help="One-off override for the Jupyter allowed-workdir tool valve.")
+    parser.add_argument("--artifact-root", default=None, help="One-off override for the artifact root tool valve.")
+    parser.add_argument("--offline-addons-root", default=None, help="One-off override for the offline add-ons root tool valve.")
+    parser.add_argument("--offline-addons-python-path", default=None, help="One-off override for the offline add-ons Python path tool valve.")
+    parser.add_argument("--playwright-browsers-path", default=None, help="One-off override for the Playwright browser cache tool valve.")
+    parser.add_argument("--nltk-data-path", default=None, help="One-off override for the NLTK data path tool valve.")
+    parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="One-off override to prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--public-read", action="store_true", help="Grant read access during --import-openwebui where OpenWebUI permits it.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md and fachwissen.md as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")

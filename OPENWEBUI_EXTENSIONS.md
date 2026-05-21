@@ -82,13 +82,13 @@ Der Filter `auto_tool_selector.py` läuft als `inlet` vor dem Modellaufruf. Er e
 - `safe-mcp-openapi-import`: sichere MCP-/OpenAPI-Toolserver-Prüfung.
 - `native-tool-calling-rollout`: Native-Tool-Calling-Rollout und Abnahmetests.
 
-## Valves, API-Keys und Secrets
+## Zentrale Konfiguration, Valves und Secrets
 
-Secrets gehören nie in Git. Tool-Konfigurationen wie GitHub-Token werden in OpenWebUI-Valves oder über sichere OAuth-Injektion gesetzt. Dokumentations- und Beispielwerte müssen Platzhalter bleiben.
+Secrets gehören nie in Git. Für den API-Import ist `scripts/openwebui_workspace_config.yaml` die zentrale lokale Konfigurationsdatei; sie wird ignoriert und bleibt auf der Zielmaschine. Dokumentations- und Beispielwerte müssen Platzhalter bleiben.
 
-Für Artefakte kann `OPENWEBUI_ARTIFACT_ROOT` gesetzt werden. Dieser Pfad sollte als persistentes Volume in den OpenWebUI-Container eingebunden werden, damit erzeugte Dateien nach Neustarts erhalten bleiben.
+Die Datei bündelt die von der Import-Maschine erreichbare OpenWebUI-Adresse, den Admin-API-Key, backend-sichtbare Artefakt- und Addon-Pfade, Jupyter-Zugangsdaten, `tool_valves` und `function_valves`. Der Importer setzt daraus unter anderem die Valves für `air_gapped_jupyter_python`, `offline_artifact_workbench` und den `context_compressor_filter`. CLI-Parameter sind nur für bewusste Einmal-Overrides gedacht.
 
-Der Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` ist als lokale OpenWebUI-Erweiterung vorgesehen. Im Container werden seine Bestandteile über `/app/backend/data/cache`, `/app/backend/data/python`, `/app/backend/data/nltk_data` und `/app/backend/data/cache/ms-playwright` bereitgestellt. Tools und Filter sollen außerdem OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool Calls und Builtins nutzen, wenn die Zielinstanz sie anbietet.
+Der Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` kann als lokale OpenWebUI-Erweiterung eingebunden werden. Im Container werden seine Bestandteile über `/app/backend/data/cache`, `/app/backend/data/python`, `/app/backend/data/nltk_data` und `/app/backend/data/cache/ms-playwright` bereitgestellt und in der zentralen YAML abgebildet. Tools und Filter sollen außerdem OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool Calls und Builtins nutzen, wenn die Zielinstanz sie anbietet.
 
 ## Tests
 
@@ -128,10 +128,9 @@ notepad scripts/openwebui_workspace_config.yaml
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
-Die Konfigurationsdatei enthält die von der ausführenden Maschine erreichbare OpenWebUI-Adresse und den Admin-API-Key sowie die aus Sicht des OpenWebUI-Backends erreichbare Jupyter-Adresse, den Jupyter-Token, das Artefakt-Volume und die `addons.*`-Pfade. Die echte `scripts/openwebui_workspace_config.yaml` ist per `.gitignore` ausgeschlossen; nur die Beispiel-Datei wird versioniert. `import.include_optional_network_tools: true` ist der Standard, damit der API-Importer alle importierbaren Repo-Tools anlegt; für einen strikten Minimalimport kann der Wert lokal auf `false` gesetzt werden.
-Alternativ können dieselben Werte für lokale Einmalimporte oben in `scripts/configure_openwebui_tool_models.py` in den `SCRIPT_*`-Konstanten oder als CLI-Parameter wie `--jupyter-url`, `--jupyter-token`, `--artifact-root`, `--offline-addons-python-path` und `--playwright-browsers-path` gesetzt werden.
+Die Konfigurationsdatei enthält die von der ausführenden Maschine erreichbare OpenWebUI-Adresse und den Admin-API-Key sowie die aus Sicht des OpenWebUI-Backends erreichbare Jupyter-Adresse, den Jupyter-Token, das Artefakt-Volume, die `addons.*`-Pfade, generische `tool_valves`, `function_valves` und zentrale dokumentierte Environment-Namen. Die echte `scripts/openwebui_workspace_config.yaml` ist per `.gitignore` ausgeschlossen; nur die Beispiel-Datei wird versioniert. `import.include_optional_network_tools: true` ist der Standard, damit der API-Importer alle importierbaren Repo-Tools anlegt; für einen strikten Minimalimport kann der Wert lokal auf `false` gesetzt werden.
 
-Der Generator validiert zuerst alle lokalen Artefakte und startet danach `Tools/import_openwebui_workspace.py`. Der Importer importiert beziehungsweise aktualisiert Tools, Functions/Filter, Skills und Modelle. Standardmäßig lädt er zusätzlich `mainprompt.md` und `fachwissen.md` jedes Modellpakets als Knowledge-Basis hoch, verknüpft diese Knowledge im jeweiligen Modellprofil und setzt die Tool-Valves für `air_gapped_jupyter_python` sowie `offline_artifact_workbench`, inklusive Addon-Pythonpfad, NLTK-Pfad und Playwright-Browsercache. Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` oder direkt mit `python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
+Der Generator validiert zuerst alle lokalen Artefakte und startet danach `Tools/import_openwebui_workspace.py`. Der Importer importiert beziehungsweise aktualisiert Tools, setzt Tool-Valves, importiert Functions/Filter, setzt Function-/Filter-Valves, importiert Skills und anschließend Modelle. Standardmäßig lädt er zusätzlich `mainprompt.md` und `fachwissen.md` jedes Modellpakets als Knowledge-Basis hoch, verknüpft diese Knowledge im jeweiligen Modellprofil und importiert dann die Modellprofile. Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` oder direkt mit `python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
 
 ## Wartung
 

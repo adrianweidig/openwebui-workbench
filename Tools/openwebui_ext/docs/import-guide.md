@@ -8,9 +8,17 @@
 4. `Tools/dist/openwebui-tools-offline-import.json` auswählen.
 5. Optional mit Netzwerk-/Rich-UI-/lokalen Crawl-Tools: `Tools/dist/openwebui-tools-import.json` auswählen.
 6. Speichern und Tools nur für passende Modelle aktivieren.
-7. Valves prüfen und Secrets ausschließlich lokal in OpenWebUI konfigurieren, nicht im Repository.
+7. Für den vollständigen Repo-Import bevorzugt `scripts/openwebui_workspace_config.yaml` nutzen; dort liegen OpenWebUI-Adresse, Admin-Token, Backend-Pfade, `tool_valves` und `function_valves` zentral.
 
 Fallback: Einzelne `.py`-Dateien aus `Tools/openwebui_ext/tools/*.py` oder `Tools/jupyter/jupyter_tool.py` über `Create Tool` einfügen.
+
+Der reproduzierbare API-Pfad ist:
+
+```powershell
+Copy-Item scripts/openwebui_workspace_config.example.yaml scripts/openwebui_workspace_config.yaml
+notepad scripts/openwebui_workspace_config.yaml
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
+```
 
 ## Skills importieren
 
@@ -25,7 +33,7 @@ Fallback: Einzelne `.py`-Dateien aus `Tools/openwebui_ext/tools/*.py` oder `Tool
 - Tools nur Modellen zuordnen, deren Aufgabe den Tool-Zweck benötigt.
 - Skills können modellgebunden werden, wenn sie regelmäßig gebraucht werden.
 - Für Tools Native Function Calling bevorzugen und Status-/Citation-Events nutzen.
-- Der Standard-Workflow ist offline: zuerst `Tools/dist/openwebui-tools-offline-import.json` importieren, danach `Tools/dist/openwebui-functions-import.json` und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
+- Der Standard-Workflow ist der API-Import mit zentraler YAML, weil dabei Tool-Valves, Function-/Filter-Valves, Skills, modellbezogene Knowledge und Modellprofile in der richtigen Reihenfolge gesetzt werden. Der manuelle Offline-Fallback ist: zuerst `Tools/dist/openwebui-tools-offline-import.json` importieren, danach `Tools/dist/openwebui-functions-import.json` und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
 - Öffentliche Netzwerktools wie `safe_http_fetcher.py` und `github_repo_inspector.py` sowie optionale Rich-UI-/Crawl-Tools wie `openui_generative_ui.py` und `web_search_and_crawl.py` sind nicht Teil des Offline-Standardimports und werden keinem Modellprofil standardmäßig zugewiesen.
 
 ## Rechtevergabe
@@ -38,4 +46,4 @@ Fallback: Einzelne `.py`-Dateien aus `Tools/openwebui_ext/tools/*.py` oder `Tool
 - Importfehler: `python scripts/validate_openwebui_extensions.py` ausführen; zusätzlich Python-Syntax mit `python -m py_compile Tools/openwebui_ext/tools/<tool>.py` prüfen.
 - Tool wird nicht aufgerufen: Modell-Tool-Zuordnung und Function-Calling-Einstellung prüfen.
 - Skill nicht sichtbar: Skill aktivieren und Zugriffsrechte prüfen.
-- Unerwartete Toolfehler: Valves, Netzwerkzugriff und Größenlimits prüfen.
+- Unerwartete Toolfehler: `scripts/openwebui_workspace_config.yaml`, importierte Tool-/Function-Valves, Netzwerkzugriff und Größenlimits prüfen.

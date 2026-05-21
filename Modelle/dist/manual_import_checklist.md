@@ -17,7 +17,7 @@
 ## Direktimport
 
 `openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht.
-Für vollständige Funktion inklusive Jupyter-, Artefakt- und Addon-Valves sollte der API-Import mit `scripts/openwebui_workspace_config.yaml` genutzt werden. Der Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` stellt lokale Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete bereit.
+Für vollständige Funktion inklusive Tool-Valves, Function-/Filter-Valves, Jupyter, Artefaktpfad, Addon-Pfaden und modellbezogener Knowledge sollte der API-Import mit `scripts/openwebui_workspace_config.yaml` genutzt werden. Der Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` stellt lokale Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete bereit.
 
 ## Manuelle Integration
 
