@@ -45,6 +45,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2760,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "air_gapped_jupyter_python",
@@ -186,6 +187,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2717,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -287,6 +289,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2643,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "openapi_schema_inspector",
@@ -382,6 +385,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2650,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -479,6 +483,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2619,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -576,6 +581,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2602,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -673,6 +679,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2639,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -770,6 +777,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2648,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -867,6 +875,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2676,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -968,6 +977,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2644,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1063,6 +1073,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2638,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "offline_artifact_workbench",
@@ -1160,6 +1171,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2638,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1255,6 +1267,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2635,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1350,6 +1363,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2608,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1443,6 +1457,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2623,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1538,6 +1553,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2635,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1635,6 +1651,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2685,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1732,6 +1749,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2643,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1827,6 +1845,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 3001,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1954,6 +1973,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2792,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2057,6 +2077,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 3005,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2182,6 +2203,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2832,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2289,6 +2311,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2770,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2392,6 +2415,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2765,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "parallel_task_planner",
@@ -2497,6 +2521,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2812,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2604,6 +2629,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2596,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -2699,6 +2725,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2698,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2798,6 +2825,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2632,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2893,6 +2921,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2690,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2990,6 +3019,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2639,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -3087,6 +3117,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2603,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",

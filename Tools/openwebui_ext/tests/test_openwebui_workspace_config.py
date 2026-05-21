@@ -19,6 +19,7 @@ CONFIG_EXAMPLE = ROOT / "scripts" / "openwebui_workspace_config.example.yaml"
 REQUIRED_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 TOOL_FORCE_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
 VISION_MARKER = "## Vision- und UI-Bildanalyse"
+KNOWLEDGE_PHRASES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md", "beispiele/", "laden und analysieren"]
 
 
 def read_json(path: Path):
@@ -60,6 +61,9 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 self.assertIn(TOOL_FORCE_MARKER, system)
                 self.assertIn(VISION_MARKER, system)
                 self.assertIn("Tool-/Skill-Inventur", system)
+                self.assertLess(len(system), 3500)
+                for phrase in KNOWLEDGE_PHRASES:
+                    self.assertIn(phrase, system)
                 self.assertEqual(meta.get("requiredKnowledgeFiles"), REQUIRED_KNOWLEDGE_FILES)
                 self.assertTrue(meta.get("capabilities", {}).get("vision"))
                 self.assertGreater(len(meta.get("primaryToolIds", [])), 0)
@@ -116,6 +120,7 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 self.assertTrue(model.get("has_vision_profile"))
                 self.assertTrue(model.get("vision_enabled"))
                 self.assertTrue(model.get("has_openwebui_builtin_and_addon_policy"))
+                self.assertLess(model.get("system_prompt_chars", 999999), 3500)
                 self.assertEqual(model.get("required_knowledge_files"), REQUIRED_KNOWLEDGE_FILES)
                 for info in model.get("knowledge_files", {}).values():
                     self.assertTrue(info.get("exists"))

@@ -1031,7 +1031,7 @@
   "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
   "tool_force_policy": {
     "system_marker": "## Verbindliche Tool- und Skill-Nutzung",
-    "behavior": "Every chat model must use at least one suitable assigned tool before the final answer when a task involves files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals, parallel planning, model/tool/skill overlays, ComfyUI workflows or skill authoring.",
+    "behavior": "Every chat model starts non-trivial work with a compact tool/skill inventory and uses the smallest suitable available tool set early when files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals or parallel work are involved.",
     "model_profiles": {
       "allgemein": {
         "tools": [
@@ -1528,23 +1528,18 @@
   "tool_call_playbook_policy": {
     "system_marker": "## Explizite Tool-Aufrufmuster",
     "target_model_runtime": "local Mistral Medium 128B",
-    "behavior": "Every chat model receives concrete tool call patterns for parallel planning, true parallel tool execution, subagents, validation, Jupyter checks, artifact creation, API schema inspection, Docker/OpenWebUI diagnostics, model/tool/skill overlays and council review where configured.",
-    "required_call_patterns": [
-      "parallel_task_planner.build_parallel_execution_plan(goal, tasks_json)",
-      "parallel_tools.run_tools_parallel(tool_calls)",
-      "sub_agent.run_sub_agent(description, prompt)",
-      "sub_agent.run_parallel_sub_agents(tasks)",
-      "air_gapped_jupyter_python.run_python(code)",
-      "json_csv_text_validator.validate_json(text)",
-      "offline_artifact_workbench.create_slide_deck(...)",
-      "offline_artifact_workbench.convert_html_to_pdf(...) with local Playwright when available",
-      "tool_skill_overlay_planner.build_overlay_matrix(...)"
+    "behavior": "Every chat model receives a short system-level reminder to prefer OpenWebUI builtins, model primary tools, parallelization/subagents and visual/artifact tooling when the use case requires them. Detailed call syntax stays in Knowledge and skills.",
+    "required_prompt_phrases": [
+      "OpenWebUI-Builtins",
+      "primären Modelltools",
+      "Parallelisierung oder Subagenten",
+      "geeignetes Tool geprüft"
     ]
   },
   "custom_gpt_quality_policy": {
     "formatting_marker": "Formatting re-enabled",
     "system_marker": "## CustomGPT-Qualitätsprofil",
-    "behavior": "Every chat model is prompted like a professional Custom GPT with explicit role, scope, knowledge use, success checks, safety boundaries, Markdown quality, minimal clarifying questions, and final-answer self-checks."
+    "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ before applying role, scope, output format, quality rules and examples to the task."
   },
   "model_params_policy": {
     "max_tokens": "omitted",

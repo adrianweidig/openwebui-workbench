@@ -71,35 +71,19 @@ MANAGED_SYSTEM_SECTION_MARKERS = [
 ]
 HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
-- Arbeite grundsätzlich im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch. Gib keine verborgene Herleitung aus; liefere nur das fachlich notwendige Ergebnis.
-- Nutze verfügbare Offline-Tools und agentische Arbeitsschritte aktiv, wenn sie die Qualität, Reproduzierbarkeit oder Artefakterzeugung verbessern.
-- Nutze OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, natives Tool Calling und verfügbare Builtins aktiv, sofern die Zielinstanz sie bereitstellt. Der lokale `openwebui-offline-addons`-Stack gilt als freigegebene Laufzeit für Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete.
-- Halte Antworten trotzdem aufgabengerecht kompakt; sehr lange Ausgaben oder vollständige Artefakte nur erzeugen, wenn die Nutzeraufgabe das verlangt.
-- Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits.
+- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.
+- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.
 """
 CUSTOM_GPT_QUALITY_SYSTEM_BLOCK = f"""{CUSTOM_GPT_QUALITY_SYSTEM_MARKER}
 
-Behandle diese Modellkonfiguration wie einen professionell gepflegten Custom GPT:
-
-- Rolle, Ziel, Zielgruppe, erlaubte Aufgaben, Nicht-Aufgaben, Eingaben, Ausgaben und Erfolgskriterien müssen aus `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und den Dateien unter `beispiele/` aktiv angewendet werden.
-- Nutze die vorhandenen Prompt Suggestions, Tool-Profile, Skill-Hinweise, Beispielartefakte und Knowledge-Dateien als konkrete Verhaltensmuster; erfinde keine Tool-, Skill-, Datei-, Knowledge- oder Quellen-IDs.
-- Trenne strikt zwischen Nutzerquellen, hochgeladenen Dateien, Knowledge-Inhalten, Tool-Ausgaben, eigener Analyse, Annahmen und Empfehlungen.
-- Stelle höchstens drei gezielte Rückfragen, wenn das Ziel ohne Antwort wesentlich unklar bleibt. Wenn belastbare Annahmen möglich sind, arbeite weiter und markiere sie knapp.
-- Bei komplexen Aufgaben definierst du intern Erfolgskriterien, zerlegst die Arbeit in sinnvolle Teilschritte und prüfst vor der finalen Antwort, ob Ziel, Format, Quellenklarheit, Tool-Nutzung, Sicherheitsgrenzen und Vollständigkeit erfüllt sind.
-- Verwende sauberes Markdown mit kurzen Überschriften, Listen, Tabellen oder JSON nur dort, wo es dem Ergebnis dient. Kein Fülltext, keine Meta-Erklärungen und keine sichtbaren Debug- oder Platzhaltertexte.
-- Bei aktuellen, rechtlichen, medizinischen, finanziellen, sicherheitskritischen oder produktionsrelevanten Aussagen kennzeichne Prüfpflichten und Aktualitätsgrenzen. Ohne freigegebenes Recherchetool keine externen Fakten behaupten.
-- Secrets, Tokens, private URLs und personenbezogene Daten minimieren, nicht unnötig wiederholen und niemals in Artefakte, Beispiele oder Logs übernehmen.
-- Produktive Änderungen, riskante Aktionen, externe Aufrufe oder irreversible Schritte nur nach ausdrücklicher Nutzerfreigabe und mit klarem Risiko-/Rollback-Hinweis.
+- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/` laden und analysieren.
+- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.
+- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.
 """
 VISION_SYSTEM_BLOCK = f"""{VISION_SYSTEM_MARKER}
 
-Nutze die Vision-/Multimodal-Faehigkeit der Zielinstanz aktiv, wenn der Nutzer Bilder, Screenshots, gescannte Dokumente, Folien, Diagramme, UI-Zustaende, Vorher-/Nachher-Vergleiche oder visuelle Artefakte bereitstellt.
-
-- Pruefe zuerst, ob OpenWebUI die Bildteile tatsaechlich an das Basismodell weitergibt. Wenn nicht, fordere gezielt Screenshot, OCR-Text, HTML/PDF-Export oder eine klare Beschreibung an und nutze lokale Offline-Tools als Fallback.
-- Bei UI-Tests und visueller Artefakt-QA: bewerte Layout, Responsiveness, Overlaps, Lesbarkeit, Kontrast, Fokus-/Hover-/Touch-Zustaende, Interaktionsleisten, Dark Mode, reduzierte Bewegung und sichtbare Fehlermeldungen.
-- Bei Dokumentbildern, Tabellen, Charts oder Scans: trenne sicher lesbaren Text, visuelle Struktur, erkannte Daten, Unsicherheiten und notwendige Validierung.
-- Bei Praesentationen, Dashboards, HTML/PDF und visuellen Ergebnissen: nutze nach Moeglichkeit `offline_artifact_workbench`, lokale Playwright-/Chromium-Faehigkeiten aus `openwebui-offline-addons` und die Beispielartefakte aus `beispielergebnis.md`, um hochwertige offline lauffaehige Ergebnisse zu erzeugen oder zu pruefen.
-- Behaupte keine nicht sichtbaren Details. Markiere Bildbereiche, die unscharf, abgeschnitten, verdeckt oder nicht sicher interpretierbar sind.
+- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.
+- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.
 """
 MODEL_TEMPERATURES = {
     "allgemein": 0.45,
@@ -337,6 +321,11 @@ def read_json(path: Path) -> Any:
 def write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text.rstrip() + "\n", encoding="utf-8")
 
 
 def stable_text_bytes(path: Path) -> bytes:
@@ -787,64 +776,26 @@ def top_p_for_temperature(temperature: float) -> float:
 
 def tool_force_block_for_model(model_id: str) -> str:
     profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
-    tools = ", ".join(f"`{tool}`" for tool in profile["tools"])
+    if model_id == "allgemein":
+        tools = "alle in `meta.toolIds` tatsächlich verfügbaren Tools der Instanz"
+    else:
+        tools = ", ".join(f"`{tool}`" for tool in profile["tools"])
     skills = ", ".join(f"`{skill}`" for skill in profile["skills"])
     focus = profile["focus"]
     return f"""{TOOL_FORCE_SYSTEM_MARKER}
 
-Zu Beginn jeder nicht-trivialen Aufgabe MUSST du eine kurze Tool-/Skill-Inventur durchführen: Prüfe anhand der tatsächlich verfügbaren Tool-IDs, importierten Skills, Nutzerdateien und des gewünschten Ergebnisses, welche Tools oder Skills für diesen Use Case passen. Nutze nur wirklich verfügbare Tools; wenn ein empfohlenes Tool oder ein Skill in der Zielinstanz fehlt, erfinde ihn nicht, sondern arbeite mit dem besten verfügbaren Fallback und benenne die Grenze knapp.
-
-Berücksichtige dabei auch OpenWebUI-Standardfunktionen und Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls, lokale Caches und die gemounteten `openwebui-offline-addons`. Wenn ein Builtin dieselbe Aufgabe schneller oder sicherer erledigt als ein Repo-Tool, nutze das Builtin oder kombiniere es mit dem kleinsten passenden Repo-Tool.
-
-Wenn ein passendes Tool verfügbar ist, nutze es früh im Arbeitsablauf und nicht erst nach einer fertigen Antwort. Bei mehreren unabhängigen Teilprüfungen prüfe, ob `parallel_task_planner`, `parallel_tools`, `subagent_orchestrator` oder `sub_agent` die Arbeit robuster machen. Wenn `auto_tool_selector` als Filter aktiv ist, prüfe dessen Tool-Vorauswahl trotzdem bewusst gegen den aktuellen Use Case.
-
-Vor jeder finalen Antwort prüfst du aktiv, ob ein freigegebenes Tool oder ein importierter Skill die Aufgabe belastbarer, reproduzierbarer oder artefaktfähig macht. Wenn einer der folgenden Auslöser zutrifft, MUSST du vor der finalen Antwort mindestens ein passendes Tool nutzen; nur bei reiner Begriffserklärung, fehlenden Eingaben, explizitem Nutzerverbot oder Sicherheits-/Berechtigungsgründen darfst du darauf verzichten und musst den Verzicht kurz begründen.
-
-- Dateien, Tabellen, JSON, CSV, Logs oder strukturierte Texte: `json_csv_text_validator`; bei Berechnung, Transformation oder Stichproben zusätzlich `air_gapped_jupyter_python`.
-- Code, Repository-Strukturen, Diffs, Tests oder Refactoring: `repo_tree_analyzer`; für ausführbare Prüfungen oder Datenaufbereitung `air_gapped_jupyter_python`.
-- HTML, PDF, Präsentationen, ZIPs oder andere Übergabeartefakte: `offline_artifact_workbench`; für Diagramme, Mermaid, SVG-Charts oder Dashboards zusätzlich `inline_visuals_toolkit_v3`.
-- Docker-, Compose-, OpenWebUI- oder Betriebsfehler: `docker_compose_triage`.
-- OpenAPI-, MCP-, Schnittstellen- oder Toolserver-Schemata: `openapi_schema_inspector`.
-- Unklare Eingaben, fehlende Dateien oder notwendige Rückfragen vor Toolausführung: `ask_user`, sofern verfügbar.
-- Komplexe mehrstufige Aufgaben, parallele Arbeit oder Subagent-Planung: `parallel_task_planner`; für parallele bereits aktivierte Toolaufrufe `parallel_tools`; bei Rollen-/Subagent-Aufteilung zusätzlich `subagent_orchestrator` oder `sub_agent`.
-- Modell-, Tool-, Skill- oder Fallback-Zuordnung: `tool_skill_overlay_planner`.
-- Unsichere fachliche Abwägungen, zweite Modellmeinung oder robuste Entscheidungsvorbereitung: `llm_council`, sofern lokale Modell- und OpenWebUI-API-Konfiguration vorhanden sind.
-- ComfyUI-, Bild-, Audio- oder Video-Workflow-JSON: `comfyui_workflow_inspector`.
-- Skill-Entwurf oder Skill-Markdown: `markdown_skill_builder`.
-- Rich-Visuals, Dashboards, Wireframes, ASCII-/SVG-Visualisierung oder textbasierte UI-Entwürfe: `visuals_toolkit_v4`; bei klassischen Offline-SVG-/Mermaid-Artefakten zusätzlich oder alternativ `inline_visuals_toolkit_v3`.
-- Interne MediaWiki-Arbeit: `mediawiki_legacy_crawler` nur bei explizitem Auftrag und vorhandener Konfiguration.
-- Public-Web-, GitHub- oder Rich-UI-Tools wie `web_search_and_crawl`, `safe_http_fetcher`, `github_repo_inspector` und `openui_generative_ui` nur nutzen, wenn sie in der Zielinstanz bewusst importiert, konfiguriert und für den aktuellen Offline-/Netzbereich freigegeben sind.
-
-Für dieses Modell sind primär diese Tools vorgesehen: {tools}.
-Wenn Skills importiert oder an das Modell gebunden sind, berücksichtige besonders: {skills}.
-Optimierungsfokus: {focus}
-
-Nutze immer den kleinsten ausreichenden Tool-Satz. Validiere Tool-Ausgaben kritisch, verschweige Fehler nicht und gib keine Secrets, Tokens oder unnötigen Rohdaten aus.
+- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.
+- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.
+- Primäre Tools: {tools}. Relevante Skills: {skills}. Fokus: {focus}
 """
 
 
 def tool_call_playbook_block_for_model(model_id: str) -> str:
-    profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
-    primary_tools = ", ".join(f"`{tool}`" for tool in profile["tools"])
     return f"""{TOOL_CALL_PLAYBOOK_SYSTEM_MARKER}
 
-Die Zielumgebung arbeitet lokal mit Mistral Medium 128B. Erzwinge High-Reasoning deshalb über Planung, Tool-Nutzung, Validierung und kurze Selbstprüfung im Prompt, nicht über nicht unterstützte Runtime-Parameter. Nutze die folgenden Aufrufmuster ausdrücklich, sobald die jeweilige Situation passt:
-
-- Vor jeder nicht-trivialen Antwort: Prüfe, ob mindestens eines der primären Modelltools passt. Primäre Tools dieses Modells: {primary_tools}.
-- Prüfe zusätzlich OpenWebUI-Builtins und Standardfähigkeiten der Zielinstanz: Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und lokal gemountete `openwebui-offline-addons` dürfen und sollen genutzt werden, wenn sie den Use Case schneller, robuster oder artefaktfähiger machen.
-- Bei zwei oder mehr unabhängigen Teilaufgaben: zuerst `parallel_task_planner.build_parallel_execution_plan(goal, tasks_json)` nutzen, die Abhängigkeiten prüfen und dann in Wellen arbeiten.
-- Bei mehreren bereits bekannten unabhängigen Toolaufrufen: `parallel_tools.run_tools_parallel(tool_calls)` mit `tool_calls` als JSON-Array wie `[{{"name":"validate_json","args":{{"text":"..."}}}}, {{"name":"analyze_tree","args":{{"tree_text":"..."}}}}]` verwenden. Nicht für abhängige, riskante oder schreibende Schritte einsetzen.
-- Bei komplexer Analyse mit klar trennbaren Rollen: `subagent_orchestrator.build_subagent_roster(available_models_json, available_tools_json)`, danach `subagent_orchestrator.build_subagent_jobs(goal, workstreams_json, subagent_profiles_json)` und für die Ausführung `sub_agent.run_sub_agent(description, prompt)` oder bei mehreren unabhängigen Rollen `sub_agent.run_parallel_sub_agents(tasks)` nutzen. Ergebnisse mit `subagent_orchestrator.merge_subagent_results(results_json)` oder `parallel_task_planner.merge_parallel_results(results_json)` zusammenführen.
-- Bei JSON, CSV, Logs oder strukturiertem Text: `json_csv_text_validator.validate_json(text)`, `json_csv_text_validator.validate_csv(text, delimiter)` oder `json_csv_text_validator.inspect_text(text)` vor der inhaltlichen Schlussfolgerung nutzen.
-- Bei Berechnungen, Stichproben, Transformationen oder reproduzierbarer lokaler Prüfung: `air_gapped_jupyter_python.run_python(code)` nutzen und Ausgaben kritisch plausibilisieren.
-- Bei Repository-, Code-, Diff- oder Refactoring-Fragen: `repo_tree_analyzer.analyze_tree(tree_text)` und bei ausführbarer Prüfung zusätzlich `air_gapped_jupyter_python.run_python(code)` einsetzen.
-- Bei HTML, PDF, Präsentation, ZIP oder Übergabeartefakt: `offline_artifact_workbench.create_html_document(...)`, `offline_artifact_workbench.create_slide_deck(...)`, `offline_artifact_workbench.convert_html_to_pdf(...)` oder `offline_artifact_workbench.bundle_artifacts(...)` nutzen; für PDF-Rendering nach Möglichkeit den lokalen Playwright/Chromium-Cache aus `openwebui-offline-addons` verwenden.
-- Bei OpenAPI-, MCP- oder Toolserver-Schemata: `openapi_schema_inspector.inspect_openapi_json(schema_json)` nutzen.
-- Bei Docker-, Compose-, OpenWebUI- oder Betriebsfehlern: `docker_compose_triage.analyze_compose(compose_text)` oder `docker_compose_triage.analyze_error_text(error_text)` nutzen.
-- Bei Modell-/Tool-/Skill-Zuordnung, Fallbacks oder Capability-Lücken: `tool_skill_overlay_planner.build_overlay_matrix(...)`, `tool_skill_overlay_planner.compare_capability_coverage(...)` oder `tool_skill_overlay_planner.suggest_fallback_stack(objective, candidates_json)` nutzen.
-- Bei unsicherer fachlicher Abwägung oder Bedarf an einer zweiten Modellmeinung: `llm_council.consult_council(topic)` nutzen, sofern die lokale OpenWebUI-API-Konfiguration vorhanden ist.
-
-Parallelisierung und Subagenten sind bei komplexen, mehrteiligen Aufgaben der Standardweg. Verzichte nur, wenn die Aufgabe trivial einstufig ist, ein Tool fehlt, der Nutzer Tool-Nutzung untersagt, Abhängigkeiten Parallelität unsicher machen oder ein Berechtigungs-/Sicherheitsgrund dagegen spricht; benenne diese Grenze knapp.
+- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.
+- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.
+- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.
 """
 
 
@@ -982,6 +933,14 @@ def managed_system_profile_for_model(model_id: str) -> str:
     return "\n\n".join(sections)
 
 
+def systemprompt_source_for_model(model_id: str) -> str:
+    return f"""# Systemprompt
+
+Dies ist nur der kurze Bootstrap-Prompt für das Modell `{model_id}`. Mainprompt, Fachwissen und Beispielwissen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.
+
+{managed_system_profile_for_model(model_id)}"""
+
+
 def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
     if not isinstance(system_prompt, str):
         return system_prompt
@@ -1005,15 +964,7 @@ def normalize_base_prompt_text(system_prompt: str) -> str:
 
 
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
-    raw_system_prompt = params.get("system")
-    if isinstance(raw_system_prompt, str):
-        base_prompt = normalize_base_prompt_text(strip_managed_system_sections(strip_markdown_formatting_marker(raw_system_prompt)))
-        system_parts = [managed_system_profile_for_model(model_id)]
-        if base_prompt:
-            system_parts.append(base_prompt)
-        system_prompt = "\n\n".join(system_parts)
-    else:
-        system_prompt = raw_system_prompt
+    system_prompt = systemprompt_source_for_model(model_id)
     system_prompt = ensure_markdown_formatting_enabled(system_prompt)
     temperature = temperature_for_model(model_id)
     params.clear()
@@ -1134,10 +1085,17 @@ def apply_model_config(tool_records: List[ToolRecord], function_records: List[Fu
         configured = configure_model(original, offline_tool_ids, filter_ids, all_tool_ids)
         configured_models.append(configured)
         new_data = [configured]
+        model_id = str(configured.get("id", ""))
+        systemprompt_path = path.parent / "systemprompt.md"
+        systemprompt_source = systemprompt_source_for_model(model_id)
         if new_data != data:
             changed = True
             if write:
                 write_json(path, new_data)
+        if not systemprompt_path.exists() or systemprompt_path.read_text(encoding="utf-8").replace("\r\n", "\n").rstrip() != systemprompt_source.rstrip():
+            changed = True
+            if write:
+                write_text(systemprompt_path, systemprompt_source)
     if write:
         write_json(MODEL_IMPORT, configured_models)
         write_json(MODEL_FALLBACK, configured_models)
@@ -1190,10 +1148,11 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "has_explicit_tool_call_playbook": TOOL_CALL_PLAYBOOK_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
-                "has_openwebui_builtin_and_addon_policy": "OpenWebUI-Standardfunktionen" in str(model.get("params", {}).get("system", ""))
+                "has_openwebui_builtin_and_addon_policy": "OpenWebUI-Builtins" in str(model.get("params", {}).get("system", ""))
                 and "openwebui-offline-addons" in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
+                "system_prompt_chars": len(str(model.get("params", {}).get("system", ""))) if isinstance(model.get("params"), dict) else 0,
                 "has_tool_force_profile": TOOL_FORCE_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
@@ -1349,29 +1308,24 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
         "tool_force_policy": {
             "system_marker": TOOL_FORCE_SYSTEM_MARKER,
-            "behavior": "Every chat model must use at least one suitable assigned tool before the final answer when a task involves files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals, parallel planning, model/tool/skill overlays, ComfyUI workflows or skill authoring.",
+            "behavior": "Every chat model starts non-trivial work with a compact tool/skill inventory and uses the smallest suitable available tool set early when files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals or parallel work are involved.",
             "model_profiles": TOOL_FORCE_PROFILES,
         },
         "tool_call_playbook_policy": {
             "system_marker": TOOL_CALL_PLAYBOOK_SYSTEM_MARKER,
             "target_model_runtime": "local Mistral Medium 128B",
-            "behavior": "Every chat model receives concrete tool call patterns for parallel planning, true parallel tool execution, subagents, validation, Jupyter checks, artifact creation, API schema inspection, Docker/OpenWebUI diagnostics, model/tool/skill overlays and council review where configured.",
-            "required_call_patterns": [
-                "parallel_task_planner.build_parallel_execution_plan(goal, tasks_json)",
-                "parallel_tools.run_tools_parallel(tool_calls)",
-                "sub_agent.run_sub_agent(description, prompt)",
-                "sub_agent.run_parallel_sub_agents(tasks)",
-                "air_gapped_jupyter_python.run_python(code)",
-                "json_csv_text_validator.validate_json(text)",
-                "offline_artifact_workbench.create_slide_deck(...)",
-                "offline_artifact_workbench.convert_html_to_pdf(...) with local Playwright when available",
-                "tool_skill_overlay_planner.build_overlay_matrix(...)",
+            "behavior": "Every chat model receives a short system-level reminder to prefer OpenWebUI builtins, model primary tools, parallelization/subagents and visual/artifact tooling when the use case requires them. Detailed call syntax stays in Knowledge and skills.",
+            "required_prompt_phrases": [
+                "OpenWebUI-Builtins",
+                "primären Modelltools",
+                "Parallelisierung oder Subagenten",
+                "geeignetes Tool geprüft",
             ],
         },
         "custom_gpt_quality_policy": {
             "formatting_marker": MARKDOWN_FORMATTING_MARKER,
             "system_marker": CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
-            "behavior": "Every chat model is prompted like a professional Custom GPT with explicit role, scope, knowledge use, success checks, safety boundaries, Markdown quality, minimal clarifying questions, and final-answer self-checks.",
+            "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ before applying role, scope, output format, quality rules and examples to the task.",
         },
         "model_params_policy": {
             "max_tokens": "omitted",
@@ -1464,19 +1418,22 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         system_text = str(params.get("system", ""))
         if not system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER):
             issues.append(f"Chat-Modell {model_id} aktiviert Markdown-Formatierung nicht am Promptanfang")
+        if len(system_text) > 3500:
+            issues.append(f"Chat-Modell {model_id} hat einen zu langen Systemprompt ({len(system_text)} Zeichen)")
         if HIGH_REASONING_SYSTEM_MARKER not in system_text or "Reasoning-Profil `high`" not in system_text:
             issues.append(f"Chat-Modell {model_id} hat kein durchgängiges High-Reasoning-Systemprofil")
-        for required_phrase in ["OpenWebUI-Standardfunktionen", "openwebui-offline-addons"]:
+        for required_phrase in ["OpenWebUI-Builtins", "openwebui-offline-addons"]:
             if required_phrase not in system_text:
                 issues.append(f"Chat-Modell {model_id} fehlt Builtin-/Addon-Laufzeitvorgabe: {required_phrase}")
         if CUSTOM_GPT_QUALITY_SYSTEM_MARKER not in system_text:
             issues.append(f"Chat-Modell {model_id} hat kein CustomGPT-Qualitätsprofil")
         for required_phrase in [
-            "Rolle, Ziel, Zielgruppe",
-            "Erfolgskriterien",
-            "Trenne strikt zwischen Nutzerquellen",
-            "höchstens drei gezielte Rückfragen",
-            "Secrets, Tokens, private URLs",
+            "mainprompt.md",
+            "fachwissen.md",
+            "beispielergebnis.md",
+            "beispiele/",
+            "laden und analysieren",
+            "Rolle, Ziel, Scope",
         ]:
             if required_phrase not in system_text:
                 issues.append(f"Chat-Modell {model_id} fehlt CustomGPT-Qualitätskriterium: {required_phrase}")
@@ -1485,15 +1442,10 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if TOOL_CALL_PLAYBOOK_SYSTEM_MARKER not in system_text:
             issues.append(f"Chat-Modell {model_id} hat keine expliziten Tool-Aufrufmuster")
         for required_phrase in [
-            "Mistral Medium 128B",
-            "parallel_task_planner.build_parallel_execution_plan",
-            "parallel_tools.run_tools_parallel",
-            "sub_agent.run_parallel_sub_agents",
-            "air_gapped_jupyter_python.run_python",
-            "json_csv_text_validator.validate_json",
-            "offline_artifact_workbench.create_slide_deck",
-            "offline_artifact_workbench.convert_html_to_pdf",
-            "tool_skill_overlay_planner.build_overlay_matrix",
+            "OpenWebUI-Builtins",
+            "primären Modelltools",
+            "Parallelisierung oder Subagenten",
+            "geeignetes Tool geprüft",
         ]:
             if required_phrase not in system_text:
                 issues.append(f"Chat-Modell {model_id} fehlt explizites Tool-Aufrufmuster: {required_phrase}")
