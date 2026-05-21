@@ -13,6 +13,27 @@
   "api_import_config_example": "scripts/openwebui_workspace_config.example.yaml",
   "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml",
   "api_import_token": "openwebui.admin_token in config YAML, OPENWEBUI_ADMIN_TOKEN environment variable, or --token CLI argument",
+  "offline_addons_runtime": {
+    "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
+    "container_data_root": "/app/backend/data",
+    "container_cache_path": "/app/backend/data/cache",
+    "container_python_path": "/app/backend/data/python",
+    "container_nltk_data_path": "/app/backend/data/nltk_data",
+    "container_playwright_browsers_path": "/app/backend/data/cache/ms-playwright",
+    "config_keys": [
+      "addons.root",
+      "addons.python_path",
+      "addons.playwright_browsers_path",
+      "addons.nltk_data",
+      "addons.prefer_playwright_pdf"
+    ],
+    "preferred_uses": [
+      "OpenWebUI built-in caches and offline model assets",
+      "local Playwright/Chromium rendering for HTML/PDF artifacts",
+      "local Python packages for imported tools",
+      "NLTK and Tiktoken resources for document and token tooling"
+    ]
+  },
   "tools_first": [
     "air_gapped_jupyter_python",
     "ask_user",
@@ -1024,6 +1045,7 @@
       "air_gapped_jupyter_python.run_python(code)",
       "json_csv_text_validator.validate_json(text)",
       "offline_artifact_workbench.create_slide_deck(...)",
+      "offline_artifact_workbench.convert_html_to_pdf(...) with local Playwright when available",
       "tool_skill_overlay_planner.build_overlay_matrix(...)"
     ]
   },
@@ -1108,7 +1130,7 @@
     "params.system tool-force section",
     "meta.profile_image_url"
   ],
-  "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
+  "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
   "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
   "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
   "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",

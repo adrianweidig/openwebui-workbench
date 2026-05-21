@@ -22,6 +22,16 @@ artifacts:
   # Path as seen by the OpenWebUI backend/container.
   root: "/app/backend/data/offline_artifacts"
 
+addons:
+  # F:\offline-ai-stack\openwebui-offline-addons is mounted into OpenWebUI
+  # through the offline stack override. These paths are seen by the OpenWebUI
+  # backend/container, not by the remote machine running this importer.
+  root: "/app/backend/data"
+  python_path: "/app/backend/data/python"
+  playwright_browsers_path: "/app/backend/data/cache/ms-playwright"
+  nltk_data: "/app/backend/data/nltk_data"
+  prefer_playwright_pdf: true
+
 import:
   public_read: false
   skip_knowledge: false

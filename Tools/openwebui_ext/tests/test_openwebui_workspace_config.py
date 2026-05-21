@@ -73,14 +73,17 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         self.assertIn("scripts/openwebui_workspace_config.yaml", plan.get("api_import_config_file", ""))
         self.assertIn("scripts/openwebui_workspace_config.example.yaml", plan.get("api_import_config_example", ""))
         self.assertIn("4_upload_model_knowledge", plan.get("order", []))
+        self.assertEqual(plan.get("offline_addons_runtime", {}).get("container_playwright_browsers_path"), "/app/backend/data/cache/ms-playwright")
         self.assertEqual(plan.get("model_knowledge_files_required"), REQUIRED_KNOWLEDGE_FILES)
         self.assertGreaterEqual(len(plan.get("skills_before_models", [])), 1)
         self.assertGreaterEqual(len(tools.get("tools", [])), 1)
         self.assertGreaterEqual(len(functions.get("functions", [])), 1)
+        self.assertIn("openwebui-offline-addons", summary.get("openwebui_builtin_and_addon_policy", ""))
 
         for model in summary.get("models", []):
             with self.subTest(model=model.get("id")):
                 self.assertTrue(model.get("has_tool_force_profile"))
+                self.assertTrue(model.get("has_openwebui_builtin_and_addon_policy"))
                 self.assertEqual(model.get("required_knowledge_files"), REQUIRED_KNOWLEDGE_FILES)
                 for info in model.get("knowledge_files", {}).values():
                     self.assertTrue(info.get("exists"))
@@ -92,9 +95,13 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         runtime = importer.resolve_runtime_config(args)
         self.assertEqual(runtime["base_url"], "http://openwebui.example.local:3000")
         self.assertEqual(runtime["jupyter"]["OPENWEBUI_JUPYTER_URL"], "http://jupyter:8888")
+        self.assertEqual(runtime["addons"]["playwright_browsers_path"], "/app/backend/data/cache/ms-playwright")
+        self.assertTrue(runtime["addons"]["prefer_playwright_pdf"])
         valves = importer.configured_tool_valves(runtime)
         self.assertIn("air_gapped_jupyter_python", valves)
         self.assertIn("offline_artifact_workbench", valves)
+        self.assertEqual(valves["offline_artifact_workbench"]["playwright_browsers_path"], "/app/backend/data/cache/ms-playwright")
+        self.assertTrue(valves["offline_artifact_workbench"]["prefer_playwright_pdf"])
 
 
 if __name__ == "__main__":

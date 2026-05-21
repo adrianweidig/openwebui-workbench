@@ -1,9 +1,9 @@
 """
 title: Offline Artifact Workbench
 description: Create offline HTML documents, slide decks, optional PDFs and ZIP bundles in a controlled artifact directory.
-version: 1.0.0
+version: 1.1.0
 license: MIT
-security: Writes only below the configured artifact root. Optional PDF conversion uses local allowlisted converters or Python libraries when present. No internet access, arbitrary path reads or shell strings are used.
+security: Writes only below the configured artifact root. Optional PDF conversion uses local Playwright, allowlisted converters or Python libraries when present. No internet access, arbitrary path reads or shell strings are used.
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, List
@@ -33,6 +34,12 @@ class Tools:
 
     class Valves(BaseModel):
         artifact_root: str = Field("/app/backend/data/offline_artifacts", description="Directory where generated artifacts are written.")
+        offline_addons_root: str = Field("/app/backend/data", description="Root of the mounted OpenWebUI offline add-ons data tree.")
+        offline_addons_python_path: str = Field("/app/backend/data/python", description="Additional offline Python package path prepared for OpenWebUI tools.")
+        playwright_browsers_path: str = Field("/app/backend/data/cache/ms-playwright", description="Local Playwright browser cache path.")
+        nltk_data_path: str = Field("/app/backend/data/nltk_data", description="Local NLTK data path prepared by the offline add-ons bundle.")
+        prefer_playwright_pdf: bool = Field(True, description="Use local Playwright/Chromium for PDF rendering before WeasyPrint or wkhtmltopdf.")
+        playwright_timeout_ms: int = Field(60000, description="Timeout for Playwright HTML rendering.")
         max_html_chars: int = Field(400000, description="Maximum HTML input size.")
         max_zip_files: int = Field(25, description="Maximum files per ZIP bundle.")
         allow_wkhtmltopdf: bool = Field(False, description="Allow local wkhtmltopdf conversion when installed.")
@@ -95,14 +102,18 @@ class Tools:
         source = self._safe_existing_path(html_file, ".html")
         target = self._safe_output_path(pdf_filename or (source.stem + ".pdf"), ".pdf")
         try:
-            converted_by = self._convert_with_weasyprint(source, target)
+            converted_by = ""
+            if bool(self.valves.prefer_playwright_pdf):
+                converted_by = await self._convert_with_playwright(source, target)
+            if not converted_by:
+                converted_by = self._convert_with_weasyprint(source, target)
             if not converted_by and bool(self.valves.allow_wkhtmltopdf):
                 converted_by = self._convert_with_wkhtmltopdf(source, target)
         except Exception as exc:
             await self._emit(__event_emitter__, "PDF-Konvertierung fehlgeschlagen", True)
             return f"Fehler: PDF-Konvertierung fehlgeschlagen: {type(exc).__name__}: {self._redact(str(exc))}"
         if not converted_by:
-            return "Fehler: Kein lokaler PDF-Konverter verfügbar. Installiere lokal `weasyprint` im OpenWebUI-Container oder aktiviere ein installiertes `wkhtmltopdf` über die Tool-Valve."
+            return "Fehler: Kein lokaler PDF-Konverter verfügbar. Stelle den Offline-Addon-Stack mit Playwright bereit, installiere lokal `weasyprint` im OpenWebUI-Container oder aktiviere ein installiertes `wkhtmltopdf` über die Tool-Valve."
         self._write_manifest(target, "pdf", {"source": str(source.name), "converter": converted_by})
         await self._file_event(__event_emitter__, target)
         await self._emit(__event_emitter__, "PDF erzeugt", True)
@@ -208,12 +219,60 @@ body { background: #f8fafc; }
         HTML(filename=str(source)).write_pdf(str(target))
         return "weasyprint"
 
+    async def _convert_with_playwright(self, source: Path, target: Path) -> str:
+        self._prepare_offline_addons_runtime()
+        try:
+            from playwright.async_api import async_playwright  # type: ignore
+        except Exception:
+            return ""
+        try:
+            async with async_playwright() as playwright:
+                browser = await playwright.chromium.launch(headless=True)
+                try:
+                    page = await browser.new_page()
+                    await page.goto(source.resolve().as_uri(), wait_until="networkidle", timeout=int(self.valves.playwright_timeout_ms))
+                    await page.pdf(path=str(target), print_background=True, prefer_css_page_size=True)
+                finally:
+                    await browser.close()
+        except Exception:
+            if target.exists():
+                try:
+                    target.unlink()
+                except Exception:
+                    pass
+            return ""
+        return "playwright"
+
     def _convert_with_wkhtmltopdf(self, source: Path, target: Path) -> str:
         exe = shutil.which("wkhtmltopdf")
         if not exe:
             return ""
         subprocess.run([exe, "--disable-local-file-access", str(source), str(target)], check=True, timeout=60)
         return "wkhtmltopdf"
+
+    def _prepare_offline_addons_runtime(self) -> None:
+        root_value = str(getattr(self.valves, "offline_addons_root", "") or os.environ.get("OPENWEBUI_OFFLINE_ADDONS_ROOT", "")).strip()
+        root = Path(root_value).expanduser().resolve() if root_value else None
+
+        python_path = str(getattr(self.valves, "offline_addons_python_path", "") or os.environ.get("OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH", "")).strip()
+        if not python_path and root:
+            python_path = str(root / "python")
+        if python_path:
+            candidate = Path(python_path).expanduser().resolve()
+            if candidate.exists() and str(candidate) not in sys.path:
+                sys.path.insert(0, str(candidate))
+
+        browsers_path = str(getattr(self.valves, "playwright_browsers_path", "") or os.environ.get("PLAYWRIGHT_BROWSERS_PATH", "")).strip()
+        if not browsers_path and root:
+            browsers_path = str(root / "cache" / "ms-playwright")
+        if browsers_path:
+            os.environ["PLAYWRIGHT_BROWSERS_PATH"] = browsers_path
+
+        nltk_path = str(getattr(self.valves, "nltk_data_path", "") or os.environ.get("NLTK_DATA", "")).strip()
+        if not nltk_path and root:
+            nltk_path = str(root / "nltk_data")
+        if nltk_path:
+            os.environ.setdefault("NLTK_DATA", nltk_path)
 
     def _write_manifest(self, path: Path, artifact_type: str, meta: Dict[str, Any]) -> None:
         manifest = {"artifact": path.name, "type": artifact_type, "meta": meta}

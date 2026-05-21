@@ -209,7 +209,7 @@
       "configuration": [
         "OPENWEBUI_ARTIFACT_ROOT"
       ],
-      "sha256": "49517647d7dfa7e75e62358a51c05465b6d69d62b1e790e39f065c04362462d3",
+      "sha256": "1be001be9716e2aebe05aab2df1b20e62733eaa5d1edc64fa5ed84db21221053",
       "importable": true,
       "methods": [
         "bundle_artifacts",

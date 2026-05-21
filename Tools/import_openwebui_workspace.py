@@ -26,6 +26,11 @@ JUPYTER_TOKEN = ""
 JUPYTER_TIMEOUT_SECONDS = 30
 JUPYTER_ALLOWED_WORKDIR = ""
 ARTIFACT_ROOT = ""
+OFFLINE_ADDONS_ROOT = ""
+OFFLINE_ADDONS_PYTHON_PATH = ""
+PLAYWRIGHT_BROWSERS_PATH = ""
+NLTK_DATA_PATH = ""
+PREFER_PLAYWRIGHT_PDF = True
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS_DIR = ROOT / "Tools"
@@ -340,6 +345,38 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
             ARTIFACT_ROOT,
         )
     )
+    prefer_playwright_pdf = (
+        args.prefer_playwright_pdf
+        if args.prefer_playwright_pdf is not None
+        else first_config_value(
+            config,
+            ["addons.prefer_playwright_pdf", "offline_addons.prefer_playwright_pdf", "tools.offline_artifact_workbench.prefer_playwright_pdf"],
+            PREFER_PLAYWRIGHT_PDF,
+        )
+    )
+    addons = {
+        "offline_addons_root": (
+            args.offline_addons_root
+            or os.getenv("OPENWEBUI_OFFLINE_ADDONS_ROOT")
+            or first_config_value(config, ["addons.root", "offline_addons.root"], OFFLINE_ADDONS_ROOT)
+        ),
+        "offline_addons_python_path": (
+            args.offline_addons_python_path
+            or os.getenv("OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH")
+            or first_config_value(config, ["addons.python_path", "addons.python_dir", "offline_addons.python_path"], OFFLINE_ADDONS_PYTHON_PATH)
+        ),
+        "playwright_browsers_path": (
+            args.playwright_browsers_path
+            or os.getenv("PLAYWRIGHT_BROWSERS_PATH")
+            or first_config_value(config, ["addons.playwright_browsers_path", "offline_addons.playwright_browsers_path"], PLAYWRIGHT_BROWSERS_PATH)
+        ),
+        "nltk_data_path": (
+            args.nltk_data_path
+            or os.getenv("NLTK_DATA")
+            or first_config_value(config, ["addons.nltk_data", "addons.nltk_data_path", "offline_addons.nltk_data_path"], NLTK_DATA_PATH)
+        ),
+        "prefer_playwright_pdf": as_bool(prefer_playwright_pdf, True),
+    }
     return {
         "config_path": config_path,
         "base_url": str(base_url).rstrip("/"),
@@ -350,6 +387,7 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         "skip_knowledge": skip_knowledge,
         "jupyter": jupyter,
         "artifact_root": str(artifact_root or ""),
+        "addons": addons,
     }
 
 
@@ -363,8 +401,24 @@ def configured_tool_valves(runtime: dict[str, Any]) -> dict[str, dict[str, Any]]
     if jupyter:
         valves["air_gapped_jupyter_python"] = jupyter
     artifact_root = runtime.get("artifact_root")
+    artifact_valves: dict[str, Any] = {}
     if artifact_root:
-        valves["offline_artifact_workbench"] = {"artifact_root": artifact_root}
+        artifact_valves["artifact_root"] = artifact_root
+    addons = runtime.get("addons", {})
+    if isinstance(addons, dict):
+        for key in [
+            "offline_addons_root",
+            "offline_addons_python_path",
+            "playwright_browsers_path",
+            "nltk_data_path",
+        ]:
+            value = addons.get(key)
+            if value not in (None, ""):
+                artifact_valves[key] = value
+        if "prefer_playwright_pdf" in addons:
+            artifact_valves["prefer_playwright_pdf"] = as_bool(addons.get("prefer_playwright_pdf"), True)
+    if artifact_valves:
+        valves["offline_artifact_workbench"] = artifact_valves
     return valves
 
 
@@ -675,6 +729,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--jupyter-timeout-seconds", type=int, default=None, help="Jupyter execution timeout tool valve.")
     parser.add_argument("--jupyter-allowed-workdir", default=None, help="Allowed workdir as seen by the Jupyter host/container.")
     parser.add_argument("--artifact-root", default=None, help="Artifact root as seen by the OpenWebUI backend/container.")
+    parser.add_argument("--offline-addons-root", default=None, help="Root of the mounted offline add-ons tree as seen by OpenWebUI.")
+    parser.add_argument("--offline-addons-python-path", default=None, help="Offline add-ons Python package path as seen by OpenWebUI.")
+    parser.add_argument("--playwright-browsers-path", default=None, help="Local Playwright browser cache path as seen by OpenWebUI.")
+    parser.add_argument("--nltk-data-path", default=None, help="Local NLTK data path as seen by OpenWebUI.")
+    parser.add_argument("--prefer-playwright-pdf", action="store_true", default=None, help="Prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--timeout", type=int, default=None)
     return parser.parse_args(argv)
 

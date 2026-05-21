@@ -29,6 +29,11 @@ SCRIPT_JUPYTER_TOKEN = ""
 SCRIPT_JUPYTER_TIMEOUT_SECONDS = ""
 SCRIPT_JUPYTER_ALLOWED_WORKDIR = ""
 SCRIPT_ARTIFACT_ROOT = ""
+SCRIPT_OFFLINE_ADDONS_ROOT = ""
+SCRIPT_OFFLINE_ADDONS_PYTHON_PATH = ""
+SCRIPT_PLAYWRIGHT_BROWSERS_PATH = ""
+SCRIPT_NLTK_DATA_PATH = ""
+SCRIPT_PREFER_PLAYWRIGHT_PDF = ""
 
 TOOLS_INDEX = ROOT / "Tools" / "index.json"
 TOOLS_DIST = ROOT / "Tools" / "dist"
@@ -77,6 +82,7 @@ HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
 - Arbeite grundsätzlich im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch. Gib keine verborgene Herleitung aus; liefere nur das fachlich notwendige Ergebnis.
 - Nutze verfügbare Offline-Tools und agentische Arbeitsschritte aktiv, wenn sie die Qualität, Reproduzierbarkeit oder Artefakterzeugung verbessern.
+- Nutze OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, natives Tool Calling und verfügbare Builtins aktiv, sofern die Zielinstanz sie bereitstellt. Der lokale `openwebui-offline-addons`-Stack gilt als freigegebene Laufzeit für Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete.
 - Halte Antworten trotzdem aufgabengerecht kompakt; sehr lange Ausgaben oder vollständige Artefakte nur erzeugen, wenn die Nutzeraufgabe das verlangt.
 - Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits.
 """
@@ -741,6 +747,8 @@ def tool_force_block_for_model(model_id: str) -> str:
 
 Zu Beginn jeder nicht-trivialen Aufgabe MUSST du eine kurze Tool-/Skill-Inventur durchführen: Prüfe anhand der tatsächlich verfügbaren Tool-IDs, importierten Skills, Nutzerdateien und des gewünschten Ergebnisses, welche Tools oder Skills für diesen Use Case passen. Nutze nur wirklich verfügbare Tools; wenn ein empfohlenes Tool oder ein Skill in der Zielinstanz fehlt, erfinde ihn nicht, sondern arbeite mit dem besten verfügbaren Fallback und benenne die Grenze knapp.
 
+Berücksichtige dabei auch OpenWebUI-Standardfunktionen und Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls, lokale Caches und die gemounteten `openwebui-offline-addons`. Wenn ein Builtin dieselbe Aufgabe schneller oder sicherer erledigt als ein Repo-Tool, nutze das Builtin oder kombiniere es mit dem kleinsten passenden Repo-Tool.
+
 Wenn ein passendes Tool verfügbar ist, nutze es früh im Arbeitsablauf und nicht erst nach einer fertigen Antwort. Bei mehreren unabhängigen Teilprüfungen prüfe, ob `parallel_task_planner`, `parallel_tools`, `subagent_orchestrator` oder `sub_agent` die Arbeit robuster machen. Wenn `auto_tool_selector` als Filter aktiv ist, prüfe dessen Tool-Vorauswahl trotzdem bewusst gegen den aktuellen Use Case.
 
 Vor jeder finalen Antwort prüfst du aktiv, ob ein freigegebenes Tool oder ein importierter Skill die Aufgabe belastbarer, reproduzierbarer oder artefaktfähig macht. Wenn einer der folgenden Auslöser zutrifft, MUSST du vor der finalen Antwort mindestens ein passendes Tool nutzen; nur bei reiner Begriffserklärung, fehlenden Eingaben, explizitem Nutzerverbot oder Sicherheits-/Berechtigungsgründen darfst du darauf verzichten und musst den Verzicht kurz begründen.
@@ -776,13 +784,14 @@ def tool_call_playbook_block_for_model(model_id: str) -> str:
 Die Zielumgebung arbeitet lokal mit Mistral Medium 128B. Erzwinge High-Reasoning deshalb über Planung, Tool-Nutzung, Validierung und kurze Selbstprüfung im Prompt, nicht über nicht unterstützte Runtime-Parameter. Nutze die folgenden Aufrufmuster ausdrücklich, sobald die jeweilige Situation passt:
 
 - Vor jeder nicht-trivialen Antwort: Prüfe, ob mindestens eines der primären Modelltools passt. Primäre Tools dieses Modells: {primary_tools}.
+- Prüfe zusätzlich OpenWebUI-Builtins und Standardfähigkeiten der Zielinstanz: Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und lokal gemountete `openwebui-offline-addons` dürfen und sollen genutzt werden, wenn sie den Use Case schneller, robuster oder artefaktfähiger machen.
 - Bei zwei oder mehr unabhängigen Teilaufgaben: zuerst `parallel_task_planner.build_parallel_execution_plan(goal, tasks_json)` nutzen, die Abhängigkeiten prüfen und dann in Wellen arbeiten.
 - Bei mehreren bereits bekannten unabhängigen Toolaufrufen: `parallel_tools.run_tools_parallel(tool_calls)` mit `tool_calls` als JSON-Array wie `[{{"name":"validate_json","args":{{"text":"..."}}}}, {{"name":"analyze_tree","args":{{"tree_text":"..."}}}}]` verwenden. Nicht für abhängige, riskante oder schreibende Schritte einsetzen.
 - Bei komplexer Analyse mit klar trennbaren Rollen: `subagent_orchestrator.build_subagent_roster(available_models_json, available_tools_json)`, danach `subagent_orchestrator.build_subagent_jobs(goal, workstreams_json, subagent_profiles_json)` und für die Ausführung `sub_agent.run_sub_agent(description, prompt)` oder bei mehreren unabhängigen Rollen `sub_agent.run_parallel_sub_agents(tasks)` nutzen. Ergebnisse mit `subagent_orchestrator.merge_subagent_results(results_json)` oder `parallel_task_planner.merge_parallel_results(results_json)` zusammenführen.
 - Bei JSON, CSV, Logs oder strukturiertem Text: `json_csv_text_validator.validate_json(text)`, `json_csv_text_validator.validate_csv(text, delimiter)` oder `json_csv_text_validator.inspect_text(text)` vor der inhaltlichen Schlussfolgerung nutzen.
 - Bei Berechnungen, Stichproben, Transformationen oder reproduzierbarer lokaler Prüfung: `air_gapped_jupyter_python.run_python(code)` nutzen und Ausgaben kritisch plausibilisieren.
 - Bei Repository-, Code-, Diff- oder Refactoring-Fragen: `repo_tree_analyzer.analyze_tree(tree_text)` und bei ausführbarer Prüfung zusätzlich `air_gapped_jupyter_python.run_python(code)` einsetzen.
-- Bei HTML, PDF, Präsentation, ZIP oder Übergabeartefakt: `offline_artifact_workbench.create_html_document(...)`, `offline_artifact_workbench.create_slide_deck(...)`, `offline_artifact_workbench.convert_html_to_pdf(...)` oder `offline_artifact_workbench.bundle_artifacts(...)` nutzen.
+- Bei HTML, PDF, Präsentation, ZIP oder Übergabeartefakt: `offline_artifact_workbench.create_html_document(...)`, `offline_artifact_workbench.create_slide_deck(...)`, `offline_artifact_workbench.convert_html_to_pdf(...)` oder `offline_artifact_workbench.bundle_artifacts(...)` nutzen; für PDF-Rendering nach Möglichkeit den lokalen Playwright/Chromium-Cache aus `openwebui-offline-addons` verwenden.
 - Bei OpenAPI-, MCP- oder Toolserver-Schemata: `openapi_schema_inspector.inspect_openapi_json(schema_json)` nutzen.
 - Bei Docker-, Compose-, OpenWebUI- oder Betriebsfehlern: `docker_compose_triage.analyze_compose(compose_text)` oder `docker_compose_triage.analyze_error_text(error_text)` nutzen.
 - Bei Modell-/Tool-/Skill-Zuordnung, Fallbacks oder Capability-Lücken: `tool_skill_overlay_planner.build_overlay_matrix(...)`, `tool_skill_overlay_planner.compare_capability_coverage(...)` oder `tool_skill_overlay_planner.suggest_fallback_stack(objective, candidates_json)` nutzen.
@@ -1082,6 +1091,7 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
         "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
         "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
         "mistral_medium_128b_policy": "High reasoning is prompt-enforced with explicit tool-call playbooks; unsupported runtime parameters stay omitted.",
+        "openwebui_builtin_and_addon_policy": "Chat models prefer standard OpenWebUI builtins and the mounted openwebui-offline-addons runtime for local caches, Playwright/Chromium, Tiktoken, NLTK and Python packages when available.",
         "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
         "models": [
             {
@@ -1103,6 +1113,10 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 if isinstance(model.get("params"), dict)
                 else False,
                 "has_explicit_tool_call_playbook": TOOL_CALL_PLAYBOOK_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
+                if isinstance(model.get("params"), dict)
+                else False,
+                "has_openwebui_builtin_and_addon_policy": "OpenWebUI-Standardfunktionen" in str(model.get("params", {}).get("system", ""))
+                and "openwebui-offline-addons" in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
                 "has_tool_force_profile": TOOL_FORCE_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
@@ -1149,6 +1163,27 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "api_import_config_example": rel(CONFIG_EXAMPLE),
         "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml",
         "api_import_token": "openwebui.admin_token in config YAML, OPENWEBUI_ADMIN_TOKEN environment variable, or --token CLI argument",
+        "offline_addons_runtime": {
+            "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
+            "container_data_root": "/app/backend/data",
+            "container_cache_path": "/app/backend/data/cache",
+            "container_python_path": "/app/backend/data/python",
+            "container_nltk_data_path": "/app/backend/data/nltk_data",
+            "container_playwright_browsers_path": "/app/backend/data/cache/ms-playwright",
+            "config_keys": [
+                "addons.root",
+                "addons.python_path",
+                "addons.playwright_browsers_path",
+                "addons.nltk_data",
+                "addons.prefer_playwright_pdf",
+            ],
+            "preferred_uses": [
+                "OpenWebUI built-in caches and offline model assets",
+                "local Playwright/Chromium rendering for HTML/PDF artifacts",
+                "local Python packages for imported tools",
+                "NLTK and Tiktoken resources for document and token tooling",
+            ],
+        },
         "tools_first": offline_tool_ids,
         "allgemein_model_tools": sorted(tool_ids_for_model("allgemein", offline_tool_ids, [record.id for record in tool_records if record.importable])),
         "tool_gui_import_file": rel(TOOL_IMPORT),
@@ -1186,6 +1221,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
                 "air_gapped_jupyter_python.run_python(code)",
                 "json_csv_text_validator.validate_json(text)",
                 "offline_artifact_workbench.create_slide_deck(...)",
+                "offline_artifact_workbench.convert_html_to_pdf(...) with local Playwright when available",
                 "tool_skill_overlay_planner.build_overlay_matrix(...)",
             ],
         },
@@ -1224,7 +1260,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "params.system tool-force section",
             "meta.profile_image_url",
         ],
-        "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native; category availability remains controlled by the OpenWebUI instance.",
+        "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model.",
         "knowledge_note": "The API importer uploads mainprompt.md and fachwissen.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
@@ -1285,6 +1321,9 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             issues.append(f"Chat-Modell {model_id} aktiviert Markdown-Formatierung nicht am Promptanfang")
         if HIGH_REASONING_SYSTEM_MARKER not in system_text or "Reasoning-Profil `high`" not in system_text:
             issues.append(f"Chat-Modell {model_id} hat kein durchgängiges High-Reasoning-Systemprofil")
+        for required_phrase in ["OpenWebUI-Standardfunktionen", "openwebui-offline-addons"]:
+            if required_phrase not in system_text:
+                issues.append(f"Chat-Modell {model_id} fehlt Builtin-/Addon-Laufzeitvorgabe: {required_phrase}")
         if CUSTOM_GPT_QUALITY_SYSTEM_MARKER not in system_text:
             issues.append(f"Chat-Modell {model_id} hat kein CustomGPT-Qualitätsprofil")
         for required_phrase in [
@@ -1306,6 +1345,7 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             "air_gapped_jupyter_python.run_python",
             "json_csv_text_validator.validate_json",
             "offline_artifact_workbench.create_slide_deck",
+            "offline_artifact_workbench.convert_html_to_pdf",
             "tool_skill_overlay_planner.build_overlay_matrix",
         ]:
             if required_phrase not in system_text:
@@ -1420,6 +1460,11 @@ def run_workspace_import(args: argparse.Namespace) -> int:
     jupyter_timeout = args.jupyter_timeout_seconds or SCRIPT_JUPYTER_TIMEOUT_SECONDS
     jupyter_allowed_workdir = args.jupyter_allowed_workdir or SCRIPT_JUPYTER_ALLOWED_WORKDIR
     artifact_root = args.artifact_root or SCRIPT_ARTIFACT_ROOT
+    offline_addons_root = args.offline_addons_root or SCRIPT_OFFLINE_ADDONS_ROOT
+    offline_addons_python_path = args.offline_addons_python_path or SCRIPT_OFFLINE_ADDONS_PYTHON_PATH
+    playwright_browsers_path = args.playwright_browsers_path or SCRIPT_PLAYWRIGHT_BROWSERS_PATH
+    nltk_data_path = args.nltk_data_path or SCRIPT_NLTK_DATA_PATH
+    prefer_playwright_pdf = args.prefer_playwright_pdf or SCRIPT_PREFER_PLAYWRIGHT_PDF
     if base_url:
         import_args.extend(["--base-url", str(base_url)])
     if token:
@@ -1434,6 +1479,16 @@ def run_workspace_import(args: argparse.Namespace) -> int:
         import_args.extend(["--jupyter-allowed-workdir", str(jupyter_allowed_workdir)])
     if artifact_root:
         import_args.extend(["--artifact-root", str(artifact_root)])
+    if offline_addons_root:
+        import_args.extend(["--offline-addons-root", str(offline_addons_root)])
+    if offline_addons_python_path:
+        import_args.extend(["--offline-addons-python-path", str(offline_addons_python_path)])
+    if playwright_browsers_path:
+        import_args.extend(["--playwright-browsers-path", str(playwright_browsers_path)])
+    if nltk_data_path:
+        import_args.extend(["--nltk-data-path", str(nltk_data_path)])
+    if str(prefer_playwright_pdf).strip().lower() in {"1", "true", "yes", "on"}:
+        import_args.append("--prefer-playwright-pdf")
     if args.public_read:
         import_args.append("--public-read")
     if args.skip_knowledge:
@@ -1462,6 +1517,11 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--jupyter-timeout-seconds", default=None, help="Jupyter execution timeout tool valve.")
     parser.add_argument("--jupyter-allowed-workdir", default=None, help="Allowed workdir as seen by the Jupyter host/container.")
     parser.add_argument("--artifact-root", default=None, help="Artifact root as seen by the OpenWebUI backend/container.")
+    parser.add_argument("--offline-addons-root", default=None, help="Root of the mounted offline add-ons tree as seen by OpenWebUI.")
+    parser.add_argument("--offline-addons-python-path", default=None, help="Offline add-ons Python package path as seen by OpenWebUI.")
+    parser.add_argument("--playwright-browsers-path", default=None, help="Local Playwright browser cache path as seen by OpenWebUI.")
+    parser.add_argument("--nltk-data-path", default=None, help="Local NLTK data path as seen by OpenWebUI.")
+    parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="Prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--public-read", action="store_true", help="Grant read access during --import-openwebui where OpenWebUI permits it.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md and fachwissen.md as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")

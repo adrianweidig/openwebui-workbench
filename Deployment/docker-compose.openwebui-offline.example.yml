@@ -1,17 +1,23 @@
 services:
   openwebui:
-    image: openwebui:latest
+    image: open-webui:offline-cuda
     container_name: openwebui-offline
     restart: unless-stopped
+    command: ["bash", "/app/backend/start-offline.sh"]
     ports:
       - "3000:8080"
     env_file:
       - ./openwebui.env
     volumes:
       - openwebui-data:/app/backend/data
-      - E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import:ro
-      - E:\OpenWebUI\Tools:/app/backend/data/openwebui-tools:ro
-      - E:\OpenWebUI\Artefakte\output:/app/backend/data/offline_artifacts
+      - "F:\\OpenWebUI\\Modelle\\dist:/app/backend/data/openwebui-import:ro"
+      - "F:\\OpenWebUI\\Tools:/app/backend/data/openwebui-tools:ro"
+      - "F:\\OpenWebUI\\Artefakte\\output:/app/backend/data/offline_artifacts"
+      - "F:\\offline-ai-stack\\openwebui-offline-addons\\cache:/app/backend/data/cache"
+      - "F:\\offline-ai-stack\\openwebui-offline-addons\\nltk_data:/app/backend/data/nltk_data"
+      - "F:\\offline-ai-stack\\openwebui-offline-addons\\python:/app/backend/data/python"
+      - "F:\\offline-ai-stack\\openwebui-offline-addons\\python\\openwebui_offline_addons.pth:/usr/local/lib/python3.11/site-packages/openwebui_offline_addons.pth:ro"
+      - "F:\\offline-ai-stack\\openwebui-offline-addons\\bin\\start-offline.sh:/app/backend/start-offline.sh:ro"
     networks:
       - offline-ai
 
@@ -21,7 +27,7 @@ services:
     restart: unless-stopped
     command: ["jupyter", "server", "--ip=0.0.0.0", "--no-browser", "--ServerApp.token=${OPENWEBUI_JUPYTER_TOKEN}"]
     volumes:
-      - E:\OpenWebUI\Artefakte\output:/workspace/artifacts
+      - "F:\\OpenWebUI\\Artefakte\\output:/workspace/artifacts"
     networks:
       - offline-ai
 

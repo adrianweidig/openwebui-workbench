@@ -1,6 +1,6 @@
 # OpenWebUI Workspace
 
-Dieses Repository verwaltet den lokalen Arbeitsbereich unter `E:\OpenWebUI`.
+Dieses Repository verwaltet den lokalen Arbeitsbereich unter `F:\OpenWebUI`.
 
 ## Struktur
 
@@ -58,6 +58,8 @@ Für visuelle Offline-Ausgaben, parallele Tool-/Subagent-Planung und robuste Mod
 - `Tools/openwebui_ext/tools/tool_skill_overlay_planner.py`
 - `Tools/openwebui_ext/tools/comfyui_workflow_inspector.py`
 
+OpenWebUI-Standardfunktionen dürfen ausdrücklich genutzt werden: Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, natives Tool Calling und alle Builtins, die die jeweilige OpenWebUI-Version bereitstellt. Zusätzlich ist der lokale Stack `F:\offline-ai-stack\openwebui-offline-addons` als Offline-Laufzeit vorgesehen; er stellt Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete für Tools und Filter bereit.
+
 Zusätzlich zu den Problemfallmodellen gibt es zwei Querschnittsmodelle:
 
 - `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme, die nicht eindeutig zu einem Spezialmodell passen; nutzt das Basismodell `coder` mit allen importierbaren Tools und allen Standardfiltern.
@@ -74,11 +76,11 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
 Der generierte Importplan liegt unter `Modelle/dist/openwebui-registration-plan.json` und erzwingt die Reihenfolge Tools, Filter, Skills, modellbezogene Knowledge-Dateien, Modelle.
-Die Modellprofile werden dabei auf natives Offline-Tool-Calling, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte, ein High-Reasoning-Systemprofil, ein CustomGPT-Qualitätsprofil, explizite Tool-Aufrufmuster und eine verbindliche Tool-/Skill-Nutzungssektion normalisiert. Systemprompt, Mainprompt und Fachwissen sind im Sammelimport enthalten. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt; High Reasoning wird für lokale Mistral-Medium-128B-Instanzen über die Systemanweisung und Tool-Validierung erzwungen.
+Die Modellprofile werden dabei auf natives Offline-Tool-Calling, OpenWebUI-Builtin-Nutzung, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte, ein High-Reasoning-Systemprofil, ein CustomGPT-Qualitätsprofil, explizite Tool-Aufrufmuster und eine verbindliche Tool-/Skill-Nutzungssektion normalisiert. Systemprompt, Mainprompt und Fachwissen sind im Sammelimport enthalten. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt; High Reasoning wird für lokale Mistral-Medium-128B-Instanzen über die Systemanweisung und Tool-Validierung erzwungen.
 Die Tool-Nutzungssektion erzwingt am Aufgabenanfang eine Tool-/Skill-Inventur und passende Tools, sobald Dateien, strukturierte Daten, Code, Artefakte, APIs, Docker-/OpenWebUI-Fehler, Visuals, Parallelplanung, Subagenten, Modellrat, Modell-/Tool-/Skill-Overlays, ComfyUI-Workflows oder Skill-Erstellung betroffen sind. Zusätzlich enthalten alle Chat-Modelle konkrete Aufrufmuster wie `parallel_task_planner.build_parallel_execution_plan(...)`, `parallel_tools.run_tools_parallel(...)`, `sub_agent.run_parallel_sub_agents(...)`, `air_gapped_jupyter_python.run_python(...)`, `json_csv_text_validator.validate_json(...)`, `offline_artifact_workbench.create_slide_deck(...)` und `tool_skill_overlay_planner.build_overlay_matrix(...)`. Parallelisierung und Subagenten sind damit bei komplexen mehrteiligen Aufgaben der Standardweg, sofern Tool-Verfügbarkeit, Berechtigungen und Abhängigkeiten dagegen nicht sprechen. Der Filter `auto_tool_selector` unterstützt diese Vorgabe, indem er passende verfügbare Tool-IDs vor dem Modellaufruf ergänzt; `markdown_normalizer` und `context_compressor_filter` bleiben ebenfalls standardmäßig als Filter verfügbar. `context_compressor_filter` normalisiert zusätzlich 0-Output-Token-Requests und kürzt übergroße Einzelprompts vor dem Modellaufruf unter das sichere Kontextbudget.
 Die Datei `Modelle/dist/openwebui-model-params-summary.json` listet die Parameter je Modell explizit zur schnellen Kontrolle.
 
-Für API-basierten Direktimport kann eine lokale Konfigurationsdatei genutzt werden. Dazu `scripts/openwebui_workspace_config.example.yaml` nach `scripts/openwebui_workspace_config.yaml` kopieren und dort die von der Import-Maschine erreichbare OpenWebUI-Adresse, den OpenWebUI-Admin-API-Key sowie die aus dem OpenWebUI-Container erreichbare Jupyter-Adresse und den Jupyter-Token eintragen. Die echte `openwebui_workspace_config.yaml` wird nicht versioniert. Der API-Importer importiert standardmäßig alle importierbaren Tools aus dem Repo; `import.include_optional_network_tools: false` reduziert den Import auf den Offline-Default-Satz.
+Für API-basierten Direktimport kann eine lokale Konfigurationsdatei genutzt werden. Dazu `scripts/openwebui_workspace_config.example.yaml` nach `scripts/openwebui_workspace_config.yaml` kopieren und dort die von der Import-Maschine erreichbare OpenWebUI-Adresse, den OpenWebUI-Admin-API-Key sowie die aus dem OpenWebUI-Container erreichbare Jupyter-Adresse, den Jupyter-Token und die `addons.*`-Pfade eintragen. Die echte `openwebui_workspace_config.yaml` wird nicht versioniert. Der API-Importer importiert standardmäßig alle importierbaren Tools aus dem Repo; `import.include_optional_network_tools: false` reduziert den Import auf den Offline-Default-Satz.
 
 ```powershell
 Copy-Item scripts/openwebui_workspace_config.example.yaml scripts/openwebui_workspace_config.yaml
@@ -86,9 +88,9 @@ notepad scripts/openwebui_workspace_config.yaml
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
-Alternativ können `OPENWEBUI_ADMIN_TOKEN`, `OPENWEBUI_BASE_URL` oder die CLI-Parameter `--token` und `--base-url` genutzt werden. Das direkte Importskript `Tools/import_openwebui_workspace.py` bleibt als Fallback nutzbar. Es importiert Tools, Functions/Filter, Skills, Modellprofile, eingebettete Icons, setzt die Jupyter-/Artefakt-Valves aus der Konfigurationsdatei und hängt `mainprompt.md` sowie `fachwissen.md` als Knowledge pro Modell an.
+Alternativ können `OPENWEBUI_ADMIN_TOKEN`, `OPENWEBUI_BASE_URL` oder die CLI-Parameter `--token` und `--base-url` genutzt werden. Das direkte Importskript `Tools/import_openwebui_workspace.py` bleibt als Fallback nutzbar. Es importiert Tools, Functions/Filter, Skills, Modellprofile, eingebettete Icons, setzt die Jupyter-/Artefakt-/Addon-Valves aus der Konfigurationsdatei und hängt `mainprompt.md` sowie `fachwissen.md` als Knowledge pro Modell an.
 Ein Import-Probelauf ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
-Falls keine YAML-Datei genutzt werden soll, können lokale Defaults oben in `scripts/configure_openwebui_tool_models.py` bei `SCRIPT_OPENWEBUI_BASE_URL`, `SCRIPT_OPENWEBUI_ADMIN_TOKEN`, `SCRIPT_JUPYTER_URL`, `SCRIPT_JUPYTER_TOKEN`, `SCRIPT_JUPYTER_ALLOWED_WORKDIR` und `SCRIPT_ARTIFACT_ROOT` eingetragen werden. Dieser Weg ist für lokale Einmalimporte gedacht; für dauerhafte Arbeit bleibt die ignorierte YAML-Datei sauberer.
+Falls keine YAML-Datei genutzt werden soll, können lokale Defaults oben in `scripts/configure_openwebui_tool_models.py` bei `SCRIPT_OPENWEBUI_BASE_URL`, `SCRIPT_OPENWEBUI_ADMIN_TOKEN`, `SCRIPT_JUPYTER_URL`, `SCRIPT_JUPYTER_TOKEN`, `SCRIPT_JUPYTER_ALLOWED_WORKDIR`, `SCRIPT_ARTIFACT_ROOT`, `SCRIPT_OFFLINE_ADDONS_ROOT`, `SCRIPT_OFFLINE_ADDONS_PYTHON_PATH`, `SCRIPT_PLAYWRIGHT_BROWSERS_PATH` und `SCRIPT_NLTK_DATA_PATH` eingetragen werden. Dieser Weg ist für lokale Einmalimporte gedacht; für dauerhafte Arbeit bleibt die ignorierte YAML-Datei sauberer.
 
 ### Modelle per Volume oder Dateimount
 
@@ -97,7 +99,7 @@ Wenn der OpenWebUI-Container lokale Dateien per Volume lesen soll, ist `Modelle/
 Beispiel `docker run`:
 
 ```text
--v E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
+-v F:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
 ```
 
 Beispiel `docker-compose.yml`:
@@ -106,9 +108,12 @@ Beispiel `docker-compose.yml`:
 services:
   openwebui:
     volumes:
-      - E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
-      - E:\OpenWebUI\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
-      - E:\OpenWebUI\Artefakte\output:/app/backend/data/offline_artifacts
+      - F:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
+      - F:\OpenWebUI\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
+      - F:\OpenWebUI\Artefakte\output:/app/backend/data/offline_artifacts
+      - F:\offline-ai-stack\openwebui-offline-addons\cache:/app/backend/data/cache
+      - F:\offline-ai-stack\openwebui-offline-addons\nltk_data:/app/backend/data/nltk_data
+      - F:\offline-ai-stack\openwebui-offline-addons\python:/app/backend/data/python
 ```
 
 Hinweis: Der exakte Zielpfad im Container hängt von der eingesetzten `openwebui:latest`-Variante ab. Falls die Instanz keinen direkten Dateiscan für Modelle unterstützt, `Modelle/dist/openwebui-models-import.json` oder ein einzelnes `Modelle/einzelmodelle/<modell-id>/model.json` direkt über die GUI importieren.
@@ -125,9 +130,14 @@ OPENWEBUI_JUPYTER_TOKEN
 OPENWEBUI_JUPYTER_TIMEOUT_SECONDS
 OPENWEBUI_JUPYTER_ALLOWED_WORKDIR
 OPENWEBUI_ARTIFACT_ROOT
+OPENWEBUI_OFFLINE_ADDONS_ROOT
+OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH
+NLTK_DATA
+TIKTOKEN_CACHE_DIR
+PLAYWRIGHT_BROWSERS_PATH
 ```
 
-Bei Nutzung des API-Importers werden diese Werte aus `scripts/openwebui_workspace_config.yaml` als Tool-Valves für `air_gapped_jupyter_python` und `offline_artifact_workbench` gesetzt. Die Jupyter-URL muss aus Sicht des OpenWebUI-Backends erreichbar sein, etwa `http://jupyter:8888` im Docker-Netz.
+Bei Nutzung des API-Importers werden diese Werte aus `scripts/openwebui_workspace_config.yaml` als Tool-Valves für `air_gapped_jupyter_python` und `offline_artifact_workbench` gesetzt. Die Jupyter-URL und die Addon-Pfade müssen aus Sicht des OpenWebUI-Backends erreichbar sein, etwa `http://jupyter:8888` und `/app/backend/data/cache/ms-playwright` im Docker-Netz.
 
 ## Wichtige Einstiege
 

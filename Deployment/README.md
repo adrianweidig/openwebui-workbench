@@ -5,6 +5,8 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 ## Zielbild
 
 - OpenWebUI läuft ohne Internetzugriff.
+- OpenWebUI nutzt die Standardfunktionen der Zielinstanz maximal: natives Tool Calling, Code Interpreter, Datei-/Knowledge-Kontext, Citations und Statusmeldungen, soweit die eingesetzte OpenWebUI-Version sie bereitstellt.
+- Der lokale Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` stellt vorbereitete Caches, Playwright/Chromium, NLTK, Tiktoken und zusätzliche Python-Pakete bereit.
 - Ein lokaler oder intern erreichbarer Jupyter-Server übernimmt kontrollierte Python-Ausführung.
 - Modelle, Tools und Skills werden aus diesem Repository importiert.
 - Erzeugte HTML-, PDF-, ZIP- und Datenartefakte landen in einem persistenten Volume.
@@ -12,9 +14,14 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 
 ## Wichtige Volumes
 
-- `E:\OpenWebUI\Modelle\dist` nach `/app/backend/data/openwebui-import`
-- `E:\OpenWebUI\Tools` nach `/app/backend/data/openwebui-tools`
-- `E:\OpenWebUI\Artefakte\output` nach `/app/backend/data/offline_artifacts`
+- `F:\OpenWebUI\Modelle\dist` nach `/app/backend/data/openwebui-import`
+- `F:\OpenWebUI\Tools` nach `/app/backend/data/openwebui-tools`
+- `F:\OpenWebUI\Artefakte\output` nach `/app/backend/data/offline_artifacts`
+- `F:\offline-ai-stack\openwebui-offline-addons\cache` nach `/app/backend/data/cache`
+- `F:\offline-ai-stack\openwebui-offline-addons\nltk_data` nach `/app/backend/data/nltk_data`
+- `F:\offline-ai-stack\openwebui-offline-addons\python` nach `/app/backend/data/python`
+- `F:\offline-ai-stack\openwebui-offline-addons\python\openwebui_offline_addons.pth` nach `/usr/local/lib/python3.11/site-packages/openwebui_offline_addons.pth`
+- `F:\offline-ai-stack\openwebui-offline-addons\bin\start-offline.sh` nach `/app/backend/start-offline.sh`
 
 ## Wichtige Variablen
 
@@ -24,9 +31,17 @@ OPENWEBUI_JUPYTER_TOKEN
 OPENWEBUI_JUPYTER_TIMEOUT_SECONDS
 OPENWEBUI_JUPYTER_ALLOWED_WORKDIR
 OPENWEBUI_ARTIFACT_ROOT
+OPENWEBUI_OFFLINE_ADDONS_ROOT
+OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH
+NLTK_DATA
+HF_HOME
+SENTENCE_TRANSFORMERS_HOME
+TIKTOKEN_CACHE_DIR
+WHISPER_MODEL_DIR
+PLAYWRIGHT_BROWSERS_PATH
 ```
 
-Für den reproduzierbaren Remote-Import ist stattdessen die lokale Datei `scripts/openwebui_workspace_config.yaml` vorgesehen. Dort wird `openwebui.base_url` auf die von der Import-Maschine erreichbare Adresse gesetzt, während `jupyter.url` die aus dem OpenWebUI-Container erreichbare Docker-interne Adresse enthält. Der Importbefehl setzt die passenden Tool-Valves automatisch:
+Für den reproduzierbaren Remote-Import ist stattdessen die lokale Datei `scripts/openwebui_workspace_config.yaml` vorgesehen. Dort wird `openwebui.base_url` auf die von der Import-Maschine erreichbare Adresse gesetzt, während `jupyter.url` und die `addons.*`-Pfade die aus dem OpenWebUI-Container erreichbaren Docker-internen Adressen enthalten. Der Importbefehl setzt die passenden Tool-Valves automatisch:
 
 ```powershell
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
@@ -36,7 +51,8 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 
 Für direkte PDF-Erzeugung muss im OpenWebUI-Container oder in der Tool-Laufzeit lokal ein Konverter vorhanden sein:
 
-- bevorzugt Python-Paket `weasyprint`
+- bevorzugt der lokale Playwright/Chromium-Cache aus `F:\offline-ai-stack\openwebui-offline-addons`
+- danach Python-Paket `weasyprint`
 - alternativ lokal installiertes `wkhtmltopdf`, nur wenn die Tool-Valve `allow_wkhtmltopdf` aktiviert wird
 
 Ohne Konverter erzeugt das Tool weiterhin druckfertige HTML-Dateien, die manuell oder durch eine lokal bereitgestellte Pipeline in PDF umgewandelt werden können.

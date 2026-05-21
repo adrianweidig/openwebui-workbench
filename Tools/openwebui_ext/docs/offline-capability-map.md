@@ -5,6 +5,8 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 ## Grundregeln
 
 - Native Tool Calling für toolfähige Modelle nutzen.
+- OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter und Builtins nutzen, wenn die Zielinstanz sie bereitstellt.
+- Den gemounteten Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` als lokale Laufzeit für Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete einplanen.
 - Kritische Use Cases mindestens doppelt abdecken: Tool plus Skill oder Tool plus Jupyter/Checkliste.
 - Riskante Tools nicht global aktivieren.
 - Externe APIs und Dienste nur als optionale lokale Profile, nie als Air-Gap-Default.
@@ -15,7 +17,7 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 | Use Case | Primär | Fallback | Skill |
 | --- | --- | --- | --- |
 | JSON/CSV/Text prüfen | `json_csv_text_validator.py` | Jupyter | `data-cleaning-analysis` |
-| Artefakte erzeugen | `offline_artifact_workbench.py` | Jupyter/HTML manuell | `offline-artifact-production` |
+| Artefakte erzeugen | `offline_artifact_workbench.py` mit lokalem Playwright/Chromium | Jupyter/HTML manuell, WeasyPrint | `offline-artifact-production` |
 | Visuals/Charts/Dashboards | `inline_visuals_toolkit_v3.py` | Mermaid/Texttabelle | `visual-toolkit-v3-offline` |
 | Erweiterte Tabellen/Charts ohne CDN | `visuals_toolkit_v4.py` im Text-/ASCII-Modus | `inline_visuals_toolkit_v3.py` | `visual-toolkit-v3-offline` |
 | ComfyUI-Bild/Audio/Video vorbereiten | `comfyui_workflow_inspector.py` | Prompt-/Parameter-Checkliste | `offline-creative-media-workflows` |

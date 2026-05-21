@@ -18,7 +18,9 @@ Dieses Verzeichnis ist der Copy/Paste- und Transportbereich für OpenWebUI-Tools
 3. `openwebui-tools-offline-import.json` über `Workspace > Tools > Import` importieren.
 4. `openwebui-functions-import.json` über `Workspace > Functions > Import` importieren.
 5. `.md`-Dateien aus `openwebui_ext/skills/` über `Workspace > Skills` importieren.
-6. Jupyter-, Artefakt- und Filter-Valves lokal setzen oder den API-Import mit `scripts/openwebui_workspace_config.yaml` nutzen.
+6. Jupyter-, Artefakt-, Addon- und Filter-Valves lokal setzen oder den API-Import mit `scripts/openwebui_workspace_config.yaml` nutzen.
+
+Der empfohlene Offline-Stack bindet `F:\offline-ai-stack\openwebui-offline-addons` in OpenWebUI ein. Die Konfigurationsdatei setzt dafür `addons.python_path`, `addons.playwright_browsers_path`, `addons.nltk_data` und `addons.prefer_playwright_pdf`, sodass Tools lokale Python-Pakete, Tiktoken/NLTK-Caches und Playwright/Chromium ohne Laufzeitdownloads verwenden können.
 
 Optionale Tools aus `openwebui-tools-import.json`, die nicht im Offline-Default liegen, müssen bewusst konfiguriert werden: `openui_generative_ui.py` benötigt ein lokal bereitgestelltes OpenUI-Browser-Bundle, `web_search_and_crawl.py` lokale/self-hosted SearXNG-/Crawl4AI-Endpunkte und `safe_http_fetcher.py`/`github_repo_inspector.py` sind keine Air-Gap-Defaults.
 Alle Functions in `openwebui-functions-import.json` sind als OpenWebUI-Filter importierbar. `auto_tool_selector.py` ist ein offlinefähiger inlet-Filter und aktiviert nur Tool-IDs, die im Modell- oder Request-Kontext verfügbar sind.
