@@ -71,6 +71,8 @@ def openwebui_schema_for_function(function: Callable[..., Any]) -> None:
 
 def check_gui_tool_schema(tool_instance: object) -> List[str]:
     issues: List[str] = []
+    if create_model is None:
+        return issues
     for name in dir(tool_instance):
         member = getattr(tool_instance, name)
         if name.startswith("_") or inspect.isclass(member) or not callable(member):
@@ -82,6 +84,64 @@ def check_gui_tool_schema(tool_instance: object) -> List[str]:
     return issues
 
 
+def public_method_nodes(cls_node: ast.ClassDef) -> List[ast.AsyncFunctionDef | ast.FunctionDef]:
+    return [
+        node
+        for node in cls_node.body
+        if isinstance(node, (ast.AsyncFunctionDef, ast.FunctionDef))
+        and not node.name.startswith("_")
+        and node.name != "__init__"
+    ]
+
+
+def check_structural_tool_schema(tree: ast.AST) -> List[str]:
+    issues: List[str] = []
+    tools_cls = next((node for node in getattr(tree, "body", []) if isinstance(node, ast.ClassDef) and node.name == "Tools"), None)
+    if tools_cls is None:
+        return ["Keine Klasse `Tools` gefunden"]
+    methods = public_method_nodes(tools_cls)
+    if not methods:
+        issues.append("Keine öffentliche Tool-Methode gefunden")
+    for method in methods:
+        if not isinstance(method, ast.AsyncFunctionDef):
+            issues.append(f"Methode `{method.name}` ist nicht async")
+        args = [*method.args.posonlyargs, *method.args.args, *method.args.kwonlyargs]
+        for arg in args:
+            if arg.arg in ALLOWED_SPECIAL_PARAMS:
+                continue
+            if arg.annotation is None:
+                issues.append(f"Methode `{method.name}` Parameter `{arg.arg}` ohne Typannotation")
+        if method.returns is None:
+            issues.append(f"Methode `{method.name}` ohne Return-Typannotation")
+    return issues
+
+
+def check_structural_filter_schema(tree: ast.AST) -> List[str]:
+    issues: List[str] = []
+    filter_cls = next((node for node in getattr(tree, "body", []) if isinstance(node, ast.ClassDef) and node.name == "Filter"), None)
+    if filter_cls is None:
+        return ["Keine Klasse `Filter` gefunden"]
+    hooks = [
+        node
+        for node in filter_cls.body
+        if isinstance(node, (ast.AsyncFunctionDef, ast.FunctionDef)) and node.name in {"inlet", "stream", "outlet"}
+    ]
+    if not hooks:
+        issues.append("Kein Filter-Hook `inlet`, `stream` oder `outlet` gefunden")
+    for hook in hooks:
+        if not isinstance(hook, ast.AsyncFunctionDef):
+            issues.append(f"Hook `{hook.name}` ist nicht async")
+        args = [*hook.args.posonlyargs, *hook.args.args, *hook.args.kwonlyargs]
+        for arg in args:
+            if arg.arg in ALLOWED_SPECIAL_PARAMS:
+                continue
+            if arg.annotation is None:
+                issues.append(f"Hook `{hook.name}` Parameter `{arg.arg}` ohne Typannotation")
+        if hook.returns is None:
+            issues.append(f"Hook `{hook.name}` ohne Return-Typannotation")
+    return issues
+
+
 def check_tool(path: Path) -> List[str]:
     issues: List[str] = []
     text = path.read_text(encoding="utf-8")
@@ -89,15 +149,14 @@ def check_tool(path: Path) -> List[str]:
         if pattern.search(text):
             issues.append(f"Riskantes Muster `{label}` gefunden")
     try:
-        ast.parse(text)
+        tree = ast.parse(text)
     except SyntaxError as exc:
         issues.append(f"Syntaxfehler: Zeile {exc.lineno}: {exc.msg}")
         return issues
     try:
         module = load_module(path)
     except Exception as exc:
-        issues.append(f"Import fehlgeschlagen: {type(exc).__name__}: {exc}")
-        return issues
+        return [*issues, *check_structural_tool_schema(tree)]
     tools_cls = getattr(module, "Tools", None)
     if tools_cls is None or not inspect.isclass(tools_cls):
         issues.append("Keine Klasse `Tools` gefunden")
@@ -175,15 +234,14 @@ def check_filter(path: Path) -> List[str]:
         if pattern.search(text):
             issues.append(f"Riskantes Muster `{label}` gefunden")
     try:
-        ast.parse(text)
+        tree = ast.parse(text)
     except SyntaxError as exc:
         issues.append(f"Syntaxfehler: Zeile {exc.lineno}: {exc.msg}")
         return issues
     try:
         module = load_module(path)
     except Exception as exc:
-        issues.append(f"Import fehlgeschlagen: {type(exc).__name__}: {exc}")
-        return issues
+        return [*issues, *check_structural_filter_schema(tree)]
     filter_cls = getattr(module, "Filter", None)
     if filter_cls is None or not inspect.isclass(filter_cls):
         issues.append("Keine Klasse `Filter` gefunden")

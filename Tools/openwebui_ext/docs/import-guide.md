@@ -44,6 +44,8 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ## Troubleshooting
 
 - Importfehler: `python scripts/validate_openwebui_extensions.py` ausführen; zusätzlich Python-Syntax mit `python -m py_compile Tools/openwebui_ext/tools/<tool>.py` prüfen.
+- Meldungen wie `Tool nicht importierbar` im Generator sollten mit aktuellem Stand nicht mehr durch lokal fehlende Python-Pakete entstehen. `configure_openwebui_tool_models.py` prüft Tools und Filter strukturell per AST und braucht auf der Import-Maschine keine optionalen Tool-Abhängigkeiten wie `fastapi`, `pydantic`, `requests`, `aiohttp`, `tiktoken`, `starlette` oder `playwright`, solange nur Bundles gebaut oder ein Dry-Run ausgeführt wird.
+- Wenn OpenWebUI selbst beim echten Import ein Tool ablehnt, liegt der Fehler im Zielcontainer. Dann den Tool-Namen aus der OpenWebUI-Fehlermeldung nehmen und dort prüfen, ob die Zielinstanz die benötigten Runtime-Pakete aus `openwebui-offline-addons` beziehungsweise dem OpenWebUI-Backend-Pythonpfad laden kann.
 - Tool wird nicht aufgerufen: Modell-Tool-Zuordnung und Function-Calling-Einstellung prüfen.
 - Skill nicht sichtbar: Skill aktivieren und Zugriffsrechte prüfen.
 - Unerwartete Toolfehler: `scripts/openwebui_workspace_config.yaml`, importierte Tool-/Function-Valves, Netzwerkzugriff und Größenlimits prüfen.

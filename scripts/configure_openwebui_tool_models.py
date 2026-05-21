@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import base64
 import hashlib
 import importlib.util
-import inspect
 import json
 import re
 import shutil
@@ -12,7 +12,6 @@ import sys
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
-from types import ModuleType
 from typing import Any, Dict, Iterable, List, Tuple
 
 
@@ -400,47 +399,39 @@ def parse_bool(value: Any, default: bool = True) -> bool:
     return bool(value)
 
 
-def load_module(path: Path) -> ModuleType:
-    module_name = "owui_config_tool_" + re.sub(r"\W+", "_", path.stem)
-    spec = importlib.util.spec_from_file_location(module_name, path)
-    if spec is None or spec.loader is None:
-        raise RuntimeError("importlib spec konnte nicht erstellt werden")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def inspect_tool(path: Path) -> Tuple[bool, List[str]]:
+    """Structurally inspect an OpenWebUI Tool without importing its runtime dependencies."""
     try:
-        module = load_module(path)
-        tools_cls = getattr(module, "Tools", None)
-        if not inspect.isclass(tools_cls):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        tools_cls = next((node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "Tools"), None)
+        if tools_cls is None:
             return False, []
-        methods = [
-            name
-            for name, member in inspect.getmembers(tools_cls, predicate=inspect.isfunction)
-            if not name.startswith("_") and name != "__init__"
-        ]
-        return bool(methods), sorted(methods)
-    except Exception:
+        methods = sorted(
+            node.name
+            for node in tools_cls.body
+            if isinstance(node, (ast.AsyncFunctionDef, ast.FunctionDef))
+            and not node.name.startswith("_")
+            and node.name != "__init__"
+        )
+        return bool(methods), methods
+    except (OSError, SyntaxError, UnicodeDecodeError):
         return False, []
 
 
 def inspect_filter(path: Path) -> Tuple[bool, List[str]]:
+    """Structurally inspect an OpenWebUI Filter without importing its runtime dependencies."""
     try:
-        module = load_module(path)
-        filter_cls = getattr(module, "Filter", None)
-        if not inspect.isclass(filter_cls):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        filter_cls = next((node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "Filter"), None)
+        if filter_cls is None:
             return False, []
-        hooks = []
-        for name in ["inlet", "stream", "outlet"]:
-            member = getattr(filter_cls, name, None)
-            if inspect.isfunction(member):
-                hooks.append(name)
-                if not inspect.iscoroutinefunction(member):
-                    return False, hooks
-        return "inlet" in hooks or "outlet" in hooks or "stream" in hooks, sorted(hooks)
-    except Exception:
+        hooks = sorted(
+            node.name
+            for node in filter_cls.body
+            if isinstance(node, ast.AsyncFunctionDef) and node.name in {"inlet", "stream", "outlet"}
+        )
+        return bool(hooks), hooks
+    except (OSError, SyntaxError, UnicodeDecodeError):
         return False, []
 
 
