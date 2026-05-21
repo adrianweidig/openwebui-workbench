@@ -91,6 +91,7 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
 Das direkte Importskript `Tools/import_openwebui_workspace.py` bleibt als Fallback nutzbar und liest dieselbe zentrale Konfigurationsdatei. CLI-Parameter wie `--token`, `--base-url` oder `--jupyter-url` sind nur für bewusste Einmal-Overrides gedacht. Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile, eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien aus `beispiele/` als Knowledge pro Modell an, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
+Für Tools nutzt der Importer zuerst die aktuellen OpenWebUI-Endpunkte unter `/api/tools/...` und fällt danach auf `/api/v1/tools/...` zurück. Falls OpenWebUI beim Schritt Tool-Valves mit `We could not find what you're looking for` antwortet, ist entweder das Tool noch nicht importiert oder die Instanz erkennt keine `Valves`-Schema-Klasse am Tool. `air_gapped_jupyter_python` exportiert deshalb `Valves` und `Tools.Valves`; nach einem Pull und erneutem Import sollte der Valves-Schritt für dieses Tool nicht mehr an der Schema-Erkennung scheitern.
 Ein Import-Probelauf ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
 
 ### Modelle per Volume oder Dateimount
@@ -139,6 +140,7 @@ PLAYWRIGHT_BROWSERS_PATH
 ```
 
 Bei Nutzung des API-Importers werden diese Werte aus `scripts/openwebui_workspace_config.yaml` als Tool-Valves für `air_gapped_jupyter_python` und `offline_artifact_workbench` gesetzt. Function-/Filter-Valves wie das Kontextbudget des `context_compressor_filter` liegen im Abschnitt `function_valves`. Die Jupyter-URL und die Addon-Pfade müssen aus Sicht des OpenWebUI-Backends erreichbar sein, etwa `http://jupyter:8888` und `/app/backend/data/cache/ms-playwright` im Docker-Netz.
+Wenn dieser Schritt auf einer OpenWebUI-Version ohne Tool-Valves-Endpunkt übersprungen wird, läuft der Import weiter; dann müssen die Jupyter-Valves einmalig über die OpenWebUI-Tool-Oberfläche oder über eine neuere OpenWebUI-Version gesetzt werden.
 
 ## Wichtige Einstiege
 

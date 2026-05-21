@@ -174,17 +174,20 @@ def _validate_python_code(code: str, allowed_workdir: str = "") -> None:
 
 
 if BaseModel is object:
-    class _Valves:
+    class Valves:
         OPENWEBUI_JUPYTER_URL = ""
         OPENWEBUI_JUPYTER_TOKEN = ""
         OPENWEBUI_JUPYTER_TIMEOUT_SECONDS = 30
         OPENWEBUI_JUPYTER_ALLOWED_WORKDIR = ""
 else:
-    class _Valves(BaseModel):
+    class Valves(BaseModel):
         OPENWEBUI_JUPYTER_URL: str = Field(default="", description="Local or internal Jupyter base URL, e.g. http://127.0.0.1:8888")
         OPENWEBUI_JUPYTER_TOKEN: str = Field(default="", description="Jupyter token. Leave empty only for a locally configured tokenless server.")
         OPENWEBUI_JUPYTER_TIMEOUT_SECONDS: int = Field(default=30, description="Execution timeout in seconds.")
         OPENWEBUI_JUPYTER_ALLOWED_WORKDIR: str = Field(default="", description="Allowed working directory on the Jupyter host.")
+
+
+_Valves = Valves
 
 
 class _JupyterClient:
@@ -336,8 +339,10 @@ def _sanitize_obj(obj: Any, token: str) -> Any:
 
 
 class Tools:
+    Valves = Valves
+
     def __init__(self):
-        self.valves = _Valves()
+        self.valves = self.Valves()
 
     def run_python(self, code: str, timeout_seconds: Optional[int] = None) -> Dict[str, Any]:
         """

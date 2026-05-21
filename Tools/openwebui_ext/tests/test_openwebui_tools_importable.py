@@ -56,6 +56,11 @@ class OpenWebUIToolImportTests(unittest.TestCase):
                 assert spec and spec.loader
                 spec.loader.exec_module(module)
                 instance = module.Tools()
+                if path.name == "jupyter_tool.py":
+                    self.assertTrue(hasattr(module, "Valves"))
+                    self.assertTrue(hasattr(module.Tools, "Valves"))
+                    self.assertTrue(hasattr(instance, "valves"))
+                    self.assertTrue(hasattr(instance.valves, "OPENWEBUI_JUPYTER_URL"))
                 methods = [
                     member
                     for name, member in inspect.getmembers(instance, predicate=callable)

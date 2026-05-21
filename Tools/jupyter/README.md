@@ -7,6 +7,7 @@
 ## Konfiguration
 
 Für den Repo-Import werden die Werte zentral in `scripts/openwebui_workspace_config.yaml` gepflegt. Der API-Importer setzt sie danach als Tool-Valves für `air_gapped_jupyter_python`; die Jupyter-URL muss aus Sicht des OpenWebUI-Backends erreichbar sein, etwa `http://jupyter:8888` im Docker-Netz.
+Das Tool exportiert `Valves` und `Tools.Valves`, damit OpenWebUI das Valves-Schema sowohl über das Top-Level-Pattern als auch direkt an der Tool-Klasse erkennt. Der Importer ruft dafür zuerst `POST /api/tools/id/air_gapped_jupyter_python/valves/update` auf und nutzt `/api/v1/tools/...` nur als Fallback.
 
 Relevante Valve-/Umgebungsnamen:
 

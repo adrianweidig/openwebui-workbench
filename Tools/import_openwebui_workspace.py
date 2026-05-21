@@ -48,6 +48,15 @@ PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEB
 PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 
 
+def is_not_found_error(exc: RuntimeError) -> bool:
+    message = str(exc).lower()
+    return (
+        "http 404" in message
+        or "could not find what you're looking for" in message
+        or "could not find what youre looking for" in message
+    )
+
+
 @dataclass(frozen=True)
 class ImportResult:
     kind: str
@@ -134,7 +143,7 @@ class OpenWebUIClient:
             try:
                 return self.request(method, path, payload=payload, query=query, expected=expected)
             except RuntimeError as exc:
-                if "HTTP 404" in str(exc):
+                if is_not_found_error(exc):
                     last_not_found = exc
                     continue
                 raise
@@ -658,7 +667,17 @@ def get_existing(client: OpenWebUIClient, path: str) -> dict[str, Any] | None:
         value = client.request("GET", path)
         return value if isinstance(value, dict) else None
     except RuntimeError as exc:
-        if "HTTP 404" in str(exc):
+        if is_not_found_error(exc):
+            return None
+        raise
+
+
+def get_existing_any(client: OpenWebUIClient, paths: list[str]) -> dict[str, Any] | None:
+    try:
+        value = client.request_any("GET", paths)
+        return value if isinstance(value, dict) else None
+    except RuntimeError as exc:
+        if is_not_found_error(exc):
             return None
         raise
 
@@ -730,8 +749,8 @@ def update_tool_access(client: OpenWebUIClient, tool_id: str, public: bool = Tru
     value = client.request_any(
         "POST",
         [
-            f"/api/v1/tools/id/{tool_id}/access/update",
             f"/api/tools/id/{tool_id}/access/update",
+            f"/api/v1/tools/id/{tool_id}/access/update",
         ],
         access_payload(public),
     )
@@ -913,25 +932,26 @@ def import_tools(client: OpenWebUIClient, public: bool, include_optional_network
     indexed = read_json(TOOLS_INDEX)
     by_id = {entry["id"]: entry for entry in indexed.get("tools", [])}
     for record in load_tool_records(include_optional_network_tools):
+        tool_id = record["id"]
         path = ROOT / record["path"]
-        indexed_record = by_id.get(record["id"], {})
+        indexed_record = by_id.get(tool_id, {})
         meta = parse_python_metadata(path)
         payload = {
-            "id": record["id"],
-            "name": indexed_record.get("name") or record.get("name") or record["id"],
+            "id": tool_id,
+            "name": indexed_record.get("name") or record.get("name") or tool_id,
             "content": path.read_text(encoding="utf-8"),
             "meta": {"description": indexed_record.get("purpose") or meta.get("description") or record.get("purpose")},
             "access_grants": public_read_grants(public),
         }
-        existing = get_existing(client, f"/api/v1/tools/id/{record['id']}")
+        existing = get_existing_any(client, [f"/api/tools/id/{tool_id}", f"/api/v1/tools/id/{tool_id}"])
         if existing:
-            client.request("POST", f"/api/v1/tools/id/{record['id']}/update", payload)
+            client.request_any("POST", [f"/api/tools/id/{tool_id}/update", f"/api/v1/tools/id/{tool_id}/update"], payload)
             updated += 1
         else:
-            client.request("POST", "/api/v1/tools/create", payload)
+            client.request_any("POST", ["/api/tools/create", "/api/v1/tools/create"], payload)
             created += 1
         if public:
-            update_tool_access(client, record["id"], public=True)
+            update_tool_access(client, tool_id, public=True)
     return ImportResult("tools", created, updated)
 
 
@@ -939,8 +959,8 @@ def update_tool_valves(client: OpenWebUIClient, tool_id: str, valves: dict[str, 
     client.request_any(
         "POST",
         [
-            f"/api/v1/tools/id/{tool_id}/valves/update",
             f"/api/tools/id/{tool_id}/valves/update",
+            f"/api/v1/tools/id/{tool_id}/valves/update",
         ],
         valves,
     )
@@ -956,8 +976,12 @@ def import_tool_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> Impo
             update_tool_valves(client, tool_id, valves)
             updated += 1
         except RuntimeError as exc:
-            if "HTTP 404" not in str(exc):
+            if not is_not_found_error(exc):
                 raise
+            print(
+                f"Warning: skipped tool valves for {tool_id}; OpenWebUI did not expose a matching tool valves endpoint or schema. {exc}",
+                file=sys.stderr,
+            )
             skipped += 1
     return ImportResult("tool_valves", updated=updated, skipped=skipped)
 
@@ -983,8 +1007,12 @@ def import_function_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> 
             update_function_valves(client, function_id, valves)
             updated += 1
         except RuntimeError as exc:
-            if "HTTP 404" not in str(exc):
+            if not is_not_found_error(exc):
                 raise
+            print(
+                f"Warning: skipped function/filter valves for {function_id}; OpenWebUI did not expose a matching valves endpoint or schema. {exc}",
+                file=sys.stderr,
+            )
             skipped += 1
     return ImportResult("function_valves", updated=updated, skipped=skipped)
 

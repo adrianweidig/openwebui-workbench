@@ -66,7 +66,7 @@
         "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
         "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR"
       ],
-      "sha256": "fccab6d5652e30dc2cb64ad65696898b3d2db545087c9c3ee72f1d03bae48a5d",
+      "sha256": "2e9c2f300c18d3756092b65bb6e1233c4811d1287102091b851339f9fb3a002a",
       "importable": true,
       "methods": [
         "run_python"

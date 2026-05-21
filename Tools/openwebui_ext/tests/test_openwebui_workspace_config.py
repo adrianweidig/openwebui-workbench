@@ -141,6 +141,12 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         )
         self.assertTrue(importer.has_public_read_access({"access_grants": importer.public_read_grants()}))
         self.assertFalse(importer.has_public_read_access({"access_grants": []}))
+        self.assertTrue(
+            importer.is_not_found_error(
+                RuntimeError("POST /api/tools/id/air_gapped_jupyter_python/valves/update returned HTTP 404: We could not find what you're looking for")
+            )
+        )
+        self.assertFalse(importer.is_not_found_error(RuntimeError("GET /api/models returned HTTP 401: Unauthorized")))
         self.assertEqual(runtime["jupyter"]["OPENWEBUI_JUPYTER_URL"], "http://jupyter:8888")
         self.assertEqual(runtime["environment"]["PLAYWRIGHT_BROWSERS_PATH"], "/app/backend/data/cache/ms-playwright")
         self.assertEqual(
