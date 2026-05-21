@@ -130,7 +130,9 @@
     "support-ticket-vorbereitung": "generic-chat",
     "tabellen-csv-datenanalyse": "generic-data-table",
     "testfall-generierung": "generic-checklist",
-    "übersetzung-lokalisierung": "generic-translate"
+    "übersetzung-lokalisierung": "generic-translate",
+    "promptforge": "generic-workflow",
+    "allgemein": "generic-chat"
   },
   "usage_note": "OpenWebUI-Modelle nutzen meta.profile_image_url. Diese SVGs oder PNGs koennen per GUI als Profilbild gesetzt oder in eine OpenWebUI-statisch erreichbare Ablage kopiert und dann als URL referenziert werden."
 }

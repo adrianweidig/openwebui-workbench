@@ -16,6 +16,8 @@
 - `artifacts/icons/openwebui-generic-icons.json`: Icon-Katalog mit vorgeschlagener Modellzuordnung
 - `openwebui-offline-artifacts.zip`: ZIP der erzeugten Struktur
 - `artifacts/models/offline-workbench-agent.model.json`: Sammelmodell für ChatGPT-ähnliche Offline-Nutzung mit Jupyter- und Artefakt-Workflow
+- `artifacts/models/allgemein.model.json`: allgemeines Fallbackmodell für freie oder gemischte Nutzerprobleme mit allen Offline-Tools und Standardfiltern
+- `artifacts/models/promptforge.model.json`: Prompt-Optimierungsmodell mit kuratiertem Prompting-Best-Practice-Fachwissen
 
 ## Direktimport
 

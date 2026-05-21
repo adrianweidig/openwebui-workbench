@@ -72,6 +72,7 @@ HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 - Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits.
 """
 MODEL_TEMPERATURES = {
+    "allgemein": 0.45,
     "anforderungsanalyse-lastenheft": 0.4,
     "api-schnittstellenentwurf": 0.35,
     "code-dokumentation": 0.35,
@@ -90,6 +91,7 @@ MODEL_TEMPERATURES = {
     "json-csv-log-analyse": 0.15,
     "meeting-protokoll-auswertung": 0.35,
     "offline-workbench-agent": 0.45,
+    "promptforge": 0.35,
     "prozess-workflow-dokumentation": 0.4,
     "präsentationserstellung": 0.7,
     "refactoring-unterstützung": 0.25,
@@ -100,6 +102,11 @@ MODEL_TEMPERATURES = {
     "übersetzung-lokalisierung": 0.35,
 }
 TOOL_FORCE_PROFILES = {
+    "allgemein": {
+        "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "parallel_task_planner", "parallel_tools", "subagent_orchestrator", "sub_agent", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "llm_council", "comfyui_workflow_inspector", "markdown_skill_builder", "mediawiki_legacy_crawler"],
+        "skills": ["offline-use-case-router", "redundant-fallback-tooling", "native-tool-calling-rollout", "parallel-tools-subagents", "secure-tool-usage"],
+        "focus": "Freie oder gemischte Nutzerprobleme mit dem Basismodell `coder` bearbeiten, passende Spezialmodelle empfehlen und alle Offline-Tools fallbezogen aktiv nutzen.",
+    },
     "anforderungsanalyse-lastenheft": {
         "tools": ["ask_user", "offline_artifact_workbench", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner", "llm_council"],
         "skills": ["prompt-to-tool-workflow", "model-tool-skill-overlays", "offline-artifact-production"],
@@ -194,6 +201,11 @@ TOOL_FORCE_PROFILES = {
         "tools": ["parallel_task_planner", "parallel_tools", "sub_agent", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "tool_skill_overlay_planner"],
         "skills": ["parallel-tools-subagents", "offline-artifact-production", "visual-toolkit-v3-offline", "model-tool-skill-overlays"],
         "focus": "Prozesse, Workflows, Verantwortlichkeiten und Diagramme toolgestützt planen und dokumentieren.",
+    },
+    "promptforge": {
+        "tools": ["ask_user", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner", "llm_council", "markdown_skill_builder"],
+        "skills": ["prompt-to-tool-workflow", "secure-tool-usage", "model-tool-skill-overlays", "native-tool-calling-rollout"],
+        "focus": "Den ersten Nutzerprompt nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Ausgabeformat optimieren.",
     },
     "präsentationserstellung": {
         "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python"],
@@ -663,10 +675,11 @@ def is_non_chat_model(model: Dict[str, Any]) -> bool:
     return bool(caps.get("embedding") or caps.get("reranking") or caps.get("reranker"))
 
 
-def merge_unique(existing: Any, required: List[str]) -> List[str]:
+def merge_unique(existing: Any, required: Any) -> List[str]:
     values = existing if isinstance(existing, list) else []
+    required_values = required if isinstance(required, list) else []
     merged: List[str] = []
-    for value in [*values, *required]:
+    for value in [*values, *required_values]:
         if isinstance(value, str) and value not in merged:
             merged.append(value)
     return merged

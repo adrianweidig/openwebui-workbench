@@ -58,6 +58,11 @@ Für visuelle Offline-Ausgaben, parallele Tool-/Subagent-Planung und robuste Mod
 - `Tools/openwebui_ext/tools/tool_skill_overlay_planner.py`
 - `Tools/openwebui_ext/tools/comfyui_workflow_inspector.py`
 
+Zusätzlich zu den Problemfallmodellen gibt es zwei Querschnittsmodelle:
+
+- `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme, die nicht eindeutig zu einem Spezialmodell passen; nutzt das Basismodell `coder` mit allen Offline-Default-Tools und allen Standardfiltern.
+- `Promptforge`: optimiert den ersten Nutzerprompt nach dokumentierten Prompting-Best-Practices und bereitet ihn für toolfähige OpenWebUI-Modelle vor; `fachwissen.md` enthält die kuratierte Best-Practice-Wissensbasis.
+
 Die Tool-Registry und die Modell-Tool-Zuweisungen können reproduzierbar erzeugt und geprüft werden. Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus den ZIP-Paketen aus:
 
 ```powershell

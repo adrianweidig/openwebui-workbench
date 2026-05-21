@@ -23,6 +23,115 @@
   ],
   "models": [
     {
+      "id": "allgemein",
+      "name": "Allgemein",
+      "temperature": 0.45,
+      "top_p": 0.9,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "ask_user",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "visuals_toolkit_v4",
+        "parallel_task_planner",
+        "parallel_tools",
+        "subagent_orchestrator",
+        "sub_agent",
+        "tool_skill_overlay_planner",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "openapi_schema_inspector",
+        "llm_council",
+        "comfyui_workflow_inspector",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler"
+      ],
+      "recommended_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/allgemein/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2051
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/allgemein/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2192
+        }
+      },
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "ask_user",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "visuals_toolkit_v4",
+        "parallel_task_planner",
+        "parallel_tools",
+        "subagent_orchestrator",
+        "sub_agent",
+        "tool_skill_overlay_planner",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "openapi_schema_inspector",
+        "llm_council",
+        "comfyui_workflow_inspector",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler"
+      ],
+      "meta_recommended_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ]
+    },
+    {
       "id": "anforderungsanalyse-lastenheft",
       "name": "Anforderungsanalyse und Lastenheft",
       "temperature": 0.4,
@@ -1426,6 +1535,89 @@
         "native-tool-calling-rollout",
         "parallel-tools-subagents",
         "visual-toolkit-v3-offline"
+      ]
+    },
+    {
+      "id": "promptforge",
+      "name": "Promptforge",
+      "temperature": 0.35,
+      "top_p": 0.9,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_systemprompt_mainprompt_fachwissen": true,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "ask_user",
+        "tool_skill_overlay_planner",
+        "json_csv_text_validator",
+        "parallel_task_planner",
+        "llm_council",
+        "markdown_skill_builder"
+      ],
+      "recommended_skill_ids": [
+        "prompt-to-tool-workflow",
+        "secure-tool-usage",
+        "model-tool-skill-overlays",
+        "native-tool-calling-rollout"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/promptforge/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2129
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/promptforge/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4362
+        }
+      },
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "ask_user",
+        "tool_skill_overlay_planner",
+        "json_csv_text_validator",
+        "parallel_task_planner",
+        "llm_council",
+        "markdown_skill_builder"
+      ],
+      "meta_recommended_skill_ids": [
+        "prompt-to-tool-workflow",
+        "secure-tool-usage",
+        "model-tool-skill-overlays",
+        "native-tool-calling-rollout"
       ]
     },
     {

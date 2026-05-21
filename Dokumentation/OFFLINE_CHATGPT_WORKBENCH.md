@@ -6,7 +6,7 @@ Dieses Repository soll OpenWebUI so vorbereiten, dass Nutzer offline eine ChatGP
 
 ## Komponenten
 
-- `Modelle/`: direkt importierbare OpenWebUI-Modellprofile für die Problemfälle.
+- `Modelle/`: direkt importierbare OpenWebUI-Modellprofile für die Problemfälle plus `Allgemein` als Fallbackmodell und `Promptforge` zur Optimierung erster Nutzerprompts.
 - `Tools/jupyter/`: kontrollierte Python-Ausführung über einen lokalen oder internen Jupyter-Server.
 - `Tools/openwebui_ext/tools/`: zusätzliche direkt importierbare Tools.
 - `Tools/openwebui_ext/skills/`: wiederverwendbare Arbeitsanweisungen für Modelle.

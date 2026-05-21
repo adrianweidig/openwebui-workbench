@@ -28,4 +28,6 @@
 | `24_übersetzung-lokalisierung.md` | Übersetzung und Lokalisierung | `übersetzung-lokalisierung` | optional |
 | `25_compliance-richtlinienprüfung.md` | Compliance- und Richtlinienprüfung | `compliance-richtlinienprüfung` | optional |
 | Sammelmodell Offline Workbench | Offline Workbench Agent | `offline-workbench-agent` | required |
+| Allgemeines Fallbackmodell | Allgemein | `allgemein` | required |
+| Prompt-Optimierung | Promptforge | `promptforge` | optional |
 | `26_bewerbungsunterlagen-optimierung.md` | nicht erzeugt | n/a | Datei fehlt, nur im Index genannt |
