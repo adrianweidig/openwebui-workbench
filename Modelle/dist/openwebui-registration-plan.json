@@ -1012,6 +1012,11 @@
       }
     }
   },
+  "custom_gpt_quality_policy": {
+    "formatting_marker": "Formatting re-enabled",
+    "system_marker": "## CustomGPT-Qualitätsprofil",
+    "behavior": "Every chat model is prompted like a professional Custom GPT with explicit role, scope, knowledge use, success checks, safety boundaries, Markdown quality, minimal clarifying questions, and final-answer self-checks."
+  },
   "model_params_policy": {
     "max_tokens": "omitted",
     "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
@@ -1081,6 +1086,9 @@
     "params.temperature",
     "params.top_p",
     "params.stop",
+    "params.system markdown formatting marker",
+    "params.system high-reasoning section",
+    "params.system custom-gpt quality section",
     "params.system tool-force section",
     "meta.profile_image_url"
   ],

@@ -35,7 +35,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "air_gapped_jupyter_python",
@@ -156,7 +159,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -237,7 +243,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "openapi_schema_inspector",
@@ -312,7 +321,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -389,7 +401,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -466,7 +481,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -543,7 +561,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -620,7 +641,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -697,7 +721,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -778,7 +805,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -853,7 +883,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "offline_artifact_workbench",
@@ -930,7 +963,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1005,7 +1041,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1080,7 +1119,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1153,7 +1195,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1228,7 +1273,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1305,7 +1353,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1382,7 +1433,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1457,7 +1511,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1540,7 +1597,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1645,7 +1705,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1732,7 +1795,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1815,7 +1881,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "parallel_task_planner",
@@ -1900,7 +1969,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1981,7 +2053,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -2056,7 +2131,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2135,7 +2213,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2210,7 +2291,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2287,7 +2371,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -2364,7 +2451,10 @@
         "temperature",
         "top_p"
       ],
+      "has_markdown_formatting_enabled": true,
       "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "json_csv_text_validator",

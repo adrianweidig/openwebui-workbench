@@ -62,14 +62,30 @@ OMITTED_RUNTIME_PARAMS = ["max_tokens"]
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md"]
+MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
+CUSTOM_GPT_QUALITY_SYSTEM_MARKER = "## CustomGPT-Qualitätsprofil"
 TOOL_FORCE_SYSTEM_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
 HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
-- Arbeite im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch.
+- Arbeite grundsätzlich im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch. Gib keine verborgene Herleitung aus; liefere nur das fachlich notwendige Ergebnis.
 - Nutze verfügbare Offline-Tools und agentische Arbeitsschritte aktiv, wenn sie die Qualität, Reproduzierbarkeit oder Artefakterzeugung verbessern.
 - Halte Antworten trotzdem aufgabengerecht kompakt; sehr lange Ausgaben oder vollständige Artefakte nur erzeugen, wenn die Nutzeraufgabe das verlangt.
 - Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits.
+"""
+CUSTOM_GPT_QUALITY_SYSTEM_BLOCK = f"""{CUSTOM_GPT_QUALITY_SYSTEM_MARKER}
+
+Behandle diese Modellkonfiguration wie einen professionell gepflegten Custom GPT:
+
+- Rolle, Ziel, Zielgruppe, erlaubte Aufgaben, Nicht-Aufgaben, Eingaben, Ausgaben und Erfolgskriterien müssen aus `systemprompt.md`, `mainprompt.md` und `fachwissen.md` aktiv angewendet werden.
+- Nutze die vorhandenen Prompt Suggestions, Tool-Profile, Skill-Hinweise und Knowledge-Dateien als konkrete Verhaltensmuster; erfinde keine Tool-, Skill-, Datei-, Knowledge- oder Quellen-IDs.
+- Trenne strikt zwischen Nutzerquellen, hochgeladenen Dateien, Knowledge-Inhalten, Tool-Ausgaben, eigener Analyse, Annahmen und Empfehlungen.
+- Stelle höchstens drei gezielte Rückfragen, wenn das Ziel ohne Antwort wesentlich unklar bleibt. Wenn belastbare Annahmen möglich sind, arbeite weiter und markiere sie knapp.
+- Bei komplexen Aufgaben definierst du intern Erfolgskriterien, zerlegst die Arbeit in sinnvolle Teilschritte und prüfst vor der finalen Antwort, ob Ziel, Format, Quellenklarheit, Tool-Nutzung, Sicherheitsgrenzen und Vollständigkeit erfüllt sind.
+- Verwende sauberes Markdown mit kurzen Überschriften, Listen, Tabellen oder JSON nur dort, wo es dem Ergebnis dient. Kein Fülltext, keine Meta-Erklärungen und keine sichtbaren Debug- oder Platzhaltertexte.
+- Bei aktuellen, rechtlichen, medizinischen, finanziellen, sicherheitskritischen oder produktionsrelevanten Aussagen kennzeichne Prüfpflichten und Aktualitätsgrenzen. Ohne freigegebenes Recherchetool keine externen Fakten behaupten.
+- Secrets, Tokens, private URLs und personenbezogene Daten minimieren, nicht unnötig wiederholen und niemals in Artefakte, Beispiele oder Logs übernehmen.
+- Produktive Änderungen, riskante Aktionen, externe Aufrufe oder irreversible Schritte nur nach ausdrücklicher Nutzerfreigabe und mit klarem Risiko-/Rollback-Hinweis.
 """
 MODEL_TEMPERATURES = {
     "allgemein": 0.45,
@@ -754,12 +770,49 @@ def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
     )
     previous_default_line = "- Die Modellprofile setzen keine festen Laufzeitwerte wie `max_tokens`, `temperature`, `top_p`, `reasoning_effort`, `num_ctx`, `top_k` oder `seed`; die Zielinstanz verwendet ihre eigenen Defaults."
     tuned_line = "- Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits."
+    current_line = "- Arbeite im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch."
+    upgraded_line = "- Arbeite grundsätzlich im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch. Gib keine verborgene Herleitung aus; liefere nur das fachlich notwendige Ergebnis."
     if HIGH_REASONING_SYSTEM_MARKER in system_prompt:
-        return system_prompt.replace(legacy_line, tuned_line).replace(previous_default_line, tuned_line)
+        return (
+            system_prompt.replace(legacy_line, tuned_line)
+            .replace(previous_default_line, tuned_line)
+            .replace(current_line, upgraded_line)
+        )
+    for marker in [CUSTOM_GPT_QUALITY_SYSTEM_MARKER, TOOL_FORCE_SYSTEM_MARKER]:
+        marker_index = system_prompt.find(marker)
+        if marker_index != -1:
+            insert_index = system_prompt.rfind("\n\n", 0, marker_index)
+            if insert_index == -1:
+                insert_index = marker_index
+                separator = "\n\n"
+            else:
+                separator = ""
+            return f"{system_prompt[:insert_index]}{separator}{HIGH_REASONING_SYSTEM_BLOCK}{system_prompt[insert_index:]}"
     insert_before = "\n\n        # Systemprompt"
     if insert_before in system_prompt:
         return system_prompt.replace(insert_before, f"\n\n        {HIGH_REASONING_SYSTEM_BLOCK.replace(chr(10), chr(10) + '        ')}{insert_before}", 1)
     return f"{HIGH_REASONING_SYSTEM_BLOCK}\n\n{system_prompt}"
+
+
+def ensure_custom_gpt_quality_profile(system_prompt: Any) -> Any:
+    if not isinstance(system_prompt, str):
+        return system_prompt
+    block = CUSTOM_GPT_QUALITY_SYSTEM_BLOCK.rstrip()
+    start = system_prompt.find(CUSTOM_GPT_QUALITY_SYSTEM_MARKER)
+    if start != -1:
+        next_heading = re.search(r"\n\n\s+## ", system_prompt[start + len(CUSTOM_GPT_QUALITY_SYSTEM_MARKER) :])
+        if next_heading:
+            cut = start + len(CUSTOM_GPT_QUALITY_SYSTEM_MARKER) + next_heading.start()
+            return f"{system_prompt[:start]}{block}{system_prompt[cut:]}"
+        return f"{system_prompt[:start]}{block}"
+    insert_before = f"\n\n        {TOOL_FORCE_SYSTEM_MARKER}"
+    indented_block = block.replace(chr(10), chr(10) + "        ")
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
+    insert_before = "\n\n        # Systemprompt"
+    if insert_before in system_prompt:
+        return system_prompt.replace(insert_before, f"\n\n        {indented_block}{insert_before}", 1)
+    return f"{block}\n\n{system_prompt}"
 
 
 def ensure_tool_force_profile(system_prompt: Any, model_id: str) -> Any:
@@ -780,8 +833,20 @@ def ensure_tool_force_profile(system_prompt: Any, model_id: str) -> Any:
     return f"{block}\n\n{system_prompt}"
 
 
+def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
+    if not isinstance(system_prompt, str):
+        return system_prompt
+    stripped = system_prompt.lstrip()
+    if stripped.startswith(MARKDOWN_FORMATTING_MARKER):
+        return system_prompt
+    return f"{MARKDOWN_FORMATTING_MARKER}\n\n{system_prompt}"
+
+
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
-    system_prompt = ensure_tool_force_profile(ensure_high_reasoning_profile(params.get("system")), model_id)
+    system_prompt = ensure_high_reasoning_profile(params.get("system"))
+    system_prompt = ensure_custom_gpt_quality_profile(system_prompt)
+    system_prompt = ensure_tool_force_profile(system_prompt, model_id)
+    system_prompt = ensure_markdown_formatting_enabled(system_prompt)
     temperature = temperature_for_model(model_id)
     params.clear()
     if system_prompt is not None:
@@ -927,7 +992,17 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "top_p": model.get("params", {}).get("top_p") if isinstance(model.get("params"), dict) else None,
                 "function_calling": model.get("params", {}).get("function_calling") if isinstance(model.get("params"), dict) else None,
                 "runtime_param_keys": sorted(model.get("params", {}).keys()) if isinstance(model.get("params"), dict) else [],
+                "has_markdown_formatting_enabled": str(model.get("params", {}).get("system", "")).lstrip().startswith(MARKDOWN_FORMATTING_MARKER)
+                if isinstance(model.get("params"), dict)
+                else False,
                 "has_systemprompt_mainprompt_fachwissen": has_prompt_sections(model),
+                "has_high_reasoning_profile": HIGH_REASONING_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
+                and "Reasoning-Profil `high`" in str(model.get("params", {}).get("system", ""))
+                if isinstance(model.get("params"), dict)
+                else False,
+                "has_custom_gpt_quality_profile": CUSTOM_GPT_QUALITY_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
+                if isinstance(model.get("params"), dict)
+                else False,
                 "has_tool_force_profile": TOOL_FORCE_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
@@ -997,6 +1072,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "behavior": "Every chat model must use at least one suitable assigned tool before the final answer when a task involves files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals, parallel planning, model/tool/skill overlays, ComfyUI workflows or skill authoring.",
             "model_profiles": TOOL_FORCE_PROFILES,
         },
+        "custom_gpt_quality_policy": {
+            "formatting_marker": MARKDOWN_FORMATTING_MARKER,
+            "system_marker": CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
+            "behavior": "Every chat model is prompted like a professional Custom GPT with explicit role, scope, knowledge use, success checks, safety boundaries, Markdown quality, minimal clarifying questions, and final-answer self-checks.",
+        },
         "model_params_policy": {
             "max_tokens": "omitted",
             "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
@@ -1020,6 +1100,9 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "params.temperature",
             "params.top_p",
             "params.stop",
+            "params.system markdown formatting marker",
+            "params.system high-reasoning section",
+            "params.system custom-gpt quality section",
             "params.system tool-force section",
             "meta.profile_image_url",
         ],
@@ -1080,6 +1163,21 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if params.get("stop") != []:
             issues.append(f"Chat-Modell {model_id} nutzt stop nicht als leere Liste")
         system_text = str(params.get("system", ""))
+        if not system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER):
+            issues.append(f"Chat-Modell {model_id} aktiviert Markdown-Formatierung nicht am Promptanfang")
+        if HIGH_REASONING_SYSTEM_MARKER not in system_text or "Reasoning-Profil `high`" not in system_text:
+            issues.append(f"Chat-Modell {model_id} hat kein durchgängiges High-Reasoning-Systemprofil")
+        if CUSTOM_GPT_QUALITY_SYSTEM_MARKER not in system_text:
+            issues.append(f"Chat-Modell {model_id} hat kein CustomGPT-Qualitätsprofil")
+        for required_phrase in [
+            "Rolle, Ziel, Zielgruppe",
+            "Erfolgskriterien",
+            "Trenne strikt zwischen Nutzerquellen",
+            "höchstens drei gezielte Rückfragen",
+            "Secrets, Tokens, private URLs",
+        ]:
+            if required_phrase not in system_text:
+                issues.append(f"Chat-Modell {model_id} fehlt CustomGPT-Qualitätskriterium: {required_phrase}")
         if TOOL_FORCE_SYSTEM_MARKER not in system_text:
             issues.append(f"Chat-Modell {model_id} hat keine verbindliche Tool-Nutzungssektion")
         if "Tool-/Skill-Inventur" not in system_text:
