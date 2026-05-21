@@ -15,3 +15,8 @@ Thumbs.db
 
 # Local working snapshots
 OpenWebUI Model Builder/.backup/
+
+# Local deployment secrets
+scripts/openwebui_workspace_config.yaml
+Tools/openwebui_workspace_config.yaml
+openwebui_workspace_config.yaml

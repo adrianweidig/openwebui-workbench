@@ -3,6 +3,13 @@
   "gui_import_file": "Tools/dist/openwebui-functions-import.json",
   "functions": [
     {
+      "id": "auto_tool_selector",
+      "name": "Auto Tool Selector",
+      "type": "filter",
+      "source_file": "Tools/openwebui_ext/filters/auto_tool_selector.py",
+      "default_enabled_for_chat_models": true
+    },
+    {
       "id": "context_compressor_filter",
       "name": "Context Compressor Filter",
       "type": "filter",

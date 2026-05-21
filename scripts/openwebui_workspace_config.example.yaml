@@ -1,0 +1,28 @@
+# Copy this file to scripts/openwebui_workspace_config.yaml and fill in the
+# values on the target machine. The real config file is ignored by git.
+
+openwebui:
+  # Externally reachable URL from the machine where you run the import script.
+  base_url: "http://openwebui.example.local:3000"
+  # Admin API key from OpenWebUI. Keep this file local and do not commit it.
+  admin_token: "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE"
+  timeout_seconds: 120
+
+jupyter:
+  # URL as seen from the OpenWebUI backend/container, not necessarily from
+  # the remote machine running this importer. In Docker Compose this is often
+  # http://jupyter:8888 or http://host.docker.internal:8888.
+  url: "http://jupyter:8888"
+  token: "PASTE_JUPYTER_TOKEN_HERE"
+  timeout_seconds: 30
+  # Path as seen by the Jupyter container/host.
+  allowed_workdir: "/app/backend/data/offline_artifacts"
+
+artifacts:
+  # Path as seen by the OpenWebUI backend/container.
+  root: "/app/backend/data/offline_artifacts"
+
+import:
+  public_read: false
+  skip_knowledge: false
+  include_optional_network_tools: false

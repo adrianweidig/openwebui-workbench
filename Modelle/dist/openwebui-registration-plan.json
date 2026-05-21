@@ -9,8 +9,10 @@
     "6_enable_user_or_group_access"
   ],
   "api_import_script": "Tools/import_openwebui_workspace.py",
-  "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000",
-  "api_import_token": "OPENWEBUI_ADMIN_TOKEN environment variable or --token CLI argument",
+  "api_import_config_file": "scripts/openwebui_workspace_config.yaml",
+  "api_import_config_example": "scripts/openwebui_workspace_config.example.yaml",
+  "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml",
+  "api_import_token": "openwebui.admin_token in config YAML, OPENWEBUI_ADMIN_TOKEN environment variable, or --token CLI argument",
   "tools_first": [
     "air_gapped_jupyter_python",
     "ask_user",
@@ -61,6 +63,7 @@
   ],
   "function_gui_import_file": "Tools/dist/openwebui-functions-import.json",
   "filters_before_models": [
+    "auto_tool_selector",
     "context_compressor_filter",
     "markdown_normalizer"
   ],
@@ -465,10 +468,12 @@
     "model_profiles": {
       "anforderungsanalyse-lastenheft": {
         "tools": [
+          "ask_user",
           "offline_artifact_workbench",
           "tool_skill_overlay_planner",
           "json_csv_text_validator",
-          "parallel_task_planner"
+          "parallel_task_planner",
+          "llm_council"
         ],
         "skills": [
           "prompt-to-tool-workflow",
@@ -494,7 +499,8 @@
         "tools": [
           "repo_tree_analyzer",
           "air_gapped_jupyter_python",
-          "offline_artifact_workbench"
+          "offline_artifact_workbench",
+          "visuals_toolkit_v4"
         ],
         "skills": [
           "repository-maintenance",
@@ -507,7 +513,8 @@
         "tools": [
           "repo_tree_analyzer",
           "json_csv_text_validator",
-          "air_gapped_jupyter_python"
+          "air_gapped_jupyter_python",
+          "llm_council"
         ],
         "skills": [
           "code-review-deep",
@@ -520,7 +527,8 @@
         "tools": [
           "repo_tree_analyzer",
           "air_gapped_jupyter_python",
-          "json_csv_text_validator"
+          "json_csv_text_validator",
+          "llm_council"
         ],
         "skills": [
           "code-review-deep",
@@ -533,7 +541,8 @@
         "tools": [
           "repo_tree_analyzer",
           "air_gapped_jupyter_python",
-          "json_csv_text_validator"
+          "json_csv_text_validator",
+          "sub_agent"
         ],
         "skills": [
           "repository-maintenance",
@@ -546,7 +555,8 @@
         "tools": [
           "json_csv_text_validator",
           "repo_tree_analyzer",
-          "offline_artifact_workbench"
+          "offline_artifact_workbench",
+          "llm_council"
         ],
         "skills": [
           "research-grounding",
@@ -557,10 +567,12 @@
       },
       "debugging-fehleranalyse": {
         "tools": [
+          "ask_user",
           "docker_compose_triage",
           "repo_tree_analyzer",
           "air_gapped_jupyter_python",
-          "json_csv_text_validator"
+          "json_csv_text_validator",
+          "parallel_tools"
         ],
         "skills": [
           "docker-openwebui-troubleshooting",
@@ -586,6 +598,7 @@
         "tools": [
           "offline_artifact_workbench",
           "inline_visuals_toolkit_v3",
+          "visuals_toolkit_v4",
           "json_csv_text_validator"
         ],
         "skills": [
@@ -648,6 +661,7 @@
       },
       "it-helpdesk-diagnose": {
         "tools": [
+          "ask_user",
           "docker_compose_triage",
           "json_csv_text_validator",
           "repo_tree_analyzer"
@@ -688,16 +702,21 @@
       },
       "offline-workbench-agent": {
         "tools": [
+          "ask_user",
           "json_csv_text_validator",
           "air_gapped_jupyter_python",
           "offline_artifact_workbench",
           "inline_visuals_toolkit_v3",
+          "visuals_toolkit_v4",
           "parallel_task_planner",
+          "parallel_tools",
           "subagent_orchestrator",
+          "sub_agent",
           "tool_skill_overlay_planner",
           "repo_tree_analyzer",
           "docker_compose_triage",
           "openapi_schema_inspector",
+          "llm_council",
           "comfyui_workflow_inspector"
         ],
         "skills": [
@@ -712,8 +731,11 @@
       "prozess-workflow-dokumentation": {
         "tools": [
           "parallel_task_planner",
+          "parallel_tools",
+          "sub_agent",
           "offline_artifact_workbench",
           "inline_visuals_toolkit_v3",
+          "visuals_toolkit_v4",
           "tool_skill_overlay_planner"
         ],
         "skills": [
@@ -728,6 +750,7 @@
         "tools": [
           "offline_artifact_workbench",
           "inline_visuals_toolkit_v3",
+          "visuals_toolkit_v4",
           "air_gapped_jupyter_python"
         ],
         "skills": [
@@ -755,6 +778,7 @@
           "json_csv_text_validator",
           "air_gapped_jupyter_python",
           "inline_visuals_toolkit_v3",
+          "visuals_toolkit_v4",
           "offline_artifact_workbench"
         ],
         "skills": [
@@ -795,7 +819,8 @@
         "tools": [
           "repo_tree_analyzer",
           "json_csv_text_validator",
-          "air_gapped_jupyter_python"
+          "air_gapped_jupyter_python",
+          "parallel_tools"
         ],
         "skills": [
           "code-review-deep",

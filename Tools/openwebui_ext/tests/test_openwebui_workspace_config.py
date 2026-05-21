@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import unittest
 from pathlib import Path
 
@@ -12,6 +13,8 @@ REGISTRATION_PLAN = ROOT / "Modelle" / "dist" / "openwebui-registration-plan.jso
 TOOL_REGISTRY = ROOT / "Tools" / "dist" / "openwebui-tool-registry.json"
 FUNCTION_REGISTRY = ROOT / "Tools" / "dist" / "openwebui-function-registry.json"
 SKILLS_DIR = ROOT / "Tools" / "openwebui_ext" / "skills"
+IMPORT_SCRIPT = ROOT / "Tools" / "import_openwebui_workspace.py"
+CONFIG_EXAMPLE = ROOT / "scripts" / "openwebui_workspace_config.example.yaml"
 
 REQUIRED_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md"]
 TOOL_FORCE_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
@@ -19,6 +22,17 @@ TOOL_FORCE_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
 
 def read_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_importer():
+    spec = importlib.util.spec_from_file_location("test_import_openwebui_workspace", IMPORT_SCRIPT)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    import sys
+
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
@@ -56,6 +70,8 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         functions = read_json(FUNCTION_REGISTRY)
 
         self.assertIn("Tools/import_openwebui_workspace.py", plan.get("api_import_script", ""))
+        self.assertIn("scripts/openwebui_workspace_config.yaml", plan.get("api_import_config_file", ""))
+        self.assertIn("scripts/openwebui_workspace_config.example.yaml", plan.get("api_import_config_example", ""))
         self.assertIn("4_upload_model_knowledge", plan.get("order", []))
         self.assertEqual(plan.get("model_knowledge_files_required"), REQUIRED_KNOWLEDGE_FILES)
         self.assertGreaterEqual(len(plan.get("skills_before_models", [])), 1)
@@ -69,6 +85,16 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 for info in model.get("knowledge_files", {}).values():
                     self.assertTrue(info.get("exists"))
                     self.assertTrue(info.get("non_empty"))
+
+    def test_config_yaml_example_resolves_openwebui_and_jupyter_values(self) -> None:
+        importer = load_importer()
+        args = importer.parse_args(["--config", str(CONFIG_EXAMPLE), "--dry-run"])
+        runtime = importer.resolve_runtime_config(args)
+        self.assertEqual(runtime["base_url"], "http://openwebui.example.local:3000")
+        self.assertEqual(runtime["jupyter"]["OPENWEBUI_JUPYTER_URL"], "http://jupyter:8888")
+        valves = importer.configured_tool_valves(runtime)
+        self.assertIn("air_gapped_jupyter_python", valves)
+        self.assertIn("offline_artifact_workbench", valves)
 
 
 if __name__ == "__main__":

@@ -15,15 +15,17 @@ Fallback für einzelne Tools: `Workspace > Tools > Create Tool` öffnen und den 
 Tools führen serverseitig Python aus. Nur vertrauenswürdige Administratoren sollten Tools importieren oder ändern.
 
 Die öffentlichen Tool-Exports aus `Tools/openwebui_ext/third_party/public_openwebui_tools/` wurden nicht roh als Default übernommen. Produktive Kopien liegen unter `Tools/openwebui_ext/tools/` und wurden für Air-Gap-Betrieb angepasst: keine öffentlichen API-Fallbacks, keine öffentlichen CDN-Defaults im Offline-Standard und Public-Web-Crawling nur mit lokaler/private Host-Allowlist.
+Die öffentlichen Function-Exports aus `Tools/openwebui_ext/third_party/public_openwebui_functions/` werden produktiv ausschließlich als echte Filter unter `Tools/openwebui_ext/filters/` geführt. `auto_tool_selector.py` aktiviert passende lokale Tools und optional konfigurierte MCP-Server vor dem Modellaufruf, bleibt dabei aber offlinefähig und verzichtet auf externe LLM- oder Netzwerk-Fallbacks.
 
 ## Filter importieren
 
 1. OpenWebUI als Administrator öffnen.
 2. `Workspace > Functions > Import` wählen und `Tools/dist/openwebui-functions-import.json` importieren.
-3. Falls der Function-Importdialog nicht verfügbar ist, `Workspace > Functions > Create Function` wählen und den Inhalt aus `Tools/openwebui_ext/filters/context_compressor_filter.py` einfügen.
+3. Falls der Function-Importdialog nicht verfügbar ist, `Workspace > Functions > Create Function` wählen und den Inhalt aus `Tools/openwebui_ext/filters/*.py` einzeln einfügen.
 4. Speichern, Valves prüfen und Filter für Modelle aktivieren.
 
 Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die geschätzten Kontexttokens. Sobald der konfigurierte Schwellwert erreicht ist, sendet er eine Statusmeldung, erzeugt eine kompakte Zusammenfassung älterer Chatteile und injiziert diese als Systemkontext in denselben Chatrequest. Einen neuen Chat legt der Filter bewusst nicht selbst an, weil OpenWebUI-Filter dafür keine stabile versionsübergreifende API garantieren; der robuste Default ist die Zusammenfassung im aktuellen Chatkontext.
+Der Filter `auto_tool_selector.py` läuft als `inlet` vor dem Modellaufruf. Er ergänzt `body.tool_ids` heuristisch um passende bereits verfügbare lokale Tools wie `ask_user`, `parallel_tools`, `sub_agent`, `llm_council`, `visuals_toolkit_v4`, Jupyter, Artefakt-Tools und Validatoren. Optionale Public-/Netzwerktools werden nur gewählt, wenn sie tatsächlich im Modell-/Request-Kontext verfügbar sind.
 
 ## Skills importieren
 
@@ -46,12 +48,18 @@ Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die gesc
 - `inline_visuals_toolkit_v3.py`: offline SVG-Charts, HTML-Dashboards, Mermaid-Blöcke und Visual-Briefs erzeugen.
 - `parallel_task_planner.py`: komplexe Arbeit in sichere Parallelwellen und Subagent-Arbeitspakete zerlegen.
 - `subagent_orchestrator.py`: Subagent-Roster, Delegationsprompts und Ergebnis-Merges erzeugen.
+- `parallel_tools.py`: bereits aktivierte OpenWebUI-Tools parallel ausführen.
+- `sub_agent.py`: isolierte OpenWebUI-Subagenten mit Air-Gap-sicheren Defaults ausführen.
+- `llm_council.py`: lokale Modellratsantworten über die OpenWebUI-API erzeugen.
+- `visuals_toolkit_v4.py`: CDN-freie Text-, ASCII- und Visual-Hilfen als Ergänzung zu den lokalen Visual-Tools.
 - `tool_skill_overlay_planner.py`: Modell-/Tool-/Skill-Overlays mit Redundanz und Fallbacks planen.
 - `comfyui_workflow_inspector.py`: ComfyUI-Workflow-JSON lokal prüfen und Setup-Checklisten erzeugen.
 
 ## Filter-Katalog
 
 - `context_compressor_filter.py`: modellübergreifender Kontextkomprimierer mit Token-Schätzung, Statusmeldung und automatischer Zusammenfassung älterer Chatanteile.
+- `auto_tool_selector.py`: offlinefähiger inlet-Filter, der passende Tool-IDs vor dem Modellaufruf aktiviert.
+- `markdown_normalizer.py`: output-Filter für Markdown-, Mermaid-, Tabellen- und Codeblock-Normalisierung.
 
 ## Skill-Katalog
 
@@ -113,11 +121,15 @@ Chat-Modelle erhalten nur Offline-Default-Tools in `meta.toolIds`, außerdem `me
 Der API-basierte Import kann direkt über den Generator ausgeführt werden:
 
 ```powershell
-$env:OPENWEBUI_ADMIN_TOKEN="YOUR_OPEN_WEBUI_API_KEY"
-python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000
+Copy-Item scripts/openwebui_workspace_config.example.yaml scripts/openwebui_workspace_config.yaml
+notepad scripts/openwebui_workspace_config.yaml
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
-Der Generator validiert zuerst alle lokalen Artefakte und startet danach `Tools/import_openwebui_workspace.py`. Der Importer importiert beziehungsweise aktualisiert Tools, Functions/Filter, Skills und Modelle. Standardmäßig lädt er zusätzlich `mainprompt.md` und `fachwissen.md` jedes Modellpakets als Knowledge-Basis hoch und verknüpft diese Knowledge im jeweiligen Modellprofil. Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run` oder direkt mit `python Tools/import_openwebui_workspace.py --dry-run` möglich.
+Die Konfigurationsdatei enthält die von der ausführenden Maschine erreichbare OpenWebUI-Adresse und den Admin-API-Key sowie die aus Sicht des OpenWebUI-Backends erreichbare Jupyter-Adresse, den Jupyter-Token und das Artefakt-Volume. Die echte `scripts/openwebui_workspace_config.yaml` ist per `.gitignore` ausgeschlossen; nur die Beispiel-Datei wird versioniert.
+Alternativ können dieselben Werte für lokale Einmalimporte oben in `scripts/configure_openwebui_tool_models.py` in den `SCRIPT_*`-Konstanten oder als CLI-Parameter wie `--jupyter-url`, `--jupyter-token` und `--artifact-root` gesetzt werden.
+
+Der Generator validiert zuerst alle lokalen Artefakte und startet danach `Tools/import_openwebui_workspace.py`. Der Importer importiert beziehungsweise aktualisiert Tools, Functions/Filter, Skills und Modelle. Standardmäßig lädt er zusätzlich `mainprompt.md` und `fachwissen.md` jedes Modellpakets als Knowledge-Basis hoch, verknüpft diese Knowledge im jeweiligen Modellprofil und setzt die Tool-Valves für `air_gapped_jupyter_python` sowie `offline_artifact_workbench`. Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` oder direkt mit `python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
 
 ## Wartung
 

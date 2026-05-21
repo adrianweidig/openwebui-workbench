@@ -17,6 +17,19 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 
 ROOT = Path(__file__).resolve().parents[1]
+CONFIG_FILE = Path(__file__).with_name("openwebui_workspace_config.yaml")
+CONFIG_EXAMPLE = Path(__file__).with_name("openwebui_workspace_config.example.yaml")
+
+# Optional local defaults. Prefer scripts/openwebui_workspace_config.yaml for real
+# deployments so secrets never need to be committed.
+SCRIPT_OPENWEBUI_BASE_URL = ""
+SCRIPT_OPENWEBUI_ADMIN_TOKEN = ""
+SCRIPT_JUPYTER_URL = ""
+SCRIPT_JUPYTER_TOKEN = ""
+SCRIPT_JUPYTER_TIMEOUT_SECONDS = ""
+SCRIPT_JUPYTER_ALLOWED_WORKDIR = ""
+SCRIPT_ARTIFACT_ROOT = ""
+
 TOOLS_INDEX = ROOT / "Tools" / "index.json"
 TOOLS_DIST = ROOT / "Tools" / "dist"
 IMPORT_SCRIPT = ROOT / "Tools" / "import_openwebui_workspace.py"
@@ -88,7 +101,7 @@ MODEL_TEMPERATURES = {
 }
 TOOL_FORCE_PROFILES = {
     "anforderungsanalyse-lastenheft": {
-        "tools": ["offline_artifact_workbench", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner"],
+        "tools": ["ask_user", "offline_artifact_workbench", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner", "llm_council"],
         "skills": ["prompt-to-tool-workflow", "model-tool-skill-overlays", "offline-artifact-production"],
         "focus": "Anforderungen, Akzeptanzkriterien, Tool-/Skill-Abdeckung und Handover-Artefakte strukturiert validieren.",
     },
@@ -98,32 +111,32 @@ TOOL_FORCE_PROFILES = {
         "focus": "OpenAPI-/JSON-Schemata prüfen, API-Verträge konsistent halten und Schnittstellenartefakte erzeugen.",
     },
     "code-dokumentation": {
-        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "offline_artifact_workbench"],
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "offline_artifact_workbench", "visuals_toolkit_v4"],
         "skills": ["repository-maintenance", "offline-artifact-production", "secure-tool-usage"],
         "focus": "Repository-Struktur, Codeauszüge und Dokumentationsartefakte mit lokalen Prüfpfaden absichern.",
     },
     "code-review": {
-        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python"],
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python", "llm_council"],
         "skills": ["code-review-deep", "repository-maintenance", "secure-tool-usage"],
         "focus": "Diffs, Dateibäume, Findings, Tests und strukturierte Review-Ergebnisse toolgestützt prüfen.",
     },
     "codeanalyse": {
-        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator", "llm_council"],
         "skills": ["code-review-deep", "repository-maintenance", "secure-tool-usage"],
         "focus": "Code- und Strukturfragen mit Dateibaum-, Parsing- oder Testhilfen belegen.",
     },
     "codegenerierung": {
-        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "tools": ["repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator", "sub_agent"],
         "skills": ["repository-maintenance", "secure-tool-usage", "openwebui-tool-authoring"],
         "focus": "Vorhandene Struktur prüfen, erzeugten Code lokal plausibilisieren und strukturierte Daten validieren.",
     },
     "compliance-richtlinienprüfung": {
-        "tools": ["json_csv_text_validator", "repo_tree_analyzer", "offline_artifact_workbench"],
+        "tools": ["json_csv_text_validator", "repo_tree_analyzer", "offline_artifact_workbench", "llm_council"],
         "skills": ["research-grounding", "secure-tool-usage", "redundant-fallback-tooling"],
         "focus": "Bereitgestellte Richtlinien, Tabellen, Dateibäume und Nachweisartefakte nachvollziehbar prüfen.",
     },
     "debugging-fehleranalyse": {
-        "tools": ["docker_compose_triage", "repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator"],
+        "tools": ["ask_user", "docker_compose_triage", "repo_tree_analyzer", "air_gapped_jupyter_python", "json_csv_text_validator", "parallel_tools"],
         "skills": ["docker-openwebui-troubleshooting", "repository-maintenance", "secure-tool-usage"],
         "focus": "Logs, Compose-Auszüge, Codepfade und Reproduktionsdaten toolgestützt eingrenzen.",
     },
@@ -133,7 +146,7 @@ TOOL_FORCE_PROFILES = {
         "focus": "Bereitgestellte Dokumentinhalte, Tabellen und Extrakte lokal prüfen und bei Bedarf als Artefakt ausgeben.",
     },
     "dokumentengenerierung": {
-        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "json_csv_text_validator"],
+        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "json_csv_text_validator"],
         "skills": ["offline-artifact-production", "visual-toolkit-v3-offline", "secure-tool-usage"],
         "focus": "HTML/PDF/ZIP-fähige Ergebnisse mit Artefakt- und Visual-Tools erzeugen.",
     },
@@ -158,7 +171,7 @@ TOOL_FORCE_PROFILES = {
         "focus": "Extraktionsschema, JSON/CSV-Ausgabe und Datenqualität vor der finalen Antwort validieren.",
     },
     "it-helpdesk-diagnose": {
-        "tools": ["docker_compose_triage", "json_csv_text_validator", "repo_tree_analyzer"],
+        "tools": ["ask_user", "docker_compose_triage", "json_csv_text_validator", "repo_tree_analyzer"],
         "skills": ["docker-openwebui-troubleshooting", "secure-tool-usage", "offline-use-case-router"],
         "focus": "Fehlertexte, Konfigurationsauszüge und Diagnosepfade mit passenden lokalen Tools prüfen.",
     },
@@ -173,17 +186,17 @@ TOOL_FORCE_PROFILES = {
         "focus": "Beschlüsse, Aufgabenlisten, Tabellen und Übergabedokumente strukturiert prüfen oder erzeugen.",
     },
     "offline-workbench-agent": {
-        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "parallel_task_planner", "subagent_orchestrator", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "comfyui_workflow_inspector"],
+        "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "parallel_task_planner", "parallel_tools", "subagent_orchestrator", "sub_agent", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "llm_council", "comfyui_workflow_inspector"],
         "skills": ["offline-use-case-router", "redundant-fallback-tooling", "native-tool-calling-rollout", "parallel-tools-subagents", "visual-toolkit-v3-offline"],
         "focus": "Neue Aufgaben routen, passende Tools erzwingen, komplexe Arbeit planen und Artefakte lokal erzeugen.",
     },
     "prozess-workflow-dokumentation": {
-        "tools": ["parallel_task_planner", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "tool_skill_overlay_planner"],
+        "tools": ["parallel_task_planner", "parallel_tools", "sub_agent", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "tool_skill_overlay_planner"],
         "skills": ["parallel-tools-subagents", "offline-artifact-production", "visual-toolkit-v3-offline", "model-tool-skill-overlays"],
         "focus": "Prozesse, Workflows, Verantwortlichkeiten und Diagramme toolgestützt planen und dokumentieren.",
     },
     "präsentationserstellung": {
-        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "air_gapped_jupyter_python"],
+        "tools": ["offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python"],
         "skills": ["offline-artifact-production", "visual-toolkit-v3-offline", "offline-creative-media-workflows"],
         "focus": "Folien, Visuals, Diagrammdaten und exportierbare Präsentationsartefakte mit Tools erzeugen.",
     },
@@ -193,7 +206,7 @@ TOOL_FORCE_PROFILES = {
         "focus": "Änderungsbereiche, Tests, Risiken und Strukturwirkungen lokal prüfen.",
     },
     "report-dashboard-vorbereitung": {
-        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "inline_visuals_toolkit_v3", "offline_artifact_workbench"],
+        "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "offline_artifact_workbench"],
         "skills": ["data-cleaning-analysis", "visual-toolkit-v3-offline", "offline-artifact-production"],
         "focus": "Daten prüfen, Kennzahlen berechnen, Visuals erzeugen und Dashboard-Artefakte vorbereiten.",
     },
@@ -208,7 +221,7 @@ TOOL_FORCE_PROFILES = {
         "focus": "Tabellen und CSV immer validieren, Berechnungen mit Jupyter durchführen und Ergebnisse exportierbar machen.",
     },
     "testfall-generierung": {
-        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python"],
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python", "parallel_tools"],
         "skills": ["code-review-deep", "repository-maintenance", "data-cleaning-analysis"],
         "focus": "Anforderungen, Codepfade, Testdaten und erwartete Ergebnisse mit lokalen Prüfpfaden absichern.",
     },
@@ -680,7 +693,7 @@ def tool_force_block_for_model(model_id: str) -> str:
 
 Zu Beginn jeder nicht-trivialen Aufgabe MUSST du eine kurze Tool-/Skill-Inventur durchführen: Prüfe anhand der tatsächlich verfügbaren Tool-IDs, importierten Skills, Nutzerdateien und des gewünschten Ergebnisses, welche Tools oder Skills für diesen Use Case passen. Nutze nur wirklich verfügbare Tools; wenn ein empfohlenes Tool oder ein Skill in der Zielinstanz fehlt, erfinde ihn nicht, sondern arbeite mit dem besten verfügbaren Fallback und benenne die Grenze knapp.
 
-Wenn ein passendes Tool verfügbar ist, nutze es früh im Arbeitsablauf und nicht erst nach einer fertigen Antwort. Bei mehreren unabhängigen Teilprüfungen prüfe, ob `parallel_task_planner`, `parallel_tools` oder `subagent_orchestrator` die Arbeit robuster machen.
+Wenn ein passendes Tool verfügbar ist, nutze es früh im Arbeitsablauf und nicht erst nach einer fertigen Antwort. Bei mehreren unabhängigen Teilprüfungen prüfe, ob `parallel_task_planner`, `parallel_tools`, `subagent_orchestrator` oder `sub_agent` die Arbeit robuster machen. Wenn `auto_tool_selector` als Filter aktiv ist, prüfe dessen Tool-Vorauswahl trotzdem bewusst gegen den aktuellen Use Case.
 
 Vor jeder finalen Antwort prüfst du aktiv, ob ein freigegebenes Tool oder ein importierter Skill die Aufgabe belastbarer, reproduzierbarer oder artefaktfähig macht. Wenn einer der folgenden Auslöser zutrifft, MUSST du vor der finalen Antwort mindestens ein passendes Tool nutzen; nur bei reiner Begriffserklärung, fehlenden Eingaben, explizitem Nutzerverbot oder Sicherheits-/Berechtigungsgründen darfst du darauf verzichten und musst den Verzicht kurz begründen.
 
@@ -689,11 +702,15 @@ Vor jeder finalen Antwort prüfst du aktiv, ob ein freigegebenes Tool oder ein i
 - HTML, PDF, Präsentationen, ZIPs oder andere Übergabeartefakte: `offline_artifact_workbench`; für Diagramme, Mermaid, SVG-Charts oder Dashboards zusätzlich `inline_visuals_toolkit_v3`.
 - Docker-, Compose-, OpenWebUI- oder Betriebsfehler: `docker_compose_triage`.
 - OpenAPI-, MCP-, Schnittstellen- oder Toolserver-Schemata: `openapi_schema_inspector`.
-- Komplexe mehrstufige Aufgaben, parallele Arbeit oder Subagent-Planung: `parallel_task_planner`; bei Rollen-/Subagent-Aufteilung zusätzlich `subagent_orchestrator`.
+- Unklare Eingaben, fehlende Dateien oder notwendige Rückfragen vor Toolausführung: `ask_user`, sofern verfügbar.
+- Komplexe mehrstufige Aufgaben, parallele Arbeit oder Subagent-Planung: `parallel_task_planner`; für parallele bereits aktivierte Toolaufrufe `parallel_tools`; bei Rollen-/Subagent-Aufteilung zusätzlich `subagent_orchestrator` oder `sub_agent`.
 - Modell-, Tool-, Skill- oder Fallback-Zuordnung: `tool_skill_overlay_planner`.
+- Unsichere fachliche Abwägungen, zweite Modellmeinung oder robuste Entscheidungsvorbereitung: `llm_council`, sofern lokale Modell- und OpenWebUI-API-Konfiguration vorhanden sind.
 - ComfyUI-, Bild-, Audio- oder Video-Workflow-JSON: `comfyui_workflow_inspector`.
 - Skill-Entwurf oder Skill-Markdown: `markdown_skill_builder`.
+- Rich-Visuals, Dashboards, Wireframes, ASCII-/SVG-Visualisierung oder textbasierte UI-Entwürfe: `visuals_toolkit_v4`; bei klassischen Offline-SVG-/Mermaid-Artefakten zusätzlich oder alternativ `inline_visuals_toolkit_v3`.
 - Interne MediaWiki-Arbeit: `mediawiki_legacy_crawler` nur bei explizitem Auftrag und vorhandener Konfiguration.
+- Public-Web-, GitHub- oder Rich-UI-Tools wie `web_search_and_crawl`, `safe_http_fetcher`, `github_repo_inspector` und `openui_generative_ui` nur nutzen, wenn sie in der Zielinstanz bewusst importiert, konfiguriert und für den aktuellen Offline-/Netzbereich freigegeben sind.
 
 Für dieses Modell sind primär diese Tools vorgesehen: {tools}.
 Wenn Skills importiert oder an das Modell gebunden sind, berücksichtige besonders: {skills}.
@@ -788,8 +805,8 @@ def configure_model(model: Dict[str, Any], tool_ids: List[str], filter_ids: List
     profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
     meta["profile_image_url"] = icon_data_uri_for_model(model_id)
     meta["toolIds"] = list(tool_ids)
-    meta["filterIds"] = merge_unique(meta.get("filterIds"), filter_ids)
-    meta["defaultFilterIds"] = merge_unique(meta.get("defaultFilterIds"), filter_ids)
+    meta["filterIds"] = merge_unique(filter_ids, meta.get("filterIds"))
+    meta["defaultFilterIds"] = merge_unique(filter_ids, meta.get("defaultFilterIds"))
     meta["primaryToolIds"] = list(profile["tools"])
     meta["recommendedSkillIds"] = list(profile["skills"])
     meta["requiredKnowledgeFiles"] = list(REQUIRED_MODEL_KNOWLEDGE_FILES)
@@ -919,8 +936,10 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "6_enable_user_or_group_access",
         ],
         "api_import_script": rel(IMPORT_SCRIPT),
-        "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000",
-        "api_import_token": "OPENWEBUI_ADMIN_TOKEN environment variable or --token CLI argument",
+        "api_import_config_file": rel(CONFIG_FILE),
+        "api_import_config_example": rel(CONFIG_EXAMPLE),
+        "api_import_command": "python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml",
+        "api_import_token": "openwebui.admin_token in config YAML, OPENWEBUI_ADMIN_TOKEN environment variable, or --token CLI argument",
         "tools_first": offline_tool_ids,
         "tool_gui_import_file": rel(TOOL_IMPORT),
         "tool_gui_offline_import_file": rel(OFFLINE_TOOL_IMPORT),
@@ -998,6 +1017,8 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
     for record in function_records:
         if not record.importable:
             issues.append(f"Function nicht importierbar: {record.id} ({record.path})")
+        elif record.function_type != "filter":
+            issues.append(f"Aktivierte Function ist kein Filter: {record.id} ({record.path}) type={record.function_type}")
     for model in models:
         model_id = str(model.get("id"))
         meta = model.get("meta", {}) if isinstance(model.get("meta"), dict) else {}
@@ -1087,6 +1108,7 @@ def rebuild_zips() -> None:
             TOOLS_INDEX,
             ROOT / "Tools" / "README.md",
             IMPORT_SCRIPT,
+            CONFIG_EXAMPLE,
             TOOL_REGISTRY,
             OFFLINE_TOOL_IMPORT,
             TOOL_IMPORT,
@@ -1108,6 +1130,7 @@ def rebuild_zips() -> None:
             REGISTRATION_PLAN,
             MODEL_PARAMS_SUMMARY,
             MODEL_DIST / "manual_import_checklist.md",
+            CONFIG_EXAMPLE,
         ]:
             if path.exists():
                 archive.write(path, rel(path))
@@ -1124,10 +1147,29 @@ def run_workspace_import(args: argparse.Namespace) -> int:
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     import_args: List[str] = []
-    if args.base_url:
-        import_args.extend(["--base-url", args.base_url])
-    if args.token:
-        import_args.extend(["--token", args.token])
+    if args.config:
+        import_args.extend(["--config", args.config])
+    base_url = args.base_url or SCRIPT_OPENWEBUI_BASE_URL
+    token = args.token or SCRIPT_OPENWEBUI_ADMIN_TOKEN
+    jupyter_url = args.jupyter_url or SCRIPT_JUPYTER_URL
+    jupyter_token = args.jupyter_token or SCRIPT_JUPYTER_TOKEN
+    jupyter_timeout = args.jupyter_timeout_seconds or SCRIPT_JUPYTER_TIMEOUT_SECONDS
+    jupyter_allowed_workdir = args.jupyter_allowed_workdir or SCRIPT_JUPYTER_ALLOWED_WORKDIR
+    artifact_root = args.artifact_root or SCRIPT_ARTIFACT_ROOT
+    if base_url:
+        import_args.extend(["--base-url", str(base_url)])
+    if token:
+        import_args.extend(["--token", str(token)])
+    if jupyter_url:
+        import_args.extend(["--jupyter-url", str(jupyter_url)])
+    if jupyter_token:
+        import_args.extend(["--jupyter-token", str(jupyter_token)])
+    if jupyter_timeout:
+        import_args.extend(["--jupyter-timeout-seconds", str(jupyter_timeout)])
+    if jupyter_allowed_workdir:
+        import_args.extend(["--jupyter-allowed-workdir", str(jupyter_allowed_workdir)])
+    if artifact_root:
+        import_args.extend(["--artifact-root", str(artifact_root)])
     if args.public_read:
         import_args.append("--public-read")
     if args.skip_knowledge:
@@ -1148,8 +1190,14 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--rebuild-zips", action="store_true", help="Rebuild portable offline ZIP artifacts after writing.")
     parser.add_argument("--import-openwebui", action="store_true", help="After a successful write/check pass, import tools, functions, skills, knowledge and models into an OpenWebUI instance.")
     parser.add_argument("--import-dry-run", action="store_true", help="Run the importer's local payload validation through this script without calling OpenWebUI.")
+    parser.add_argument("--config", default=None, help="YAML config for OpenWebUI/Jupyter endpoints and tokens. Defaults to scripts/openwebui_workspace_config.yaml when present.")
     parser.add_argument("--base-url", default=None, help="OpenWebUI base URL for --import-openwebui, for example http://localhost:3000.")
     parser.add_argument("--token", default=None, help="OpenWebUI admin API token for --import-openwebui. Prefer OPENWEBUI_ADMIN_TOKEN.")
+    parser.add_argument("--jupyter-url", default=None, help="Jupyter URL as seen from the OpenWebUI backend/container.")
+    parser.add_argument("--jupyter-token", default=None, help="Jupyter token for the air_gapped_jupyter_python tool valve.")
+    parser.add_argument("--jupyter-timeout-seconds", default=None, help="Jupyter execution timeout tool valve.")
+    parser.add_argument("--jupyter-allowed-workdir", default=None, help="Allowed workdir as seen by the Jupyter host/container.")
+    parser.add_argument("--artifact-root", default=None, help="Artifact root as seen by the OpenWebUI backend/container.")
     parser.add_argument("--public-read", action="store_true", help="Grant read access during --import-openwebui where OpenWebUI permits it.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md and fachwissen.md as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")

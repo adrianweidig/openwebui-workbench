@@ -80,6 +80,37 @@ class OpenWebUIFilterImportTests(unittest.TestCase):
         self.assertIn("| A | B|", content)
         self.assertEqual(content.count("```"), 2)
 
+    def test_auto_tool_selector_adds_relevant_available_tools(self) -> None:
+        path = FILTERS_DIR / "auto_tool_selector.py"
+        spec = importlib.util.spec_from_file_location("test_auto_tool_selector", path)
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader if spec else None)
+        module = importlib.util.module_from_spec(spec)
+        assert spec and spec.loader
+        spec.loader.exec_module(module)
+        filter_obj = module.Filter()
+        body = {
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Bitte validiere dieses JSON und erstelle daraus ein Diagramm im Dashboard.",
+                }
+            ]
+        }
+        model = {
+            "meta": {
+                "toolIds": [
+                    "json_csv_text_validator",
+                    "visuals_toolkit_v4",
+                    "parallel_tools",
+                ]
+            }
+        }
+        result = asyncio.run(filter_obj.inlet(body, __model__=model))
+        self.assertIn("json_csv_text_validator", result["tool_ids"])
+        self.assertIn("visuals_toolkit_v4", result["tool_ids"])
+        self.assertIn("auto_tool_selector", result["metadata"])
+
 
 if __name__ == "__main__":
     unittest.main()

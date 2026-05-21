@@ -17,11 +17,15 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
-# Paste the admin API token here, or set OPENWEBUI_ADMIN_TOKEN.
+# Paste values here only if you do not want to use scripts/openwebui_workspace_config.yaml
+# or environment variables. Do not commit real tokens.
 OPENWEBUI_ADMIN_TOKEN = "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE"
-
-# Change this only if your OpenWebUI is not reachable on localhost:3000.
 OPENWEBUI_BASE_URL = "http://localhost:3000"
+JUPYTER_URL = ""
+JUPYTER_TOKEN = ""
+JUPYTER_TIMEOUT_SECONDS = 30
+JUPYTER_ALLOWED_WORKDIR = ""
+ARTIFACT_ROOT = ""
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS_DIR = ROOT / "Tools"
@@ -32,6 +36,7 @@ FUNCTION_REGISTRY = TOOLS_DIR / "dist" / "openwebui-function-registry.json"
 SKILLS_DIR = OPENWEBUI_EXT / "skills"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md")
+DEFAULT_CONFIG_NAME = "openwebui_workspace_config.yaml"
 
 PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEBUI_API_KEY"}
 
@@ -98,6 +103,27 @@ class OpenWebUIClient:
         except URLError as exc:
             raise RuntimeError(f"Cannot reach OpenWebUI at {self.base_url}: {exc}") from exc
 
+    def request_any(
+        self,
+        method: str,
+        paths: list[str],
+        payload: Any | None = None,
+        query: dict[str, Any] | None = None,
+        expected: tuple[int, ...] = (200,),
+    ) -> Any:
+        last_not_found: RuntimeError | None = None
+        for path in paths:
+            try:
+                return self.request(method, path, payload=payload, query=query, expected=expected)
+            except RuntimeError as exc:
+                if "HTTP 404" in str(exc):
+                    last_not_found = exc
+                    continue
+                raise
+        if last_not_found:
+            raise last_not_found
+        raise RuntimeError(f"No API path candidates supplied for {method}")
+
     def upload_file(self, path: Path) -> dict[str, Any]:
         boundary = f"----openwebui-workspace-{uuid.uuid4().hex}"
         content_type = mimetypes.guess_type(path.name)[0] or "text/plain"
@@ -132,6 +158,213 @@ class OpenWebUIClient:
 
 def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def strip_yaml_comment(line: str) -> str:
+    in_single = False
+    in_double = False
+    escaped = False
+    for index, char in enumerate(line):
+        if escaped:
+            escaped = False
+            continue
+        if char == "\\" and in_double:
+            escaped = True
+            continue
+        if char == "'" and not in_double:
+            in_single = not in_single
+        elif char == '"' and not in_single:
+            in_double = not in_double
+        elif char == "#" and not in_single and not in_double:
+            return line[:index]
+    return line
+
+
+def parse_config_scalar(value: str) -> Any:
+    value = value.strip()
+    if not value:
+        return ""
+    if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
+        return value[1:-1]
+    lowered = value.lower()
+    if lowered in {"true", "yes", "on"}:
+        return True
+    if lowered in {"false", "no", "off"}:
+        return False
+    if lowered in {"null", "none", "~"}:
+        return ""
+    try:
+        return int(value)
+    except ValueError:
+        return value
+
+
+def read_simple_yaml(path: Path) -> dict[str, Any]:
+    root: dict[str, Any] = {}
+    stack: list[tuple[int, dict[str, Any]]] = [(-1, root)]
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = strip_yaml_comment(raw_line).rstrip()
+        if not line.strip():
+            continue
+        if line.lstrip().startswith("- "):
+            raise ValueError(f"{path}: YAML lists are not supported in this lightweight config parser: {raw_line}")
+        indent = len(line) - len(line.lstrip(" "))
+        clean = line.strip()
+        if ":" not in clean:
+            raise ValueError(f"{path}: expected 'key: value' line: {raw_line}")
+        key, raw_value = clean.split(":", 1)
+        key = key.strip()
+        if not key:
+            raise ValueError(f"{path}: empty config key: {raw_line}")
+        while stack and indent <= stack[-1][0]:
+            stack.pop()
+        parent = stack[-1][1] if stack else root
+        if raw_value.strip() == "":
+            node: dict[str, Any] = {}
+            parent[key] = node
+            stack.append((indent, node))
+        else:
+            parent[key] = parse_config_scalar(raw_value)
+    return root
+
+
+def default_config_paths() -> list[Path]:
+    return [
+        ROOT / "scripts" / DEFAULT_CONFIG_NAME,
+        Path(__file__).with_name(DEFAULT_CONFIG_NAME),
+        ROOT / DEFAULT_CONFIG_NAME,
+    ]
+
+
+def load_config(path_value: str | None) -> tuple[dict[str, Any], Path | None]:
+    if path_value:
+        path = Path(path_value)
+        if not path.is_absolute():
+            path = (ROOT / path).resolve()
+        if not path.exists():
+            raise FileNotFoundError(f"Config file not found: {path}")
+        return read_simple_yaml(path), path
+    for path in default_config_paths():
+        if path.exists():
+            return read_simple_yaml(path), path
+    return {}, None
+
+
+def config_get(config: dict[str, Any], dotted_path: str, default: Any = None) -> Any:
+    value: Any = config
+    for part in dotted_path.split("."):
+        if not isinstance(value, dict) or part not in value:
+            return default
+        value = value[part]
+    return value
+
+
+def first_config_value(config: dict[str, Any], dotted_paths: list[str], default: Any = None) -> Any:
+    for dotted_path in dotted_paths:
+        value = config_get(config, dotted_path, None)
+        if value not in (None, ""):
+            return value
+    return default
+
+
+def as_bool(value: Any, default: bool = False) -> bool:
+    if value in (None, ""):
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(value)
+
+
+def as_int(value: Any, default: int) -> int:
+    if value in (None, ""):
+        return default
+    return int(value)
+
+
+def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
+    config, config_path = load_config(args.config)
+    base_url = (
+        args.base_url
+        or os.getenv("OPENWEBUI_BASE_URL")
+        or first_config_value(config, ["openwebui.base_url", "openwebui.url"])
+        or OPENWEBUI_BASE_URL
+    )
+    token = (
+        args.token
+        or os.getenv("OPENWEBUI_ADMIN_TOKEN")
+        or first_config_value(config, ["openwebui.admin_token", "openwebui.api_key", "openwebui.token"])
+        or OPENWEBUI_ADMIN_TOKEN
+    )
+    timeout = as_int(
+        args.timeout
+        if args.timeout is not None
+        else first_config_value(config, ["openwebui.timeout_seconds", "import.timeout_seconds"], 120),
+        120,
+    )
+    include_optional = args.include_optional_network_tools or as_bool(
+        first_config_value(config, ["import.include_optional_network_tools"], False)
+    )
+    public_read = args.public_read or as_bool(first_config_value(config, ["import.public_read"], False))
+    skip_knowledge = args.skip_knowledge or as_bool(first_config_value(config, ["import.skip_knowledge"], False))
+    jupyter = {
+        "OPENWEBUI_JUPYTER_URL": (
+            args.jupyter_url
+            or os.getenv("OPENWEBUI_JUPYTER_URL")
+            or first_config_value(config, ["jupyter.url", "jupyter.base_url"], JUPYTER_URL)
+        ),
+        "OPENWEBUI_JUPYTER_TOKEN": (
+            args.jupyter_token
+            or os.getenv("OPENWEBUI_JUPYTER_TOKEN")
+            or first_config_value(config, ["jupyter.token", "jupyter.api_token"], JUPYTER_TOKEN)
+        ),
+        "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS": (
+            args.jupyter_timeout_seconds
+            or os.getenv("OPENWEBUI_JUPYTER_TIMEOUT_SECONDS")
+            or first_config_value(config, ["jupyter.timeout_seconds"], JUPYTER_TIMEOUT_SECONDS)
+        ),
+        "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR": (
+            args.jupyter_allowed_workdir
+            or os.getenv("OPENWEBUI_JUPYTER_ALLOWED_WORKDIR")
+            or first_config_value(config, ["jupyter.allowed_workdir", "jupyter.workdir"], JUPYTER_ALLOWED_WORKDIR)
+        ),
+    }
+    artifact_root = (
+        args.artifact_root
+        or os.getenv("OPENWEBUI_ARTIFACT_ROOT")
+        or first_config_value(
+            config,
+            ["artifacts.root", "artifact_root", "tools.offline_artifact_workbench.artifact_root"],
+            ARTIFACT_ROOT,
+        )
+    )
+    return {
+        "config_path": config_path,
+        "base_url": str(base_url).rstrip("/"),
+        "token": str(token).strip(),
+        "timeout": timeout,
+        "include_optional_network_tools": include_optional,
+        "public_read": public_read,
+        "skip_knowledge": skip_knowledge,
+        "jupyter": jupyter,
+        "artifact_root": str(artifact_root or ""),
+    }
+
+
+def configured_tool_valves(runtime: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    valves: dict[str, dict[str, Any]] = {}
+    jupyter = {
+        key: value
+        for key, value in runtime.get("jupyter", {}).items()
+        if value not in (None, "")
+    }
+    if jupyter:
+        valves["air_gapped_jupyter_python"] = jupyter
+    artifact_root = runtime.get("artifact_root")
+    if artifact_root:
+        valves["offline_artifact_workbench"] = {"artifact_root": artifact_root}
+    return valves
 
 
 def slugify(value: str) -> str:
@@ -219,7 +452,8 @@ def required_model_knowledge_files(model_dir: Path) -> list[Path]:
     return files
 
 
-def validate_workspace_payload(include_optional_network_tools: bool) -> list[ImportResult]:
+def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
+    include_optional_network_tools = bool(runtime.get("include_optional_network_tools"))
     tool_count = len(load_tool_records(include_optional_network_tools))
     function_count = len(load_function_records())
     skills = skill_files()
@@ -233,6 +467,7 @@ def validate_workspace_payload(include_optional_network_tools: bool) -> list[Imp
         ImportResult("tools", skipped=tool_count),
         ImportResult("functions", skipped=function_count),
         ImportResult("skills", skipped=len(skills)),
+        ImportResult("tool_valves", skipped=len(configured_tool_valves(runtime))),
         ImportResult("model_knowledge_collections", skipped=len(model_files)),
         ImportResult("models", skipped=len(model_files)),
     ]
@@ -262,6 +497,28 @@ def import_tools(client: OpenWebUIClient, public: bool, include_optional_network
             client.request("POST", "/api/v1/tools/create", payload)
             created += 1
     return ImportResult("tools", created, updated)
+
+
+def update_tool_valves(client: OpenWebUIClient, tool_id: str, valves: dict[str, Any]) -> None:
+    client.request_any(
+        "POST",
+        [
+            f"/api/v1/tools/id/{tool_id}/valves/update",
+            f"/api/tools/id/{tool_id}/valves/update",
+        ],
+        valves,
+    )
+
+
+def import_tool_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> ImportResult:
+    updated = skipped = 0
+    for tool_id, valves in configured_tool_valves(runtime).items():
+        if not valves:
+            skipped += 1
+            continue
+        update_tool_valves(client, tool_id, valves)
+        updated += 1
+    return ImportResult("tool_valves", updated=updated, skipped=skipped)
 
 
 def import_functions(client: OpenWebUIClient) -> ImportResult:
@@ -401,8 +658,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Import this repository's OpenWebUI tools, functions, skills, knowledge and models."
     )
-    parser.add_argument("--base-url", default=os.getenv("OPENWEBUI_BASE_URL", OPENWEBUI_BASE_URL))
-    parser.add_argument("--token", default=os.getenv("OPENWEBUI_ADMIN_TOKEN", OPENWEBUI_ADMIN_TOKEN))
+    parser.add_argument("--config", default=None, help="YAML config file. Defaults to scripts/openwebui_workspace_config.yaml when present.")
+    parser.add_argument("--base-url", default=None)
+    parser.add_argument("--token", default=None)
     parser.add_argument("--public-read", action="store_true", help="Grant read access to all users where OpenWebUI permits it.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md and fachwissen.md files as Knowledge.")
     parser.add_argument(
@@ -411,29 +669,47 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Also import optional network-capable tools. They remain unassigned unless model JSON references them.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Validate payload files and print counts without calling OpenWebUI.")
-    parser.add_argument("--timeout", type=int, default=120)
+    parser.add_argument("--jupyter-url", default=None, help="Jupyter URL as seen from the OpenWebUI backend/container.")
+    parser.add_argument("--jupyter-token", default=None, help="Jupyter token for the air_gapped_jupyter_python tool valve.")
+    parser.add_argument("--jupyter-timeout-seconds", type=int, default=None, help="Jupyter execution timeout tool valve.")
+    parser.add_argument("--jupyter-allowed-workdir", default=None, help="Allowed workdir as seen by the Jupyter host/container.")
+    parser.add_argument("--artifact-root", default=None, help="Artifact root as seen by the OpenWebUI backend/container.")
+    parser.add_argument("--timeout", type=int, default=None)
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    runtime = resolve_runtime_config(args)
     if args.dry_run:
         print_results(
-            validate_workspace_payload(args.include_optional_network_tools),
+            validate_workspace_payload(runtime),
             title="# OpenWebUI workspace import dry-run",
         )
         return 0
-    token = str(args.token).strip()
+    token = str(runtime["token"]).strip()
     if token in PLACEHOLDER_TOKENS:
-        print("Set OPENWEBUI_ADMIN_TOKEN or paste the admin token into OPENWEBUI_ADMIN_TOKEN in this script.", file=sys.stderr)
+        print(
+            "Set OPENWEBUI_ADMIN_TOKEN, paste OPENWEBUI_ADMIN_TOKEN in this script, or configure openwebui.admin_token in scripts/openwebui_workspace_config.yaml.",
+            file=sys.stderr,
+        )
         return 2
-    client = OpenWebUIClient(args.base_url, token, timeout=args.timeout)
+    client = OpenWebUIClient(runtime["base_url"], token, timeout=int(runtime["timeout"]))
     started = time.time()
     results = [
-        import_tools(client, public=args.public_read, include_optional_network_tools=args.include_optional_network_tools),
+        import_tools(
+            client,
+            public=bool(runtime["public_read"]),
+            include_optional_network_tools=bool(runtime["include_optional_network_tools"]),
+        ),
+        import_tool_valves(client, runtime),
         import_functions(client),
-        import_skills(client, public=args.public_read),
-        import_models(client, public=args.public_read, upload_knowledge=not args.skip_knowledge),
+        import_skills(client, public=bool(runtime["public_read"])),
+        import_models(
+            client,
+            public=bool(runtime["public_read"]),
+            upload_knowledge=not bool(runtime["skip_knowledge"]),
+        ),
     ]
     print_results(results)
     print(f"- duration_seconds: {time.time() - started:.1f}")

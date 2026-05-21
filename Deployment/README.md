@@ -26,6 +26,12 @@ OPENWEBUI_JUPYTER_ALLOWED_WORKDIR
 OPENWEBUI_ARTIFACT_ROOT
 ```
 
+Für den reproduzierbaren Remote-Import ist stattdessen die lokale Datei `scripts/openwebui_workspace_config.yaml` vorgesehen. Dort wird `openwebui.base_url` auf die von der Import-Maschine erreichbare Adresse gesetzt, während `jupyter.url` die aus dem OpenWebUI-Container erreichbare Docker-interne Adresse enthält. Der Importbefehl setzt die passenden Tool-Valves automatisch:
+
+```powershell
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
+```
+
 ## PDF-Konvertierung
 
 Für direkte PDF-Erzeugung muss im OpenWebUI-Container oder in der Tool-Laufzeit lokal ein Konverter vorhanden sein:

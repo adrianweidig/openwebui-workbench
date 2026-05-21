@@ -15,7 +15,7 @@ OPENWEBUI_JUPYTER_TIMEOUT_SECONDS
 OPENWEBUI_JUPYTER_ALLOWED_WORKDIR
 ```
 
-Alternativ können dieselben Werte in OpenWebUI als Tool-Valves gepflegt werden. Die Beispieldateien `.env.example` und `jupyter_config.example.json` enthalten keine echten Geheimnisse.
+Alternativ können dieselben Werte in OpenWebUI als Tool-Valves gepflegt werden. Beim API-Import liest `scripts/configure_openwebui_tool_models.py` die Werte aus `scripts/openwebui_workspace_config.yaml` und setzt sie automatisch für das Tool `air_gapped_jupyter_python`. Die dortige Jupyter-URL muss aus Sicht des OpenWebUI-Backends erreichbar sein, etwa `http://jupyter:8888` im Docker-Netz. Die Beispieldateien `.env.example`, `jupyter_config.example.json` und `scripts/openwebui_workspace_config.example.yaml` enthalten keine echten Geheimnisse.
 
 ## Sicherheitsgrenzen
 

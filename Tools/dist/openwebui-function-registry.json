@@ -7,10 +7,23 @@
   ],
   "gui_import_file": "Tools/dist/openwebui-functions-import.json",
   "filter_import_order": [
+    "auto_tool_selector",
     "context_compressor_filter",
     "markdown_normalizer"
   ],
   "functions": [
+    {
+      "id": "auto_tool_selector",
+      "name": "Auto Tool Selector",
+      "path": "Tools/openwebui_ext/filters/auto_tool_selector.py",
+      "purpose": "Offline-safe inlet filter that enables relevant local OpenWebUI tools and configured MCP tool servers for the current message.",
+      "function_type": "filter",
+      "sha256": "93c9812e192f1cd3fb5f7eb43a0a5f469cbd886fb241d9975ba096c07d7a7e13",
+      "importable": true,
+      "hooks": [
+        "inlet"
+      ]
+    },
     {
       "id": "context_compressor_filter",
       "name": "Context Compressor Filter",

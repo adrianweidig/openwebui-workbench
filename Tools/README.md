@@ -30,6 +30,9 @@ Weitere produktive Tools liegen unter `openwebui_ext/tools/`. Für den Offline-C
 - `openwebui_ext/tools/tool_skill_overlay_planner.py`: Tools und Skills redundant auf Modellprofile verteilen.
 - `openwebui_ext/tools/comfyui_workflow_inspector.py`: ComfyUI-Workflows offline prüfen und Setup-Checklisten erzeugen.
 - `openwebui_ext/tools/mediawiki_legacy_crawler.py`: interne alte MediaWiki-Server per API und Legacy-Login crawlen.
+- `openwebui_ext/filters/auto_tool_selector.py`: passende lokale Tools und optional konfigurierte MCP-Server vor dem Modellaufruf aktivieren.
+- `openwebui_ext/filters/markdown_normalizer.py`: Markdown-, Tabellen-, Mermaid- und Codeblock-Ausgaben nach dem Modellaufruf normalisieren.
+- `openwebui_ext/filters/context_compressor_filter.py`: lange Chats vor dem Modellaufruf lokal komprimieren.
 
 Optionale, nicht im Offline-Standard aktivierte Drittanbieter-Tools:
 
@@ -42,11 +45,14 @@ Optionale, nicht im Offline-Standard aktivierte Drittanbieter-Tools:
 Der bevorzugte Weg ist der Generator mit anschließendem API-Import. Er schreibt zuerst die Registries, Modellprofile, ZIPs und Prüfübersichten und ruft danach den Importer auf:
 
 ```powershell
-$env:OPENWEBUI_ADMIN_TOKEN="YOUR_OPEN_WEBUI_API_KEY"
-python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url http://localhost:3000
+Copy-Item scripts/openwebui_workspace_config.example.yaml scripts/openwebui_workspace_config.yaml
+notepad scripts/openwebui_workspace_config.yaml
+python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
-`import_openwebui_workspace.py` bleibt als Fallback direkt ausführbar und nutzt die erzeugten Registries. Es importiert Tools, Functions/Filter und Skills, lädt `mainprompt.md` und `fachwissen.md` je Modell als Knowledge hoch und importiert anschließend die Modellprofile inklusive eingebetteter Icons. Vor einem echten Import kann `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run` die lokalen Payloads prüfen.
+Die Konfigurationsdatei trennt die extern erreichbare OpenWebUI-Adresse von der Docker-internen Jupyter-Adresse. `openwebui.base_url` muss von der Maschine erreichbar sein, auf der das Python-Skript läuft; `jupyter.url` muss aus Sicht des OpenWebUI-Backends erreichbar sein, z. B. `http://jupyter:8888`.
+
+`import_openwebui_workspace.py` bleibt als Fallback direkt ausführbar und nutzt die erzeugten Registries. Es importiert Tools, Functions/Filter und Skills, setzt Jupyter-/Artefakt-Valves, lädt `mainprompt.md` und `fachwissen.md` je Modell als Knowledge hoch und importiert anschließend die Modellprofile inklusive eingebetteter Icons. Vor einem echten Import kann `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` die lokalen Payloads prüfen.
 Es wird auch in `dist/openwebui-tools-skills-offline.zip` mit ausgeliefert.
 
 ## Codex-Testprovider

@@ -19,7 +19,7 @@
 
 ## Direktimport
 
-`openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht. Für den vollständigen Import inklusive Tools, Functions/Filter, Skills und modellbezogener Knowledge-Bases ist der API-Import über `scripts/configure_openwebui_tool_models.py --import-openwebui` vorgesehen.
+`openwebui-models-import.json` und die einzelnen `models/<modell-id>/model.json`-Dateien folgen dem lokal geprüften OpenWebUI-Exportschema und sind für den GUI-Import gedacht. Für den vollständigen Import inklusive Tools, Functions/Filter, Skills, Jupyter-/Artefakt-Valves und modellbezogener Knowledge-Bases ist der API-Import über `scripts/configure_openwebui_tool_models.py --import-openwebui --config scripts/openwebui_workspace_config.yaml` vorgesehen.
 
 Die Chat-Modelle nutzen natives Tool-Calling, use-case-spezifische `temperature`-/`top_p`-Werte, eingebettete Modellicons, ein High-Reasoning-Systemprofil und verbindliche Tool-/Skill-Nutzungsregeln mit Tool-/Skill-Inventur am Aufgabenanfang. Systemprompt, Mainprompt und Fachwissen sind im jeweiligen `params.system` enthalten; zusätzlich lädt der API-Importer `mainprompt.md` und `fachwissen.md` je Modell als OpenWebUI-Knowledge hoch und verknüpft sie in `meta.knowledge`. Der Standardworkflow ist offline; öffentliche Netzwerktools werden nicht zugewiesen. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
 
