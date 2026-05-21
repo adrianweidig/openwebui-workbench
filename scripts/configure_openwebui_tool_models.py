@@ -58,6 +58,7 @@ MODEL_ICON_ARTIFACTS = MODEL_DIST / "artifacts" / "icons"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 TOOLS_ZIP = TOOLS_DIST / "openwebui-tools-skills-offline.zip"
 MODELS_ZIP = MODEL_DIST / "openwebui-offline-artifacts.zip"
+ZIP_EPOCH = (1980, 1, 1, 0, 0, 0)
 
 FUNCTION_CALLING_NATIVE = "native"
 CHAT_MODEL_TOOL_MODE = "all_validated_custom_tools"
@@ -350,6 +351,13 @@ def should_archive(path: Path) -> bool:
     if path.suffix in {".pyc", ".pyo", ".pyd"}:
         return False
     return True
+
+
+def write_archive_file(archive: zipfile.ZipFile, path: Path) -> None:
+    info = zipfile.ZipInfo(rel(path), ZIP_EPOCH)
+    info.compress_type = zipfile.ZIP_DEFLATED
+    info.external_attr = ((0o755 if path.suffix == ".sh" else 0o644) & 0xFFFF) << 16
+    archive.writestr(info, path.read_bytes())
 
 
 def stable_tool_id(path: Path, indexed_by_path: Dict[str, Dict[str, Any]]) -> str:
@@ -1405,10 +1413,10 @@ def rebuild_zips() -> None:
             target.unlink()
     with zipfile.ZipFile(TOOLS_ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for item in [ROOT / "Tools" / "jupyter", ROOT / "Tools" / "openwebui_ext"]:
-            for path in item.rglob("*"):
+            for path in sorted(item.rglob("*")):
                 if path.is_file() and should_archive(path):
-                    archive.write(path, rel(path))
-        for path in [
+                    write_archive_file(archive, path)
+        for path in sorted([
             TOOLS_INDEX,
             ROOT / "Tools" / "README.md",
             IMPORT_SCRIPT,
@@ -1418,11 +1426,11 @@ def rebuild_zips() -> None:
             TOOL_IMPORT,
             FUNCTION_REGISTRY,
             FUNCTION_IMPORT,
-        ]:
+        ]):
             if path.exists():
-                archive.write(path, rel(path))
+                write_archive_file(archive, path)
     with zipfile.ZipFile(MODELS_ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for path in [
+        for path in sorted([
             MODEL_DIST / "README.md",
             MODEL_IMPORT,
             MODEL_FALLBACK,
@@ -1435,12 +1443,12 @@ def rebuild_zips() -> None:
             MODEL_PARAMS_SUMMARY,
             MODEL_DIST / "manual_import_checklist.md",
             CONFIG_EXAMPLE,
-        ]:
+        ]):
             if path.exists():
-                archive.write(path, rel(path))
-        for path in (MODEL_DIST / "artifacts").rglob("*"):
+                write_archive_file(archive, path)
+        for path in sorted((MODEL_DIST / "artifacts").rglob("*")):
             if path.is_file() and should_archive(path):
-                archive.write(path, rel(path))
+                write_archive_file(archive, path)
 
 
 def run_workspace_import(args: argparse.Namespace) -> int:
