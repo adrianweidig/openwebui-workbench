@@ -7,7 +7,16 @@ Importierbare OpenWebUI-Filter-Functions für modellübergreifende Middleware.
 Zählt vor jedem Modellaufruf die geschätzten Chat-Kontexttokens. Sobald der
 konfigurierte Schwellwert erreicht wird, werden ältere Chatnachrichten in eine
 kompakte System-Zusammenfassung überführt und die jüngsten Nachrichten
-unverändert behalten.
+bevorzugt erhalten.
+
+Zusätzlich entfernt der Filter problematische 0-Ausgabewerte wie
+`max_tokens: 0` oder `num_predict: 0` aus dem Request. Wenn der Request danach
+immer noch über dem sicheren Eingabebudget liegt, greift ein harter Context
+Budget Guard: Systemnachrichten bleiben geschützt, die jüngste Nutzeranweisung
+bleibt priorisiert, sehr große Einzelprompts oder Toolausgaben werden
+struktur-aware mit Anfang, Ende, wichtigen Fehler-/Code-/JSON-/CSV-Zeilen und
+einem sichtbaren Kürzungshinweis verdichtet. Das verhindert Providerfehler wie
+`maximum context length is 131072 tokens ... requested 0 output tokens`.
 
 Der Filter ist als togglebarer OpenWebUI-Filter gebaut, wird aber durch die
 Generatorlogik in `meta.defaultFilterIds` für alle Chat-Modelle standardmäßig

@@ -24,7 +24,7 @@ Die öffentlichen Function-Exports aus `Tools/openwebui_ext/third_party/public_o
 3. Falls der Function-Importdialog nicht verfügbar ist, `Workspace > Functions > Create Function` wählen und den Inhalt aus `Tools/openwebui_ext/filters/*.py` einzeln einfügen.
 4. Speichern, Valves prüfen und Filter für Modelle aktivieren.
 
-Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die geschätzten Kontexttokens. Sobald der konfigurierte Schwellwert erreicht ist, sendet er eine Statusmeldung, erzeugt eine kompakte Zusammenfassung älterer Chatteile und injiziert diese als Systemkontext in denselben Chatrequest. Einen neuen Chat legt der Filter bewusst nicht selbst an, weil OpenWebUI-Filter dafür keine stabile versionsübergreifende API garantieren; der robuste Default ist die Zusammenfassung im aktuellen Chatkontext.
+Der Filter `context_compressor_filter.py` zählt vor jedem Modellaufruf die geschätzten Kontexttokens. Sobald der konfigurierte Schwellwert erreicht ist, sendet er eine Statusmeldung, erzeugt eine kompakte Zusammenfassung älterer Chatteile und injiziert diese als Systemkontext in denselben Chatrequest. Zusätzlich entfernt er 0-Ausgabewerte wie `max_tokens: 0` oder `num_predict: 0` und setzt bei weiter übergroßen Requests einen harten Context Budget Guard ein, der Systemnachrichten schützt, die jüngste Nutzeranweisung priorisiert und sehr große Einzelprompts struktur-aware kürzt. Einen neuen Chat legt der Filter bewusst nicht selbst an, weil OpenWebUI-Filter dafür keine stabile versionsübergreifende API garantieren; der robuste Default ist die Zusammenfassung im aktuellen Chatkontext.
 Der Filter `auto_tool_selector.py` läuft als `inlet` vor dem Modellaufruf. Er ergänzt `body.tool_ids` heuristisch um passende bereits verfügbare lokale Tools wie `ask_user`, `parallel_tools`, `sub_agent`, `llm_council`, `visuals_toolkit_v4`, Jupyter, Artefakt-Tools und Validatoren. Optionale Public-/Netzwerktools werden nur gewählt, wenn sie tatsächlich im Modell-/Request-Kontext verfügbar sind.
 
 ## Skills importieren
@@ -57,7 +57,7 @@ Der Filter `auto_tool_selector.py` läuft als `inlet` vor dem Modellaufruf. Er e
 
 ## Filter-Katalog
 
-- `context_compressor_filter.py`: modellübergreifender Kontextkomprimierer mit Token-Schätzung, Statusmeldung und automatischer Zusammenfassung älterer Chatanteile.
+- `context_compressor_filter.py`: modellübergreifender Kontextkomprimierer mit Token-Schätzung, Statusmeldung, automatischer Zusammenfassung älterer Chatanteile, 0-Output-Token-Normalisierung und hartem Budget-Guard für übergroße Einzelprompts.
 - `auto_tool_selector.py`: offlinefähiger inlet-Filter, der passende Tool-IDs vor dem Modellaufruf aktiviert.
 - `markdown_normalizer.py`: output-Filter für Markdown-, Mermaid-, Tabellen- und Codeblock-Normalisierung.
 

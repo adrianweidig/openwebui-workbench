@@ -28,9 +28,9 @@
       "id": "context_compressor_filter",
       "name": "Context Compressor Filter",
       "path": "Tools/openwebui_ext/filters/context_compressor_filter.py",
-      "purpose": "Counts chat-context tokens before model calls and compresses older messages when the configured context window is nearly exhausted.",
+      "purpose": "Counts chat-context tokens before model calls, normalizes zero output-token requests and keeps oversized prompts inside a safe context budget.",
       "function_type": "filter",
-      "sha256": "af16ebf1e6c77b924b6df91a3b4406b346e7d0ff9efa05e005a05580515a9954",
+      "sha256": "6809267c3dd668a2fce9120c8fb39e44abfb75894c73067a834d4e97646cd536",
       "importable": true,
       "hooks": [
         "inlet"
