@@ -98,6 +98,15 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 - Netzwerktools sind nicht Teil des Air-Gap-Defaults und dürfen nicht still aktiviert werden.
 - Unsichere oder nicht referenzierte Dateien nicht löschen, sondern im Abschlussbericht markieren.
 
+## Security-Remediation
+
+- Vor Security-Fixes GitHub-Befunde über Code Scanning, Dependabot, Secret Scanning, Security Advisories, Actions-Runs und Workflow-Logs prüfen.
+- Lokale Security-Prüfungen passend zum Repo einsetzen, mindestens `python scripts/verify_openwebui_workspace.py`, Python-Syntax-Compile, Secret-Suche und bei Python-Code einen Bandit-Scan der aktiven Skript-/Toolpfade.
+- GitHub-Actions-Warnungen zu veralteten Action-Runtimes oder CodeQL-Major-Versionen zeitnah beheben, ohne nicht vorhandene Build-Schritte zu erfinden.
+- Keine Secret-Scanning-Funde vollständig ausgeben; Werte maskieren, aus Dateien entfernen und Rotation als manuellen Folgeschritt dokumentieren, wenn History oder externe Systeme betroffen sind.
+- Alert-Dismissals nur mit belastbarer False-Positive- oder Not-Applicable-Begründung nutzen; ungelöste Risiken nicht durch Dismissals verstecken.
+- Security-Änderungen nach Möglichkeit mit dem zentralen Verify-Runner und einem erneuten GitHub-Alert-Abruf validieren.
+
 ## Datei-Löschungen
 
 - Sicher löschbar sind nur lokale Caches wie `__pycache__/`, `.pytest_cache/` oder eindeutig temporäre Dateien.

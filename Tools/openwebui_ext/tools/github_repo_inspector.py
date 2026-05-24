@@ -27,6 +27,7 @@ except Exception:  # pragma: no cover
 
 
 REPO_RE = re.compile(r"^[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}$")
+GITHUB_API_HOST = "api.github.com"
 
 
 class Tools:
@@ -87,6 +88,9 @@ class Tools:
         return str(getattr(self.valves, "github_token", "") or "")
 
     def _get_json(self, url: str, token: str, optional: bool = False) -> Optional[Dict[str, Any]]:
+        parsed = urllib.parse.urlparse(url)
+        if parsed.scheme != "https" or parsed.hostname != GITHUB_API_HOST:
+            raise ValueError("Only https://api.github.com URLs are allowed.")
         headers = {"Accept": "application/vnd.github+json", "User-Agent": self.valves.user_agent, "X-GitHub-Api-Version": "2022-11-28"}
         if token:
             headers["Authorization"] = f"Bearer {token}"

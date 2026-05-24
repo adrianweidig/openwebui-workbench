@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import urlparse, urlencode
 from urllib.request import Request, urlopen
 
 
@@ -188,7 +188,11 @@ def normalize_openwebui_base_url(base_url: str) -> str:
     normalized = str(base_url).strip().rstrip("/")
     for suffix in ("/api/v1", "/api"):
         if normalized.lower().endswith(suffix):
-            return normalized[: -len(suffix)].rstrip("/")
+            normalized = normalized[: -len(suffix)].rstrip("/")
+            break
+    parsed = urlparse(normalized)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise ValueError("openwebui.base_url must be an http(s) URL with a host.")
     return normalized
 
 

@@ -120,7 +120,7 @@
       "purpose": "Read-only GitHub repository metadata inspection with optional token support through Valves or OpenWebUI OAuth.",
       "offline": false,
       "configuration": [],
-      "sha256": "479b14c20d90e2ef69644141eeac503f9984a229d81a5521bda72204f11083dc",
+      "sha256": "8a4fb9e8de81f7652657ee5300406557a413e509aae6de4f1f4c1b7c165260ac",
       "importable": true,
       "methods": [
         "evaluate_tool_candidate",

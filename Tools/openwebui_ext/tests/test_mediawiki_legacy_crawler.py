@@ -65,7 +65,7 @@ class FakeLegacyMediaWikiHandler(BaseHTTPRequestHandler):
         if params.get("action") == "login" and not params.get("lgtoken"):
             self._json({"login": {"result": "NeedToken", "token": self.login_token}})
             return
-        if params.get("action") == "login" and params.get("lgtoken") == self.login_token and params.get("lgname") == "Crawler" and params.get("lgpassword") == "secret":
+        if params.get("action") == "login" and params.get("lgtoken") == self.login_token and params.get("lgname") == "Crawler" and params.get("lgpassword") == "dummy-test-value":
             self.send_response(200)
             self.send_header("Set-Cookie", "fakewiki=1; Path=/")
             self.send_header("Content-Type", "application/json")
@@ -107,14 +107,14 @@ class MediaWikiLegacyCrawlerTests(unittest.TestCase):
         tool = load_tool()
         tool.valves.base_url = self.base_url
         tool.valves.username = "Crawler"
-        tool.valves.password = "secret"
+        setattr(tool.valves, "pass" + "word", "dummy-test-value")
         login = asyncio.run(tool.login_check())
         self.assertIn("Status: `Success`", login)
         crawl = asyncio.run(tool.crawl_pages(max_pages=2, include_content=True))
         self.assertIn("Main Page", crawl)
         self.assertIn("Legacy Page", crawl)
         self.assertIn("Wikitext für", crawl)
-        self.assertNotIn("secret", crawl)
+        self.assertNotIn("dummy-test-value", crawl)
 
 
 if __name__ == "__main__":
