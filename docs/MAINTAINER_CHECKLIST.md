@@ -4,11 +4,17 @@ Diese Checkliste enthält manuelle GitHub- und Veröffentlichungsaufgaben, die n
 
 ## Repository-Metadaten
 
-- Repository Description setzen, zum Beispiel: `Portable OpenWebUI workbench with offline model packages, tools, filters, skills and import artifacts.`
-- Topics prüfen und setzen, zum Beispiel: `openwebui`, `offline-ai`, `llm-tools`, `jupyter`, `air-gap`, `python`, `model-packages`, `developer-tools`.
+Erledigt am 2026-05-24:
+
+- Repository Description gesetzt: `Portable OpenWebUI workbench with offline model packages, tools, filters, skills and import artifacts.`
+- Topics gesetzt: `openwebui`, `offline-ai`, `llm-tools`, `jupyter`, `air-gap`, `python`, `model-packages`, `developer-tools`.
+- Issues aktiviert.
+- Discussions aktiviert.
+- Wiki deaktiviert, weil die Repository-Dokumentation in Markdown-Dateien gepflegt wird.
+
+Offen:
+
 - Website-URL nur setzen, wenn eine belastbare Dokumentations- oder Projektseite existiert.
-- Wiki deaktivieren, falls die Repository-Dokumentation ausschließlich in Markdown-Dateien gepflegt werden soll.
-- Discussions aktivieren, falls allgemeine Fragen und Ideen getrennt von Issues laufen sollen.
 
 ## Social Preview
 
@@ -18,18 +24,32 @@ Diese Checkliste enthält manuelle GitHub- und Veröffentlichungsaufgaben, die n
 
 ## Branch Protection und Rulesets
 
-- Für `main` Pull Requests vor Merge verlangen.
-- CI-Workflow `Verify workspace` als Required Status Check setzen, sobald er auf GitHub einmal erfolgreich gelaufen ist.
-- CodeQL-Workflow als Security-Signal beobachten, aber erst nach erfolgreichem Lauf als verpflichtend setzen.
-- Force-Pushes und Branch-Löschungen für `main` einschränken.
+Erledigt am 2026-05-24:
+
+- Branch Protection für `main` aktiviert.
+- Required Status Checks gesetzt: `Verify workspace (3.10)` und `Verify workspace (3.13)`.
+- Strict Status Checks aktiviert.
+- Force-Pushes und Branch-Löschungen für `main` deaktiviert.
+
+Offen:
+
+- Entscheiden, ob zusätzlich Pull-Request-Reviews oder Conversation Resolution verpflichtend werden sollen.
+- CodeQL-Workflow weiter beobachten; aktuell ist er als Security-Signal aktiv, aber nicht als Required Check gesetzt.
 
 ## Security Settings
 
-- Dependabot alerts aktivieren.
-- Dependabot security updates aktivieren.
-- Code scanning aktivieren und ersten CodeQL-Lauf prüfen.
-- Secret scanning aktivieren, falls für das Repository verfügbar.
-- Private Vulnerability Reporting aktivieren oder einen privaten Sicherheitskontakt dokumentieren.
+Erledigt am 2026-05-24:
+
+- Dependabot alerts aktiviert.
+- Dependabot security updates aktiviert.
+- Code scanning über CodeQL aktiviert; erster Lauf erfolgreich, 0 Alerts.
+- Secret scanning aktiviert.
+- Secret scanning push protection aktiviert.
+- Private Vulnerability Reporting aktiviert.
+
+Offen:
+
+- Optional einen zusätzlichen privaten Sicherheitskontakt außerhalb von GitHub dokumentieren, falls gewünscht.
 
 ## Releases
 
