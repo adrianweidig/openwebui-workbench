@@ -2,7 +2,7 @@
 
 ## Stand
 
-Analysebasis ist das komplette Arbeitsverzeichnis `E:\OpenWebUI`.
+Analysebasis ist das komplette Arbeitsverzeichnis `E:\openwebui-workbench`.
 
 ## Beobachtungen
 

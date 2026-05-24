@@ -14,9 +14,9 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 
 ## Wichtige Volumes
 
-- `F:\OpenWebUI\Modelle\dist` nach `/app/backend/data/openwebui-import`
-- `F:\OpenWebUI\Tools` nach `/app/backend/data/openwebui-tools`
-- `F:\OpenWebUI\Artefakte\output` nach `/app/backend/data/offline_artifacts`
+- `E:\openwebui-workbench\Modelle\dist` nach `/app/backend/data/openwebui-import`
+- `E:\openwebui-workbench\Tools` nach `/app/backend/data/openwebui-tools`
+- `E:\openwebui-workbench\Artefakte\output` nach `/app/backend/data/offline_artifacts`
 - `F:\offline-ai-stack\openwebui-offline-addons\cache` nach `/app/backend/data/cache`
 - `F:\offline-ai-stack\openwebui-offline-addons\nltk_data` nach `/app/backend/data/nltk_data`
 - `F:\offline-ai-stack\openwebui-offline-addons\python` nach `/app/backend/data/python`

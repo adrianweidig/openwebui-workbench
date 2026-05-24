@@ -1,6 +1,6 @@
-# OpenWebUI Workspace
+# OpenWebUI Workbench
 
-Dieses Repository verwaltet den lokalen Arbeitsbereich unter `F:\OpenWebUI`.
+Dieses Repository verwaltet die portable OpenWebUI Workbench. Der lokale Standardpfad auf dieser Maschine ist `E:\openwebui-workbench`; auf anderen Systemen kann das Repository unter einem beliebigen Pfad geklont werden.
 
 ## Struktur
 
@@ -24,7 +24,7 @@ Dieses Repository verwaltet den lokalen Arbeitsbereich unter `F:\OpenWebUI`.
 - Original-Briefings in `Problemfälle/` werden nicht destruktiv verändert.
 - Builder-interne Sicherungen bleiben lokal unter `OpenWebUI Model Builder/.backup/`, werden ignoriert und nicht versioniert.
 - Alte Generatorausgaben unter `OpenWebUI Model Builder/dist/` sind nicht kanonisch; produktive Artefakte liegen ausschließlich unter `Modelle/dist/` und `Tools/dist/`.
-- Das Repository ist auf Offline-/Air-Gapped-Arbeit ausgelegt.
+- Das Repository ist für portable Online-, Offline- und Air-Gapped-Arbeit ausgelegt.
 
 ## OpenWebUI Direktnutzung
 
@@ -101,7 +101,7 @@ Wenn der OpenWebUI-Container lokale Dateien per Volume lesen soll, ist `Modelle/
 Beispiel `docker run`:
 
 ```text
--v F:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
+-v E:\openwebui-workbench\Modelle\dist:/app/backend/data/openwebui-import
 ```
 
 Beispiel `docker-compose.yml`:
@@ -110,9 +110,9 @@ Beispiel `docker-compose.yml`:
 services:
   openwebui:
     volumes:
-      - F:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
-      - F:\OpenWebUI\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
-      - F:\OpenWebUI\Artefakte\output:/app/backend/data/offline_artifacts
+      - E:\openwebui-workbench\Modelle\dist:/app/backend/data/openwebui-import
+      - E:\openwebui-workbench\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
+      - E:\openwebui-workbench\Artefakte\output:/app/backend/data/offline_artifacts
       - F:\offline-ai-stack\openwebui-offline-addons\cache:/app/backend/data/cache
       - F:\offline-ai-stack\openwebui-offline-addons\nltk_data:/app/backend/data/nltk_data
       - F:\offline-ai-stack\openwebui-offline-addons\python:/app/backend/data/python

@@ -10,9 +10,9 @@ services:
       - ./openwebui.env
     volumes:
       - openwebui-data:/app/backend/data
-      - "F:\\OpenWebUI\\Modelle\\dist:/app/backend/data/openwebui-import:ro"
-      - "F:\\OpenWebUI\\Tools:/app/backend/data/openwebui-tools:ro"
-      - "F:\\OpenWebUI\\Artefakte\\output:/app/backend/data/offline_artifacts"
+      - "E:\\openwebui-workbench\\Modelle\\dist:/app/backend/data/openwebui-import:ro"
+      - "E:\\openwebui-workbench\\Tools:/app/backend/data/openwebui-tools:ro"
+      - "E:\\openwebui-workbench\\Artefakte\\output:/app/backend/data/offline_artifacts"
       - "F:\\offline-ai-stack\\openwebui-offline-addons\\cache:/app/backend/data/cache"
       - "F:\\offline-ai-stack\\openwebui-offline-addons\\nltk_data:/app/backend/data/nltk_data"
       - "F:\\offline-ai-stack\\openwebui-offline-addons\\python:/app/backend/data/python"
@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     command: ["jupyter", "server", "--ip=0.0.0.0", "--no-browser", "--ServerApp.token=${OPENWEBUI_JUPYTER_TOKEN}"]
     volumes:
-      - "F:\\OpenWebUI\\Artefakte\\output:/workspace/artifacts"
+      - "E:\\openwebui-workbench\\Artefakte\\output:/workspace/artifacts"
     networks:
       - offline-ai
 

@@ -1,4 +1,4 @@
-# KI-Kontext für E:\OpenWebUI
+# KI-Kontext für openwebui-workbench
 
 ## Zweck der Umgebung
 

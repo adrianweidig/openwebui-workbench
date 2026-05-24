@@ -11,12 +11,12 @@ from pathlib import Path
 from typing import Any
 
 
-BASE_DIR = Path(r"E:\OpenWebUI\OpenWebUI Model Builder")
-PROBLEM_DIR = Path(r"E:\OpenWebUI\Problemfälle")
+ROOT_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = ROOT_DIR / "OpenWebUI Model Builder"
+PROBLEM_DIR = ROOT_DIR / "Problemfälle"
 DIST_DIR = BASE_DIR / "dist"
 WORK_DIR = BASE_DIR / ".work"
 BACKUP_DIR = BASE_DIR / ".backup"
-ROOT_DIR = BASE_DIR.parent
 ROOT_MODELS_DIR = ROOT_DIR / "Modelle"
 ROOT_MODELS_SINGLE_DIR = ROOT_MODELS_DIR / "einzelmodelle"
 ROOT_MODELS_DIST_DIR = ROOT_MODELS_DIR / "dist"
