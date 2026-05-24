@@ -12,8 +12,8 @@ Diese Checkliste enthält manuelle GitHub- und Veröffentlichungsaufgaben, die n
 
 ## Social Preview
 
-- `docs/assets/social-preview.svg` als Vorlage nutzen.
-- Falls GitHub einen PNG-Upload verlangt, lokal als 1280 x 640 PNG exportieren.
+- `docs/assets/social-preview.svg` als bearbeitbare Vorlage nutzen.
+- `docs/assets/social-preview.png` ist als 1280 x 640 PNG für GitHub Social Preview vorbereitet.
 - Social Preview im GitHub-Repository unter `Settings > Social preview` hochladen.
 
 ## Branch Protection und Rulesets
