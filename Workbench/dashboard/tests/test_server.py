@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from Workbench.dashboard.server import WorkbenchConfig, WorkbenchState
+from Workbench.dashboard.server import WorkbenchConfig, WorkbenchState, openwebui_ssl_context
 
 
 class WorkbenchStateTests(unittest.TestCase):
@@ -87,6 +87,16 @@ class WorkbenchStateTests(unittest.TestCase):
     def test_rejects_resource_path_traversal(self) -> None:
         with self.assertRaises(ValueError):
             self.state.read_resource("tool", "../demo_tool")
+
+    def test_tls_context_can_disable_verification_for_local_https(self) -> None:
+        context = openwebui_ssl_context(tls_verify=False)
+        self.assertFalse(context.check_hostname)
+        self.assertEqual(context.verify_mode.name, "CERT_NONE")
+
+    def test_summary_reports_tls_settings(self) -> None:
+        state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://127.0.0.1:9", tls_verify=False))
+        summary = state.summary()
+        self.assertFalse(summary["openwebui"]["tls_verify"])
 
 
 if __name__ == "__main__":

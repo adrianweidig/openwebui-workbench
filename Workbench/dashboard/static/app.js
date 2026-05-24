@@ -6,6 +6,8 @@ const state = {
   selectedFile: "systemprompt.md",
   selectedResource: null,
   dirty: false,
+  modelView: "split",
+  resourceView: "split",
 };
 
 const el = (id) => document.getElementById(id);
@@ -26,6 +28,166 @@ function setText(id, value) {
   el(id).textContent = value;
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function inlineMarkdown(value) {
+  let html = escapeHtml(value);
+  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  return html;
+}
+
+function renderMarkdown(content) {
+  const lines = String(content || "").replace(/\r\n/g, "\n").split("\n");
+  const output = [];
+  let listType = "";
+  let inCode = false;
+  let codeLines = [];
+
+  const closeList = () => {
+    if (listType) {
+      output.push(`</${listType}>`);
+      listType = "";
+    }
+  };
+  const flushCode = () => {
+    output.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+    codeLines = [];
+  };
+
+  for (const line of lines) {
+    if (line.trim().startsWith("```")) {
+      closeList();
+      if (inCode) {
+        flushCode();
+      }
+      inCode = !inCode;
+      continue;
+    }
+    if (inCode) {
+      codeLines.push(line);
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,3})\s+(.+)$/);
+    if (heading) {
+      closeList();
+      const level = heading[1].length;
+      output.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);
+      continue;
+    }
+
+    const bullet = line.match(/^\s*[-*]\s+(.+)$/);
+    if (bullet) {
+      if (listType !== "ul") {
+        closeList();
+        output.push("<ul>");
+        listType = "ul";
+      }
+      output.push(`<li>${inlineMarkdown(bullet[1])}</li>`);
+      continue;
+    }
+
+    const numbered = line.match(/^\s*\d+\.\s+(.+)$/);
+    if (numbered) {
+      if (listType !== "ol") {
+        closeList();
+        output.push("<ol>");
+        listType = "ol";
+      }
+      output.push(`<li>${inlineMarkdown(numbered[1])}</li>`);
+      continue;
+    }
+
+    const quote = line.match(/^>\s?(.*)$/);
+    if (quote) {
+      closeList();
+      output.push(`<blockquote>${inlineMarkdown(quote[1])}</blockquote>`);
+      continue;
+    }
+
+    if (!line.trim()) {
+      closeList();
+      continue;
+    }
+
+    closeList();
+    output.push(`<p>${inlineMarkdown(line)}</p>`);
+  }
+
+  closeList();
+  if (inCode) flushCode();
+  return output.join("\n") || "<p class=\"empty-preview\">Keine Vorschau verfügbar.</p>";
+}
+
+function highlightPython(content) {
+  const keywords = new Set([
+    "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class", "continue", "def", "del",
+    "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal",
+    "not", "or", "pass", "raise", "return", "try", "while", "with", "yield",
+  ]);
+  const builtins = new Set(["dict", "int", "len", "list", "max", "min", "print", "range", "set", "str", "sum", "tuple"]);
+  const tokenPattern = /(@[A-Za-z_][\w.]*|#[^\n]*|"""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b\d+(?:\.\d+)?\b|\b[A-Za-z_]\w*\b)/g;
+  let html = "";
+  let index = 0;
+  for (const match of String(content || "").matchAll(tokenPattern)) {
+    const token = match[0];
+    const start = match.index || 0;
+    html += escapeHtml(String(content || "").slice(index, start));
+    const safe = escapeHtml(token);
+    if (token.startsWith("#")) html += `<span class="py-comment">${safe}</span>`;
+    else if (token.startsWith("@")) html += `<span class="py-decorator">${safe}</span>`;
+    else if (/^['"]/.test(token)) html += `<span class="py-string">${safe}</span>`;
+    else if (/^\d/.test(token)) html += `<span class="py-number">${safe}</span>`;
+    else if (keywords.has(token)) html += `<span class="py-keyword">${safe}</span>`;
+    else if (builtins.has(token)) html += `<span class="py-builtin">${safe}</span>`;
+    else html += safe;
+    index = start + token.length;
+  }
+  html += escapeHtml(String(content || "").slice(index));
+  return `<pre><code>${html}</code></pre>`;
+}
+
+function updateModelPreview() {
+  el("markdown-preview").innerHTML = renderMarkdown(el("markdown-editor").value);
+}
+
+function updateResourcePreview() {
+  const content = el("resource-editor").value;
+  if (state.selectedResource?.kind === "tool") {
+    el("resource-preview").innerHTML = highlightPython(content);
+  } else {
+    el("resource-preview").innerHTML = renderMarkdown(content);
+  }
+}
+
+function applyView(editor, mode) {
+  const workspace = el(editor === "model" ? "model-workspace" : "resource-workspace");
+  workspace.classList.remove("split-mode", "edit-mode", "preview-mode");
+  workspace.classList.add(`${mode}-mode`);
+  if (editor === "model") state.modelView = mode;
+  if (editor === "resource") state.resourceView = mode;
+  document.querySelectorAll(`.view-mode[data-editor="${editor}"]`).forEach((button) => {
+    button.classList.toggle("active", button.dataset.mode === mode);
+  });
+}
+
+function applyTheme(theme) {
+  const light = theme === "light";
+  document.body.classList.toggle("light-theme", light);
+  el("theme-toggle").textContent = light ? "Light" : "Dark";
+  el("theme-toggle").setAttribute("aria-pressed", String(!light));
+  localStorage.setItem("workbench-theme", theme);
+}
+
 function renderStatus() {
   const status = state.status;
   if (!status) return;
@@ -38,7 +200,9 @@ function renderStatus() {
   el("open-openwebui").href = status.openwebui.public_url;
   el("openwebui-dot").classList.toggle("online", Boolean(status.openwebui.reachable.ok));
   setText("config-local", status.config.local_config_exists ? status.config.config_path : `${status.config.config_path} fehlt`);
-  setText("config-token", status.openwebui.admin_token_configured ? "gesetzt" : "nicht gesetzt");
+  const tlsMode = status.openwebui.tls_verify ? "TLS verifiziert" : "TLS Prüfung aus";
+  const caMode = status.openwebui.ca_file_configured || status.openwebui.ca_path_configured ? "eigene CA" : "System-CA";
+  setText("config-token", `${status.openwebui.admin_token_configured ? "gesetzt" : "nicht gesetzt"} · ${tlsMode} · ${caMode}`);
   setText("config-write", status.write_enabled ? "aktiv" : "deaktiviert");
 
   const artifactList = el("artifact-list");
@@ -129,6 +293,7 @@ async function selectResource(kind, resourceId) {
   const payload = await api(`/api/resources/${encodeURIComponent(kind)}/${encodeURIComponent(resourceId)}/file`);
   el("resource-editor").disabled = false;
   el("resource-editor").value = payload.content;
+  updateResourcePreview();
   el("save-resource").disabled = false;
   setText("resource-state", `${payload.path} geladen`);
 }
@@ -152,6 +317,7 @@ async function loadFile(name) {
   const payload = await api(`/api/models/${encodeURIComponent(state.selectedModel.id)}/file?name=${encodeURIComponent(name)}`);
   el("markdown-editor").disabled = false;
   el("markdown-editor").value = payload.content;
+  updateModelPreview();
   el("save-file").disabled = false;
   state.dirty = false;
   setText("editor-state", payload.exists ? `${payload.path} geladen` : `${payload.path} neu`);
@@ -249,10 +415,18 @@ function wireEvents() {
   el("resource-search").addEventListener("input", renderResources);
   el("markdown-editor").addEventListener("input", () => {
     state.dirty = true;
+    updateModelPreview();
     setText("editor-state", "Ungespeicherte Änderung");
   });
   el("resource-editor").addEventListener("input", () => {
+    updateResourcePreview();
     setText("resource-state", "Ungespeicherte Änderung");
+  });
+  document.querySelectorAll(".view-mode").forEach((button) => {
+    button.addEventListener("click", () => applyView(button.dataset.editor, button.dataset.mode));
+  });
+  el("theme-toggle").addEventListener("click", () => {
+    applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light");
   });
   el("save-file").addEventListener("click", saveFile);
   el("save-resource").addEventListener("click", saveResource);
@@ -265,6 +439,9 @@ function wireEvents() {
 }
 
 async function init() {
+  applyTheme(localStorage.getItem("workbench-theme") || "dark");
+  applyView("model", state.modelView);
+  applyView("resource", state.resourceView);
   wireEvents();
   await refreshStatus();
   await refreshModels(false);

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import ssl
 import subprocess
 import sys
 import time
@@ -95,6 +96,21 @@ def read_secret_from_env(name: str, file_name: str) -> str:
         return ""
 
 
+def tls_verify_from_env() -> bool:
+    return env_bool("OPENWEBUI_TLS_VERIFY", True)
+
+
+def openwebui_ssl_context(tls_verify: bool | None = None, ca_file: str = "", ca_path: str = "") -> ssl.SSLContext | None:
+    verify = tls_verify_from_env() if tls_verify is None else tls_verify
+    if not verify:
+        return ssl._create_unverified_context()
+    cafile = ca_file or os.environ.get("OPENWEBUI_CA_FILE", "").strip() or None
+    capath = ca_path or os.environ.get("OPENWEBUI_CA_PATH", "").strip() or None
+    if cafile or capath:
+        return ssl.create_default_context(cafile=cafile, capath=capath)
+    return None
+
+
 @dataclass(frozen=True)
 class WorkbenchConfig:
     root: Path = REPO_ROOT
@@ -102,6 +118,9 @@ class WorkbenchConfig:
     openwebui_base_url: str = os.environ.get("OPENWEBUI_BASE_URL", "http://openwebui:8080").rstrip("/")
     openwebui_public_url: str = os.environ.get("OPENWEBUI_PUBLIC_URL", "http://localhost:3000").rstrip("/")
     command_timeout: int = int(os.environ.get("WORKBENCH_COMMAND_TIMEOUT_SECONDS", "300"))
+    tls_verify: bool = tls_verify_from_env()
+    ca_file: str = os.environ.get("OPENWEBUI_CA_FILE", "").strip()
+    ca_path: str = os.environ.get("OPENWEBUI_CA_PATH", "").strip()
 
     @property
     def admin_token(self) -> str:
@@ -131,6 +150,9 @@ class WorkbenchState:
                 "base_url": self.config.openwebui_base_url,
                 "public_url": self.config.openwebui_public_url,
                 "admin_token_configured": bool(self.config.admin_token),
+                "tls_verify": self.config.tls_verify,
+                "ca_file_configured": bool(self.config.ca_file),
+                "ca_path_configured": bool(self.config.ca_path),
                 "reachable": self.probe_openwebui(),
             },
             "counts": {
@@ -153,7 +175,11 @@ class WorkbenchState:
         for path in ("/health", "/"):
             request = Request(f"{url}{path}", method="GET", headers={"Accept": "text/plain"})
             try:
-                with urlopen(request, timeout=2) as response:
+                with urlopen(
+                    request,
+                    timeout=2,
+                    context=openwebui_ssl_context(self.config.tls_verify, self.config.ca_file, self.config.ca_path),
+                ) as response:
                     return {"ok": True, "status": response.status, "path": path}
             except HTTPError as exc:
                 if exc.code < 500:
@@ -351,6 +377,7 @@ class WorkbenchState:
         return self.read_resource(kind, resource_id)
 
     def run_action(self, action: str) -> dict[str, Any]:
+        command_env: dict[str, str] = {}
         if action == "check":
             command = [sys.executable, "scripts/verify_openwebui_workspace.py"]
             label = "Verify workspace"
@@ -385,6 +412,11 @@ class WorkbenchState:
                 "--token",
                 token,
             ]
+            command_env = {
+                "OPENWEBUI_TLS_VERIFY": "true" if self.config.tls_verify else "false",
+                "OPENWEBUI_CA_FILE": self.config.ca_file,
+                "OPENWEBUI_CA_PATH": self.config.ca_path,
+            }
             label = "Import to OpenWebUI"
         else:
             raise ValueError(f"Unbekannte Aktion: {action}")
@@ -399,6 +431,7 @@ class WorkbenchState:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             timeout=self.config.command_timeout,
+            env={**os.environ, **command_env},
         )
         output = redact(completed.stdout or "", [self.config.admin_token])
         safe_command = [part if part != self.config.admin_token else "[REDACTED]" for part in command]

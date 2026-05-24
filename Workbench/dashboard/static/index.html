@@ -38,6 +38,7 @@
             <h2>OpenWebUI zentral verwalten</h2>
             <p>Markdown-Modelle bearbeiten, Dist-Artefakte erzeugen und Importläufe auslösen.</p>
           </div>
+          <button id="theme-toggle" class="ghost theme-toggle" type="button" aria-pressed="true">Dark</button>
           <div class="summary-grid" aria-label="Repository Kennzahlen">
             <div><span id="count-models">0</span><small>Modelle</small></div>
             <div><span id="count-tools">0</span><small>Tools</small></div>
@@ -65,7 +66,15 @@
               </div>
 
               <div class="file-tabs" id="file-tabs" aria-label="Modelldateien"></div>
-              <textarea id="markdown-editor" spellcheck="false" disabled></textarea>
+              <div class="viewer-toolbar" aria-label="Markdown Ansicht">
+                <button class="view-mode active" data-editor="model" data-mode="split" type="button">Split</button>
+                <button class="view-mode" data-editor="model" data-mode="edit" type="button">Editor</button>
+                <button class="view-mode" data-editor="model" data-mode="preview" type="button">Viewer</button>
+              </div>
+              <div class="workspace-view split-mode" id="model-workspace">
+                <textarea id="markdown-editor" spellcheck="false" disabled></textarea>
+                <article id="markdown-preview" class="markdown-preview" aria-label="Markdown Vorschau"></article>
+              </div>
               <div class="editor-actions">
                 <span id="editor-state">Bereit</span>
                 <button id="save-file" class="primary" disabled>Speichern</button>
@@ -92,7 +101,15 @@
                 </div>
               </div>
 
-              <textarea id="resource-editor" spellcheck="false" disabled></textarea>
+              <div class="viewer-toolbar" aria-label="Ressourcen Ansicht">
+                <button class="view-mode active" data-editor="resource" data-mode="split" type="button">Split</button>
+                <button class="view-mode" data-editor="resource" data-mode="edit" type="button">Editor</button>
+                <button class="view-mode" data-editor="resource" data-mode="preview" type="button">Viewer</button>
+              </div>
+              <div class="workspace-view split-mode" id="resource-workspace">
+                <textarea id="resource-editor" spellcheck="false" disabled></textarea>
+                <article id="resource-preview" class="markdown-preview code-preview" aria-label="Dateivorschau"></article>
+              </div>
               <div class="editor-actions">
                 <span id="resource-state">Bereit</span>
                 <button id="save-resource" class="primary" disabled>Speichern</button>

@@ -42,10 +42,29 @@ Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN`
   - `beispiele/*.md`
 - Tool-Quellen unter `Tools/openwebui_ext/tools/*.py` bearbeiten.
 - Skill-Markdown unter `Tools/openwebui_ext/skills/*.md` bearbeiten.
+- Markdown-Dateien im Split-, Editor- oder Viewer-Modus lesen.
+- Python-Tools mit Syntax-Highlighting in der Vorschau prüfen.
+- Dunkles Standard-Theme nutzen und bei Bedarf lokal auf Light umschalten.
 - Dist-Artefakte neu erzeugen.
 - Import-Payload lokal prüfen.
 - Tools, Filter, Skills, Knowledge und Modelle zur konfigurierten OpenWebUI-Instanz synchronisieren.
 - Zentrale Workspace-Verifikation starten.
+
+## HTTPS und lokale Zertifikate
+
+Wenn die Workbench OpenWebUI über eine lokale HTTPS-Adresse wie `https://openwebui.top.secret` erreicht, kann sie private Zertifikate explizit vertrauen oder für eine rein lokale Testinstanz die TLS-Prüfung deaktivieren:
+
+```powershell
+$env:OPENWEBUI_BASE_URL="https://openwebui.top.secret"
+$env:OPENWEBUI_PUBLIC_URL="https://openwebui.top.secret"
+$env:OPENWEBUI_CA_FILE="C:\Pfad\zur\local-ca.pem"
+```
+
+Nur für vertrauenswürdige lokale Endpunkte:
+
+```powershell
+$env:OPENWEBUI_TLS_VERIFY="false"
+```
 
 ## Sicherheitsgrenzen
 

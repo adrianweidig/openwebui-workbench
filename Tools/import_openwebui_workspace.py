@@ -4,7 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 import mimetypes
+import os
 import re
+import ssl
 import sys
 import time
 import uuid
@@ -57,6 +59,14 @@ def is_not_found_error(exc: RuntimeError) -> bool:
     )
 
 
+def openwebui_ssl_context(tls_verify: bool, ca_file: str = "", ca_path: str = "") -> ssl.SSLContext | None:
+    if not tls_verify:
+        return ssl._create_unverified_context()
+    if ca_file or ca_path:
+        return ssl.create_default_context(cafile=ca_file or None, capath=ca_path or None)
+    return None
+
+
 @dataclass(frozen=True)
 class ImportResult:
     kind: str
@@ -73,11 +83,15 @@ class OpenWebUIClient:
         timeout: int = 120,
         auth_header: str = "Authorization",
         auth_scheme: str | None = "Bearer",
+        tls_verify: bool = True,
+        ca_file: str = "",
+        ca_path: str = "",
     ) -> None:
         self.base_url = normalize_openwebui_base_url(base_url)
         self.timeout = timeout
         self.auth_header = auth_header.strip() or "Authorization"
         self.auth_scheme = "" if auth_scheme is None else str(auth_scheme).strip()
+        self.ssl_context = openwebui_ssl_context(tls_verify, ca_file, ca_path)
         auth_value = token if not self.auth_scheme else f"{self.auth_scheme} {token}"
         self.headers = {
             self.auth_header: auth_value,
@@ -109,7 +123,7 @@ class OpenWebUIClient:
             request_headers.update(headers)
         request = Request(self.api_url(path, query), data=body, headers=request_headers, method=method)
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:
                 raw = response.read()
                 if response.status not in expected:
                     raise RuntimeError(f"{method} {path} returned HTTP {response.status}: {raw[:500]!r}")
@@ -176,7 +190,7 @@ class OpenWebUIClient:
             method="POST",
         )
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:
                 return json.loads(response.read().decode("utf-8"))
         except HTTPError as exc:
             raw = exc.read().decode("utf-8", errors="replace")
@@ -412,6 +426,27 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         else first_config_value(config, ["openwebui.timeout_seconds", "import.timeout_seconds"], 120),
         120,
     )
+    tls_verify = as_bool(
+        args.tls_verify
+        if args.tls_verify is not None
+        else (
+            os.environ.get("OPENWEBUI_TLS_VERIFY")
+            or first_config_value(config, ["openwebui.tls_verify", "openwebui.verify_tls", "openwebui.ssl_verify"], True)
+        ),
+        True,
+    )
+    ca_file = str(
+        args.ca_file
+        or os.environ.get("OPENWEBUI_CA_FILE")
+        or first_config_value(config, ["openwebui.ca_file", "openwebui.cafile", "openwebui.ca_bundle"], "")
+        or ""
+    ).strip()
+    ca_path = str(
+        args.ca_path
+        or os.environ.get("OPENWEBUI_CA_PATH")
+        or first_config_value(config, ["openwebui.ca_path", "openwebui.capath"], "")
+        or ""
+    ).strip()
     include_optional = args.include_optional_network_tools or as_bool(
         first_config_value(config, ["import.include_optional_network_tools"], True),
         True,
@@ -567,6 +602,9 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         "auth_header": auth_header,
         "auth_scheme": auth_scheme,
         "timeout": timeout,
+        "tls_verify": tls_verify,
+        "ca_file": ca_file,
+        "ca_path": ca_path,
         "include_optional_network_tools": include_optional,
         "public_read": public_read,
         "skip_knowledge": skip_knowledge,
@@ -1173,6 +1211,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
     parser.add_argument("--auth-header", default=None, help="One-off override for the OpenWebUI API key header. Defaults to Authorization; use x-api-key or CUSTOM_API_KEY_HEADER when a proxy consumes Authorization.")
     parser.add_argument("--auth-scheme", default=None, help="One-off override for the auth scheme. Defaults to Bearer for Authorization and empty for custom API-key headers.")
+    parser.add_argument("--tls-verify", choices=("true", "false"), default=None, help="Verify OpenWebUI HTTPS certificates. Set false only for trusted local self-signed endpoints.")
+    parser.add_argument("--ca-file", default=None, help="CA bundle file for a private OpenWebUI HTTPS endpoint.")
+    parser.add_argument("--ca-path", default=None, help="Directory with trusted CA certificates for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
     parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ files as Knowledge.")
     parser.add_argument(
@@ -1218,6 +1259,9 @@ def main(argv: list[str] | None = None) -> int:
         timeout=int(runtime["timeout"]),
         auth_header=str(runtime["auth_header"]),
         auth_scheme=str(runtime["auth_scheme"]),
+        tls_verify=bool(runtime["tls_verify"]),
+        ca_file=str(runtime["ca_file"]),
+        ca_path=str(runtime["ca_path"]),
     )
     check_openwebui_auth(client)
     if args.auth_check:

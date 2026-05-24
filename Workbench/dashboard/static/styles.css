@@ -1,10 +1,32 @@
 :root {
+  color-scheme: dark;
+  --bg: #0b0f17;
+  --sidebar: #080b12;
+  --sidebar-muted: #9aa7bb;
+  --surface: #111827;
+  --surface-2: #182233;
+  --surface-3: #0d1320;
+  --text: #e5edf8;
+  --muted: #9aa7bb;
+  --border: #2a3547;
+  --accent: #60a5fa;
+  --accent-strong: #3b82f6;
+  --ok: #22c55e;
+  --warn: #f59e0b;
+  --danger: #fb7185;
+  --code-bg: #0a0f1a;
+  --code-text: #d7e2f2;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.26);
+}
+
+body.light-theme {
   color-scheme: light;
   --bg: #f6f7f9;
   --sidebar: #10151f;
   --sidebar-muted: #9aa6b8;
   --surface: #ffffff;
   --surface-2: #f1f4f8;
+  --surface-3: #f8fafc;
   --text: #17202e;
   --muted: #657287;
   --border: #d9e0ea;
@@ -13,6 +35,8 @@
   --ok: #159447;
   --warn: #d97706;
   --danger: #c2410c;
+  --code-bg: #0f172a;
+  --code-text: #dbeafe;
   --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
 }
 
@@ -170,6 +194,10 @@ nav {
   gap: 24px;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.theme-toggle {
+  min-width: 78px;
 }
 
 .topbar h2 {
@@ -380,17 +408,158 @@ textarea:focus {
 
 textarea {
   display: block;
-  width: calc(100% - 32px);
-  min-height: calc(100vh - 330px);
-  margin: 16px;
+  width: 100%;
+  min-height: calc(100vh - 382px);
+  margin: 0;
   padding: 16px;
   resize: vertical;
   border: 1px solid var(--border);
   border-radius: 8px;
-  color: #111827;
+  background: var(--code-bg);
+  color: var(--code-text);
   font-family: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 14px;
   line-height: 1.55;
+}
+
+.viewer-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 0;
+}
+
+.view-mode {
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.view-mode.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.workspace-view {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.workspace-view.split-mode {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.workspace-view.edit-mode {
+  grid-template-columns: 1fr;
+}
+
+.workspace-view.preview-mode {
+  grid-template-columns: 1fr;
+}
+
+.workspace-view.edit-mode .markdown-preview,
+.workspace-view.preview-mode textarea {
+  display: none;
+}
+
+.markdown-preview {
+  overflow: auto;
+  min-height: calc(100vh - 382px);
+  max-height: calc(100vh - 270px);
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-3);
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+  margin: 0.9em 0 0.35em;
+  line-height: 1.2;
+}
+
+.markdown-preview h1:first-child,
+.markdown-preview h2:first-child,
+.markdown-preview h3:first-child,
+.markdown-preview p:first-child,
+.markdown-preview pre:first-child {
+  margin-top: 0;
+}
+
+.markdown-preview p {
+  margin: 0 0 0.75em;
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+  padding-left: 1.35em;
+}
+
+.markdown-preview blockquote {
+  margin: 0.8em 0;
+  padding-left: 1em;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+}
+
+.markdown-preview code,
+.markdown-preview pre {
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.markdown-preview code {
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+  background: var(--surface-2);
+}
+
+.markdown-preview pre {
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--code-bg);
+  color: var(--code-text);
+}
+
+.code-preview {
+  white-space: normal;
+}
+
+.code-preview pre {
+  margin: 0;
+  white-space: pre;
+}
+
+.py-keyword {
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+.py-string {
+  color: #86efac;
+}
+
+.py-comment {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.py-number {
+  color: #fbbf24;
+}
+
+.py-decorator,
+.py-builtin {
+  color: #c084fc;
 }
 
 .editor-actions {
@@ -524,7 +693,8 @@ textarea {
   .app-shell,
   .split,
   .action-layout,
-  .asset-layout {
+  .asset-layout,
+  .workspace-view.split-mode {
     grid-template-columns: 1fr;
   }
 

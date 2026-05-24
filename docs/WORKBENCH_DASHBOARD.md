@@ -72,9 +72,9 @@ Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwend
 ## Arbeitsablauf
 
 1. Modell im Dashboard auswählen.
-2. `systemprompt.md`, `mainprompt.md`, `fachwissen.md` oder Beispiele direkt im Markdown-Editor ändern.
+2. `systemprompt.md`, `mainprompt.md`, `fachwissen.md` oder Beispiele direkt im Markdown-Editor ändern und im Viewer prüfen.
 3. Datei speichern.
-4. Optional Tools unter `Tools/openwebui_ext/tools/*.py` oder Skills unter `Tools/openwebui_ext/skills/*.md` im Dashboard bearbeiten.
+4. Optional Tools unter `Tools/openwebui_ext/tools/*.py` oder Skills unter `Tools/openwebui_ext/skills/*.md` im Dashboard bearbeiten. Python-Tools werden in der Vorschau mit Syntax-Highlighting angezeigt.
 5. `Artefakte neu erzeugen` ausführen.
 6. `Import prüfen` ausführen.
 7. Mit gesetztem `OPENWEBUI_ADMIN_TOKEN` `Zu OpenWebUI synchronisieren` ausführen.
@@ -93,6 +93,9 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 |---|---|
 | `OPENWEBUI_BASE_URL` | URL, die der Workbench-Container zur OpenWebUI-API nutzt. Im Compose-Stack `http://openwebui:8080`. |
 | `OPENWEBUI_PUBLIC_URL` | Browser-Link im Dashboard, meist `http://localhost:3000`. |
+| `OPENWEBUI_TLS_VERIFY` | `true` prüft HTTPS-Zertifikate. Für vertrauenswürdige lokale Self-Signed-Endpunkte kann `false` gesetzt werden. |
+| `OPENWEBUI_CA_FILE` | Optionaler CA-Bundle-Pfad für private lokale OpenWebUI-Zertifikate. |
+| `OPENWEBUI_CA_PATH` | Optionales CA-Verzeichnis für private lokale OpenWebUI-Zertifikate. |
 | `OPENWEBUI_ADMIN_TOKEN` | Admin-API-Key für echte Synchronisierung. Nicht nötig für Lesen, Bearbeiten, Generieren oder Dry-Run. |
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternativer Pfad zu einer Token-Datei im Container. |
 | `WEBUI_SECRET_KEY` | Stabiler lokaler OpenWebUI-Secret-Key, damit Sessions nach Container-Neustarts erhalten bleiben. |
@@ -103,7 +106,9 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 
 - Das Dashboard ist in der Compose-Datei nur an `127.0.0.1` gebunden.
 - Es hat keine eigene Authentifizierung.
+- Dark Mode ist der Standard; die Theme-Auswahl bleibt lokal im Browser gespeichert.
 - API-Token werden nur über Umgebung oder Token-Datei gelesen und in Aktionsausgaben redigiert.
+- Für HTTPS zu OpenWebUI wird Zertifikatsprüfung standardmäßig beibehalten. Eine deaktivierte Prüfung ist nur für lokale, vertrauenswürdige Testendpunkte vorgesehen.
 - Es werden keine frei eingegebenen Shell-Befehle ausgeführt; Dashboard-Aktionen sind fest verdrahtete Repository-Kommandos.
 - Markdown-Schreibzugriff ist auf freigegebene Dateien innerhalb eines Modellpakets begrenzt.
 - Tool- und Skill-Schreibzugriff ist auf existierende Dateien unter `Tools/openwebui_ext/tools/*.py` und `Tools/openwebui_ext/skills/*.md` begrenzt.

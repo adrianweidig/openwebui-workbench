@@ -1556,6 +1556,12 @@ def run_workspace_import(args: argparse.Namespace) -> int:
         import_args.extend(["--auth-header", str(args.auth_header)])
     if args.auth_scheme is not None:
         import_args.extend(["--auth-scheme", str(args.auth_scheme)])
+    if args.tls_verify is not None:
+        import_args.extend(["--tls-verify", str(args.tls_verify)])
+    if args.ca_file:
+        import_args.extend(["--ca-file", str(args.ca_file)])
+    if args.ca_path:
+        import_args.extend(["--ca-path", str(args.ca_path)])
     if args.jupyter_url:
         import_args.extend(["--jupyter-url", str(args.jupyter_url)])
     if args.jupyter_token:
@@ -1601,6 +1607,9 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--token", default=None, help="One-off override for openwebui.admin_token from the central config.")
     parser.add_argument("--auth-header", default=None, help="One-off override for OpenWebUI API key header. Use x-api-key or CUSTOM_API_KEY_HEADER if Authorization is unavailable.")
     parser.add_argument("--auth-scheme", default=None, help="One-off override for auth scheme. Defaults to Bearer for Authorization and empty for custom API-key headers.")
+    parser.add_argument("--tls-verify", choices=("true", "false"), default=None, help="Verify OpenWebUI HTTPS certificates. Set false only for trusted local self-signed endpoints.")
+    parser.add_argument("--ca-file", default=None, help="CA bundle file for a private OpenWebUI HTTPS endpoint.")
+    parser.add_argument("--ca-path", default=None, help="Directory with trusted CA certificates for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--jupyter-url", default=None, help="One-off override for the Jupyter tool valve. Prefer tool_valves.air_gapped_jupyter_python in the config.")
     parser.add_argument("--jupyter-token", default=None, help="One-off override for the Jupyter token tool valve.")
     parser.add_argument("--jupyter-timeout-seconds", default=None, help="One-off override for the Jupyter timeout tool valve.")
