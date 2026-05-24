@@ -1,0 +1,46 @@
+name: Feature request
+description: Neues Modell, Tool, Skill, Validierung oder Dokumentationsverbesserung vorschlagen.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      options:
+        - Neues Modell
+        - Tool
+        - Filter
+        - Skill
+        - Import/Export
+        - Deployment
+        - Tests/CI
+        - Dokumentation
+        - Repository-Pflege
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: Bedarf
+      description: Welches konkrete Problem soll gelöst werden?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Vorschlag
+      description: Wie könnte die Lösung aussehen?
+    validations:
+      required: true
+  - type: textarea
+    id: offline
+    attributes:
+      label: Offline- und Sicherheitsauswirkungen
+      description: Betrifft der Vorschlag Netzwerkzugriff, Valves, Jupyter, Dateisystem-Mounts oder Secrets?
+  - type: textarea
+    id: validation
+    attributes:
+      label: Mögliche Validierung
+      description: Welche Checks sollten den Beitrag absichern?

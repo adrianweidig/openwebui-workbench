@@ -1,0 +1,31 @@
+name: Documentation
+description: Unklare, fehlende oder widersprüchliche Dokumentation melden.
+title: "[Docs]: "
+labels:
+  - documentation
+body:
+  - type: textarea
+    id: location
+    attributes:
+      label: Betroffene Stelle
+      description: Datei, Überschrift oder Link.
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: Was ist unklar oder falsch?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Verbesserungsvorschlag
+      description: Wenn möglich mit konkreter Formulierung oder erwarteter Information.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Sicherheitscheck
+      options:
+        - label: Der Vorschlag enthält keine Secrets oder produktiven Zugangsdaten.
+          required: true

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/adrianweidig/openwebui-workbench/blob/main/SECURITY.md
+    about: Do not report sensitive vulnerabilities in public issues. Read the security policy first.

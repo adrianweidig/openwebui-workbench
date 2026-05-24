@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="title desc">
+  <title id="title">OpenWebUI Workbench</title>
+  <desc id="desc">A calm repository hero showing model packages, tools, filters and deployment artifacts flowing into OpenWebUI.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.52" stop-color="#123f4d"/>
+      <stop offset="1" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#ecfeff" stop-opacity="0.92"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#020617" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="1280" height="420" fill="url(#bg)"/>
+  <path d="M0 310 C160 260 270 350 420 306 C560 265 690 202 850 248 C990 288 1120 214 1280 245 L1280 420 L0 420 Z" fill="#f8fafc" opacity="0.88"/>
+  <g filter="url(#shadow)">
+    <rect x="64" y="56" width="520" height="286" rx="18" fill="url(#panel)"/>
+    <text x="104" y="126" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700" fill="#0f172a">OpenWebUI Workbench</text>
+    <text x="104" y="168" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#164e63">Portable Modellpakete, Tools, Filter und Air-Gap-Handover</text>
+    <text x="104" y="218" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#334155">Python-Validierung  •  OpenWebUI-Import  •  Offline-Workflows</text>
+    <g transform="translate(104 252)">
+      <rect width="112" height="38" rx="19" fill="#0f766e"/>
+      <text x="56" y="25" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Modelle</text>
+      <rect x="126" width="82" height="38" rx="19" fill="#334155"/>
+      <text x="167" y="25" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Tools</text>
+      <rect x="222" width="84" height="38" rx="19" fill="#0e7490"/>
+      <text x="264" y="25" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Filter</text>
+      <rect x="320" width="98" height="38" rx="19" fill="#475569"/>
+      <text x="369" y="25" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Skills</text>
+    </g>
+  </g>
+  <g transform="translate(692 72)" filter="url(#shadow)">
+    <rect width="424" height="232" rx="18" fill="#ffffff" opacity="0.96"/>
+    <g transform="translate(36 36)">
+      <rect width="88" height="64" rx="10" fill="#dff7f3"/>
+      <path d="M25 21h38M25 33h38M25 45h24" stroke="#0f766e" stroke-width="5" stroke-linecap="round"/>
+      <text x="44" y="92" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#0f172a">Briefings</text>
+    </g>
+    <g transform="translate(168 36)">
+      <rect width="88" height="64" rx="10" fill="#e0f2fe"/>
+      <circle cx="31" cy="32" r="13" fill="#0284c7"/>
+      <path d="M50 22h15M50 34h15M50 46h15" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+      <text x="44" y="92" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#0f172a">Modelle</text>
+    </g>
+    <g transform="translate(300 36)">
+      <rect width="88" height="64" rx="10" fill="#f1f5f9"/>
+      <path d="M24 41l14-18 14 18 14-18" fill="none" stroke="#475569" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="44" y="92" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#0f172a">Tools</text>
+    </g>
+    <path d="M124 68h40M256 68h40" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(92 150)">
+      <rect width="240" height="46" rx="23" fill="#0f172a"/>
+      <text x="120" y="30" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff">OpenWebUI Import</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,70 @@
+name: Bug report
+description: Fehler in Modellartefakten, Tools, Filtern, Import, Deployment oder Validierung melden.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bitte keine Tokens, privaten URLs, `.env`-Inhalte oder produktiven Konfigurationsdateien posten.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      options:
+        - Modelle
+        - Tools
+        - Filter
+        - Skills
+        - API-Import
+        - GUI-Import
+        - Deployment
+        - Dokumentation
+        - Tests/CI
+        - Sonstiges
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Was funktioniert nicht?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduktion
+      description: Welche Schritte führen zum Fehler?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Erwartetes Verhalten
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Tatsächliches Verhalten
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Umgebung
+      description: OpenWebUI-Version, Python-Version, Betriebssystem, Docker-Verfügbarkeit und relevanter Importweg.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Ausgeführte Checks
+      description: Ausgabe von `python scripts/verify_openwebui_workspace.py` oder relevanten Einzelchecks, ohne Secrets.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Sicherheitscheck
+      options:
+        - label: Ich habe keine Secrets, Tokens oder produktiven Zugangsdaten eingefügt.
+          required: true

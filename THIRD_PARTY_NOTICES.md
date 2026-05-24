@@ -47,7 +47,7 @@ Abrufdatum: 2026-05-19
 
 ### Öffentliche OpenWebUI-Tool-Exports aus lokalem Download
 
-- Quelle: `C:\Users\adrian.TOP\Downloads\öffentliche tools`
+- Quelle: lokaler Download-Export `öffentliche tools`
 - Abruf-/Übernahmedatum: 2026-05-20
 - Enthaltene Exports: Ask User, OpenUI, LLM Council, Parallel Tools, Sub Agent, Visuals Toolkit V4, Web Search and Crawl.
 - Lizenzangaben laut Tool-Metadaten: `llm_council`, `parallel_tools`, `sub_agent`, `visuals_toolkit_v4` und `web_search_and_crawl` nennen MIT; `ask_user`, `openui` und `markdown_normalizer` nennen keine explizite Lizenz im Export.

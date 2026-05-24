@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">OpenWebUI Workbench Social Preview</title>
+  <desc id="desc">Social preview graphic for the OpenWebUI Workbench repository.</desc>
+  <rect width="1280" height="640" fill="#0f172a"/>
+  <rect x="64" y="64" width="1152" height="512" rx="32" fill="#f8fafc"/>
+  <text x="128" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="68" font-weight="800" fill="#0f172a">OpenWebUI Workbench</text>
+  <text x="128" y="242" font-family="Segoe UI, Arial, sans-serif" font-size="31" fill="#155e75">Portable Modellpakete, Tools, Filter und Air-Gap-Handover</text>
+  <g transform="translate(128 322)">
+    <rect width="174" height="58" rx="29" fill="#0f766e"/>
+    <text x="87" y="37" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">Modelle</text>
+    <rect x="198" width="142" height="58" rx="29" fill="#334155"/>
+    <text x="269" y="37" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">Tools</text>
+    <rect x="364" width="138" height="58" rx="29" fill="#0e7490"/>
+    <text x="433" y="37" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">Filter</text>
+    <rect x="526" width="134" height="58" rx="29" fill="#475569"/>
+    <text x="593" y="37" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">Skills</text>
+  </g>
+  <text x="128" y="472" font-family="Segoe UI, Arial, sans-serif" font-size="25" fill="#334155">Python-Validierung  •  OpenWebUI-Import  •  Offline-Workflows</text>
+  <path d="M924 188h122a54 54 0 0 1 54 54v156a54 54 0 0 1-54 54H924a54 54 0 0 1-54-54V242a54 54 0 0 1 54-54Z" fill="#dff7f3"/>
+  <path d="M934 286h102M934 321h102M934 356h68" stroke="#0f766e" stroke-width="14" stroke-linecap="round"/>
+</svg>
