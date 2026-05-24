@@ -1,6 +1,6 @@
 # OpenWebUI Workbench
 
-![OpenWebUI Workbench Hero](docs/assets/openwebui-workbench-hero.svg)
+![OpenWebUI Workbench Hero](docs/assets/openwebui-workbench-hero.png)
 
 [![CI](https://github.com/adrianweidig/openwebui-workbench/actions/workflows/ci.yml/badge.svg)](https://github.com/adrianweidig/openwebui-workbench/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/adrianweidig/openwebui-workbench/actions/workflows/codeql.yml/badge.svg)](https://github.com/adrianweidig/openwebui-workbench/actions/workflows/codeql.yml)
