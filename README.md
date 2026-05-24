@@ -1,6 +1,6 @@
 # OpenWebUI Workbench
 
-Dieses Repository verwaltet die portable OpenWebUI Workbench. Der lokale Standardpfad auf dieser Maschine ist `E:\openwebui-workbench`; auf anderen Systemen kann das Repository unter einem beliebigen Pfad geklont werden.
+Dieses Repository verwaltet die portable OpenWebUI Workbench. Der lokale Standardpfad auf dieser Maschine ist `E:\OpenWebUI`; auf anderen Systemen kann das Repository unter einem beliebigen Pfad geklont werden.
 
 ## Struktur
 
@@ -60,7 +60,7 @@ Für visuelle Offline-Ausgaben, parallele Tool-/Subagent-Planung und robuste Mod
 
 OpenWebUI-Standardfunktionen dürfen ausdrücklich genutzt werden: Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, natives Tool Calling und alle Builtins, die die jeweilige OpenWebUI-Version bereitstellt. Zusätzlich ist der lokale Stack `F:\offline-ai-stack\openwebui-offline-addons` als Offline-Laufzeit vorgesehen; er stellt Caches, Tiktoken, NLTK, Playwright/Chromium und zusätzliche Python-Pakete für Tools und Filter bereit.
 
-Zusätzlich zu den Problemfallmodellen gibt es zwei Querschnittsmodelle:
+Zusätzlich zu den Problemfallmodellen gibt es mehrere Querschnittsmodelle:
 
 - `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme, die nicht eindeutig zu einem Spezialmodell passen; nutzt das Basismodell `coder` mit allen importierbaren Tools und allen Standardfiltern.
 - `PromptForge`: arbeitet wie der Custom GPT `PromptForge` aus `adrianweidig/custom-gpts` und erzeugt vollständige Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows.
@@ -101,7 +101,7 @@ Wenn der OpenWebUI-Container lokale Dateien per Volume lesen soll, ist `Modelle/
 Beispiel `docker run`:
 
 ```text
--v E:\openwebui-workbench\Modelle\dist:/app/backend/data/openwebui-import
+-v E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
 ```
 
 Beispiel `docker-compose.yml`:
@@ -110,9 +110,9 @@ Beispiel `docker-compose.yml`:
 services:
   openwebui:
     volumes:
-      - E:\openwebui-workbench\Modelle\dist:/app/backend/data/openwebui-import
-      - E:\openwebui-workbench\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
-      - E:\openwebui-workbench\Artefakte\output:/app/backend/data/offline_artifacts
+      - E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
+      - E:\OpenWebUI\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
+      - E:\OpenWebUI\Artefakte\output:/app/backend/data/offline_artifacts
       - F:\offline-ai-stack\openwebui-offline-addons\cache:/app/backend/data/cache
       - F:\offline-ai-stack\openwebui-offline-addons\nltk_data:/app/backend/data/nltk_data
       - F:\offline-ai-stack\openwebui-offline-addons\python:/app/backend/data/python
@@ -144,6 +144,7 @@ Wenn dieser Schritt auf einer OpenWebUI-Version ohne Tool-Valves-Endpunkt übers
 
 ## Wichtige Einstiege
 
+- `AGENTS.md`
 - `OpenWebUI Model Builder/README.md`
 - `Modelle/einzelmodelle/index.md`
 - `Modelle/dist/README.md`
@@ -151,3 +152,7 @@ Wenn dieser Schritt auf einer OpenWebUI-Version ohne Tool-Valves-Endpunkt übers
 - `OPENWEBUI_EXTENSIONS.md`
 - `Dokumentation/OFFLINE_CHATGPT_WORKBENCH.md`
 - `Deployment/README.md`
+
+## Lizenz
+
+Dieses Repository steht unter der Apache License 2.0; siehe `LICENSE`. Die Lizenzwahl ist eine technische Repository-Empfehlung und sollte vor externer oder kommerziell wichtiger Veröffentlichung rechtlich geprüft werden.

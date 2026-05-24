@@ -3,11 +3,15 @@ from __future__ import annotations
 import importlib.util
 import inspect
 import json
+import ast
 import unittest
 from pathlib import Path
 from typing import Any, get_type_hints
 
-from pydantic import create_model
+try:
+    from pydantic import create_model
+except Exception:  # pragma: no cover - minimal local test environments may not ship OpenWebUI deps
+    create_model = None  # type: ignore[assignment]
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -15,6 +19,29 @@ TOOLS_DIR = ROOT / "Tools" / "openwebui_ext" / "tools"
 TOOL_IMPORT = ROOT / "Tools" / "dist" / "openwebui-tools-import.json"
 OFFLINE_TOOL_IMPORT = ROOT / "Tools" / "dist" / "openwebui-tools-offline-import.json"
 FUNCTION_IMPORT = ROOT / "Tools" / "dist" / "openwebui-functions-import.json"
+OPTIONAL_RUNTIME_MODULES = {"aiohttp", "fastapi", "pydantic", "requests", "starlette"}
+
+
+def assert_structural_tool_contract(testcase: unittest.TestCase, path: Path) -> None:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    tools_cls = next((node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "Tools"), None)
+    testcase.assertIsNotNone(tools_cls, f"{path.name} has no Tools class")
+    assert tools_cls is not None
+    methods = [
+        node
+        for node in tools_cls.body
+        if isinstance(node, (ast.AsyncFunctionDef, ast.FunctionDef))
+        and not node.name.startswith("_")
+        and node.name != "__init__"
+    ]
+    testcase.assertGreater(len(methods), 0, f"{path.name} has no public tool methods")
+    for method in methods:
+        testcase.assertIsInstance(method, ast.AsyncFunctionDef, f"{path.name}:{method.name} is not async")
+        for arg in [*method.args.posonlyargs, *method.args.args, *method.args.kwonlyargs]:
+            if arg.arg == "self" or arg.arg.startswith("__"):
+                continue
+            testcase.assertIsNotNone(arg.annotation, f"{path.name}:{method.name}:{arg.arg} lacks annotation")
+        testcase.assertIsNotNone(method.returns, f"{path.name}:{method.name} lacks return annotation")
 
 
 class OpenWebUIToolImportTests(unittest.TestCase):
@@ -28,7 +55,13 @@ class OpenWebUIToolImportTests(unittest.TestCase):
                 self.assertIsNotNone(spec.loader if spec else None)
                 module = importlib.util.module_from_spec(spec)
                 assert spec and spec.loader
-                spec.loader.exec_module(module)
+                try:
+                    spec.loader.exec_module(module)
+                except ModuleNotFoundError as exc:
+                    if exc.name in OPTIONAL_RUNTIME_MODULES:
+                        assert_structural_tool_contract(self, path)
+                        continue
+                    raise
                 self.assertTrue(hasattr(module, "Tools"))
                 tools_cls = module.Tools
                 methods = [
@@ -47,6 +80,8 @@ class OpenWebUIToolImportTests(unittest.TestCase):
                     self.assertIsNot(signature.return_annotation, inspect._empty, f"{path.name}:{method.__name__} lacks return annotation")
 
     def test_tools_match_openwebui_gui_schema_generation(self) -> None:
+        if create_model is None:
+            self.skipTest("pydantic is not available in this minimal local Python environment")
         for path in [ROOT / "Tools" / "jupyter" / "jupyter_tool.py", *sorted(TOOLS_DIR.glob("*.py"))]:
             with self.subTest(tool=path.name):
                 spec = importlib.util.spec_from_file_location("test_gui_tool_" + path.stem, path)

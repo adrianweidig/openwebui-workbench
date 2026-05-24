@@ -1,40 +1,42 @@
-# Repo Analyse
+# Repo-Analyse
 
 ## Stand
 
-Analysebasis ist das komplette Arbeitsverzeichnis `E:\openwebui-workbench`.
+Analysebasis ist das Arbeitsverzeichnis `E:\OpenWebUI` nach der Workspace-Strukturierung. Diese Datei ist eine Momentaufnahme; die zentrale Einstiegspunkt-Dokumentation ist `README.md`.
 
 ## Beobachtungen
 
-- Root ist fachlich in fünf Bereiche gegliedert: `Modelle`, `OpenWebUI Model Builder`, `Problemfälle`, `Tools`, `Weiteres`.
-- Der Schwerpunkt liegt klar im Builder-Bereich. Dort liegen Quellen, Generator, Sicherungen und erzeugte Distributionsartefakte.
-- `Problemfälle` enthält die eigentlichen fachlichen Briefings.
-- `Modelle`, `Tools` und `Weiteres` waren strukturell vorhanden, aber inhaltlich praktisch leer. Sie wurden mit jeweils einer kurzen `README.md` als definierte Ablage vorbereitet.
+- Das Repository ist ein OpenWebUI-Workspace für offline nutzbare Modellpakete, Tools, Filter, Skills und Handover-Artefakte.
+- `Problemfälle/` enthält die fachlichen Briefings.
+- `Modelle/einzelmodelle/` enthält die menschenlesbaren Modellpakete.
+- `Modelle/dist/` und `Tools/dist/` enthalten bewusst versionierte Übergabe- und ZIP-Artefakte.
+- `Tools/openwebui_ext/` enthält importierbare OpenWebUI-Erweiterungen inklusive lokaler Tests.
+- `Artefakte/output/` und `Artefakte/temp/` sind lokale Laufzeitbereiche und sollen außer `.gitkeep` nicht versioniert werden.
 
 ## Dateibestand
 
-| Bereich | Dateien | Unterordner | Groesse in Byte |
+Die folgenden Zahlen schließen `.git/` aus und dienen nur zur Orientierung.
+
+| Bereich | Dateien | Unterordner | Größe in Byte |
 |---|---:|---:|---:|
-| `Modelle` | 1 | 0 | 177 |
-| `OpenWebUI Model Builder` | 518 | 113 | 4689329 |
+| `Artefakte` | 4 | 2 | 1241 |
+| `Deployment` | 3 | 0 | 6082 |
+| `Dokumentation` | 1 | 0 | 4431 |
+| `Modelle` | 352 | 103 | 2705414 |
+| `OpenWebUI Model Builder` | 7 | 1 | 1472783 |
 | `Problemfälle` | 27 | 0 | 190405 |
-| `Tools` | 1 | 0 | 167 |
+| `scripts` | 4 | 0 | 146161 |
+| `Tools` | 83 | 11 | 2813109 |
 | `Weiteres` | 1 | 0 | 169 |
 
 ## Bewertung
 
-- Die vorhandene inhaltliche Hauptlogik ist konsistent auf den Builder fokussiert.
-- Für Git und spätere Zusammenarbeit fehlten bisher Root-Metadaten und eine Repo-weite Strukturdefinition.
-- Für sauberes Arbeiten ist es sinnvoll, den Root als gemeinsames Git-Repository zu behandeln und den Builder-Output bewusst mit zu versionieren.
-
-## Vorbereitung für weitere Arbeit
-
-- Root-`README.md` angelegt
-- `WORKSPACE.md` als Arbeitskonvention angelegt
-- `.gitignore` für Python-Caches und lokale Builder-Backups angelegt
-- leere Fachordner mit Zweckbeschreibung vorbereitet
+- Die operative Struktur ist klar getrennt: Briefings, Einzelmodelle, Dist-Artefakte, Tools und Deployment-Vorlagen.
+- Identische Modell-JSONs in `Modelle/einzelmodelle/` und `Modelle/dist/artifacts/models/` sind gewollte Handover-Duplikate.
+- Es gibt kein klassisches Paketmanifest; die Qualitätsprüfung läuft über die vorhandenen Python-Skripte und Unittests.
+- Die zentrale `README.md` bündelt Nutzung, Validierung, Importwege und Verweise auf Spezialdokumente.
 
 ## Offene operative Punkte
 
-- GitHub-Push erfordert eine gültige GitHub-Authentifizierung.
-- Für spätere Automatisierung kann zusätzlich ein kleines `scripts/`-Verzeichnis sinnvoll werden. Aktuell ist das nicht nötig.
+- Lizenz- und Copyright-Angaben sollten vor externer oder kommerziell relevanter Veröffentlichung menschlich beziehungsweise rechtlich geprüft werden.
+- Bei Änderungen an Modell-, Tool- oder Filterlogik müssen `python scripts/validate_openwebui_extensions.py`, `python scripts/configure_openwebui_tool_models.py --check` und die Unittests erneut laufen.

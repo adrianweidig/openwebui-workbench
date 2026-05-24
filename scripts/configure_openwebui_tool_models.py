@@ -1055,7 +1055,7 @@ def model_knowledge_status(model_id: str) -> Dict[str, Dict[str, Any]]:
     status: Dict[str, Dict[str, Any]] = {}
     for path in model_knowledge_files(model_id):
         exists = path.exists()
-        size = path.stat().st_size if exists else 0
+        size = len(stable_text_bytes(path)) if exists else 0
         status[path.name] = {
             "path": rel(path),
             "exists": exists,

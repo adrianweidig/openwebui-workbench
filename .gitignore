@@ -17,6 +17,17 @@ Thumbs.db
 OpenWebUI Model Builder/.backup/
 
 # Local deployment secrets
+.env
+.env.*
+!.env.example
+*.local
 scripts/openwebui_workspace_config.yaml
 Tools/openwebui_workspace_config.yaml
 openwebui_workspace_config.yaml
+
+# Runtime output and logs
+*.log
+Artefakte/output/*
+!Artefakte/output/.gitkeep
+Artefakte/temp/*
+!Artefakte/temp/.gitkeep

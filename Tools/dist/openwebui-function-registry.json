@@ -42,7 +42,7 @@
       "path": "Tools/openwebui_ext/filters/markdown_normalizer.py",
       "purpose": "A content normalizer filter that fixes common Markdown formatting issues in LLM outputs, such as broken code blocks, LaTeX formulas, and list formatting. Including LaTeX command protection.",
       "function_type": "filter",
-      "sha256": "e4795efcce1e9350a5a69e909958d81a235adda8640cf5a2532fdd279d1d6a37",
+      "sha256": "beb70dd6dd2ef71855014f3434b732e47a7a175dd3d91a1d34197b3317164fb3",
       "importable": true,
       "hooks": [
         "outlet"

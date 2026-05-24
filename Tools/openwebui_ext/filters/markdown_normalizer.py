@@ -14,14 +14,31 @@ offline: true
 # The original export declared type "action", but the code implements a
 # Filter with an outlet hook. The generator imports it as a filter.
 # No external network access is performed.
-from pydantic import BaseModel, Field
 from typing import Optional, List, Callable, Dict, Any
-from fastapi import Request
 import re
 import logging
 import asyncio
 import json
 from dataclasses import dataclass, field
+
+try:
+    from pydantic import BaseModel, Field
+except Exception:  # pragma: no cover - OpenWebUI normally provides pydantic
+    class BaseModel:
+        def __init__(self, **kwargs: Any) -> None:
+            for key, value in self.__class__.__dict__.items():
+                if key.startswith("_") or callable(value):
+                    continue
+                setattr(self, key, kwargs.get(key, value))
+
+    def Field(default: Any = None, description: str = "") -> Any:
+        return default
+
+try:
+    from fastapi import Request
+except Exception:  # pragma: no cover - only needed for OpenWebUI request typing
+    class Request:
+        pass
 
 # Configure logging
 logger = logging.getLogger(__name__)
