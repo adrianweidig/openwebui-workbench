@@ -41,6 +41,22 @@ Danach:
 
 Die OpenWebUI-Image-Referenz folgt der offiziellen Docker-Dokumentation und nutzt `ghcr.io/open-webui/open-webui:main` als Default.
 
+## Lokale `top.secret`-Adresse
+
+Wenn auf der Maschine bereits der lokale `top.secret`-Edge-Proxy läuft, kann die Workbench ohne Port über `https://workbench.top.secret` erreichbar gemacht werden:
+
+```powershell
+docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
+```
+
+Voraussetzungen außerhalb dieses Repositorys:
+
+- Windows-Hostsfile: `127.0.0.1 workbench.top.secret`, optional per `powershell -ExecutionPolicy Bypass -File Deployment/enable-workbench-top-secret.ps1`
+- Edge-Netzwerk: `ki_infra_seu_test` oder per `TOPSECRET_EDGE_NETWORK` gesetzt
+- Nginx-Route im Edge-Proxy nach `http://workbench:8088`
+
+Der Nginx-Server-Block dafür liegt als Vorlage unter [`../Deployment/top-secret-nginx.workbench.conf`](../Deployment/top-secret-nginx.workbench.conf). Die Adresse ist für lokale Nutzung gedacht; das Dashboard hat keine eigene Authentifizierung.
+
 ## Nur Workbench zu vorhandener OpenWebUI-Instanz starten
 
 Wenn OpenWebUI schon als anderer Container oder Hostprozess läuft:

@@ -58,6 +58,20 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
     if args.include_docker_compose:
         steps.append(CommandStep("Docker compose example config", ["docker", "compose", "-f", "Deployment/docker-compose.openwebui-offline.example.yml", "config"]))
         steps.append(CommandStep("Docker compose workbench config", ["docker", "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"]))
+        steps.append(
+            CommandStep(
+                "Docker compose top.secret workbench config",
+                [
+                    "docker",
+                    "compose",
+                    "-f",
+                    "Deployment/docker-compose.workbench.yml",
+                    "-f",
+                    "Deployment/docker-compose.top-secret.yml",
+                    "config",
+                ],
+            )
+        )
     return steps
 
 

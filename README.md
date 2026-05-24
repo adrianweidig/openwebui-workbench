@@ -74,6 +74,7 @@ Danach:
 
 - OpenWebUI: `http://localhost:3000`
 - Workbench: `http://localhost:8088`
+- Optional mit lokalem `top.secret`-Edge-Proxy: `https://workbench.top.secret`
 
 Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` zur OpenWebUI-API synchronisieren. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
 

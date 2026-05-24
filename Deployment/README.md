@@ -5,6 +5,7 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 ## Compose-Varianten
 
 - `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können.
+- `docker-compose.top-secret.yml`: optionaler lokaler Override, der den Workbench-Container zusätzlich an das bestehende `top.secret`-Edge-Netz hängt und dort als `workbench` sowie `workbench.top.secret` verfügbar macht.
 - `docker-compose.openwebui-offline.example.yml`: ältere Offline-Beispielvorlage mit lokalem OpenWebUI-/Jupyter-Image und maschinenspezifischen Addon-Pfaden.
 
 Start der neuen Workbench-Umgebung:
@@ -12,6 +13,20 @@ Start der neuen Workbench-Umgebung:
 ```powershell
 Copy-Item Deployment/workbench.env.example .env
 docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+```
+
+Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
+
+```powershell
+docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
+```
+
+Der Edge-Proxy benötigt zusätzlich einen Host `workbench.top.secret`, eine Nginx-Route nach `http://workbench:8088` und einen lokalen Windows-Hosts-Eintrag `127.0.0.1 workbench.top.secret`. Die passende Nginx-Server-Block-Vorlage liegt in [`top-secret-nginx.workbench.conf`](top-secret-nginx.workbench.conf).
+
+Der Windows-Hosts-Eintrag kann mit Administratorrechten idempotent gesetzt werden:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File Deployment/enable-workbench-top-secret.ps1
 ```
 
 Weitere Details stehen in [`../docs/WORKBENCH_DASHBOARD.md`](../docs/WORKBENCH_DASHBOARD.md).

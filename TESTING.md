@@ -24,7 +24,7 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    python scripts/verify_openwebui_workspace.py
    ```
 
-3. Wenn Docker lokal verfügbar ist, Compose-Beispiel zusätzlich prüfen:
+3. Wenn Docker lokal verfügbar ist, Compose-Beispiele inklusive optionalem `top.secret`-Override zusätzlich prüfen:
 
    ```powershell
    python scripts/verify_openwebui_workspace.py --include-docker-compose
