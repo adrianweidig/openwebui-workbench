@@ -2,7 +2,7 @@
 
 ## Stand
 
-Analysebasis ist das Arbeitsverzeichnis `E:\OpenWebUI` nach der Workspace-Strukturierung. Diese Datei ist eine Momentaufnahme; die zentrale Einstiegspunkt-Dokumentation ist `README.md`.
+Analysebasis ist der OpenWebUI-Workbench-Arbeitsbaum nach der Workspace-Strukturierung. Diese Datei ist eine Momentaufnahme; die zentrale Einstiegspunkt-Dokumentation ist `README.md`.
 
 ## Beobachtungen
 

@@ -1,6 +1,6 @@
 # Public OpenWebUI Function Exports
 
-Diese JSON-Dateien sind unveränderte öffentliche OpenWebUI-Function-Exports aus `C:\Users\adrian.TOP\Downloads\öffentliche functions`.
+Diese JSON-Dateien sind unveränderte öffentliche OpenWebUI-Function-Exports aus einem lokalen Downloadordner.
 
 Die produktiven Kopien liegen unter `Tools/openwebui_ext/filters/` oder künftig unter passenden Function-Unterordnern und wurden für Air-Gap-Betrieb geprüft.
 

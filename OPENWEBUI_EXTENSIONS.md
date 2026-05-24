@@ -94,13 +94,20 @@ Der Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` kann als 
 
 ## Tests
 
-Lokale Prüfung:
+Zentrale lokale Prüfung:
 
 ```powershell
+python scripts/verify_openwebui_workspace.py
+```
+
+Einzeldiagnose:
+
+```powershell
+python -m compileall -q scripts Tools
 python scripts/validate_openwebui_extensions.py
-python -m unittest Tools.openwebui_ext.tests.test_openwebui_tools_importable
 python scripts/configure_openwebui_tool_models.py --check
-python -m unittest Tools.openwebui_ext.tests.test_openwebui_filters_importable
+python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.example.yaml
+python -m unittest discover Tools.openwebui_ext.tests
 ```
 
 ## Tool- und Modellregistrierung

@@ -23,8 +23,16 @@ Installationsbefehl: keiner, solange kein Projektmanifest ergänzt wird.
 Validierung:
 
 ```powershell
+python scripts/verify_openwebui_workspace.py
+```
+
+Einzeldiagnose:
+
+```powershell
+python -m compileall -q scripts Tools
 python scripts/validate_openwebui_extensions.py
 python scripts/configure_openwebui_tool_models.py --check
+python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.example.yaml
 python -m unittest discover Tools.openwebui_ext.tests
 ```
 
@@ -32,6 +40,12 @@ Artefakte bewusst neu erzeugen:
 
 ```powershell
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
+```
+
+Wenn Docker lokal verfügbar ist, kann die Compose-Beispielkonfiguration zusätzlich geprüft werden:
+
+```powershell
+python scripts/verify_openwebui_workspace.py --include-docker-compose
 ```
 
 API-Import nur nach ausdrücklichem Auftrag und mit lokal gesetztem Token:
@@ -60,7 +74,7 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 ## Git-Regeln
 
 - Vor Änderungen `git status --short --branch` prüfen.
-- Bei `dubious ownership` keine globale Git-Konfiguration ändern; für Prüfungen `git -c safe.directory=E:/OpenWebUI ...` nutzen.
+- Bei `dubious ownership` keine globale Git-Konfiguration ändern; für Prüfungen `git -c safe.directory=<repo-pfad> ...` nutzen.
 - Keine destruktiven Git-Befehle ohne ausdrückliche Freigabe.
 - Pull, Push, Merge, Rebase und Konfliktlösung nicht automatisch ausführen, außer der Nutzer beauftragt ausdrücklich Repository-Synchronisation oder Veröffentlichung.
 - Bestehende Nutzer- oder Fremdänderungen nicht überschreiben.
@@ -85,6 +99,7 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 - Relevante Checks wurden ausgeführt oder die Grenze wurde begründet.
 - `git diff` wurde geprüft.
 - README, AGENTS und Lizenzangaben sind konsistent.
+- `TESTING.md` und der zentrale Verify-Runner sind aktuell.
 - Keine Secrets wurden hinzugefügt.
 - Keine Funktionalität wurde absichtlich verändert.
 - Unsichere Punkte sind im Abschlussbericht als prüfpflichtig markiert.

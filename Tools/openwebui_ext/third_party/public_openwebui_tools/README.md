@@ -1,6 +1,6 @@
 # Public OpenWebUI Tool Exports
 
-Diese JSON-Dateien sind die unveränderten öffentlichen OpenWebUI-Tool-Exports aus `C:\Users\adrian.TOP\Downloads\öffentliche tools`.
+Diese JSON-Dateien sind die unveränderten öffentlichen OpenWebUI-Tool-Exports aus einem lokalen Downloadordner.
 
 Die produktiven Kopien liegen als einzelne Python-Tools unter `Tools/openwebui_ext/tools/` und wurden für Air-Gap-Betrieb angepasst:
 

@@ -2,7 +2,7 @@
 
 ## Ziel
 
-`E:\OpenWebUI` dient auf dieser Maschine als gemeinsames Arbeitsverzeichnis für:
+Der OpenWebUI-Workbench-Root dient als gemeinsames Arbeitsverzeichnis für:
 
 - OpenWebUI-Modellbau
 - Problemfall-Sammlung
@@ -26,7 +26,7 @@
 
 ## Git-Konvention
 
-- Root des Git-Repositories ist `E:\OpenWebUI`.
+- Root des Git-Repositories ist der Checkout dieses Repositories.
 - Builder-Quellen bleiben unter `OpenWebUI Model Builder/`.
 - Operative Modelle liegen unter `Modelle/`.
 - Operative Tools liegen unter `Tools/`.

@@ -1,6 +1,6 @@
 # OpenWebUI Workbench
 
-Dieses Repository verwaltet die portable OpenWebUI Workbench. Der lokale Standardpfad auf dieser Maschine ist `E:\OpenWebUI`; auf anderen Systemen kann das Repository unter einem beliebigen Pfad geklont werden.
+Dieses Repository verwaltet die portable OpenWebUI Workbench. Der lokale Standardpfad auf dieser Maschine ist `E:\Codex_Workspace\repos\openwebui-workbench`; auf anderen Systemen kann das Repository unter einem beliebigen Pfad geklont werden.
 
 ## Struktur
 
@@ -77,6 +77,22 @@ Die Tool-Registry und die Modell-Tool-Zuweisungen können reproduzierbar erzeugt
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
+## Qualitätsprüfung und Tests
+
+Für eine schnelle, nicht-mutierende Gesamtprüfung:
+
+```powershell
+python scripts/verify_openwebui_workspace.py
+```
+
+Der Verify-Runner kompiliert Python-Dateien, prüft OpenWebUI-Tools, Filter und Skills, führt den Generator im Check-Modus aus, startet einen API-Import-Dry-Run mit der Beispielkonfiguration, lädt alle JSON-Artefakte und führt die Unit-Tests aus. Mit lokal verfügbarem Docker kann zusätzlich die Compose-Beispielkonfiguration geprüft werden:
+
+```powershell
+python scripts/verify_openwebui_workspace.py --include-docker-compose
+```
+
+Details, Einzeldiagnosen und typische Fehlerbilder stehen in `TESTING.md`.
+
 Der generierte Importplan liegt unter `Modelle/dist/openwebui-registration-plan.json` und erzwingt die Reihenfolge Tools, Tool-Publication, Tool-Valves, Functions/Filter, Function-/Filter-Globalisierung, Function-/Filter-Valves, Skills, Skill-Publication, modellbezogene Knowledge-Dateien, Knowledge-Publication, Modelle und Modell-Publication.
 Die Modellprofile werden dabei auf natives Offline-Tool-Calling, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte und einen kurzen Bootstrap-Systemprompt normalisiert. Dieser Systemprompt bleibt bewusst knapp und verpflichtet jedes Modell, vor der Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien aus `beispiele/` als Knowledge zu laden, zu analysieren und für Rolle, Scope, Ausgabeformat, Tool-Nutzung und Qualitätsmaßstab anzuwenden. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt; High Reasoning wird für lokale Mistral-Medium-128B-Instanzen über die kurze Systemanweisung, Tool-Planung und Ergebnisvalidierung erzwungen.
 Die Tool-Nutzungssektion erzwingt am Aufgabenanfang eine Tool-/Skill-Inventur und passende Tools, sobald Dateien, strukturierte Daten, Code, Artefakte, APIs, Docker-/OpenWebUI-Fehler, Visuals, Parallelplanung oder Subagenten betroffen sind. Die konkrete Tool-Syntax und die use-case-spezifischen Arbeitsmuster liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und den importierten Skills; der kurze Systemprompt verweist nur auf diese Pflicht. Der Filter `auto_tool_selector` unterstützt diese Vorgabe, indem er passende verfügbare Tool-IDs vor dem Modellaufruf ergänzt; `markdown_normalizer` und `context_compressor_filter` bleiben ebenfalls standardmäßig als Filter verfügbar. `context_compressor_filter` normalisiert zusätzlich 0-Output-Token-Requests und kürzt übergroße Einzelprompts vor dem Modellaufruf unter das sichere Kontextbudget.
@@ -101,7 +117,7 @@ Wenn der OpenWebUI-Container lokale Dateien per Volume lesen soll, ist `Modelle/
 Beispiel `docker run`:
 
 ```text
--v E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
+-v <OPENWEBUI_WORKSPACE>\Modelle\dist:/app/backend/data/openwebui-import
 ```
 
 Beispiel `docker-compose.yml`:
@@ -110,9 +126,9 @@ Beispiel `docker-compose.yml`:
 services:
   openwebui:
     volumes:
-      - E:\OpenWebUI\Modelle\dist:/app/backend/data/openwebui-import
-      - E:\OpenWebUI\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
-      - E:\OpenWebUI\Artefakte\output:/app/backend/data/offline_artifacts
+      - <OPENWEBUI_WORKSPACE>\Modelle\dist:/app/backend/data/openwebui-import
+      - <OPENWEBUI_WORKSPACE>\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
+      - <OPENWEBUI_WORKSPACE>\Artefakte\output:/app/backend/data/offline_artifacts
       - F:\offline-ai-stack\openwebui-offline-addons\cache:/app/backend/data/cache
       - F:\offline-ai-stack\openwebui-offline-addons\nltk_data:/app/backend/data/nltk_data
       - F:\offline-ai-stack\openwebui-offline-addons\python:/app/backend/data/python
@@ -150,6 +166,7 @@ Wenn dieser Schritt auf einer OpenWebUI-Version ohne Tool-Valves-Endpunkt übers
 - `Modelle/dist/README.md`
 - `Tools/jupyter/README.md`
 - `OPENWEBUI_EXTENSIONS.md`
+- `TESTING.md`
 - `Dokumentation/OFFLINE_CHATGPT_WORKBENCH.md`
 - `Deployment/README.md`
 
