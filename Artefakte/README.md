@@ -20,7 +20,7 @@ Setze für das Artefakt-Tool bevorzugt:
 OPENWEBUI_ARTIFACT_ROOT=/app/backend/data/offline_artifacts
 ```
 
-Für lokale Windows-Arbeit kann dieser Containerpfad auf `E:\OpenWebUI\Artefakte\output` gemountet werden. Die genaue Mount-Strategie steht in `Deployment/README.md`.
+Für lokale Windows-Arbeit kann dieser Containerpfad auf `<OPENWEBUI_WORKSPACE>\Artefakte\output` gemountet werden. Die genaue Mount-Strategie steht in `Deployment/README.md`.
 
 ## Git-Regel
 
