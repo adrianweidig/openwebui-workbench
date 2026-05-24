@@ -2,6 +2,20 @@
 
 Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWebUI-Betrieb mit eigenem Jupyter-Server, persistenten Modellen, Tools, Skills und Artefakten.
 
+## Compose-Varianten
+
+- `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können.
+- `docker-compose.openwebui-offline.example.yml`: ältere Offline-Beispielvorlage mit lokalem OpenWebUI-/Jupyter-Image und maschinenspezifischen Addon-Pfaden.
+
+Start der neuen Workbench-Umgebung:
+
+```powershell
+Copy-Item Deployment/workbench.env.example .env
+docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+```
+
+Weitere Details stehen in [`../docs/WORKBENCH_DASHBOARD.md`](../docs/WORKBENCH_DASHBOARD.md).
+
 ## Zielbild
 
 - OpenWebUI läuft ohne Internetzugriff.

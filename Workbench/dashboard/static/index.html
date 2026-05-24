@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenWebUI Workbench</title>
+    <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" rx="12" fill="%2310151f"/%3E%3Ctext x="32" y="39" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="white"%3EOW%3C/text%3E%3C/svg%3E' />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">OW</span>
+          <div>
+            <h1>Workbench</h1>
+            <p id="repo-root">Repository wird geladen</p>
+          </div>
+        </div>
+        <nav aria-label="Workbench Bereiche">
+          <button class="nav-item active" data-panel="models">Modelle</button>
+          <button class="nav-item" data-panel="resources">Tools & Skills</button>
+          <button class="nav-item" data-panel="actions">Sync</button>
+          <button class="nav-item" data-panel="assets">Artefakte</button>
+        </nav>
+        <div class="status-box">
+          <span class="status-dot" id="openwebui-dot"></span>
+          <div>
+            <strong id="openwebui-status">OpenWebUI</strong>
+            <span id="openwebui-url">-</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h2>OpenWebUI zentral verwalten</h2>
+            <p>Markdown-Modelle bearbeiten, Dist-Artefakte erzeugen und Importläufe auslösen.</p>
+          </div>
+          <div class="summary-grid" aria-label="Repository Kennzahlen">
+            <div><span id="count-models">0</span><small>Modelle</small></div>
+            <div><span id="count-tools">0</span><small>Tools</small></div>
+            <div><span id="count-skills">0</span><small>Skills</small></div>
+          </div>
+        </header>
+
+        <section class="panel active" id="panel-models">
+          <div class="split">
+            <section class="list-pane" aria-label="Modellliste">
+              <div class="pane-head">
+                <h3>Modellpakete</h3>
+                <input id="model-search" type="search" placeholder="Filtern" autocomplete="off" />
+              </div>
+              <div id="model-list" class="model-list"></div>
+            </section>
+
+            <section class="editor-pane" aria-label="Markdown Editor">
+              <div class="editor-head">
+                <div>
+                  <h3 id="model-title">Kein Modell ausgewählt</h3>
+                  <p id="model-description">Wähle links ein Modellpaket aus.</p>
+                </div>
+                <a id="open-openwebui" class="secondary-link" href="http://localhost:3000" target="_blank" rel="noreferrer">OpenWebUI öffnen</a>
+              </div>
+
+              <div class="file-tabs" id="file-tabs" aria-label="Modelldateien"></div>
+              <textarea id="markdown-editor" spellcheck="false" disabled></textarea>
+              <div class="editor-actions">
+                <span id="editor-state">Bereit</span>
+                <button id="save-file" class="primary" disabled>Speichern</button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-resources">
+          <div class="split">
+            <section class="list-pane" aria-label="Tool- und Skillliste">
+              <div class="pane-head">
+                <h3>Tools & Skills</h3>
+                <input id="resource-search" type="search" placeholder="Filtern" autocomplete="off" />
+              </div>
+              <div id="resource-list" class="model-list"></div>
+            </section>
+
+            <section class="editor-pane" aria-label="Tool- und Skill-Editor">
+              <div class="editor-head">
+                <div>
+                  <h3 id="resource-title">Keine Ressource ausgewählt</h3>
+                  <p id="resource-description">Wähle links ein Tool oder Skill aus.</p>
+                </div>
+              </div>
+
+              <textarea id="resource-editor" spellcheck="false" disabled></textarea>
+              <div class="editor-actions">
+                <span id="resource-state">Bereit</span>
+                <button id="save-resource" class="primary" disabled>Speichern</button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-actions">
+          <div class="action-layout">
+            <section>
+              <h3>Synchronisierung</h3>
+              <div class="action-grid">
+                <button class="action-card" data-action="generate">
+                  <strong>Artefakte neu erzeugen</strong>
+                  <span>Registries, Modellprofile und ZIPs aus dem aktuellen Markdown-Stand bauen.</span>
+                </button>
+                <button class="action-card" data-action="import-dry-run">
+                  <strong>Import prüfen</strong>
+                  <span>OpenWebUI-Payload lokal validieren, ohne die Zielinstanz zu verändern.</span>
+                </button>
+                <button class="action-card" data-action="import-openwebui">
+                  <strong>Zu OpenWebUI synchronisieren</strong>
+                  <span>Tools, Filter, Skills, Knowledge und Modelle über die API importieren.</span>
+                </button>
+                <button class="action-card" data-action="check">
+                  <strong>Workspace verifizieren</strong>
+                  <span>Syntax, Generator, Import-Dry-Run, JSON und Unit-Tests prüfen.</span>
+                </button>
+              </div>
+            </section>
+            <section class="log-pane">
+              <div class="pane-head">
+                <h3>Ausgabe</h3>
+                <button id="clear-log" class="ghost">Leeren</button>
+              </div>
+              <pre id="action-log">Noch keine Aktion ausgeführt.</pre>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-assets">
+          <div class="asset-layout">
+            <section>
+              <h3>Dist-Artefakte</h3>
+              <div id="artifact-list" class="artifact-list"></div>
+            </section>
+            <section>
+              <h3>Konfiguration</h3>
+              <dl class="config-list">
+                <div><dt>Lokale Config</dt><dd id="config-local">-</dd></div>
+                <div><dt>API Token</dt><dd id="config-token">-</dd></div>
+                <div><dt>Schreibmodus</dt><dd id="config-write">-</dd></div>
+              </dl>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

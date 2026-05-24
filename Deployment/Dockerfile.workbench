@@ -1,0 +1,17 @@
+FROM python:3.13-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/workspace:/app \
+    WORKBENCH_ROOT=/workspace \
+    WORKBENCH_HOST=0.0.0.0 \
+    WORKBENCH_PORT=8088
+
+WORKDIR /workspace
+
+COPY Workbench /app/Workbench
+
+EXPOSE 8088
+
+CMD ["python", "-m", "Workbench.dashboard.server"]
+

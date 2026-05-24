@@ -19,6 +19,7 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 | Modelle manuell importieren | [`Modelle/einzelmodelle/`](Modelle/einzelmodelle/) und [`Modelle/dist/openwebui-models-import.json`](Modelle/dist/openwebui-models-import.json) |
 | Tools und Filter importieren | [`Tools/dist/`](Tools/dist/) und [`OPENWEBUI_EXTENSIONS.md`](OPENWEBUI_EXTENSIONS.md) |
 | Vollständigen API-Import vorbereiten | [`scripts/openwebui_workspace_config.example.yaml`](scripts/openwebui_workspace_config.example.yaml) |
+| Dashboard-Container starten | [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md) und [`Deployment/docker-compose.workbench.yml`](Deployment/docker-compose.workbench.yml) |
 | Lokale Qualität prüfen | [`TESTING.md`](TESTING.md) |
 | Deployment-Mounts verstehen | [`Deployment/README.md`](Deployment/README.md) |
 | Architektur überblicken | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
@@ -60,7 +61,30 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 
 ## Quick Start
 
-### 1. Repository prüfen
+### 1. Dashboard mit OpenWebUI starten
+
+Für eine lokale OpenWebUI-Instanz plus Workbench-Dashboard:
+
+```powershell
+Copy-Item Deployment/workbench.env.example .env
+docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+```
+
+Danach:
+
+- OpenWebUI: `http://localhost:3000`
+- Workbench: `http://localhost:8088`
+
+Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` zur OpenWebUI-API synchronisieren. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
+
+Wenn OpenWebUI bereits läuft, kann nur der Workbench-Container gestartet werden:
+
+```powershell
+$env:OPENWEBUI_BASE_URL="http://host.docker.internal:3000"
+docker compose -f Deployment/docker-compose.workbench.yml up -d --build workbench
+```
+
+### 2. Repository prüfen
 
 Für eine schnelle, nicht-mutierende Gesamtprüfung:
 
@@ -76,7 +100,7 @@ Wenn Docker lokal verfügbar ist, kann zusätzlich die Compose-Beispielkonfigura
 python scripts/verify_openwebui_workspace.py --include-docker-compose
 ```
 
-### 2. Modelle per OpenWebUI-GUI importieren
+### 3. Modelle per OpenWebUI-GUI importieren
 
 1. In OpenWebUI das gewünschte Basismodell `coder` verfügbar machen.
 2. In [`Modelle/einzelmodelle/<modell-id>/`](Modelle/einzelmodelle/) das passende Paket wählen.
@@ -86,7 +110,7 @@ python scripts/verify_openwebui_workspace.py --include-docker-compose
 6. Optional ein schlichtes Profilicon aus [`Modelle/icons/generic/`](Modelle/icons/generic/) oder [`Modelle/dist/artifacts/icons/generic/`](Modelle/dist/artifacts/icons/generic/) zuweisen.
 7. Das Jupyter-Tool nur dann zuordnen, wenn es im Modellprofil genannt ist.
 
-### 3. Tools, Functions und Skills importieren
+### 4. Tools, Functions und Skills importieren
 
 Die Erweiterungen unter [`Tools/openwebui_ext/`](Tools/openwebui_ext/) sind direkt für OpenWebUI vorbereitet:
 

@@ -40,11 +40,12 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
 ## Einzelbefehle für Diagnose
 
 ```powershell
-python -m compileall -q scripts Tools
+python -m compileall -q scripts Tools Workbench
 python scripts/validate_openwebui_extensions.py
 python scripts/configure_openwebui_tool_models.py --check
 python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.example.yaml
 python -m unittest discover Tools.openwebui_ext.tests
+python -m unittest discover Workbench.dashboard.tests
 ```
 
 JSON-Artefakte werden durch `scripts/verify_openwebui_workspace.py` mitgeprüft. Der Generator-Check muss ohne neue Änderungen enden (`Änderungen erkannt: False`), sonst sind Dist-Artefakte nicht synchron.

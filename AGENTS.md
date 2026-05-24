@@ -15,6 +15,7 @@ Dieses Repository ist ein portabler OpenWebUI-Workbench-Arbeitsbereich für Mode
 - `Tools/dist/`: gebündelte Tool-/Skill-Artefakte.
 - `Artefakte/output/` und `Artefakte/temp/`: lokale Laufzeitausgaben, normalerweise nicht versioniert.
 - `Deployment/`: Offline-Compose- und Volume-Vorlagen.
+- `Workbench/dashboard/`: lokales Dashboard für Modell-Markdown, Tool-/Skill-Dateien, Dist-Generierung und OpenWebUI-Sync.
 
 ## Standardbefehle
 
@@ -34,6 +35,7 @@ python scripts/validate_openwebui_extensions.py
 python scripts/configure_openwebui_tool_models.py --check
 python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.example.yaml
 python -m unittest discover Tools.openwebui_ext.tests
+python -m unittest discover Workbench.dashboard.tests
 ```
 
 Artefakte bewusst neu erzeugen:
@@ -70,6 +72,7 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 - Deutsche Fließtexte mit echten UTF-8-Umlauten schreiben.
 - Technische Aussagen nur dokumentieren, wenn die Dateien oder Skripte im aktuellen Stand existieren.
 - Drittanbieter-Quellen und Übernahmen in `THIRD_PARTY_NOTICES.md` dokumentieren.
+- Dashboard-Dokumentation muss klar zwischen Repo-Volume als Quelle, bearbeitbaren Modell-/Tool-/Skill-Dateien, generierten Dist-Artefakten und echter OpenWebUI-API-Synchronisierung unterscheiden.
 - Öffentliche Repository-Dokumentation muss sachlich bleiben: keine erfundenen Features, Badges, Roadmap-Zusagen, Supportkanäle oder Sicherheitsgarantien.
 - Community-Dateien wie `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, `CHANGELOG.md` und `.github/*` bei relevanten Prozessänderungen konsistent halten.
 - README-Links bevorzugt relativ setzen; absolute GitHub-Links nur verwenden, wenn Owner und Repository eindeutig sind.
@@ -97,6 +100,8 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 - Keine produktiven OpenWebUI-, Jupyter-, Docker- oder API-Aktionen ohne klaren Auftrag.
 - Netzwerktools sind nicht Teil des Air-Gap-Defaults und dürfen nicht still aktiviert werden.
 - Unsichere oder nicht referenzierte Dateien nicht löschen, sondern im Abschlussbericht markieren.
+- Das Workbench-Dashboard ist lokal gedacht; ohne vorgeschaltete Authentifizierung nicht öffentlich exponieren.
+- OpenWebUI-Admin-Tokens nur über lokale `.env`, Umgebung oder Token-Dateien nutzen und nie in Dashboard-Logs, Markdown oder Commits ausgeben.
 
 ## Security-Remediation
 

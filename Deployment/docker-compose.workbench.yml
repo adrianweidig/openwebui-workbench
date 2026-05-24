@@ -1,0 +1,55 @@
+name: openwebui-workbench
+
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:${OPENWEBUI_IMAGE_TAG:-main}
+    container_name: ${OPENWEBUI_CONTAINER_NAME:-openwebui}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${OPENWEBUI_PORT:-3000}:8080"
+    environment:
+      WEBUI_AUTH: ${WEBUI_AUTH:-true}
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:-}
+      DO_NOT_TRACK: ${DO_NOT_TRACK:-true}
+      SCARF_NO_ANALYTICS: ${SCARF_NO_ANALYTICS:-true}
+      ANONYMIZED_TELEMETRY: ${ANONYMIZED_TELEMETRY:-false}
+    volumes:
+      - openwebui-data:/app/backend/data
+      - ../Modelle/dist:/app/backend/data/openwebui-import:ro
+      - ../Tools:/app/backend/data/openwebui-tools:ro
+      - ../Artefakte/output:/app/backend/data/offline_artifacts
+    networks:
+      - workbench
+
+  workbench:
+    build:
+      context: ..
+      dockerfile: Deployment/Dockerfile.workbench
+    image: openwebui-workbench-dashboard:local
+    container_name: ${WORKBENCH_CONTAINER_NAME:-openwebui-workbench}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${WORKBENCH_PORT:-8088}:8088"
+    environment:
+      WORKBENCH_ROOT: /workspace
+      WORKBENCH_HOST: 0.0.0.0
+      WORKBENCH_PORT: 8088
+      WORKBENCH_ALLOW_WRITE: ${WORKBENCH_ALLOW_WRITE:-true}
+      WORKBENCH_COMMAND_TIMEOUT_SECONDS: ${WORKBENCH_COMMAND_TIMEOUT_SECONDS:-300}
+      OPENWEBUI_BASE_URL: ${OPENWEBUI_BASE_URL:-http://openwebui:8080}
+      OPENWEBUI_PUBLIC_URL: ${OPENWEBUI_PUBLIC_URL:-http://localhost:${OPENWEBUI_PORT:-3000}}
+      OPENWEBUI_ADMIN_TOKEN: ${OPENWEBUI_ADMIN_TOKEN:-}
+      OPENWEBUI_ADMIN_TOKEN_FILE: ${OPENWEBUI_ADMIN_TOKEN_FILE:-}
+    volumes:
+      - ..:/workspace
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - workbench
+
+volumes:
+  openwebui-data:
+
+networks:
+  workbench:
+    driver: bridge

@@ -44,7 +44,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
     python = sys.executable
     steps = [
-        CommandStep("Python syntax compile", [python, "-m", "compileall", "-q", "scripts", "Tools"]),
+        CommandStep("Python syntax compile", [python, "-m", "compileall", "-q", "scripts", "Tools", "Workbench"]),
         CommandStep("OpenWebUI extension validation", [python, "scripts/validate_openwebui_extensions.py"]),
         CommandStep("Tool/model generator check", [python, "scripts/configure_openwebui_tool_models.py", "--check"]),
         CommandStep(
@@ -54,8 +54,10 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
     ]
     if not args.skip_unit_tests:
         steps.append(CommandStep("Unit tests", [python, "-m", "unittest", "discover", "Tools.openwebui_ext.tests"]))
+        steps.append(CommandStep("Workbench dashboard tests", [python, "-m", "unittest", "discover", "Workbench.dashboard.tests"]))
     if args.include_docker_compose:
         steps.append(CommandStep("Docker compose example config", ["docker", "compose", "-f", "Deployment/docker-compose.openwebui-offline.example.yml", "config"]))
+        steps.append(CommandStep("Docker compose workbench config", ["docker", "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"]))
     return steps
 
 
