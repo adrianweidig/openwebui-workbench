@@ -2,6 +2,9 @@ const state = {
   status: null,
   models: [],
   resources: [],
+  locale: "de",
+  messages: {},
+  fallbackMessages: {},
   selectedModel: null,
   selectedFile: "systemprompt.md",
   selectedResource: null,
@@ -11,10 +14,67 @@ const state = {
 };
 
 const el = (id) => document.getElementById(id);
+const DEFAULT_LOCALE = "de";
+const SUPPORTED_LOCALES = ["de", "en"];
+
+function normalizeLocale(value) {
+  const language = String(value || "").trim().replace("_", "-").toLowerCase().split("-")[0];
+  return SUPPORTED_LOCALES.includes(language) ? language : DEFAULT_LOCALE;
+}
+
+function detectInitialLocale() {
+  const explicit = localStorage.getItem("workbench-locale");
+  if (explicit) return normalizeLocale(explicit);
+  const browserLocale = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+  return normalizeLocale(browserLocale);
+}
+
+async function fetchMessages(locale) {
+  const response = await fetch(`/static/locales/${locale}.json`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Locale ${locale} could not be loaded`);
+  return response.json();
+}
+
+function t(key, params = {}) {
+  const template = state.messages[key] ?? state.fallbackMessages[key] ?? key;
+  return String(template).replace(/\{([A-Za-z0-9_]+)\}/g, (_match, name) => {
+    return Object.prototype.hasOwnProperty.call(params, name) ? String(params[name]) : `{${name}}`;
+  });
+}
+
+function translateDocument() {
+  document.documentElement.lang = state.locale;
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    node.textContent = t(node.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+    node.setAttribute("placeholder", t(node.dataset.i18nPlaceholder));
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((node) => {
+    node.setAttribute("aria-label", t(node.dataset.i18nAriaLabel));
+  });
+  const select = el("locale-select");
+  if (select) select.value = state.locale;
+}
+
+async function setLocale(locale, persist = true) {
+  state.locale = normalizeLocale(locale);
+  if (!Object.keys(state.fallbackMessages).length) {
+    state.fallbackMessages = await fetchMessages(DEFAULT_LOCALE);
+  }
+  state.messages = state.locale === DEFAULT_LOCALE
+    ? state.fallbackMessages
+    : { ...state.fallbackMessages, ...(await fetchMessages(state.locale)) };
+  if (persist) localStorage.setItem("workbench-locale", state.locale);
+  translateDocument();
+  if (state.status) renderStatus();
+  renderModels();
+  renderResources();
+}
 
 async function api(path, options = {}) {
   const response = await fetch(path, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    headers: { "Content-Type": "application/json", "X-Workbench-Locale": state.locale, ...(options.headers || {}) },
     ...options,
   });
   const payload = await response.json();
@@ -125,7 +185,7 @@ function renderMarkdown(content) {
 
   closeList();
   if (inCode) flushCode();
-  return output.join("\n") || "<p class=\"empty-preview\">Keine Vorschau verfügbar.</p>";
+  return output.join("\n") || `<p class="empty-preview">${t("preview.empty")}</p>`;
 }
 
 function highlightPython(content) {
@@ -183,7 +243,7 @@ function applyView(editor, mode) {
 function applyTheme(theme) {
   const light = theme === "light";
   document.body.classList.toggle("light-theme", light);
-  el("theme-toggle").textContent = light ? "Light" : "Dark";
+  el("theme-toggle").textContent = light ? t("theme.light") : t("theme.dark");
   el("theme-toggle").setAttribute("aria-pressed", String(!light));
   localStorage.setItem("workbench-theme", theme);
 }
@@ -195,26 +255,26 @@ function renderStatus() {
   const existingArtifacts = artifacts.filter((item) => item.exists).length;
   const artifactBytes = artifacts.reduce((total, item) => total + (item.bytes || 0), 0);
   setText("repo-root", status.root);
-  setText("count-models", status.counts.models);
-  setText("count-tools", status.counts.tools);
-  setText("count-skills", status.counts.skills);
+  setText("count-models", formatNumber(status.counts.models));
+  setText("count-tools", formatNumber(status.counts.tools));
+  setText("count-skills", formatNumber(status.counts.skills));
   setText("openwebui-url", status.openwebui.public_url);
-  setText("openwebui-status", status.openwebui.reachable.ok ? "OpenWebUI erreichbar" : "OpenWebUI nicht erreichbar");
+  setText("openwebui-status", status.openwebui.reachable.ok ? t("status.openwebuiReachable") : t("status.openwebuiUnreachable"));
   el("open-openwebui").href = status.openwebui.public_url;
   el("openwebui-dot").classList.toggle("online", Boolean(status.openwebui.reachable.ok));
-  setText("config-local", status.config.local_config_exists ? status.config.config_path : `${status.config.config_path} fehlt`);
-  const tlsMode = status.openwebui.tls_verify ? "TLS verifiziert" : "TLS Prüfung aus";
-  const caMode = status.openwebui.ca_file_configured || status.openwebui.ca_path_configured ? "eigene CA" : "System-CA";
-  setText("config-token", `${status.openwebui.admin_token_configured ? "gesetzt" : "nicht gesetzt"} · ${tlsMode} · ${caMode}`);
-  setText("config-write", status.write_enabled ? "aktiv" : "deaktiviert");
-  setText("signal-api", status.openwebui.reachable.ok ? "Verbunden" : "Nicht erreichbar");
+  setText("config-local", status.config.local_config_exists ? status.config.config_path : t("config.missing", { path: status.config.config_path }));
+  const tlsMode = status.openwebui.tls_verify ? t("config.tlsVerified") : t("config.tlsOff");
+  const caMode = status.openwebui.ca_file_configured || status.openwebui.ca_path_configured ? t("config.customCa") : t("config.systemCa");
+  setText("config-token", `${status.openwebui.admin_token_configured ? t("state.set") : t("state.notSet")} · ${tlsMode} · ${caMode}`);
+  setText("config-write", status.write_enabled ? t("state.active") : t("state.disabled"));
+  setText("signal-api", status.openwebui.reachable.ok ? t("signals.connected") : t("signals.unreachable"));
   setText("signal-api-detail", status.openwebui.base_url);
-  setText("signal-auth", status.dashboard?.auth_enabled ? "Passwortschutz aktiv" : "Lokaler Modus");
-  setText("signal-auth-detail", status.dashboard?.auth_enabled ? "Alle Routen geschützt" : "Auth-Env nicht gesetzt");
-  setText("signal-write", status.write_enabled ? "Schreibzugriff aktiv" : "Read-only");
-  setText("signal-config", status.config.local_config_exists ? "Lokale Sync-Config vorhanden" : "Beispiel-Config aktiv");
-  setText("signal-artifacts", `${existingArtifacts}/${artifacts.length} vorhanden`);
-  setText("signal-artifacts-detail", `${formatBytes(artifactBytes)} Handover-Daten`);
+  setText("signal-auth", status.dashboard?.auth_enabled ? t("signals.authEnabled") : t("signals.localMode"));
+  setText("signal-auth-detail", status.dashboard?.auth_enabled ? t("signals.allRoutesProtected") : t("signals.authEnvMissing"));
+  setText("signal-write", status.write_enabled ? t("signals.writeEnabled") : t("signals.readOnly"));
+  setText("signal-config", status.config.local_config_exists ? t("signals.localConfig") : t("signals.exampleConfig"));
+  setText("signal-artifacts", t("artifacts.existing", { existing: existingArtifacts, total: artifacts.length }));
+  setText("signal-artifacts-detail", t("artifacts.handover", { bytes: formatBytes(artifactBytes) }));
   setSignalState("signal-api", status.openwebui.reachable.ok ? "ok" : "danger");
   setSignalState("signal-auth", status.dashboard?.auth_enabled ? "ok" : "warn");
   setSignalState("signal-write", status.write_enabled ? "ok" : "warn");
@@ -228,10 +288,10 @@ function renderStatus() {
     const title = document.createElement("strong");
     title.textContent = item.path;
     const meta = document.createElement("span");
-    meta.textContent = item.exists ? `${item.bytes} Bytes · ${item.mtime}` : "fehlt";
+    meta.textContent = item.exists ? `${formatNumber(item.bytes)} ${t("unit.bytes")} · ${formatDateTime(item.mtime)}` : t("state.missing");
     const stateChip = document.createElement("span");
     stateChip.className = `chip artifact-state ${item.exists ? "ok" : "warn"}`;
-    stateChip.textContent = item.exists ? formatBytes(item.bytes) : "fehlt";
+    stateChip.textContent = item.exists ? formatBytes(item.bytes) : t("state.missing");
     const text = document.createElement("div");
     text.append(title, meta);
     row.append(text, stateChip);
@@ -246,7 +306,7 @@ function setSignalState(id, level) {
 }
 
 function formatBytes(bytes) {
-  if (!bytes) return "0 B";
+  if (!bytes) return `0 ${t("unit.byteShort")}`;
   const units = ["B", "KB", "MB", "GB"];
   let value = bytes;
   let index = 0;
@@ -254,22 +314,39 @@ function formatBytes(bytes) {
     value /= 1024;
     index += 1;
   }
-  return `${value.toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
+  return `${formatNumber(value, index === 0 ? 0 : 1)} ${units[index]}`;
+}
+
+function formatNumber(value, fractionDigits = 0) {
+  return new Intl.NumberFormat(state.locale === "en" ? "en-US" : "de-DE", {
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: fractionDigits,
+  }).format(value);
+}
+
+function formatDateTime(value) {
+  if (!value) return "-";
+  const parsed = new Date(String(value).replace(" ", "T"));
+  if (Number.isNaN(parsed.getTime())) return value;
+  return new Intl.DateTimeFormat(state.locale === "en" ? "en-US" : "de-DE", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(parsed);
 }
 
 function visibleModels() {
-  const query = el("model-search").value.trim().toLowerCase();
+  const query = el("model-search").value.trim().toLocaleLowerCase(state.locale);
   if (!query) return state.models;
   return state.models.filter((model) => {
-    return `${model.id} ${model.name} ${model.description}`.toLowerCase().includes(query);
+    return `${model.id} ${model.name} ${model.description}`.toLocaleLowerCase(state.locale).includes(query);
   });
 }
 
 function visibleResources() {
-  const query = el("resource-search").value.trim().toLowerCase();
+  const query = el("resource-search").value.trim().toLocaleLowerCase(state.locale);
   if (!query) return state.resources;
   return state.resources.filter((resource) => {
-    return `${resource.kind} ${resource.id} ${resource.name} ${resource.path}`.toLowerCase().includes(query);
+    return `${resource.kind} ${resource.id} ${resource.name} ${resource.path}`.toLocaleLowerCase(state.locale).includes(query);
   });
 }
 
@@ -277,9 +354,9 @@ function renderResources() {
   const list = el("resource-list");
   list.replaceChildren();
   const resources = visibleResources();
-  setText("resource-filter-state", `${resources.length} von ${state.resources.length} Ressourcen`);
+  setText("resource-filter-state", t("resources.count", { visible: formatNumber(resources.length), total: formatNumber(state.resources.length) }));
   if (!resources.length) {
-    renderEmpty(list, "Keine Ressource passt zum Filter.");
+    renderEmpty(list, t("resources.empty"));
     return;
   }
   resources.forEach((resource) => {
@@ -293,7 +370,7 @@ function renderResources() {
     title.textContent = resource.name;
     const meta = document.createElement("div");
     meta.className = "row-meta";
-    meta.append(makeChip(resource.kind, resource.kind === "tool" ? "accent" : "ok"), makeChip(resource.extension), makeChip(formatBytes(resource.bytes)));
+    meta.append(makeChip(t(`resource.kind.${resource.kind}`), resource.kind === "tool" ? "accent" : "ok"), makeChip(resource.extension), makeChip(formatBytes(resource.bytes)));
     const sub = document.createElement("span");
     sub.textContent = resource.path;
     button.append(title, meta, sub);
@@ -306,9 +383,9 @@ function renderModels() {
   const list = el("model-list");
   list.replaceChildren();
   const models = visibleModels();
-  setText("model-filter-state", `${models.length} von ${state.models.length} Modellen`);
+  setText("model-filter-state", t("models.count", { visible: formatNumber(models.length), total: formatNumber(state.models.length) }));
   if (!models.length) {
-    renderEmpty(list, "Kein Modell passt zum Filter.");
+    renderEmpty(list, t("models.empty"));
     return;
   }
   models.forEach((model) => {
@@ -322,7 +399,10 @@ function renderModels() {
     title.textContent = model.name;
     const meta = document.createElement("div");
     meta.className = "row-meta";
-    meta.append(makeChip(model.base_model_id || "kein Basismodell", "accent"), makeChip(`${model.files.filter((file) => file.exists).length}/${model.files.length} Dateien`, "ok"));
+    meta.append(
+      makeChip(model.base_model_id || t("models.noBase"), "accent"),
+      makeChip(t("models.filesCount", { existing: model.files.filter((file) => file.exists).length, total: model.files.length }), "ok"),
+    );
     if (model.tags?.[0]) meta.append(makeChip(model.tags[0]));
     const sub = document.createElement("span");
     sub.textContent = model.description || model.id;
@@ -366,13 +446,13 @@ async function selectResource(kind, resourceId) {
   setText("resource-title", resource.name);
   setText("resource-description", resource.path);
   renderResources();
-  setText("resource-state", "Lade Datei");
+  setText("resource-state", t("state.loadingFile"));
   const payload = await api(`/api/resources/${encodeURIComponent(kind)}/${encodeURIComponent(resourceId)}/file`);
   el("resource-editor").disabled = false;
   el("resource-editor").value = payload.content;
   updateResourcePreview();
   el("save-resource").disabled = false;
-  setText("resource-state", `${payload.path} geladen`);
+  setText("resource-state", t("state.loaded", { path: payload.path }));
 }
 
 async function selectModel(modelId) {
@@ -390,20 +470,20 @@ async function loadFile(name) {
   if (!state.selectedModel) return;
   state.selectedFile = name;
   renderFileTabs();
-  setText("editor-state", "Lade Datei");
+  setText("editor-state", t("state.loadingFile"));
   const payload = await api(`/api/models/${encodeURIComponent(state.selectedModel.id)}/file?name=${encodeURIComponent(name)}`);
   el("markdown-editor").disabled = false;
   el("markdown-editor").value = payload.content;
   updateModelPreview();
   el("save-file").disabled = false;
   state.dirty = false;
-  setText("editor-state", payload.exists ? `${payload.path} geladen` : `${payload.path} neu`);
+  setText("editor-state", payload.exists ? t("state.loaded", { path: payload.path }) : t("state.newFile", { path: payload.path }));
 }
 
 async function saveResource() {
   if (!state.selectedResource) return;
   el("save-resource").disabled = true;
-  setText("resource-state", "Speichere");
+  setText("resource-state", t("state.saving"));
   try {
     const payload = await api(
       `/api/resources/${encodeURIComponent(state.selectedResource.kind)}/${encodeURIComponent(state.selectedResource.id)}/file`,
@@ -412,7 +492,7 @@ async function saveResource() {
         body: JSON.stringify({ content: el("resource-editor").value }),
       },
     );
-    setText("resource-state", `${payload.path} gespeichert`);
+    setText("resource-state", t("state.saved", { path: payload.path }));
     await refreshResources(false);
   } catch (error) {
     setText("resource-state", error.message);
@@ -424,14 +504,14 @@ async function saveResource() {
 async function saveFile() {
   if (!state.selectedModel || !state.selectedFile) return;
   el("save-file").disabled = true;
-  setText("editor-state", "Speichere");
+  setText("editor-state", t("state.saving"));
   try {
     const payload = await api(`/api/models/${encodeURIComponent(state.selectedModel.id)}/file`, {
       method: "PUT",
       body: JSON.stringify({ name: state.selectedFile, content: el("markdown-editor").value }),
     });
     state.dirty = false;
-    setText("editor-state", `${payload.path} gespeichert`);
+    setText("editor-state", t("state.saved", { path: payload.path }));
     await refreshModels(false);
   } catch (error) {
     setText("editor-state", error.message);
@@ -442,15 +522,15 @@ async function saveFile() {
 
 async function runAction(action) {
   const log = el("action-log");
-  log.textContent = `Starte ${action} ...`;
+  log.textContent = t("log.starting", { action });
   try {
     const result = await api(`/api/actions/${encodeURIComponent(action)}`, { method: "POST", body: "{}" });
-    log.textContent = `$ ${result.command.join(" ")}\n\nExit-Code: ${result.returncode}\nDauer: ${result.duration_seconds}s\n\n${result.output}`;
+    log.textContent = `$ ${result.command.join(" ")}\n\n${t("log.exitCode")}: ${result.returncode}\n${t("log.duration")}: ${formatNumber(result.duration_seconds, 1)}s\n\n${result.output}`;
     await refreshStatus();
     await refreshModels(false);
     await refreshResources(false);
   } catch (error) {
-    log.textContent += `\n\nFehler: ${error.message}`;
+    log.textContent += `\n\n${t("state.error")}: ${error.message}`;
   }
 }
 
@@ -497,11 +577,11 @@ function wireEvents() {
   el("markdown-editor").addEventListener("input", () => {
     state.dirty = true;
     updateModelPreview();
-    setText("editor-state", "Ungespeicherte Änderung");
+    setText("editor-state", t("state.unsaved"));
   });
   el("resource-editor").addEventListener("input", () => {
     updateResourcePreview();
-    setText("resource-state", "Ungespeicherte Änderung");
+    setText("resource-state", t("state.unsaved"));
   });
   document.querySelectorAll(".view-mode").forEach((button) => {
     button.addEventListener("click", () => applyView(button.dataset.editor, button.dataset.mode));
@@ -509,12 +589,16 @@ function wireEvents() {
   el("theme-toggle").addEventListener("click", () => {
     applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light");
   });
+  el("locale-select").addEventListener("change", async () => {
+    await setLocale(el("locale-select").value, true);
+    applyTheme(document.body.classList.contains("light-theme") ? "light" : "dark");
+  });
   el("refresh-dashboard").addEventListener("click", async () => {
-    setText("editor-state", "Aktualisiere Status");
+    setText("editor-state", t("state.refreshing"));
     await refreshStatus();
     await refreshModels(true);
     await refreshResources(true);
-    setText("editor-state", "Status aktualisiert");
+    setText("editor-state", t("state.refreshed"));
   });
   el("save-file").addEventListener("click", saveFile);
   el("save-resource").addEventListener("click", saveResource);
@@ -522,11 +606,12 @@ function wireEvents() {
     button.addEventListener("click", () => runAction(button.dataset.action));
   });
   el("clear-log").addEventListener("click", () => {
-    el("action-log").textContent = "Noch keine Aktion ausgeführt.";
+    el("action-log").textContent = t("log.empty");
   });
 }
 
 async function init() {
+  await setLocale(detectInitialLocale(), false);
   applyTheme(localStorage.getItem("workbench-theme") || "dark");
   applyView("model", state.modelView);
   applyView("resource", state.resourceView);

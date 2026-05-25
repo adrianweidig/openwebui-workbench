@@ -1,5 +1,7 @@
 # Security Policy
 
+🌐 Sprachen: [Deutsch](SECURITY.md) | [English](SECURITY.en.md)
+
 ## Geltungsbereich
 
 Dieses Repository enthält OpenWebUI-Modellartefakte, Python-Tools, Filter, Skills, Importskripte und Deployment-Vorlagen. Sicherheitsrelevant sind besonders:

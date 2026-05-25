@@ -1,5 +1,7 @@
 # Code of Conduct
 
+🌐 Sprachen: [Deutsch](CODE_OF_CONDUCT.md) | [English](CODE_OF_CONDUCT.en.md)
+
 Dieses Projekt soll ein respektvoller, sachlicher und produktiver Ort für technische Zusammenarbeit sein.
 
 ## Erwartetes Verhalten

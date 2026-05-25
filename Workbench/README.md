@@ -1,5 +1,7 @@
 # Workbench Dashboard
 
+🌐 Sprachen: [Deutsch](README.md) | [English](../docs/en/WORKBENCH_DASHBOARD.md)
+
 `Workbench/dashboard` ist die lokale Verwaltungsoberfläche für dieses Repository. Der Service liest und schreibt direkt im gemounteten Repository-Volume und macht damit die Markdown-Dateien unter `Modelle/einzelmodelle/`, die Tool-Quellen unter `Tools/openwebui_ext/tools/` und die Skills unter `Tools/openwebui_ext/skills/` zur zentralen Quelle für Systemprompts, Mainprompts, Fachwissen, Beispiele, Tools und Modellpflege.
 
 ## Start lokal
@@ -53,6 +55,7 @@ Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN`
 - Markdown-Dateien im Split-, Editor- oder Viewer-Modus lesen.
 - Python-Tools mit Syntax-Highlighting in der Vorschau prüfen.
 - Dunkles Standard-Theme nutzen und bei Bedarf lokal auf Light umschalten.
+- Deutsch als Standardsprache nutzen und über die Sprachwahl oder `WORKBENCH_LOCALE=en` auf Englisch umschalten.
 - Dist-Artefakte neu erzeugen.
 - Import-Payload lokal prüfen.
 - Tools, Filter, Skills, Knowledge und Modelle zur konfigurierten OpenWebUI-Instanz synchronisieren.

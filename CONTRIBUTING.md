@@ -1,5 +1,7 @@
 # Contributing
 
+🌐 Sprachen: [Deutsch](CONTRIBUTING.md) | [English](CONTRIBUTING.en.md)
+
 Danke für dein Interesse an der OpenWebUI Workbench. Beiträge sind willkommen, wenn sie die direkte OpenWebUI-Nutzbarkeit, Offline-Fähigkeit, Dokumentation, Validierung oder Wartbarkeit verbessern.
 
 ## Geeignete Beiträge

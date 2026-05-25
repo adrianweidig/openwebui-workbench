@@ -1,5 +1,7 @@
 # FAQ
 
+🌐 Sprachen: [Deutsch](FAQ.md) | [English](en/FAQ.md)
+
 ## Ist dieses Repository eine Web-App?
 
 Nein. Es ist ein portabler OpenWebUI-Workbench-Arbeitsbereich mit Modellpaketen, Tools, Filtern, Skills, Importartefakten, Deployment-Vorlagen und Prüfskripten.

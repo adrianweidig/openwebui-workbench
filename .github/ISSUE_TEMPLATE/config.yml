@@ -3,3 +3,9 @@ contact_links:
   - name: Security report
     url: https://github.com/adrianweidig/openwebui-workbench/blob/main/SECURITY.md
     about: Do not report sensitive vulnerabilities in public issues. Read the security policy first.
+  - name: Sicherheitsmeldung
+    url: https://github.com/adrianweidig/openwebui-workbench/blob/main/SECURITY.md
+    about: Sensible Schwachstellen nicht öffentlich melden. Bitte zuerst die Security Policy lesen.
+  - name: English documentation
+    url: https://github.com/adrianweidig/openwebui-workbench/blob/main/README.en.md
+    about: English README and links to translated documentation.

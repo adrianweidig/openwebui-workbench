@@ -1,5 +1,7 @@
 # Architektur
 
+🌐 Sprachen: [Deutsch](ARCHITECTURE.md) | [English](en/ARCHITECTURE.md)
+
 Dieses Repository ist ein portabler OpenWebUI-Workbench-Arbeitsbereich. Es enthält keine laufende Anwendung, sondern kuratierte Quellen, Generatorlogik, importierbare Artefakte und lokale Validierung.
 
 ## Komponenten
