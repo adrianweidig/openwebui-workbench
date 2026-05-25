@@ -1,5 +1,7 @@
 # OpenWebUI Workbench
 
+🌐 Sprachen: [Deutsch](README.md) | [English](README.en.md)
+
 ![OpenWebUI Workbench Hero](docs/assets/openwebui-workbench-hero.png)
 
 [![CI](https://github.com/adrianweidig/openwebui-workbench/actions/workflows/ci.yml/badge.svg)](https://github.com/adrianweidig/openwebui-workbench/actions/workflows/ci.yml)
@@ -24,6 +26,8 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 | Deployment-Mounts verstehen | [`Deployment/README.md`](Deployment/README.md) |
 | Architektur überblicken | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | Beiträge vorbereiten | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
+| Englischsprachige README öffnen | [`README.en.md`](README.en.md) |
+| Mehrsprachigkeit verstehen | [`docs/de/I18N.md`](docs/de/I18N.md) und [`docs/en/I18N.md`](docs/en/I18N.md) |
 
 ## Was dieses Repository liefert
 
@@ -33,6 +37,19 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 - Einen reproduzierbaren Generator für Tool-/Filter-Registries, Modellprofile, eingebettete Icons, ZIP-Handover und Importpläne.
 - Nicht-mutierende Prüfskripte, die Python-Syntax, OpenWebUI-Erweiterungen, Generatorzustand, Import-Payloads, JSON-Dateien und Unit-Tests validieren.
 - Deployment-Vorlagen für einen offline nutzbaren OpenWebUI-Betrieb mit optionalem Jupyter-Server und lokalem Addon-Stack.
+
+## Internationalisierung
+
+Deutsch ist die Standardsprache des Repositorys, der README, der Standarddokumentation, des Workbench-Dashboards und der menschenlesbaren Fallback-Ausgaben. Englisch ist als wichtigste Alternativsprache gepflegt. GitHub übersetzt die normale Repository-Ansicht nicht automatisch nach Besuchersprache; deshalb nutzt das Projekt explizite Sprachdateien und sichtbare Sprachlinks:
+
+- [`README.md`](README.md) ist die deutsche Startseite.
+- [`README.en.md`](README.en.md) ist die englische Startseite.
+- [`docs/de/`](docs/de/) enthält den deutschen Dokumentationseinstieg und i18n-Hinweise.
+- [`docs/en/`](docs/en/) enthält den englischen Dokumentationseinstieg und i18n-Hinweise.
+- Community-Dateien wie [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), [`SUPPORT.md`](SUPPORT.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) und [`CHANGELOG.md`](CHANGELOG.md) haben englische `.en.md`-Varianten.
+- Das Workbench-Dashboard nutzt `WORKBENCH_LOCALE`, Browser-/Systemsprache und eine manuelle Sprachwahl. Unbekannte oder fehlende Locale-Informationen fallen stabil auf Deutsch zurück.
+
+UTF-8 bleibt für alle menschenlesbaren Dateien und JSON-Artefakte verbindlich. Umlaute, Akzente, Emojis und nicht-lateinische Zeichen werden nicht transliteriert, sofern sie fachlich sichtbarer Text sind. Details zum Ergänzen weiterer Sprachen stehen in [`docs/de/I18N.md`](docs/de/I18N.md).
 
 ## Grenzen
 

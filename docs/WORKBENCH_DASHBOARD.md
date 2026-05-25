@@ -1,5 +1,7 @@
 # Workbench Dashboard
 
+🌐 Sprachen: [Deutsch](WORKBENCH_DASHBOARD.md) | [English](en/WORKBENCH_DASHBOARD.md)
+
 Das Workbench Dashboard macht dieses Repository zur aktiven Verwaltungsoberfläche für eine OpenWebUI-Instanz. OpenWebUI bleibt der Chat- und Runtime-Container; die Workbench läuft daneben als zweiter Container und verwaltet die Quellen, aus denen Tools, Filter, Skills, Knowledge und Modellprofile erzeugt und synchronisiert werden.
 
 ## Zielbild
@@ -104,6 +106,13 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternativer Pfad zu einer Passwortdatei im Container. |
 | `WORKBENCH_ALLOW_WRITE` | `true` erlaubt Markdown-Schreibzugriff. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Import- und Verify-Aktionen. |
+| `WORKBENCH_LOCALE` | Standard-Locale des Dashboards, aktuell `de` oder `en`. Unbekannte Werte fallen auf Deutsch zurück. |
+
+## Internationalisierung
+
+Das Dashboard startet auf Deutsch und kann über die Sprachwahl oben rechts auf Englisch umgestellt werden. Die Auswahl wird lokal im Browser als `workbench-locale` gespeichert. Ohne manuelle Auswahl nutzt das Dashboard `WORKBENCH_LOCALE`, Browser-/HTTP-Sprache und System-Locale; wenn keine unterstützte Sprache ermittelt wird, bleibt Deutsch der Fallback.
+
+UI-Texte liegen unter `Workbench/dashboard/static/locales/`. Server- und API-Meldungen liegen in `Workbench/dashboard/i18n.py`. Neue Sprachen müssen dieselben Schlüssel wie `de.json` bereitstellen und in den unterstützten Locales ergänzt werden.
 
 ## Sicherheit
 

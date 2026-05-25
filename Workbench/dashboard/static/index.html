@@ -14,22 +14,22 @@
           <span class="brand-mark" aria-hidden="true">OW</span>
           <div>
             <h1>Workbench</h1>
-            <p id="repo-root">Repository wird geladen</p>
+            <p id="repo-root" data-i18n="repo.loading">Repository wird geladen</p>
           </div>
         </div>
-        <nav aria-label="Workbench Bereiche">
-          <button class="nav-item active" data-panel="models"><span aria-hidden="true">M</span>Modelle</button>
-          <button class="nav-item" data-panel="resources"><span aria-hidden="true">T</span>Tools & Skills</button>
-          <button class="nav-item" data-panel="actions"><span aria-hidden="true">S</span>Sync</button>
-          <button class="nav-item" data-panel="assets"><span aria-hidden="true">A</span>Artefakte</button>
+        <nav aria-label="Workbench Bereiche" data-i18n-aria-label="nav.aria">
+          <button class="nav-item active" data-panel="models"><span aria-hidden="true">M</span><span data-i18n="nav.models">Modelle</span></button>
+          <button class="nav-item" data-panel="resources"><span aria-hidden="true">T</span><span data-i18n="nav.resources">Tools & Skills</span></button>
+          <button class="nav-item" data-panel="actions"><span aria-hidden="true">S</span><span data-i18n="nav.sync">Sync</span></button>
+          <button class="nav-item" data-panel="assets"><span aria-hidden="true">A</span><span data-i18n="nav.artifacts">Artefakte</span></button>
         </nav>
-        <div class="sidebar-guide" aria-label="Workflow">
-          <small>Workflow</small>
+        <div class="sidebar-guide" aria-label="Workflow" data-i18n-aria-label="workflow.aria">
+          <small data-i18n="workflow.title">Workflow</small>
           <ol>
-            <li>Quelle prüfen</li>
-            <li>Artefakte bauen</li>
-            <li>Dry-Run starten</li>
-            <li>Sync ausführen</li>
+            <li data-i18n="workflow.source">Quelle prüfen</li>
+            <li data-i18n="workflow.build">Artefakte bauen</li>
+            <li data-i18n="workflow.dryRun">Dry-Run starten</li>
+            <li data-i18n="workflow.sync">Sync ausführen</li>
           </ol>
         </div>
         <div class="status-box">
@@ -44,39 +44,43 @@
       <main class="main">
         <header class="topbar">
           <div class="hero-copy">
-            <span class="eyebrow">Repository Control Center</span>
-            <h2>OpenWebUI zentral verwalten</h2>
-            <p>Markdown-Modelle bearbeiten, Dist-Artefakte erzeugen und Importläufe kontrolliert auslösen.</p>
+            <span class="eyebrow" data-i18n="hero.eyebrow">Repository Control Center</span>
+            <h2 data-i18n="hero.title">OpenWebUI zentral verwalten</h2>
+            <p data-i18n="hero.body">Markdown-Modelle bearbeiten, Dist-Artefakte erzeugen und Importläufe kontrolliert auslösen.</p>
           </div>
           <div class="topbar-actions">
-            <button id="refresh-dashboard" class="ghost" type="button">Aktualisieren</button>
+            <select id="locale-select" class="ghost locale-select" aria-label="Sprache" data-i18n-aria-label="language.select">
+              <option value="de">Deutsch</option>
+              <option value="en">English</option>
+            </select>
+            <button id="refresh-dashboard" class="ghost" type="button" data-i18n="action.refresh">Aktualisieren</button>
             <button id="theme-toggle" class="ghost theme-toggle" type="button" aria-pressed="true">Dark</button>
           </div>
-          <div class="summary-grid" aria-label="Repository Kennzahlen">
-            <div><span id="count-models">0</span><small>Modelle</small></div>
-            <div><span id="count-tools">0</span><small>Tools</small></div>
-            <div><span id="count-skills">0</span><small>Skills</small></div>
+          <div class="summary-grid" aria-label="Repository Kennzahlen" data-i18n-aria-label="summary.aria">
+            <div><span id="count-models">0</span><small data-i18n="summary.models">Modelle</small></div>
+            <div><span id="count-tools">0</span><small data-i18n="summary.tools">Tools</small></div>
+            <div><span id="count-skills">0</span><small data-i18n="summary.skills">Skills</small></div>
           </div>
         </header>
 
-        <section class="signal-strip" aria-label="Statusübersicht">
+        <section class="signal-strip" aria-label="Statusübersicht" data-i18n-aria-label="signals.aria">
           <div class="signal-card">
-            <small>API-Ziel</small>
-            <strong id="signal-api">Wird geprüft</strong>
+            <small data-i18n="signals.api">API-Ziel</small>
+            <strong id="signal-api" data-i18n="signals.checking">Wird geprüft</strong>
             <span id="signal-api-detail">-</span>
           </div>
           <div class="signal-card">
-            <small>Dashboard</small>
-            <strong id="signal-auth">Auth unbekannt</strong>
+            <small data-i18n="signals.dashboard">Dashboard</small>
+            <strong id="signal-auth" data-i18n="signals.authUnknown">Auth unbekannt</strong>
             <span id="signal-auth-detail">-</span>
           </div>
           <div class="signal-card">
-            <small>Bearbeitung</small>
+            <small data-i18n="signals.editing">Bearbeitung</small>
             <strong id="signal-write">-</strong>
             <span id="signal-config">-</span>
           </div>
           <div class="signal-card">
-            <small>Artefakte</small>
+            <small data-i18n="signals.artifacts">Artefakte</small>
             <strong id="signal-artifacts">-</strong>
             <span id="signal-artifacts-detail">-</span>
           </div>
@@ -84,39 +88,39 @@
 
         <section class="panel active" id="panel-models">
           <div class="split">
-            <section class="list-pane" aria-label="Modellliste">
+            <section class="list-pane" aria-label="Modellliste" data-i18n-aria-label="models.listAria">
               <div class="pane-head">
                 <div>
-                  <h3>Modellpakete</h3>
-                  <p id="model-filter-state">Alle Modelle</p>
+                  <h3 data-i18n="models.title">Modellpakete</h3>
+                  <p id="model-filter-state" data-i18n="models.all">Alle Modelle</p>
                 </div>
-                <input id="model-search" type="search" placeholder="Filtern" autocomplete="off" />
+                <input id="model-search" type="search" placeholder="Filtern" data-i18n-placeholder="search.placeholder" autocomplete="off" />
               </div>
               <div id="model-list" class="model-list"></div>
             </section>
 
-            <section class="editor-pane" aria-label="Markdown Editor">
+            <section class="editor-pane" aria-label="Markdown Editor" data-i18n-aria-label="models.editorAria">
               <div class="editor-head">
                 <div>
-                  <h3 id="model-title">Kein Modell ausgewählt</h3>
-                  <p id="model-description">Wähle links ein Modellpaket aus.</p>
+                  <h3 id="model-title" data-i18n="models.none">Kein Modell ausgewählt</h3>
+                  <p id="model-description" data-i18n="models.pick">Wähle links ein Modellpaket aus.</p>
                 </div>
-                <a id="open-openwebui" class="secondary-link" href="http://localhost:3000" target="_blank" rel="noreferrer">OpenWebUI öffnen</a>
+                <a id="open-openwebui" class="secondary-link" href="http://localhost:3000" target="_blank" rel="noreferrer" data-i18n="models.open">OpenWebUI öffnen</a>
               </div>
 
               <div class="file-tabs" id="file-tabs" aria-label="Modelldateien"></div>
-              <div class="viewer-toolbar" aria-label="Markdown Ansicht">
-                <button class="view-mode active" data-editor="model" data-mode="split" type="button">Split</button>
-                <button class="view-mode" data-editor="model" data-mode="edit" type="button">Editor</button>
-                <button class="view-mode" data-editor="model" data-mode="preview" type="button">Viewer</button>
+              <div class="viewer-toolbar" aria-label="Markdown Ansicht" data-i18n-aria-label="view.markdownAria">
+                <button class="view-mode active" data-editor="model" data-mode="split" type="button" data-i18n="view.split">Split</button>
+                <button class="view-mode" data-editor="model" data-mode="edit" type="button" data-i18n="view.editor">Editor</button>
+                <button class="view-mode" data-editor="model" data-mode="preview" type="button" data-i18n="view.viewer">Viewer</button>
               </div>
               <div class="workspace-view split-mode" id="model-workspace">
                 <textarea id="markdown-editor" spellcheck="false" disabled></textarea>
-                <article id="markdown-preview" class="markdown-preview" aria-label="Markdown Vorschau"></article>
+                <article id="markdown-preview" class="markdown-preview" aria-label="Markdown Vorschau" data-i18n-aria-label="view.markdownPreview"></article>
               </div>
               <div class="editor-actions">
-                <span id="editor-state">Bereit</span>
-                <button id="save-file" class="primary" disabled>Speichern</button>
+                <span id="editor-state" data-i18n="state.ready">Bereit</span>
+                <button id="save-file" class="primary" disabled data-i18n="action.save">Speichern</button>
               </div>
             </section>
           </div>
@@ -124,37 +128,37 @@
 
         <section class="panel" id="panel-resources">
           <div class="split">
-            <section class="list-pane" aria-label="Tool- und Skillliste">
+            <section class="list-pane" aria-label="Tool- und Skillliste" data-i18n-aria-label="resources.listAria">
               <div class="pane-head">
                 <div>
-                  <h3>Tools & Skills</h3>
-                  <p id="resource-filter-state">Alle Ressourcen</p>
+                  <h3 data-i18n="resources.title">Tools & Skills</h3>
+                  <p id="resource-filter-state" data-i18n="resources.all">Alle Ressourcen</p>
                 </div>
-                <input id="resource-search" type="search" placeholder="Filtern" autocomplete="off" />
+                <input id="resource-search" type="search" placeholder="Filtern" data-i18n-placeholder="search.placeholder" autocomplete="off" />
               </div>
               <div id="resource-list" class="model-list"></div>
             </section>
 
-            <section class="editor-pane" aria-label="Tool- und Skill-Editor">
+            <section class="editor-pane" aria-label="Tool- und Skill-Editor" data-i18n-aria-label="resources.editorAria">
               <div class="editor-head">
                 <div>
-                  <h3 id="resource-title">Keine Ressource ausgewählt</h3>
-                  <p id="resource-description">Wähle links ein Tool oder Skill aus.</p>
+                  <h3 id="resource-title" data-i18n="resources.none">Keine Ressource ausgewählt</h3>
+                  <p id="resource-description" data-i18n="resources.pick">Wähle links ein Tool oder Skill aus.</p>
                 </div>
               </div>
 
-              <div class="viewer-toolbar" aria-label="Ressourcen Ansicht">
-                <button class="view-mode active" data-editor="resource" data-mode="split" type="button">Split</button>
-                <button class="view-mode" data-editor="resource" data-mode="edit" type="button">Editor</button>
-                <button class="view-mode" data-editor="resource" data-mode="preview" type="button">Viewer</button>
+              <div class="viewer-toolbar" aria-label="Ressourcen Ansicht" data-i18n-aria-label="view.resourcesAria">
+                <button class="view-mode active" data-editor="resource" data-mode="split" type="button" data-i18n="view.split">Split</button>
+                <button class="view-mode" data-editor="resource" data-mode="edit" type="button" data-i18n="view.editor">Editor</button>
+                <button class="view-mode" data-editor="resource" data-mode="preview" type="button" data-i18n="view.viewer">Viewer</button>
               </div>
               <div class="workspace-view split-mode" id="resource-workspace">
                 <textarea id="resource-editor" spellcheck="false" disabled></textarea>
-                <article id="resource-preview" class="markdown-preview code-preview" aria-label="Dateivorschau"></article>
+                <article id="resource-preview" class="markdown-preview code-preview" aria-label="Dateivorschau" data-i18n-aria-label="view.filePreview"></article>
               </div>
               <div class="editor-actions">
-                <span id="resource-state">Bereit</span>
-                <button id="save-resource" class="primary" disabled>Speichern</button>
+                <span id="resource-state" data-i18n="state.ready">Bereit</span>
+                <button id="save-resource" class="primary" disabled data-i18n="action.save">Speichern</button>
               </div>
             </section>
           </div>
@@ -163,36 +167,36 @@
         <section class="panel" id="panel-actions">
           <div class="action-layout">
             <section>
-              <h3>Synchronisierung</h3>
+              <h3 data-i18n="sync.title">Synchronisierung</h3>
               <div class="action-grid">
                 <button class="action-card" data-action="generate">
-                  <small>1 · Build</small>
-                  <strong>Artefakte neu erzeugen</strong>
-                  <span>Registries, Modellprofile und ZIPs aus dem aktuellen Markdown-Stand bauen.</span>
+                  <small data-i18n="sync.generate.step">1 · Build</small>
+                  <strong data-i18n="sync.generate.title">Artefakte neu erzeugen</strong>
+                  <span data-i18n="sync.generate.body">Registries, Modellprofile und ZIPs aus dem aktuellen Markdown-Stand bauen.</span>
                 </button>
                 <button class="action-card" data-action="import-dry-run">
-                  <small>2 · Safe Check</small>
-                  <strong>Import prüfen</strong>
-                  <span>OpenWebUI-Payload lokal validieren, ohne die Zielinstanz zu verändern.</span>
+                  <small data-i18n="sync.dryRun.step">2 · Safe Check</small>
+                  <strong data-i18n="sync.dryRun.title">Import prüfen</strong>
+                  <span data-i18n="sync.dryRun.body">OpenWebUI-Payload lokal validieren, ohne die Zielinstanz zu verändern.</span>
                 </button>
                 <button class="action-card" data-action="import-openwebui">
-                  <small>3 · API Sync</small>
-                  <strong>Zu OpenWebUI synchronisieren</strong>
-                  <span>Tools, Filter, Skills, Knowledge und Modelle über die API importieren.</span>
+                  <small data-i18n="sync.api.step">3 · API Sync</small>
+                  <strong data-i18n="sync.api.title">Zu OpenWebUI synchronisieren</strong>
+                  <span data-i18n="sync.api.body">Tools, Filter, Skills, Knowledge und Modelle über die API importieren.</span>
                 </button>
                 <button class="action-card" data-action="check">
-                  <small>QA</small>
-                  <strong>Workspace verifizieren</strong>
-                  <span>Syntax, Generator, Import-Dry-Run, JSON und Unit-Tests prüfen.</span>
+                  <small data-i18n="sync.check.step">QA</small>
+                  <strong data-i18n="sync.check.title">Workspace verifizieren</strong>
+                  <span data-i18n="sync.check.body">Syntax, Generator, Import-Dry-Run, JSON und Unit-Tests prüfen.</span>
                 </button>
               </div>
             </section>
             <section class="log-pane">
               <div class="pane-head">
-                <h3>Ausgabe</h3>
-                <button id="clear-log" class="ghost">Leeren</button>
+                <h3 data-i18n="log.title">Ausgabe</h3>
+                <button id="clear-log" class="ghost" data-i18n="action.clear">Leeren</button>
               </div>
-              <pre id="action-log">Noch keine Aktion ausgeführt.</pre>
+              <pre id="action-log" data-i18n="log.empty">Noch keine Aktion ausgeführt.</pre>
             </section>
           </div>
         </section>
@@ -200,15 +204,15 @@
         <section class="panel" id="panel-assets">
           <div class="asset-layout">
             <section>
-              <h3>Dist-Artefakte</h3>
+              <h3 data-i18n="artifacts.title">Dist-Artefakte</h3>
               <div id="artifact-list" class="artifact-list"></div>
             </section>
             <section>
-              <h3>Konfiguration</h3>
+              <h3 data-i18n="config.title">Konfiguration</h3>
               <dl class="config-list">
-                <div><dt>Lokale Config</dt><dd id="config-local">-</dd></div>
-                <div><dt>API Token</dt><dd id="config-token">-</dd></div>
-                <div><dt>Schreibmodus</dt><dd id="config-write">-</dd></div>
+                <div><dt data-i18n="config.local">Lokale Config</dt><dd id="config-local">-</dd></div>
+                <div><dt data-i18n="config.token">API Token</dt><dd id="config-token">-</dd></div>
+                <div><dt data-i18n="config.write">Schreibmodus</dt><dd id="config-write">-</dd></div>
               </dl>
             </section>
           </div>

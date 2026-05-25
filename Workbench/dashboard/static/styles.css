@@ -54,7 +54,8 @@ body {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -285,7 +286,8 @@ nav {
 }
 
 #model-search,
-#resource-search {
+#resource-search,
+.locale-select {
   width: 132px;
   padding: 8px 10px;
   border: 1px solid var(--border);
@@ -295,6 +297,7 @@ nav {
 
 #model-search:focus,
 #resource-search:focus,
+.locale-select:focus,
 textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
@@ -729,7 +732,8 @@ textarea {
   }
 
   #model-search,
-  #resource-search {
+  #resource-search,
+  .locale-select {
     width: 100%;
   }
 
@@ -1054,11 +1058,18 @@ textarea:focus-visible {
 }
 
 #model-search,
-#resource-search {
+#resource-search,
+.locale-select {
   min-height: 42px;
   width: 168px;
   background: var(--surface);
   color: var(--text);
+}
+
+.locale-select {
+  width: auto;
+  min-width: 112px;
+  appearance: auto;
 }
 
 .model-list {

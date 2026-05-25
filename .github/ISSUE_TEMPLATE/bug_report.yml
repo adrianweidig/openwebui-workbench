@@ -1,5 +1,5 @@
-name: Bug report
-description: Fehler in Modellartefakten, Tools, Filtern, Import, Deployment oder Validierung melden.
+name: Bug report / Fehlerbericht
+description: Fehler in Modellartefakten, Tools, Filtern, Dashboard, Import, Deployment, i18n oder Validierung melden.
 title: "[Bug]: "
 labels:
   - bug
@@ -8,6 +8,7 @@ body:
     attributes:
       value: |
         Bitte keine Tokens, privaten URLs, `.env`-Inhalte oder produktiven Konfigurationsdateien posten.
+        Please do not post tokens, private URLs, `.env` contents, or production configuration files.
   - type: dropdown
     id: area
     attributes:
@@ -20,6 +21,7 @@ body:
         - API-Import
         - GUI-Import
         - Deployment
+        - Internationalisierung/Localization
         - Dokumentation
         - Tests/CI
         - Sonstiges
@@ -29,38 +31,40 @@ body:
     id: problem
     attributes:
       label: Problem
-      description: Was funktioniert nicht?
+      description: Was funktioniert nicht? / What is not working?
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
       label: Reproduktion
-      description: Welche Schritte führen zum Fehler?
+      description: Welche Schritte führen zum Fehler? / Which steps reproduce the bug?
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
       label: Erwartetes Verhalten
+      description: Was sollte passieren? / What should happen?
     validations:
       required: true
   - type: textarea
     id: actual
     attributes:
       label: Tatsächliches Verhalten
+      description: Was passiert stattdessen? / What happens instead?
     validations:
       required: true
   - type: textarea
     id: environment
     attributes:
       label: Umgebung
-      description: OpenWebUI-Version, Python-Version, Betriebssystem, Docker-Verfügbarkeit und relevanter Importweg.
+      description: OpenWebUI-Version, Python-Version, Betriebssystem, Docker-Verfügbarkeit, Sprache/Locale und relevanter Importweg.
   - type: textarea
     id: validation
     attributes:
       label: Ausgeführte Checks
-      description: Ausgabe von `python scripts/verify_openwebui_workspace.py` oder relevanten Einzelchecks, ohne Secrets.
+      description: Ausgabe von `python scripts/verify_openwebui_workspace.py` oder relevanten Einzelchecks, ohne Secrets. / Check output without secrets.
   - type: checkboxes
     id: safety
     attributes:

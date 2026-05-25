@@ -10,6 +10,7 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 import Workbench.dashboard.server as dashboard_server
+from Workbench.dashboard.i18n import detect_locale, normalize_locale, t
 from Workbench.dashboard.server import WorkbenchConfig, WorkbenchState, openwebui_ssl_context
 
 
@@ -126,6 +127,12 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertTrue(summary["dashboard"]["auth_username_configured"])
         self.assertTrue(summary["dashboard"]["auth_password_configured"])
 
+    def test_i18n_defaults_to_german_and_supports_english(self) -> None:
+        self.assertEqual(normalize_locale("fr-FR"), "de")
+        self.assertEqual(detect_locale("en-US,en;q=0.9"), "en")
+        self.assertEqual(t("auth_required", "de"), "Authentifizierung erforderlich.")
+        self.assertEqual(t("auth_required", "en"), "Authentication required.")
+
     def test_basic_auth_protects_dashboard_routes(self) -> None:
         state = WorkbenchState(
             WorkbenchConfig(
@@ -141,20 +148,40 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "wrong")), 401)
         self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "secret")), 200)
 
+    def test_basic_auth_uses_accept_language_when_available(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        base_url = self.start_server(state)
+        status, body = self.request(base_url, headers={"Accept-Language": "en-US,en;q=0.9"})
+        self.assertEqual(status, 401)
+        self.assertEqual(json.loads(body)["error"], "Authentication required.")
+
     def test_static_route_rejects_encoded_path_traversal(self) -> None:
         base_url = self.start_server(self.state)
         self.assertEqual(self.request_status(base_url, path="/static/..%2F..%2FREADME.md"), 400)
 
     def request_status(self, base_url: str, authorization: str = "", path: str = "/api/status") -> int:
+        status, _body = self.request(base_url, authorization=authorization, path=path)
+        return status
+
+    def request(self, base_url: str, authorization: str = "", path: str = "/api/status", headers: dict[str, str] | None = None) -> tuple[int, str]:
         host_port = base_url.removeprefix("http://")
         host, raw_port = host_port.rsplit(":", 1)
         connection = HTTPConnection(host, int(raw_port), timeout=5)
         try:
-            headers = {"Authorization": authorization} if authorization else {}
-            connection.request("GET", path, headers=headers)
+            request_headers = dict(headers or {})
+            if authorization:
+                request_headers["Authorization"] = authorization
+            connection.request("GET", path, headers=request_headers)
             response = connection.getresponse()
-            response.read()
-            return response.status
+            body = response.read().decode("utf-8")
+            return response.status, body
         finally:
             connection.close()
 

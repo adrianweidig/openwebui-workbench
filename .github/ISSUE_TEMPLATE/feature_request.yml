@@ -1,5 +1,5 @@
-name: Feature request
-description: Neues Modell, Tool, Skill, Validierung oder Dokumentationsverbesserung vorschlagen.
+name: Feature request / Funktionsvorschlag
+description: Neues Modell, Tool, Skill, Übersetzung, Validierung oder Dokumentationsverbesserung vorschlagen.
 title: "[Feature]: "
 labels:
   - enhancement
@@ -15,6 +15,7 @@ body:
         - Skill
         - Import/Export
         - Deployment
+        - Internationalisierung/Localization
         - Tests/CI
         - Dokumentation
         - Repository-Pflege
@@ -24,23 +25,23 @@ body:
     id: need
     attributes:
       label: Bedarf
-      description: Welches konkrete Problem soll gelöst werden?
+      description: Welches konkrete Problem soll gelöst werden? / Which concrete problem should be solved?
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
       label: Vorschlag
-      description: Wie könnte die Lösung aussehen?
+      description: Wie könnte die Lösung aussehen? / What could the solution look like?
     validations:
       required: true
   - type: textarea
     id: offline
     attributes:
       label: Offline- und Sicherheitsauswirkungen
-      description: Betrifft der Vorschlag Netzwerkzugriff, Valves, Jupyter, Dateisystem-Mounts oder Secrets?
+      description: Betrifft der Vorschlag Netzwerkzugriff, Valves, Jupyter, Dateisystem-Mounts, Sprache/Locale oder Secrets?
   - type: textarea
     id: validation
     attributes:
       label: Mögliche Validierung
-      description: Welche Checks sollten den Beitrag absichern?
+      description: Welche Checks sollten den Beitrag absichern? / Which checks should validate the contribution?

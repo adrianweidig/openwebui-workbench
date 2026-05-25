@@ -19,6 +19,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, unquote, urlparse
 from urllib.request import Request, urlopen
 
+from Workbench.dashboard.i18n import DEFAULT_LOCALE, SUPPORTED_LOCALES, detect_locale, t
+
 
 REPO_ROOT = Path(os.environ.get("WORKBENCH_ROOT", Path(__file__).resolve().parents[2])).resolve()
 STATIC_ROOT = Path(__file__).resolve().with_name("static")
@@ -66,9 +68,9 @@ def require_safe_path_segment(value: str, message: str) -> str:
 def static_file_path(raw_path: str) -> Path:
     decoded = unquote(raw_path).replace("\\", "/")
     parts = decoded.split("/")
-    safe_parts = [require_safe_path_segment(part, "Ungültiger Static-Pfad.") for part in parts if part]
+    safe_parts = [require_safe_path_segment(part, t("invalid_static_path")) for part in parts if part]
     if len(safe_parts) != len(parts) or not safe_parts:
-        raise ValueError("Ungültiger Static-Pfad.")
+        raise ValueError(t("invalid_static_path"))
     return STATIC_ROOT.joinpath(*safe_parts)
 
 
@@ -138,6 +140,7 @@ class WorkbenchConfig:
     tls_verify: bool = tls_verify_from_env()
     ca_file: str = os.environ.get("OPENWEBUI_CA_FILE", "").strip()
     ca_path: str = os.environ.get("OPENWEBUI_CA_PATH", "").strip()
+    locale: str = detect_locale(os.environ.get("WORKBENCH_LOCALE"))
 
     @property
     def admin_token(self) -> str:
@@ -166,6 +169,11 @@ class WorkbenchState:
         skills = self.list_skills()
         return {
             "root": str(self.root),
+            "locale": {
+                "default": DEFAULT_LOCALE,
+                "configured": self.config.locale,
+                "supported": list(SUPPORTED_LOCALES),
+            },
             "write_enabled": self.config.allow_write,
             "dashboard": {
                 "auth_enabled": self.config.auth_enabled,
@@ -302,23 +310,23 @@ class WorkbenchState:
         return files
 
     def model_dir(self, model_id: str) -> Path:
-        safe_model_id = require_safe_path_segment(model_id, "Ungültige Modell-ID.")
+        safe_model_id = require_safe_path_segment(model_id, t("invalid_model_id", self.config.locale))
         directory = self.models_root / safe_model_id
         if not directory.exists() or not directory.is_dir():
-            raise FileNotFoundError(f"Modell nicht gefunden: {model_id}")
+            raise FileNotFoundError(t("model_not_found", self.config.locale, model_id=model_id))
         return directory
 
     def normalize_model_file(self, model_id: str, name: str) -> Path:
         directory = self.model_dir(model_id)
         clean = name.strip().replace("\\", "/")
         if clean in MODEL_MARKDOWN_FILES:
-            safe_name = require_safe_path_segment(clean, "Ungültiger Dateiname.")
+            safe_name = require_safe_path_segment(clean, t("invalid_model_filename", self.config.locale))
             return directory / safe_name
         if clean.startswith("beispiele/") and clean.endswith(".md"):
             example_name = clean.removeprefix("beispiele/")
-            safe_example_name = require_safe_path_segment(example_name, "Ungültiger Beispiel-Dateiname.")
+            safe_example_name = require_safe_path_segment(example_name, t("invalid_example_filename", self.config.locale))
             return directory / "beispiele" / safe_example_name
-        raise ValueError("Nur freigegebene Markdown-Dateien eines Modellpakets dürfen bearbeitet werden.")
+        raise ValueError(t("only_model_markdown", self.config.locale))
 
     def read_model_file(self, model_id: str, name: str) -> dict[str, Any]:
         path = self.normalize_model_file(model_id, name)
@@ -335,10 +343,10 @@ class WorkbenchState:
 
     def write_model_file(self, model_id: str, name: str, content: str) -> dict[str, Any]:
         if not self.config.allow_write:
-            raise PermissionError("Schreibzugriff ist deaktiviert.")
+            raise PermissionError(t("write_disabled", self.config.locale))
         encoded = content.encode("utf-8")
         if len(encoded) > MAX_BODY_BYTES:
-            raise ValueError(f"Dateiinhalt ist größer als {MAX_BODY_BYTES} Bytes.")
+            raise ValueError(t("content_too_large", self.config.locale, max_bytes=MAX_BODY_BYTES))
         path = self.normalize_model_file(model_id, name)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8", newline="\n")
@@ -371,15 +379,15 @@ class WorkbenchState:
         return items
 
     def resource_path(self, kind: str, resource_id: str) -> Path:
-        safe_resource_id = require_safe_path_segment(resource_id, "Ungültige Ressourcen-ID.")
+        safe_resource_id = require_safe_path_segment(resource_id, t("invalid_resource_id", self.config.locale))
         if kind == "tool":
             path = self.tools_root / f"{safe_resource_id}.py"
         elif kind == "skill":
             path = self.skills_root / f"{safe_resource_id}.md"
         else:
-            raise ValueError("Ressourcentyp muss `tool` oder `skill` sein.")
+            raise ValueError(t("resource_type", self.config.locale))
         if not path.exists() or not path.is_file():
-            raise FileNotFoundError(f"Ressource nicht gefunden: {kind}/{resource_id}")
+            raise FileNotFoundError(t("resource_not_found", self.config.locale, kind=kind, resource_id=resource_id))
         return path
 
     def read_resource(self, kind: str, resource_id: str) -> dict[str, Any]:
@@ -395,10 +403,10 @@ class WorkbenchState:
 
     def write_resource(self, kind: str, resource_id: str, content: str) -> dict[str, Any]:
         if not self.config.allow_write:
-            raise PermissionError("Schreibzugriff ist deaktiviert.")
+            raise PermissionError(t("write_disabled", self.config.locale))
         encoded = content.encode("utf-8")
         if len(encoded) > MAX_BODY_BYTES:
-            raise ValueError(f"Dateiinhalt ist größer als {MAX_BODY_BYTES} Bytes.")
+            raise ValueError(t("content_too_large", self.config.locale, max_bytes=MAX_BODY_BYTES))
         path = self.resource_path(kind, resource_id)
         path.write_text(content, encoding="utf-8", newline="\n")
         return self.read_resource(kind, resource_id)
@@ -426,7 +434,7 @@ class WorkbenchState:
         elif action == "import-openwebui":
             token = self.config.admin_token
             if not token:
-                raise PermissionError("OPENWEBUI_ADMIN_TOKEN oder OPENWEBUI_ADMIN_TOKEN_FILE ist nicht gesetzt.")
+                raise PermissionError(t("token_missing", self.config.locale))
             command = [
                 sys.executable,
                 "scripts/configure_openwebui_tool_models.py",
@@ -446,7 +454,7 @@ class WorkbenchState:
             }
             label = "Import to OpenWebUI"
         else:
-            raise ValueError(f"Unbekannte Aktion: {action}")
+            raise ValueError(t("unknown_action", self.config.locale, action=action))
 
         started = time.time()
         completed = subprocess.run(
@@ -508,7 +516,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 resource_id = unquote(parts[4])
                 self.send_json(STATE.read_resource(kind, resource_id))
             else:
-                self.send_error_json(HTTPStatus.NOT_FOUND, "Route nicht gefunden.")
+                self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
         except Exception as exc:
             self.handle_exception(exc)
 
@@ -528,7 +536,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 payload = self.read_json_body()
                 self.send_json(STATE.write_resource(kind, resource_id, str(payload.get("content") or "")))
             else:
-                self.send_error_json(HTTPStatus.NOT_FOUND, "Route nicht gefunden.")
+                self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
         except Exception as exc:
             self.handle_exception(exc)
 
@@ -543,7 +551,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 status = HTTPStatus.OK if result["ok"] else HTTPStatus.BAD_GATEWAY
                 self.send_json(result, status)
             else:
-                self.send_error_json(HTTPStatus.NOT_FOUND, "Route nicht gefunden.")
+                self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
         except Exception as exc:
             self.handle_exception(exc)
 
@@ -567,7 +575,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         return False
 
     def send_auth_required(self) -> None:
-        body = json.dumps({"ok": False, "error": "Authentifizierung erforderlich."}, ensure_ascii=False).encode("utf-8")
+        body = json.dumps({"ok": False, "error": self.message("auth_required")}, ensure_ascii=False).encode("utf-8")
         self.send_response(HTTPStatus.UNAUTHORIZED)
         self.send_header("WWW-Authenticate", 'Basic realm="OpenWebUI Workbench", charset="UTF-8"')
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -578,7 +586,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
 
     def send_static(self, path: Path, content_type: str) -> None:
         if not path.exists() or not path.is_file():
-            self.send_error_json(HTTPStatus.NOT_FOUND, "Datei nicht gefunden.")
+            self.send_error_json(HTTPStatus.NOT_FOUND, self.message("file_not_found"))
             return
         body = path.read_bytes()
         self.send_response(HTTPStatus.OK)
@@ -613,14 +621,24 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
     def read_json_body(self) -> dict[str, Any]:
         length = int(self.headers.get("Content-Length", "0"))
         if length > MAX_BODY_BYTES:
-            raise ValueError(f"Request ist größer als {MAX_BODY_BYTES} Bytes.")
+            raise ValueError(self.message("request_too_large", max_bytes=MAX_BODY_BYTES))
         raw = self.rfile.read(length)
         if not raw:
             return {}
         payload = json.loads(raw.decode("utf-8"))
         if not isinstance(payload, dict):
-            raise ValueError("JSON-Body muss ein Objekt sein.")
+            raise ValueError(self.message("json_body_object"))
         return payload
+
+    def current_locale(self) -> str:
+        return detect_locale(
+            self.headers.get("X-Workbench-Locale"),
+            self.headers.get("Accept-Language"),
+            STATE.config.locale,
+        )
+
+    def message(self, key: str, **params: object) -> str:
+        return t(key, self.current_locale(), **params)
 
     @staticmethod
     def content_type(path: str) -> str:
@@ -646,7 +664,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     server = ThreadingHTTPServer((args.host, args.port), WorkbenchHandler)
-    print(f"OpenWebUI Workbench dashboard listening on http://{args.host}:{args.port}", flush=True)
+    print(t("dashboard_listening", STATE.config.locale, host=args.host, port=args.port), flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

@@ -1898,7 +1898,7 @@
           "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
           "exists": true,
           "non_empty": true,
-          "bytes": 1491
+          "bytes": 1497
         },
         "vision-ui-qa-vorlage.md": {
           "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
@@ -2570,7 +2570,7 @@
           "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
           "exists": true,
           "non_empty": true,
-          "bytes": 7530
+          "bytes": 7631
         }
       },
       "vision_enabled": true,

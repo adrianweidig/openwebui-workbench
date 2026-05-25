@@ -1,5 +1,7 @@
 # Support
 
+🌐 Sprachen: [Deutsch](SUPPORT.md) | [English](SUPPORT.en.md)
+
 ## Öffentliche Fragen
 
 Für reproduzierbare Fehler, Dokumentationslücken und konkrete Verbesserungsvorschläge bitte GitHub Issues verwenden:

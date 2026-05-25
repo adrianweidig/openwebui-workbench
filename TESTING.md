@@ -50,6 +50,17 @@ python -m unittest discover Workbench.dashboard.tests
 
 JSON-Artefakte werden durch `scripts/verify_openwebui_workspace.py` mitgeprüft. Der Generator-Check muss ohne neue Änderungen enden (`Änderungen erkannt: False`), sonst sind Dist-Artefakte nicht synchron.
 
+## Internationalisierung prüfen
+
+Das Dashboard muss Deutsch als Fallback und Englisch als Alternativsprache unterstützen. Die relevanten Tests liegen in `Workbench.dashboard.tests` und prüfen Locale-Normalisierung, `Accept-Language`-Auswertung, englische Auth-Fehlermeldungen und Unicode-Modell-IDs. Für eine manuelle Prüfung:
+
+```powershell
+$env:WORKBENCH_LOCALE="en"
+python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
+```
+
+Danach im Browser zwischen Deutsch und Englisch wechseln und prüfen, dass Umlaute in Modellnamen, Dateiinhalten und Vorschauen erhalten bleiben.
+
 ## Externe Dienste und Secrets
 
 Die Basisprüfung darf keine produktiven Dienste aufrufen. Für API-Importe wird `scripts/openwebui_workspace_config.yaml` lokal aus `scripts/openwebui_workspace_config.example.yaml` erstellt und bleibt durch `.gitignore` unversioniert. Echte Werte wie `OPENWEBUI_ADMIN_TOKEN`, Jupyter-Tokens, lokale Hostnamen und Volume-Pfade gehören nur in diese lokale Datei oder in die Zielumgebung.
