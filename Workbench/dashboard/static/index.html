@@ -18,11 +18,20 @@
           </div>
         </div>
         <nav aria-label="Workbench Bereiche">
-          <button class="nav-item active" data-panel="models">Modelle</button>
-          <button class="nav-item" data-panel="resources">Tools & Skills</button>
-          <button class="nav-item" data-panel="actions">Sync</button>
-          <button class="nav-item" data-panel="assets">Artefakte</button>
+          <button class="nav-item active" data-panel="models"><span aria-hidden="true">M</span>Modelle</button>
+          <button class="nav-item" data-panel="resources"><span aria-hidden="true">T</span>Tools & Skills</button>
+          <button class="nav-item" data-panel="actions"><span aria-hidden="true">S</span>Sync</button>
+          <button class="nav-item" data-panel="assets"><span aria-hidden="true">A</span>Artefakte</button>
         </nav>
+        <div class="sidebar-guide" aria-label="Workflow">
+          <small>Workflow</small>
+          <ol>
+            <li>Quelle prüfen</li>
+            <li>Artefakte bauen</li>
+            <li>Dry-Run starten</li>
+            <li>Sync ausführen</li>
+          </ol>
+        </div>
         <div class="status-box">
           <span class="status-dot" id="openwebui-dot"></span>
           <div>
@@ -34,11 +43,15 @@
 
       <main class="main">
         <header class="topbar">
-          <div>
+          <div class="hero-copy">
+            <span class="eyebrow">Repository Control Center</span>
             <h2>OpenWebUI zentral verwalten</h2>
-            <p>Markdown-Modelle bearbeiten, Dist-Artefakte erzeugen und Importläufe auslösen.</p>
+            <p>Markdown-Modelle bearbeiten, Dist-Artefakte erzeugen und Importläufe kontrolliert auslösen.</p>
           </div>
-          <button id="theme-toggle" class="ghost theme-toggle" type="button" aria-pressed="true">Dark</button>
+          <div class="topbar-actions">
+            <button id="refresh-dashboard" class="ghost" type="button">Aktualisieren</button>
+            <button id="theme-toggle" class="ghost theme-toggle" type="button" aria-pressed="true">Dark</button>
+          </div>
           <div class="summary-grid" aria-label="Repository Kennzahlen">
             <div><span id="count-models">0</span><small>Modelle</small></div>
             <div><span id="count-tools">0</span><small>Tools</small></div>
@@ -46,11 +59,37 @@
           </div>
         </header>
 
+        <section class="signal-strip" aria-label="Statusübersicht">
+          <div class="signal-card">
+            <small>API-Ziel</small>
+            <strong id="signal-api">Wird geprüft</strong>
+            <span id="signal-api-detail">-</span>
+          </div>
+          <div class="signal-card">
+            <small>Dashboard</small>
+            <strong id="signal-auth">Auth unbekannt</strong>
+            <span id="signal-auth-detail">-</span>
+          </div>
+          <div class="signal-card">
+            <small>Bearbeitung</small>
+            <strong id="signal-write">-</strong>
+            <span id="signal-config">-</span>
+          </div>
+          <div class="signal-card">
+            <small>Artefakte</small>
+            <strong id="signal-artifacts">-</strong>
+            <span id="signal-artifacts-detail">-</span>
+          </div>
+        </section>
+
         <section class="panel active" id="panel-models">
           <div class="split">
             <section class="list-pane" aria-label="Modellliste">
               <div class="pane-head">
-                <h3>Modellpakete</h3>
+                <div>
+                  <h3>Modellpakete</h3>
+                  <p id="model-filter-state">Alle Modelle</p>
+                </div>
                 <input id="model-search" type="search" placeholder="Filtern" autocomplete="off" />
               </div>
               <div id="model-list" class="model-list"></div>
@@ -87,7 +126,10 @@
           <div class="split">
             <section class="list-pane" aria-label="Tool- und Skillliste">
               <div class="pane-head">
-                <h3>Tools & Skills</h3>
+                <div>
+                  <h3>Tools & Skills</h3>
+                  <p id="resource-filter-state">Alle Ressourcen</p>
+                </div>
                 <input id="resource-search" type="search" placeholder="Filtern" autocomplete="off" />
               </div>
               <div id="resource-list" class="model-list"></div>
@@ -124,18 +166,22 @@
               <h3>Synchronisierung</h3>
               <div class="action-grid">
                 <button class="action-card" data-action="generate">
+                  <small>1 · Build</small>
                   <strong>Artefakte neu erzeugen</strong>
                   <span>Registries, Modellprofile und ZIPs aus dem aktuellen Markdown-Stand bauen.</span>
                 </button>
                 <button class="action-card" data-action="import-dry-run">
+                  <small>2 · Safe Check</small>
                   <strong>Import prüfen</strong>
                   <span>OpenWebUI-Payload lokal validieren, ohne die Zielinstanz zu verändern.</span>
                 </button>
                 <button class="action-card" data-action="import-openwebui">
+                  <small>3 · API Sync</small>
                   <strong>Zu OpenWebUI synchronisieren</strong>
                   <span>Tools, Filter, Skills, Knowledge und Modelle über die API importieren.</span>
                 </button>
                 <button class="action-card" data-action="check">
+                  <small>QA</small>
                   <strong>Workspace verifizieren</strong>
                   <span>Syntax, Generator, Import-Dry-Run, JSON und Unit-Tests prüfen.</span>
                 </button>

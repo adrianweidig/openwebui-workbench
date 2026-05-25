@@ -191,6 +191,9 @@ function applyTheme(theme) {
 function renderStatus() {
   const status = state.status;
   if (!status) return;
+  const artifacts = status.artifacts || [];
+  const existingArtifacts = artifacts.filter((item) => item.exists).length;
+  const artifactBytes = artifacts.reduce((total, item) => total + (item.bytes || 0), 0);
   setText("repo-root", status.root);
   setText("count-models", status.counts.models);
   setText("count-tools", status.counts.tools);
@@ -204,19 +207,54 @@ function renderStatus() {
   const caMode = status.openwebui.ca_file_configured || status.openwebui.ca_path_configured ? "eigene CA" : "System-CA";
   setText("config-token", `${status.openwebui.admin_token_configured ? "gesetzt" : "nicht gesetzt"} · ${tlsMode} · ${caMode}`);
   setText("config-write", status.write_enabled ? "aktiv" : "deaktiviert");
+  setText("signal-api", status.openwebui.reachable.ok ? "Verbunden" : "Nicht erreichbar");
+  setText("signal-api-detail", status.openwebui.base_url);
+  setText("signal-auth", status.dashboard?.auth_enabled ? "Passwortschutz aktiv" : "Lokaler Modus");
+  setText("signal-auth-detail", status.dashboard?.auth_enabled ? "Alle Routen geschützt" : "Auth-Env nicht gesetzt");
+  setText("signal-write", status.write_enabled ? "Schreibzugriff aktiv" : "Read-only");
+  setText("signal-config", status.config.local_config_exists ? "Lokale Sync-Config vorhanden" : "Beispiel-Config aktiv");
+  setText("signal-artifacts", `${existingArtifacts}/${artifacts.length} vorhanden`);
+  setText("signal-artifacts-detail", `${formatBytes(artifactBytes)} Handover-Daten`);
+  setSignalState("signal-api", status.openwebui.reachable.ok ? "ok" : "danger");
+  setSignalState("signal-auth", status.dashboard?.auth_enabled ? "ok" : "warn");
+  setSignalState("signal-write", status.write_enabled ? "ok" : "warn");
+  setSignalState("signal-artifacts", existingArtifacts === artifacts.length ? "ok" : "warn");
 
   const artifactList = el("artifact-list");
   artifactList.replaceChildren();
-  status.artifacts.forEach((item) => {
+  artifacts.forEach((item) => {
     const row = document.createElement("div");
     row.className = "artifact-item";
     const title = document.createElement("strong");
     title.textContent = item.path;
     const meta = document.createElement("span");
     meta.textContent = item.exists ? `${item.bytes} Bytes · ${item.mtime}` : "fehlt";
-    row.append(title, meta);
+    const stateChip = document.createElement("span");
+    stateChip.className = `chip artifact-state ${item.exists ? "ok" : "warn"}`;
+    stateChip.textContent = item.exists ? formatBytes(item.bytes) : "fehlt";
+    const text = document.createElement("div");
+    text.append(title, meta);
+    row.append(text, stateChip);
     artifactList.append(row);
   });
+}
+
+function setSignalState(id, level) {
+  const card = el(id).closest(".signal-card");
+  card.classList.remove("ok", "warn", "danger");
+  card.classList.add(level);
+}
+
+function formatBytes(bytes) {
+  if (!bytes) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  let value = bytes;
+  let index = 0;
+  while (value >= 1024 && index < units.length - 1) {
+    value /= 1024;
+    index += 1;
+  }
+  return `${value.toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
 }
 
 function visibleModels() {
@@ -238,15 +276,27 @@ function visibleResources() {
 function renderResources() {
   const list = el("resource-list");
   list.replaceChildren();
-  visibleResources().forEach((resource) => {
+  const resources = visibleResources();
+  setText("resource-filter-state", `${resources.length} von ${state.resources.length} Ressourcen`);
+  if (!resources.length) {
+    renderEmpty(list, "Keine Ressource passt zum Filter.");
+    return;
+  }
+  resources.forEach((resource) => {
     const button = document.createElement("button");
     button.className = `resource-row${state.selectedResource?.kind === resource.kind && state.selectedResource?.id === resource.id ? " active" : ""}`;
     button.type = "button";
+    if (state.selectedResource?.kind === resource.kind && state.selectedResource?.id === resource.id) {
+      button.setAttribute("aria-current", "true");
+    }
     const title = document.createElement("strong");
     title.textContent = resource.name;
+    const meta = document.createElement("div");
+    meta.className = "row-meta";
+    meta.append(makeChip(resource.kind, resource.kind === "tool" ? "accent" : "ok"), makeChip(resource.extension), makeChip(formatBytes(resource.bytes)));
     const sub = document.createElement("span");
-    sub.textContent = `${resource.kind} · ${resource.path}`;
-    button.append(title, sub);
+    sub.textContent = resource.path;
+    button.append(title, meta, sub);
     button.addEventListener("click", () => selectResource(resource.kind, resource.id));
     list.append(button);
   });
@@ -255,18 +305,45 @@ function renderResources() {
 function renderModels() {
   const list = el("model-list");
   list.replaceChildren();
-  visibleModels().forEach((model) => {
+  const models = visibleModels();
+  setText("model-filter-state", `${models.length} von ${state.models.length} Modellen`);
+  if (!models.length) {
+    renderEmpty(list, "Kein Modell passt zum Filter.");
+    return;
+  }
+  models.forEach((model) => {
     const button = document.createElement("button");
     button.className = `model-row${state.selectedModel?.id === model.id ? " active" : ""}`;
     button.type = "button";
+    if (state.selectedModel?.id === model.id) {
+      button.setAttribute("aria-current", "true");
+    }
     const title = document.createElement("strong");
     title.textContent = model.name;
+    const meta = document.createElement("div");
+    meta.className = "row-meta";
+    meta.append(makeChip(model.base_model_id || "kein Basismodell", "accent"), makeChip(`${model.files.filter((file) => file.exists).length}/${model.files.length} Dateien`, "ok"));
+    if (model.tags?.[0]) meta.append(makeChip(model.tags[0]));
     const sub = document.createElement("span");
-    sub.textContent = model.id;
-    button.append(title, sub);
+    sub.textContent = model.description || model.id;
+    button.append(title, meta, sub);
     button.addEventListener("click", () => selectModel(model.id));
     list.append(button);
   });
+}
+
+function makeChip(text, tone = "") {
+  const chip = document.createElement("span");
+  chip.className = `chip${tone ? ` ${tone}` : ""}`;
+  chip.textContent = text;
+  return chip;
+}
+
+function renderEmpty(container, message) {
+  const empty = document.createElement("div");
+  empty.className = "empty-state";
+  empty.textContent = message;
+  container.append(empty);
 }
 
 function renderFileTabs() {
@@ -405,9 +482,13 @@ async function refreshModels(keepSelection = true) {
 function wireEvents() {
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.addEventListener("click", () => {
-      document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.classList.remove("active");
+        item.removeAttribute("aria-current");
+      });
       document.querySelectorAll(".panel").forEach((panel) => panel.classList.remove("active"));
       button.classList.add("active");
+      button.setAttribute("aria-current", "page");
       el(`panel-${button.dataset.panel}`).classList.add("active");
     });
   });
@@ -428,6 +509,13 @@ function wireEvents() {
   el("theme-toggle").addEventListener("click", () => {
     applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light");
   });
+  el("refresh-dashboard").addEventListener("click", async () => {
+    setText("editor-state", "Aktualisiere Status");
+    await refreshStatus();
+    await refreshModels(true);
+    await refreshResources(true);
+    setText("editor-state", "Status aktualisiert");
+  });
   el("save-file").addEventListener("click", saveFile);
   el("save-resource").addEventListener("click", saveResource);
   document.querySelectorAll("[data-action]").forEach((button) => {
@@ -443,9 +531,7 @@ async function init() {
   applyView("model", state.modelView);
   applyView("resource", state.resourceView);
   wireEvents();
-  await refreshStatus();
-  await refreshModels(false);
-  await refreshResources(false);
+  await Promise.all([refreshStatus(), refreshModels(false), refreshResources(false)]);
   if (state.models.length > 0) {
     await selectModel(state.models[0].id);
   }
