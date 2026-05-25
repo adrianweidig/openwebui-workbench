@@ -66,9 +66,18 @@ class WorkbenchStateTests(unittest.TestCase):
         after = self.state.write_model_file("demo-model", "systemprompt.md", "Updated\n")
         self.assertEqual(after["content"], "Updated\n")
 
+    def test_reads_and_writes_allowed_example_markdown(self) -> None:
+        after = self.state.write_model_file("demo-model", "beispiele/demo.md", "Example note\n")
+        self.assertEqual(after["content"], "Example note\n")
+        self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispiele" / "demo.md").is_file())
+
     def test_rejects_path_traversal(self) -> None:
         with self.assertRaises(ValueError):
             self.state.read_model_file("demo-model", "../README.md")
+        with self.assertRaises(ValueError):
+            self.state.read_model_file("demo-model", "beispiele/../systemprompt.md")
+        with self.assertRaises(ValueError):
+            self.state.read_model_file("demo-model", "beispiele/sub/path.md")
 
     def test_rejects_unknown_model_id_shape(self) -> None:
         with self.assertRaises(ValueError):
@@ -132,13 +141,17 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "wrong")), 401)
         self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "secret")), 200)
 
-    def request_status(self, base_url: str, authorization: str = "") -> int:
+    def test_static_route_rejects_encoded_path_traversal(self) -> None:
+        base_url = self.start_server(self.state)
+        self.assertEqual(self.request_status(base_url, path="/static/..%2F..%2FREADME.md"), 400)
+
+    def request_status(self, base_url: str, authorization: str = "", path: str = "/api/status") -> int:
         host_port = base_url.removeprefix("http://")
         host, raw_port = host_port.rsplit(":", 1)
         connection = HTTPConnection(host, int(raw_port), timeout=5)
         try:
             headers = {"Authorization": authorization} if authorization else {}
-            connection.request("GET", "/api/status", headers=headers)
+            connection.request("GET", path, headers=headers)
             response = connection.getresponse()
             response.read()
             return response.status
