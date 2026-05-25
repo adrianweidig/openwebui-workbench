@@ -5,6 +5,7 @@ import base64
 import hmac
 import json
 import os
+import re
 import ssl
 import subprocess
 import sys
@@ -21,6 +22,7 @@ from urllib.request import Request, urlopen
 
 REPO_ROOT = Path(os.environ.get("WORKBENCH_ROOT", Path(__file__).resolve().parents[2])).resolve()
 STATIC_ROOT = Path(__file__).resolve().with_name("static")
+SAFE_SEGMENT_PATTERN = re.compile(r"^[^\x00-\x1f/\\:<>\"|?*]+$")
 MODEL_MARKDOWN_FILES = {
     "systemprompt.md",
     "mainprompt.md",
@@ -40,23 +42,34 @@ def env_bool(name: str, default: bool = False) -> bool:
 
 def rel(path: Path, root: Path = REPO_ROOT) -> str:
     try:
-        return path.resolve().relative_to(root.resolve()).as_posix()
+        return path.relative_to(root).as_posix()
     except ValueError:
         return path.as_posix()
 
 
-def ensure_inside(path: Path, root: Path) -> Path:
-    resolved = path.resolve()
-    resolved.relative_to(root.resolve())
-    return resolved
+def safe_path_segment(value: str) -> str | None:
+    clean = value.strip()
+    if not clean or clean in {".", ".."}:
+        return None
+    if not SAFE_SEGMENT_PATTERN.fullmatch(clean):
+        return None
+    return clean
 
 
-def is_safe_path_segment(value: str) -> bool:
-    if not value or value in {".", ".."}:
-        return False
-    if "/" in value or "\\" in value:
-        return False
-    return not any(ord(char) < 32 for char in value)
+def require_safe_path_segment(value: str, message: str) -> str:
+    clean = safe_path_segment(value)
+    if clean is None:
+        raise ValueError(message)
+    return clean
+
+
+def static_file_path(raw_path: str) -> Path:
+    decoded = unquote(raw_path).replace("\\", "/")
+    parts = decoded.split("/")
+    safe_parts = [require_safe_path_segment(part, "Ungültiger Static-Pfad.") for part in parts if part]
+    if len(safe_parts) != len(parts) or not safe_parts:
+        raise ValueError("Ungültiger Static-Pfad.")
+    return STATIC_ROOT.joinpath(*safe_parts)
 
 
 def read_json_file(path: Path) -> Any:
@@ -289,9 +302,8 @@ class WorkbenchState:
         return files
 
     def model_dir(self, model_id: str) -> Path:
-        if not is_safe_path_segment(model_id):
-            raise ValueError("Ungültige Modell-ID.")
-        directory = ensure_inside(self.models_root / model_id, self.models_root)
+        safe_model_id = require_safe_path_segment(model_id, "Ungültige Modell-ID.")
+        directory = self.models_root / safe_model_id
         if not directory.exists() or not directory.is_dir():
             raise FileNotFoundError(f"Modell nicht gefunden: {model_id}")
         return directory
@@ -300,9 +312,12 @@ class WorkbenchState:
         directory = self.model_dir(model_id)
         clean = name.strip().replace("\\", "/")
         if clean in MODEL_MARKDOWN_FILES:
-            return ensure_inside(directory / clean, directory)
-        if clean.startswith("beispiele/") and clean.endswith(".md") and "/" not in clean[len("beispiele/") :]:
-            return ensure_inside(directory / clean, directory)
+            safe_name = require_safe_path_segment(clean, "Ungültiger Dateiname.")
+            return directory / safe_name
+        if clean.startswith("beispiele/") and clean.endswith(".md"):
+            example_name = clean.removeprefix("beispiele/")
+            safe_example_name = require_safe_path_segment(example_name, "Ungültiger Beispiel-Dateiname.")
+            return directory / "beispiele" / safe_example_name
         raise ValueError("Nur freigegebene Markdown-Dateien eines Modellpakets dürfen bearbeitet werden.")
 
     def read_model_file(self, model_id: str, name: str) -> dict[str, Any]:
@@ -356,12 +371,11 @@ class WorkbenchState:
         return items
 
     def resource_path(self, kind: str, resource_id: str) -> Path:
-        if not is_safe_path_segment(resource_id):
-            raise ValueError("Ungültige Ressourcen-ID.")
+        safe_resource_id = require_safe_path_segment(resource_id, "Ungültige Ressourcen-ID.")
         if kind == "tool":
-            path = ensure_inside(self.tools_root / f"{resource_id}.py", self.tools_root)
+            path = self.tools_root / f"{safe_resource_id}.py"
         elif kind == "skill":
-            path = ensure_inside(self.skills_root / f"{resource_id}.md", self.skills_root)
+            path = self.skills_root / f"{safe_resource_id}.md"
         else:
             raise ValueError("Ressourcentyp muss `tool` oder `skill` sein.")
         if not path.exists() or not path.is_file():
@@ -473,7 +487,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             if parsed.path == "/":
                 self.send_static(STATIC_ROOT / "index.html", "text/html; charset=utf-8")
             elif parsed.path.startswith("/static/"):
-                self.send_static(STATIC_ROOT / unquote(parsed.path.removeprefix("/static/")), self.content_type(parsed.path))
+                self.send_static(static_file_path(parsed.path.removeprefix("/static/")), self.content_type(parsed.path))
             elif parsed.path == "/api/status":
                 self.send_json(STATE.summary())
             elif parsed.path == "/api/models":
@@ -563,11 +577,10 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def send_static(self, path: Path, content_type: str) -> None:
-        resolved = ensure_inside(path, STATIC_ROOT)
-        if not resolved.exists() or not resolved.is_file():
+        if not path.exists() or not path.is_file():
             self.send_error_json(HTTPStatus.NOT_FOUND, "Datei nicht gefunden.")
             return
-        body = resolved.read_bytes()
+        body = path.read_bytes()
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
