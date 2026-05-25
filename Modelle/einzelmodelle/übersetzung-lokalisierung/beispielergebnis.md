@@ -2,21 +2,21 @@
 
 ## Zweck dieses Modells
 
-Texte, UI-Kopien, Dokumente und Lokalisierungsfragen zielgruppen- und kontextgerecht uebertragen.
+Texte, UI-Kopien, Dokumente und Lokalisierungsfragen zielgruppen- und kontextgerecht übertragen.
 
 ## Wiederverwendbarer Musterauftrag
 
-> UI-Texte und Screenshots sollen fuer eine Zielregion lokalisiert werden.
+> UI-Texte und Screenshots sollen für eine Zielregion lokalisiert werden.
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/lokalisierungsauftrag-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/lokalisierungsauftrag-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer UI-Screenshots, Kontext, abgeschnittene Texte oder Layoutprobleme nach Uebersetzung.
+Nutze Vision für UI-Screenshots, Kontext, abgeschnittene Texte oder Layoutprobleme nach Übersetzung.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer UI-Screenshots, Kontext, abgeschnittene Texte oder Layoutprobl
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/lokalisierungsauftrag-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Ergebnis braucht Zielvariante, Tonalitaet, Platzhalter, Laengenrisiken und QA-Hinweise.
+Ergebnis braucht Zielvariante, Tonalität, Platzhalter, Längenrisiken und QA-Hinweise.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

@@ -6,17 +6,17 @@ Diffs, Risiken, Regressionen, Sicherheitsprobleme und fehlende Tests wie in eine
 
 ## Wiederverwendbarer Musterauftrag
 
-> Ein Patch soll mit Findings, Schweregrad, Repro-Hinweis und Testluecken bewertet werden.
+> Ein Patch soll mit Findings, Schweregrad, Repro-Hinweis und Testlücken bewertet werden.
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/code-review-finding-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/code-review-finding-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer UI-Regressionsscreenshots, Vorher-/Nachher-Bilder oder visuelle Testfehler.
+Nutze Vision für UI-Regressionsscreenshots, Vorher-/Nachher-Bilder oder visuelle Testfehler.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer UI-Regressionsscreenshots, Vorher-/Nachher-Bilder oder visuell
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/code-review-finding-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Findings stehen vor Zusammenfassung und referenzieren konkrete Dateien, Zeilen oder sichtbare UI-Zustaende.
+Findings stehen vor Zusammenfassung und referenzieren konkrete Dateien, Zeilen oder sichtbare UI-Zustände.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

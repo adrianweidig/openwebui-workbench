@@ -2,21 +2,21 @@
 
 ## Zweck dieses Modells
 
-Bilder, Screenshots, UI-Zustaende, Folien, Diagramme, Scans und visuelle Artefakte multimodal analysieren.
+Bilder, Screenshots, UI-Zustände, Folien, Diagramme, Scans und visuelle Artefakte multimodal analysieren.
 
 ## Wiederverwendbarer Musterauftrag
 
-> Ein UI-Screenshot oder eine HTML-Praesentation soll visuell geprueft und verbessert werden.
+> Ein UI-Screenshot oder eine HTML-Praesentation soll visuell geprüft und verbessert werden.
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/vision-ui-qa-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/vision-ui-qa-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Vision ist der Hauptpfad: sichtbare Fakten extrahieren, Unsicherheiten markieren und lokale Tools fuer Reproduktion oder Artefakte nutzen.
+Vision ist der Hauptpfad: sichtbare Fakten extrahieren, Unsicherheiten markieren und lokale Tools für Reproduktion oder Artefakte nutzen.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Vision ist der Hauptpfad: sichtbare Fakten extrahieren, Unsicherheiten markieren
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/vision-ui-qa-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Findings muessen sichtbar belegbar, priorisiert und mit konkretem Fix sowie Akzeptanzkriterium versehen sein.
+Findings müssen sichtbar belegbar, priorisiert und mit konkretem Fix sowie Akzeptanzkriterium versehen sein.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

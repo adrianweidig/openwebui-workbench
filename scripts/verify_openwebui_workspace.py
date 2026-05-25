@@ -45,6 +45,7 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
     python = sys.executable
     steps = [
         CommandStep("Python syntax compile", [python, "-m", "compileall", "-q", "scripts", "Tools", "Workbench"]),
+        CommandStep("German umlaut and UTF-8 check", [python, "scripts/check_german_umlauts.py"]),
         CommandStep("OpenWebUI extension validation", [python, "scripts/validate_openwebui_extensions.py"]),
         CommandStep("Tool/model generator check", [python, "scripts/configure_openwebui_tool_models.py", "--check"]),
         CommandStep(

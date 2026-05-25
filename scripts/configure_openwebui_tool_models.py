@@ -211,7 +211,7 @@ TOOL_FORCE_PROFILES = {
     "mistral-vision-workbench": {
         "tools": ["ask_user", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python", "json_csv_text_validator", "repo_tree_analyzer", "docker_compose_triage", "parallel_task_planner", "parallel_tools", "sub_agent", "subagent_orchestrator", "tool_skill_overlay_planner", "llm_council"],
         "skills": ["visual-toolkit-v3-offline", "offline-artifact-production", "data-cleaning-analysis", "parallel-tools-subagents", "secure-tool-usage"],
-        "focus": "Mistral-Medium-Vision fuer Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern.",
+        "focus": "Mistral-Medium-Vision für Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern.",
     },
     "offline-workbench-agent": {
         "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "parallel_task_planner", "parallel_tools", "subagent_orchestrator", "sub_agent", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "llm_council", "comfyui_workflow_inspector"],
@@ -226,17 +226,17 @@ TOOL_FORCE_PROFILES = {
     "promptforge": {
         "tools": ["ask_user", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner", "llm_council", "markdown_skill_builder"],
         "skills": ["prompt-to-tool-workflow", "secure-tool-usage", "model-tool-skill-overlays", "native-tool-calling-rollout"],
-        "focus": "Vollstaendige direkt kopierbare Markdown-Promptvorlagen nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Zielsystem erzeugen.",
+        "focus": "Vollständige direkt kopierbare Markdown-Promptvorlagen nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Zielsystem erzeugen.",
     },
     "n8n-workflow-architect": {
         "tools": ["ask_user", "json_csv_text_validator", "openapi_schema_inspector", "offline_artifact_workbench", "air_gapped_jupyter_python", "tool_skill_overlay_planner"],
         "skills": ["safe-mcp-openapi-import", "api-integration-debugging", "secure-tool-usage", "offline-use-case-router"],
-        "focus": "Importierbare n8n-Workflow-JSONs wie der Custom GPT n8n Workflow Architect planen, pruefen, validieren und mit Test- sowie Sicherheitshinweisen ausgeben.",
+        "focus": "Importierbare n8n-Workflow-JSONs wie der Custom GPT n8n Workflow Architect planen, prüfen, validieren und mit Test- sowie Sicherheitshinweisen ausgeben.",
     },
     "openwebui-model-builder": {
         "tools": ["ask_user", "tool_skill_overlay_planner", "markdown_skill_builder", "json_csv_text_validator", "offline_artifact_workbench", "repo_tree_analyzer", "openapi_schema_inspector"],
         "skills": ["openwebui-tool-authoring", "prompt-to-tool-workflow", "model-tool-skill-overlays", "secure-tool-usage", "native-tool-calling-rollout"],
-        "focus": "Vollstaendige OpenWebUI-Modellpakete mit JSON, Systemprompt, Mainprompt, Fachwissen, Tool-/Skill-Zuordnung, Knowledge und Import-QA erzeugen.",
+        "focus": "Vollständige OpenWebUI-Modellpakete mit JSON, Systemprompt, Mainprompt, Fachwissen, Tool-/Skill-Zuordnung, Knowledge und Import-QA erzeugen.",
     },
     "präsentationserstellung": {
         "tools": ["ask_user", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python", "json_csv_text_validator"],

@@ -6,17 +6,17 @@ Anforderungen, Ziele, Nicht-Ziele, Stakeholder, Akzeptanzkriterien und Lastenhef
 
 ## Wiederverwendbarer Musterauftrag
 
-> Aus Stichpunkten, Screenshots und Prozessnotizen soll ein befuellbares Lastenheft entstehen.
+> Aus Stichpunkten, Screenshots und Prozessnotizen soll ein befüllbares Lastenheft entstehen.
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/lastenheft-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/lastenheft-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer Whiteboard-Fotos, Prozessskizzen, UI-Mockups oder abfotografierte Workshops.
+Nutze Vision für Whiteboard-Fotos, Prozessskizzen, UI-Mockups oder abfotografierte Workshops.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer Whiteboard-Fotos, Prozessskizzen, UI-Mockups oder abfotografie
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/lastenheft-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Jede Anforderung braucht Prioritaet, Akzeptanzkriterium, Quelle, Risiko und offenen Klaerungspunkt.
+Jede Anforderung braucht Priorität, Akzeptanzkriterium, Quelle, Risiko und offenen Klärungspunkt.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

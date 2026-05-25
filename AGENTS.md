@@ -76,12 +76,14 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 - Öffentliche Repository-Dokumentation muss sachlich bleiben: keine erfundenen Features, Badges, Roadmap-Zusagen, Supportkanäle oder Sicherheitsgarantien.
 - Community-Dateien wie `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, `CHANGELOG.md` und `.github/*` bei relevanten Prozessänderungen konsistent halten.
 - README-Links bevorzugt relativ setzen; absolute GitHub-Links nur verwenden, wenn Owner und Repository eindeutig sind.
+- Deutsche Prosa, Prompts, Beispiele und UI-Texte immer als UTF-8 mit echten Umlauten schreiben; ASCII-Umschreibungen wie `fuer`, `ueber`, `pruefen` oder `vollstaendig` nur in technischen IDs, Dateinamen oder extern vorgegebenen Tokens belassen.
 
 ## Öffentliche Repository-Pflege
 
 - Neue GitHub-Workflows dürfen nur vorhandene, lokal prüfbare Befehle ausführen.
 - Bei fehlendem Paketmanifest keine Paketmanager- oder Lockfile-Struktur erfinden.
 - CI-Änderungen mit `python scripts/verify_openwebui_workspace.py` oder einem engeren Check absichern.
+- Der zentrale Verify-Runner enthält `scripts/check_german_umlauts.py`; bei neuen deutschen Texten muss dieser Check grün bleiben.
 - `docs/MAINTAINER_CHECKLIST.md` für manuelle GitHub-Einstellungen nutzen, statt externe Plattformzustände als erledigt zu behaupten.
 - Social-Preview-, Badge- und Security-Hinweise nur ergänzen, wenn die referenzierten Dateien oder Workflows existieren.
 

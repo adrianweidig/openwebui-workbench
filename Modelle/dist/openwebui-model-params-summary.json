@@ -1845,7 +1845,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
-      "system_prompt_chars": 3001,
+      "system_prompt_chars": 3000,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -1898,7 +1898,7 @@
           "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
           "exists": true,
           "non_empty": true,
-          "bytes": 1497
+          "bytes": 1491
         },
         "vision-ui-qa-vorlage.md": {
           "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
@@ -1973,7 +1973,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
-      "system_prompt_chars": 2792,
+      "system_prompt_chars": 2791,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2203,7 +2203,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
-      "system_prompt_chars": 2832,
+      "system_prompt_chars": 2831,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2311,7 +2311,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
-      "system_prompt_chars": 2770,
+      "system_prompt_chars": 2769,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -2570,7 +2570,7 @@
           "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
           "exists": true,
           "non_empty": true,
-          "bytes": 7631
+          "bytes": 7530
         }
       },
       "vision_enabled": true,

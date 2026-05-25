@@ -1,4 +1,4 @@
-# Offline Workbench Agent - befuellbare Ergebnisvorlage
+# Offline Workbench Agent - befüllbare Ergebnisvorlage
 
 ## 1. Auftrag
 
@@ -6,26 +6,26 @@
 
 **Eingaben:** [Dateien, Text, Screenshots, Daten, Constraints]
 
-**Nutzerkontext:** [Zielgruppe, Umgebung, Sprache, Prioritaeten]
+**Nutzerkontext:** [Zielgruppe, Umgebung, Sprache, Prioritäten]
 
 ## 2. Tool- und Vision-Check
 
-| Pruefpunkt | Entscheidung | Begruendung |
+| Prüfpunkt | Entscheidung | Begruendung |
 |---|---|---|
 | Bild/Screenshot vorhanden | [ja/nein] | [sichtbarer Nutzen] |
-| Vision direkt nutzbar | [ja/nein/unklar] | [OpenWebUI/Basismodell-Faehigkeit] |
+| Vision direkt nutzbar | [ja/nein/unklar] | [OpenWebUI/Basismodell-Fähigkeit] |
 | Lokales Tool erforderlich | [Tool-ID] | [Validierung/Artefakt/Analyse] |
-| Rueckfrage noetig | [ja/nein] | [fehlende Pflichtangabe] |
+| Rückfrage nötig | [ja/nein] | [fehlende Pflichtangabe] |
 
 ## 3. Strukturierter Ergebnisentwurf
 
 ### Kurzfazit
 
-[2-4 Saetze]
+[2-4 Sätze]
 
 ### Hauptteil
 
-[fachliches Ergebnis in der fuer den Use Case passenden Struktur]
+[fachliches Ergebnis in der für den Use Case passenden Struktur]
 
 ### Sichtbare oder belegte Quellen
 
@@ -33,18 +33,18 @@
 
 ### Unsicherheiten
 
-- [Was ist nicht belegt, unscharf, unvollstaendig oder nicht pruefbar?]
+- [Was ist nicht belegt, unscharf, unvollständig oder nicht prüfbar?]
 
 ## 4. Akzeptanzcheck
 
-- [ ] Zweck des Modells erfuellt: Komplexe Offline-Aufgaben routen, Tools kombinieren und HTML/PDF/ZIP/Tabellen/Code-Artefakte lokal erzeugen.
-- [ ] Vision-/Screenshot-Regel beachtet: Nutze Vision fuer Screenshots, Artefakt-QA, Diagramme, UI-Zustaende und visuelle Eingaben.
-- [ ] Qualitaetslatte erfuellt: Der Plan muss Tool-Wellen, Artefaktpfade, Validierung und Uebergabeformat enthalten.
-- [ ] Tool-Ausgaben kritisch geprueft.
+- [ ] Zweck des Modells erfüllt: Komplexe Offline-Aufgaben routen, Tools kombinieren und HTML/PDF/ZIP/Tabellen/Code-Artefakte lokal erzeugen.
+- [ ] Vision-/Screenshot-Regel beachtet: Nutze Vision für Screenshots, Artefakt-QA, Diagramme, UI-Zustände und visuelle Eingaben.
+- [ ] Qualitätslatte erfüllt: Der Plan muss Tool-Wellen, Artefaktpfade, Validierung und Übergabeformat enthalten.
+- [ ] Tool-Ausgaben kritisch geprüft.
 - [ ] Ergebnis ist offline weiterverwendbar.
 
-## 5. Naechste Schritte
+## 5. Nächste Schritte
 
-1. [Naechster konkreter Schritt]
+1. [Nächster konkreter Schritt]
 2. [Optionaler Test oder Review]
-3. [Freigabe-/Rueckfragepunkt]
+3. [Freigabe-/Rückfragepunkt]

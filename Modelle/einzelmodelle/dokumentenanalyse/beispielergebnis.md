@@ -10,13 +10,13 @@ Dokumente, Scans, PDFs und strukturierte Inhalte quellenorientiert analysieren.
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/dokumentenanalyse-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/dokumentenanalyse-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer gescannte Seiten, Fotos, Stempel, Tabellenbilder oder visuelle Markierungen.
+Nutze Vision für gescannte Seiten, Fotos, Stempel, Tabellenbilder oder visuelle Markierungen.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer gescannte Seiten, Fotos, Stempel, Tabellenbilder oder visuelle
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/dokumentenanalyse-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Kernaussagen, Belege, Unsicherheiten und extrahierte Daten muessen getrennt bleiben.
+Kernaussagen, Belege, Unsicherheiten und extrahierte Daten müssen getrennt bleiben.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

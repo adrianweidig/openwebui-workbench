@@ -10,13 +10,13 @@ Refactoring-Ziele, Codebereiche, Risiken, Tests und schrittweise Umsetzung struk
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/refactoring-plan-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/refactoring-plan-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer UI-Verhaltensvergleiche, Architekturskizzen oder visuelle Regressionen.
+Nutze Vision für UI-Verhaltensvergleiche, Architekturskizzen oder visuelle Regressionen.
 
 ## Tool-first-Ablauf
 
@@ -24,9 +24,9 @@ Nutze Vision fuer UI-Verhaltensvergleiche, Architekturskizzen oder visuelle Regr
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/refactoring-plan-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
 Plan braucht Scope, Nicht-Ziele, Reihenfolge, Tests, Rollback und Akzeptanzkriterien.
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```
