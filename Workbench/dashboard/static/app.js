@@ -334,11 +334,25 @@ function formatDateTime(value) {
   }).format(parsed);
 }
 
+function localizedProduct(model) {
+  const i18n = model?.i18n || {};
+  return i18n[state.locale] || i18n[model?.fallback_locale || "en"] || i18n[model?.default_locale || "de"] || i18n.de || {};
+}
+
+function modelDisplayName(model) {
+  return localizedProduct(model).name || model.name || model.id;
+}
+
+function modelDisplayDescription(model) {
+  return localizedProduct(model).description || model.description || model.id;
+}
+
 function visibleModels() {
   const query = el("model-search").value.trim().toLocaleLowerCase(state.locale);
   if (!query) return state.models;
   return state.models.filter((model) => {
-    return `${model.id} ${model.name} ${model.description}`.toLocaleLowerCase(state.locale).includes(query);
+    const product = localizedProduct(model);
+    return `${model.id} ${model.name} ${model.description} ${product.name || ""} ${product.description || ""}`.toLocaleLowerCase(state.locale).includes(query);
   });
 }
 
@@ -396,7 +410,7 @@ function renderModels() {
       button.setAttribute("aria-current", "true");
     }
     const title = document.createElement("strong");
-    title.textContent = model.name;
+    title.textContent = modelDisplayName(model);
     const meta = document.createElement("div");
     meta.className = "row-meta";
     meta.append(
@@ -405,7 +419,7 @@ function renderModels() {
     );
     if (model.tags?.[0]) meta.append(makeChip(model.tags[0]));
     const sub = document.createElement("span");
-    sub.textContent = model.description || model.id;
+    sub.textContent = modelDisplayDescription(model);
     button.append(title, meta, sub);
     button.addEventListener("click", () => selectModel(model.id));
     list.append(button);
@@ -459,8 +473,8 @@ async function selectModel(modelId) {
   const model = state.models.find((item) => item.id === modelId);
   state.selectedModel = model;
   state.selectedFile = model.files.find((file) => file.name === "systemprompt.md")?.name || model.files[0]?.name || "systemprompt.md";
-  setText("model-title", model.name);
-  setText("model-description", model.description || model.id);
+  setText("model-title", modelDisplayName(model));
+  setText("model-description", modelDisplayDescription(model));
   renderModels();
   renderFileTabs();
   await loadFile(state.selectedFile);

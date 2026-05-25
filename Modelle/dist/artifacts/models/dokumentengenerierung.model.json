@@ -104,10 +104,106 @@
         "mainprompt.md",
         "fachwissen.md",
         "beispielergebnis.md"
-      ]
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "Dokumentengenerierung",
+          "description": "Dieses Produktprofil beschreibt das Modell Dokumentengenerierung für die deutschsprachige Standardnutzung und für mehrsprachige OpenWebUI-Workflows.",
+          "suggestion": "Nutze Dokumentengenerierung auf Deutsch und beachte vorhandene Fachbegriffe.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "Document Generation",
+          "description": "This product profile describes the Document Generation model for English usage and multilingual OpenWebUI workflows.",
+          "suggestion": "Use Document Generation in English and preserve existing technical terms.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Generación de documentos",
+          "description": "Este perfil describe el modelo Generación de documentos para uso en español y flujos multilingües de OpenWebUI.",
+          "suggestion": "Usa Generación de documentos en español y conserva la terminología técnica existente.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Génération de documents",
+          "description": "Ce profil décrit le modèle Génération de documents pour l'usage en français et les workflows OpenWebUI multilingues.",
+          "suggestion": "Utilise Génération de documents en français et conserve les termes techniques existants.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Geração de documentos",
+          "description": "Este perfil descreve o modelo Geração de documentos para uso em português do Brasil e fluxos multilíngues no OpenWebUI.",
+          "suggestion": "Use Geração de documentos em português do Brasil e preserve os termos técnicos existentes.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Generazione di documenti",
+          "description": "Questo profilo descrive il modello Generazione di documenti per l'uso in italiano e per workflow OpenWebUI multilingue.",
+          "suggestion": "Usa Generazione di documenti in italiano e conserva la terminologia tecnica esistente.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "Documentgeneratie",
+          "description": "Dit profiel beschrijft het model Documentgeneratie voor Nederlands gebruik en meertalige OpenWebUI-workflows.",
+          "suggestion": "Gebruik Documentgeneratie in het Nederlands en behoud bestaande technische termen.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Generowanie dokumentów",
+          "description": "Ten profil opisuje model Generowanie dokumentów do użycia po polsku i w wielojęzycznych przepływach OpenWebUI.",
+          "suggestion": "Użyj Generowanie dokumentów po polsku i zachowaj istniejące terminy techniczne.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "Belge oluşturma",
+          "description": "Bu profil, Belge oluşturma modelini Türkçe kullanım ve çok dilli OpenWebUI iş akışları için açıklar.",
+          "suggestion": "Belge oluşturma modelini Türkçe kullan ve mevcut teknik terimleri koru.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "文書生成",
+          "description": "このプロファイルは、日本語利用と多言語 OpenWebUI ワークフロー向けの 文書生成 モデルを説明します。",
+          "suggestion": "文書生成 を日本語で使い、既存の技術用語を保持してください。",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "文档生成",
+          "description": "此配置文件说明 文档生成 模型在简体中文和多语言 OpenWebUI 工作流中的用法。",
+          "suggestion": "用简体中文使用 文档生成，并保留现有技术术语。",
+          "profile": "i18n/zh-Hans.md"
+        }
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `dokumentengenerierung`. Mainprompt, Fachwissen und Beispielwissen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `offline_artifact_workbench`, `inline_visuals_toolkit_v3`, `visuals_toolkit_v4`, `json_csv_text_validator`. Relevante Skills: `offline-artifact-production`, `visual-toolkit-v3-offline`, `secure-tool-usage`. Fokus: HTML/PDF/ZIP-fähige Ergebnisse mit Artefakt- und Visual-Tools erzeugen.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `dokumentengenerierung`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `offline_artifact_workbench`, `inline_visuals_toolkit_v3`, `visuals_toolkit_v4`, `json_csv_text_validator`. Relevante Skills: `offline-artifact-production`, `visual-toolkit-v3-offline`, `secure-tool-usage`. Fokus: HTML/PDF/ZIP-fähige Ergebnisse mit Artefakt- und Visual-Tools erzeugen.",
       "temperature": 0.7,
       "top_p": 0.95,
       "stop": [],

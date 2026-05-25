@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "übersetzung-lokalisierung",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Übersetzung und Lokalisierung",
+    "en": "Translation and Localization",
+    "es": "Traducción y localización",
+    "fr": "Traduction et localisation",
+    "pt-BR": "Tradução e localização",
+    "it": "Traduzione e localizzazione",
+    "nl": "Vertaling en lokalisatie",
+    "pl": "Tłumaczenie i lokalizacja",
+    "tr": "Çeviri ve yerelleştirme",
+    "ja": "翻訳とローカライズ",
+    "zh-Hans": "翻译与本地化"
+  }
+}

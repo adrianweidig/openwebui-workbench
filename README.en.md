@@ -47,6 +47,8 @@ German is the default language for the repository, dashboard UI, primary README,
 - [`docs/en/`](docs/en/) contains the English documentation entry and i18n guidance.
 - Community files such as [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), [`SUPPORT.md`](SUPPORT.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`CHANGELOG.md`](CHANGELOG.md) have English `.en.md` variants.
 - The Workbench dashboard uses `WORKBENCH_LOCALE`, browser/system language, and a manual language selector. Unknown or missing locale information falls back to German.
+- The product components of all 31 model packages are also maintained under `Modelle/einzelmodelle/<model-id>/i18n/`. The directly integrated product locales are `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja`, and `zh-Hans`.
+- [`Modelle/i18n/product-locales.json`](Modelle/i18n/product-locales.json) is the central product locale manifest. [`scripts/generate_model_i18n_profiles.py`](scripts/generate_model_i18n_profiles.py) keeps `model.json`, product profiles, and the manifest in sync.
 
 All text resources stay UTF-8. Umlauts, accents, emojis, and non-Latin characters are preserved instead of being transliterated when they are visible prose.
 
@@ -56,7 +58,8 @@ All text resources stay UTF-8. Umlauts, accents, emojis, and non-Latin character
 |---|---|
 | [`OpenWebUI Model Builder/`](OpenWebUI%20Model%20Builder/) | Builder rules and workspace |
 | [`Problemfälle/`](Problemfälle/) | Domain briefings used to derive model packages |
-| [`Modelle/einzelmodelle/`](Modelle/einzelmodelle/) | Human-readable model packages with prompts, knowledge, examples, and `model.json` |
+| [`Modelle/einzelmodelle/`](Modelle/einzelmodelle/) | Human-readable model packages with prompts, knowledge, examples, `model.json`, and product `i18n/` profiles |
+| [`Modelle/i18n/`](Modelle/i18n/) | Central manifest for supported product locales |
 | [`Modelle/dist/`](Modelle/dist/) | Canonical air-gap handover artifacts, import files, and ZIP bundle |
 | [`Tools/jupyter/`](Tools/jupyter/) | Production Jupyter tool with example configuration |
 | [`Tools/openwebui_ext/`](Tools/openwebui_ext/) | Importable tools, filters, skills, docs, and tests |

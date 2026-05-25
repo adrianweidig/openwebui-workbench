@@ -37,6 +37,7 @@ MODEL_FALLBACK = MODEL_DIST / "models_fallback_bundle.json"
 MODEL_PARAMS_SUMMARY = MODEL_DIST / "openwebui-model-params-summary.json"
 MODEL_ARTIFACTS = MODEL_DIST / "artifacts" / "models"
 MODEL_EXAMPLE_ARTIFACTS = MODEL_DIST / "artifacts" / "examples"
+MODEL_I18N_ARTIFACTS = MODEL_DIST / "artifacts" / "i18n"
 MODEL_ICONS = ROOT / "Modelle" / "icons"
 MODEL_ICON_MANIFEST = MODEL_ICONS / "openwebui-generic-icons.json"
 MODEL_ICON_ARTIFACTS = MODEL_DIST / "artifacts" / "icons"
@@ -55,6 +56,8 @@ PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission"
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
+MODEL_I18N_DIR_NAME = "i18n"
+SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
 CUSTOM_GPT_QUALITY_SYSTEM_MARKER = "## CustomGPT-Qualitätsprofil"
@@ -75,7 +78,7 @@ HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 """
 CUSTOM_GPT_QUALITY_SYSTEM_BLOCK = f"""{CUSTOM_GPT_QUALITY_SYSTEM_MARKER}
 
-- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/` laden und analysieren.
+- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.
 - Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.
 - Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.
 """
@@ -715,6 +718,39 @@ def sync_model_example_artifacts(write: bool) -> bool:
     return changed
 
 
+def sync_model_i18n_artifacts(write: bool) -> bool:
+    source_files: List[Tuple[str, Path, Path]] = []
+    for model_dir in sorted(path for path in SINGLE_MODELS.iterdir() if path.is_dir()):
+        i18n_dir = model_dir / MODEL_I18N_DIR_NAME
+        if i18n_dir.exists():
+            source_files.extend(
+                (model_dir.name, path, path.relative_to(i18n_dir))
+                for path in sorted(i18n_dir.rglob("*"))
+                if path.is_file() and should_archive(path)
+            )
+
+    expected_targets = {
+        MODEL_I18N_ARTIFACTS / model_id / relative_path
+        for model_id, _, relative_path in source_files
+    }
+    existing_targets = sorted(path for path in MODEL_I18N_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_I18N_ARTIFACTS.exists() else []
+    changed = any(path not in expected_targets for path in existing_targets)
+    if not changed:
+        for model_id, source, relative_path in source_files:
+            target = MODEL_I18N_ARTIFACTS / model_id / relative_path
+            if not target.exists() or target.read_bytes() != source.read_bytes():
+                changed = True
+                break
+    if changed and write:
+        if MODEL_I18N_ARTIFACTS.exists():
+            shutil.rmtree(MODEL_I18N_ARTIFACTS)
+        for model_id, source, relative_path in source_files:
+            target = MODEL_I18N_ARTIFACTS / model_id / relative_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+    return changed
+
+
 def model_files() -> List[Path]:
     return sorted(SINGLE_MODELS.glob("*/model.json"))
 
@@ -927,7 +963,7 @@ def managed_system_profile_for_model(model_id: str) -> str:
 def systemprompt_source_for_model(model_id: str) -> str:
     return f"""# Systemprompt
 
-Dies ist nur der kurze Bootstrap-Prompt für das Modell `{model_id}`. Mainprompt, Fachwissen und Beispielwissen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.
+Dies ist nur der kurze Bootstrap-Prompt für das Modell `{model_id}`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.
 
 {managed_system_profile_for_model(model_id)}"""
 
@@ -943,10 +979,10 @@ def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
 
 def normalize_base_prompt_text(system_prompt: str) -> str:
     replacements = {
-        "`systemprompt.md`, `mainprompt.md` und `fachwissen.md`": "`systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`",
-        "`mainprompt.md` und `fachwissen.md`": "`mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`",
-        "Systemprompt, Mainprompt und Fachwissen": "Systemprompt, Mainprompt, Fachwissen und Beispielwissen",
-        "systemprompt.md, mainprompt.md und fachwissen.md": "systemprompt.md, mainprompt.md, fachwissen.md, beispielergebnis.md und beispiele/",
+        "`systemprompt.md`, `mainprompt.md` und `fachwissen.md`": "`systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien unter `beispiele/` und `i18n/`",
+        "`mainprompt.md` und `fachwissen.md`": "`mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien unter `beispiele/` und `i18n/`",
+        "Systemprompt, Mainprompt und Fachwissen": "Systemprompt, Mainprompt, Fachwissen, Beispielwissen und Produktsprachen",
+        "systemprompt.md, mainprompt.md und fachwissen.md": "systemprompt.md, mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ und i18n/",
     }
     normalized = system_prompt
     for old, new in replacements.items():
@@ -1016,6 +1052,10 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
     meta["primaryToolIds"] = list(profile["tools"])
     meta["recommendedSkillIds"] = list(profile["skills"])
     meta["requiredKnowledgeFiles"] = list(REQUIRED_MODEL_KNOWLEDGE_FILES)
+    meta["defaultLocale"] = "de"
+    meta["fallbackLocale"] = "en"
+    meta["supportedLocales"] = list(SUPPORTED_PRODUCT_LOCALES)
+    meta["productLocaleFiles"] = [f"{MODEL_I18N_DIR_NAME}/{locale}.md" for locale in SUPPORTED_PRODUCT_LOCALES]
     configure_runtime_params(model_id, params)
     capabilities["builtin_tools"] = True
     capabilities["file_context"] = bool(capabilities.get("file_context", True))
@@ -1041,6 +1081,7 @@ def model_knowledge_files(model_id: str) -> List[Path]:
     model_dir = SINGLE_MODELS / model_id
     files = [model_dir / name for name in REQUIRED_MODEL_KNOWLEDGE_FILES]
     files.extend(model_example_files(model_id))
+    files.extend(model_i18n_files(model_id))
     return files
 
 
@@ -1051,12 +1092,24 @@ def model_example_files(model_id: str) -> List[Path]:
     return sorted(path for path in examples_dir.rglob("*") if path.is_file() and should_archive(path))
 
 
+def model_i18n_files(model_id: str) -> List[Path]:
+    i18n_dir = SINGLE_MODELS / model_id / MODEL_I18N_DIR_NAME
+    if not i18n_dir.exists():
+        return []
+    return sorted(path for path in i18n_dir.rglob("*") if path.is_file() and should_archive(path))
+
+
 def model_knowledge_status(model_id: str) -> Dict[str, Dict[str, Any]]:
     status: Dict[str, Dict[str, Any]] = {}
+    model_dir = SINGLE_MODELS / model_id
     for path in model_knowledge_files(model_id):
         exists = path.exists()
         size = len(stable_text_bytes(path)) if exists else 0
-        status[path.name] = {
+        try:
+            key = path.relative_to(model_dir).as_posix()
+        except ValueError:
+            key = path.name
+        status[key] = {
             "path": rel(path),
             "exists": exists,
             "non_empty": size > 0,
@@ -1114,10 +1167,22 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
         "mistral_medium_vision_policy": "All chat model profiles enable OpenWebUI vision capability and include prompt rules for screenshot, UI, chart, scan, presentation and visual artifact analysis when the backing Mistral deployment supports image inputs.",
         "openwebui_builtin_and_addon_policy": "Chat models prefer standard OpenWebUI builtins and the mounted openwebui-offline-addons runtime for local caches, Playwright/Chromium, Tiktoken, NLTK and Python packages when available.",
         "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
+        "product_i18n_policy": {
+            "default_locale": "de",
+            "fallback_locale": "en",
+            "supported_locales": SUPPORTED_PRODUCT_LOCALES,
+            "locale_dir": MODEL_I18N_DIR_NAME,
+            "dist_i18n_dir": rel(MODEL_I18N_ARTIFACTS),
+            "behavior": "Every chat model ships localized product metadata and product profiles. German remains the default; unsupported or uncertain locales fall back to German.",
+        },
         "models": [
             {
                 "id": model.get("id"),
                 "name": model.get("name"),
+                "product_i18n_locales": sorted(
+                    (model.get("meta", {}).get("productI18n", {}) if isinstance(model.get("meta"), dict) else {}).keys()
+                ),
+                "product_locale_files": model.get("meta", {}).get("productLocaleFiles", []) if isinstance(model.get("meta"), dict) else [],
                 "temperature": model.get("params", {}).get("temperature") if isinstance(model.get("params"), dict) else None,
                 "top_p": model.get("params", {}).get("top_p") if isinstance(model.get("params"), dict) else None,
                 "function_calling": model.get("params", {}).get("function_calling") if isinstance(model.get("params"), dict) else None,
@@ -1235,6 +1300,15 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "dist_examples_dir": rel(MODEL_EXAMPLE_ARTIFACTS),
             "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and beispielergebnis.md.",
         },
+        "model_product_i18n_policy": {
+            "default_locale": "de",
+            "fallback_locale": "en",
+            "supported_locales": SUPPORTED_PRODUCT_LOCALES,
+            "locale_dir": MODEL_I18N_DIR_NAME,
+            "dist_i18n_dir": rel(MODEL_I18N_ARTIFACTS),
+            "central_manifest": rel(ROOT / "Modelle" / "i18n" / "product-locales.json"),
+            "behavior": "Each model package contains localized product names, descriptions, suggestions and Markdown profiles for all supported product locales. The API importer uploads these profiles into the per-model Knowledge collection.",
+        },
         "offline_addons_runtime": {
             "host_reference": "F:\\offline-ai-stack\\openwebui-offline-addons",
             "container_data_root": "/app/backend/data",
@@ -1289,6 +1363,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "skills_before_models": workspace_skill_ids,
         "skill_source_dir": rel(SKILLS_DIR),
         "model_knowledge_files_required": REQUIRED_MODEL_KNOWLEDGE_FILES,
+        "model_product_locales_supported": SUPPORTED_PRODUCT_LOCALES,
         "knowledge_before_models": {
             str(model.get("id")): model_knowledge_status(str(model.get("id")))
             for model in models
@@ -1317,7 +1392,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "custom_gpt_quality_policy": {
             "formatting_marker": MARKDOWN_FORMATTING_MARKER,
             "system_marker": CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
-            "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ before applying role, scope, output format, quality rules and examples to the task.",
+            "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ and i18n/ before applying role, scope, output format, quality rules, examples and language behavior to the task.",
         },
         "model_params_policy": {
             "max_tokens": "omitted",
@@ -1339,6 +1414,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.primaryToolIds",
             "meta.recommendedSkillIds",
             "meta.requiredKnowledgeFiles",
+            "meta.defaultLocale",
+            "meta.fallbackLocale",
+            "meta.supportedLocales",
+            "meta.productLocaleFiles",
+            "meta.productI18n",
             "params.function_calling",
             "params.temperature",
             "params.top_p",
@@ -1354,7 +1434,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
-        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, beispielergebnis.md and files under beispiele/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
+        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, beispielergebnis.md and files under beispiele/ and i18n/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
@@ -1461,6 +1541,35 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         required_knowledge = meta.get("requiredKnowledgeFiles", [])
         if required_knowledge != REQUIRED_MODEL_KNOWLEDGE_FILES:
             issues.append(f"Chat-Modell {model_id} hat meta.requiredKnowledgeFiles nicht vollständig")
+        if meta.get("defaultLocale") != "de":
+            issues.append(f"Chat-Modell {model_id} hat Deutsch nicht als meta.defaultLocale")
+        if meta.get("fallbackLocale") != "en":
+            issues.append(f"Chat-Modell {model_id} hat Englisch nicht als meta.fallbackLocale")
+        if meta.get("supportedLocales") != SUPPORTED_PRODUCT_LOCALES:
+            issues.append(f"Chat-Modell {model_id} hat keine vollständige Produktsprachenliste")
+        expected_locale_files = [f"{MODEL_I18N_DIR_NAME}/{locale}.md" for locale in SUPPORTED_PRODUCT_LOCALES]
+        if meta.get("productLocaleFiles") != expected_locale_files:
+            issues.append(f"Chat-Modell {model_id} hat keine vollständige Produktsprachen-Dateiliste")
+        product_i18n = meta.get("productI18n", {})
+        if not isinstance(product_i18n, dict):
+            issues.append(f"Chat-Modell {model_id} hat kein gültiges meta.productI18n")
+            product_i18n = {}
+        for locale in SUPPORTED_PRODUCT_LOCALES:
+            locale_entry = product_i18n.get(locale)
+            if not isinstance(locale_entry, dict):
+                issues.append(f"Chat-Modell {model_id} fehlt meta.productI18n.{locale}")
+                continue
+            for field in ["name", "description", "suggestion", "profile"]:
+                if not isinstance(locale_entry.get(field), str) or not locale_entry.get(field, "").strip():
+                    issues.append(f"Chat-Modell {model_id} hat leeres meta.productI18n.{locale}.{field}")
+            expected_profile = f"{MODEL_I18N_DIR_NAME}/{locale}.md"
+            if locale_entry.get("profile") != expected_profile:
+                issues.append(f"Chat-Modell {model_id} verweist für {locale} nicht auf {expected_profile}")
+        manifest_path = SINGLE_MODELS / model_id / MODEL_I18N_DIR_NAME / "manifest.json"
+        if not manifest_path.exists():
+            issues.append(f"Chat-Modell {model_id} fehlt Produktsprachen-Manifest {rel(manifest_path)}")
+        if len([path for path in model_i18n_files(model_id) if path.suffix.lower() == ".md"]) < len(SUPPORTED_PRODUCT_LOCALES):
+            issues.append(f"Chat-Modell {model_id} hat weniger als {len(SUPPORTED_PRODUCT_LOCALES)} Produktsprachenprofile")
         for path in model_knowledge_files(model_id):
             if not path.exists():
                 issues.append(f"Chat-Modell {model_id} fehlt Knowledge-Datei {rel(path)}")
@@ -1621,7 +1730,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--nltk-data-path", default=None, help="One-off override for the NLTK data path tool valve.")
     parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="One-off override to prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced by the importer.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ and i18n/ as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")
     parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds for --import-openwebui.")
     args = parser.parse_args(list(argv) if argv is not None else None)
@@ -1637,6 +1746,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     changed_function_artifacts = write_function_artifacts(function_records, args.write)
     changed_icon_artifacts = sync_icon_artifacts(args.write)
     changed_example_artifacts = sync_model_example_artifacts(args.write)
+    changed_model_i18n_artifacts = sync_model_i18n_artifacts(args.write)
     changed_models, models = apply_model_config(records, function_records, args.write)
     changed_model_params_summary = write_model_params_summary(models, args.write)
     changed_plan = write_registration_plan(records, function_records, models, args.write)
@@ -1652,8 +1762,9 @@ def main(argv: Iterable[str] | None = None) -> int:
     print(f"- Non-Chat-Modelle ausgeschlossen: {sum(1 for model in models if is_non_chat_model(model))}")
     print(f"- Icon-Artefakte geändert: {changed_icon_artifacts}")
     print(f"- Beispielartefakte geändert: {changed_example_artifacts}")
+    print(f"- Produkt-i18n-Artefakte geändert: {changed_model_i18n_artifacts}")
     print(f"- Modellparameter-Zusammenfassung geändert: {changed_model_params_summary}")
-    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_icon_artifacts or changed_models or changed_model_params_summary or changed_plan}")
+    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_icon_artifacts or changed_example_artifacts or changed_model_i18n_artifacts or changed_models or changed_model_params_summary or changed_plan}")
     if args.write and args.rebuild_zips:
         rebuild_zips()
         print("- ZIP-Artefakte: neu gebaut")

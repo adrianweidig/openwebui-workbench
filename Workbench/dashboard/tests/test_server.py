@@ -27,7 +27,27 @@ class WorkbenchStateTests(unittest.TestCase):
                         "id": "demo-model",
                         "name": "Demo Model",
                         "base_model_id": "coder",
-                        "meta": {"description": "Demo", "tags": [{"name": "test"}]},
+                        "meta": {
+                            "description": "Demo",
+                            "defaultLocale": "de",
+                            "fallbackLocale": "en",
+                            "supportedLocales": ["de", "en"],
+                            "tags": [{"name": "test"}],
+                            "productI18n": {
+                                "de": {
+                                    "name": "Demo-Modell",
+                                    "description": "Beschreibung mit ä, ö, ü, ß und 日本語.",
+                                    "suggestion": "Nutze das Demo-Modell.",
+                                    "profile": "i18n/de.md",
+                                },
+                                "en": {
+                                    "name": "Demo Model",
+                                    "description": "English demo description.",
+                                    "suggestion": "Use the demo model.",
+                                    "profile": "i18n/en.md",
+                                },
+                            },
+                        },
                     }
                 ]
             ),
@@ -37,6 +57,9 @@ class WorkbenchStateTests(unittest.TestCase):
         (model_dir / "mainprompt.md").write_text("Main\n", encoding="utf-8")
         (model_dir / "fachwissen.md").write_text("Knowledge\n", encoding="utf-8")
         (model_dir / "beispielergebnis.md").write_text("Example\n", encoding="utf-8")
+        (model_dir / "i18n").mkdir()
+        (model_dir / "i18n" / "de.md").write_text("# Demo-Modell\n", encoding="utf-8")
+        (model_dir / "i18n" / "en.md").write_text("# Demo Model\n", encoding="utf-8")
         umlaut_dir = self.root / "Modelle" / "einzelmodelle" / "übersetzung-lokalisierung"
         umlaut_dir.mkdir(parents=True)
         (umlaut_dir / "model.json").write_text(
@@ -58,6 +81,11 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(len(models), 2)
         self.assertEqual(models[0]["id"], "demo-model")
         self.assertEqual(models[0]["name"], "Demo Model")
+        self.assertEqual(models[0]["default_locale"], "de")
+        self.assertEqual(models[0]["fallback_locale"], "en")
+        self.assertEqual(models[0]["i18n"]["de"]["name"], "Demo-Modell")
+        self.assertIn("日本語", models[0]["i18n"]["de"]["description"])
+        self.assertIn("i18n/de.md", [item["name"] for item in models[0]["files"]])
         self.assertIn("test", models[0]["tags"])
         self.assertEqual(models[1]["id"], "übersetzung-lokalisierung")
 
@@ -71,6 +99,11 @@ class WorkbenchStateTests(unittest.TestCase):
         after = self.state.write_model_file("demo-model", "beispiele/demo.md", "Example note\n")
         self.assertEqual(after["content"], "Example note\n")
         self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispiele" / "demo.md").is_file())
+
+    def test_reads_and_writes_allowed_product_i18n_markdown(self) -> None:
+        after = self.state.write_model_file("demo-model", "i18n/de.md", "# Aktualisiertes Profil\n")
+        self.assertEqual(after["content"], "# Aktualisiertes Profil\n")
+        self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "i18n" / "de.md").is_file())
 
     def test_rejects_path_traversal(self) -> None:
         with self.assertRaises(ValueError):

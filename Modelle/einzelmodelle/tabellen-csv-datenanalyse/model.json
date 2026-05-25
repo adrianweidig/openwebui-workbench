@@ -107,10 +107,106 @@
         "mainprompt.md",
         "fachwissen.md",
         "beispielergebnis.md"
-      ]
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "Tabellen- und CSV-Datenanalyse",
+          "description": "Dieses Produktprofil beschreibt das Modell Tabellen- und CSV-Datenanalyse für die deutschsprachige Standardnutzung und für mehrsprachige OpenWebUI-Workflows.",
+          "suggestion": "Nutze Tabellen- und CSV-Datenanalyse auf Deutsch und beachte vorhandene Fachbegriffe.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "Table and CSV Data Analysis",
+          "description": "This product profile describes the Table and CSV Data Analysis model for English usage and multilingual OpenWebUI workflows.",
+          "suggestion": "Use Table and CSV Data Analysis in English and preserve existing technical terms.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Análisis de tablas y CSV",
+          "description": "Este perfil describe el modelo Análisis de tablas y CSV para uso en español y flujos multilingües de OpenWebUI.",
+          "suggestion": "Usa Análisis de tablas y CSV en español y conserva la terminología técnica existente.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Analyse de tableaux et CSV",
+          "description": "Ce profil décrit le modèle Analyse de tableaux et CSV pour l'usage en français et les workflows OpenWebUI multilingues.",
+          "suggestion": "Utilise Analyse de tableaux et CSV en français et conserve les termes techniques existants.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Análise de tabelas e CSV",
+          "description": "Este perfil descreve o modelo Análise de tabelas e CSV para uso em português do Brasil e fluxos multilíngues no OpenWebUI.",
+          "suggestion": "Use Análise de tabelas e CSV em português do Brasil e preserve os termos técnicos existentes.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Analisi di tabelle e CSV",
+          "description": "Questo profilo descrive il modello Analisi di tabelle e CSV per l'uso in italiano e per workflow OpenWebUI multilingue.",
+          "suggestion": "Usa Analisi di tabelle e CSV in italiano e conserva la terminologia tecnica esistente.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "Tabel- en CSV-dataanalyse",
+          "description": "Dit profiel beschrijft het model Tabel- en CSV-dataanalyse voor Nederlands gebruik en meertalige OpenWebUI-workflows.",
+          "suggestion": "Gebruik Tabel- en CSV-dataanalyse in het Nederlands en behoud bestaande technische termen.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Analiza tabel i CSV",
+          "description": "Ten profil opisuje model Analiza tabel i CSV do użycia po polsku i w wielojęzycznych przepływach OpenWebUI.",
+          "suggestion": "Użyj Analiza tabel i CSV po polsku i zachowaj istniejące terminy techniczne.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "Tablo ve CSV veri analizi",
+          "description": "Bu profil, Tablo ve CSV veri analizi modelini Türkçe kullanım ve çok dilli OpenWebUI iş akışları için açıklar.",
+          "suggestion": "Tablo ve CSV veri analizi modelini Türkçe kullan ve mevcut teknik terimleri koru.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "表と CSV データ分析",
+          "description": "このプロファイルは、日本語利用と多言語 OpenWebUI ワークフロー向けの 表と CSV データ分析 モデルを説明します。",
+          "suggestion": "表と CSV データ分析 を日本語で使い、既存の技術用語を保持してください。",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "表格与 CSV 数据分析",
+          "description": "此配置文件说明 表格与 CSV 数据分析 模型在简体中文和多语言 OpenWebUI 工作流中的用法。",
+          "suggestion": "用简体中文使用 表格与 CSV 数据分析，并保留现有技术术语。",
+          "profile": "i18n/zh-Hans.md"
+        }
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `tabellen-csv-datenanalyse`. Mainprompt, Fachwissen und Beispielwissen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `json_csv_text_validator`, `air_gapped_jupyter_python`, `offline_artifact_workbench`, `inline_visuals_toolkit_v3`. Relevante Skills: `data-cleaning-analysis`, `visual-toolkit-v3-offline`, `offline-artifact-production`. Fokus: Tabellen und CSV immer validieren, Berechnungen mit Jupyter durchführen und Ergebnisse exportierbar machen.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `tabellen-csv-datenanalyse`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `json_csv_text_validator`, `air_gapped_jupyter_python`, `offline_artifact_workbench`, `inline_visuals_toolkit_v3`. Relevante Skills: `data-cleaning-analysis`, `visual-toolkit-v3-offline`, `offline-artifact-production`. Fokus: Tabellen und CSV immer validieren, Berechnungen mit Jupyter durchführen und Ergebnisse exportierbar machen.",
       "temperature": 0.15,
       "top_p": 0.8,
       "stop": [],

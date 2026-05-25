@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "it-helpdesk-diagnose",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "IT-Helpdesk-Diagnose",
+    "en": "IT Helpdesk Diagnosis",
+    "es": "Diagnóstico de mesa de ayuda de TI",
+    "fr": "Diagnostic support informatique",
+    "pt-BR": "Diagnóstico de helpdesk de TI",
+    "it": "Diagnosi helpdesk IT",
+    "nl": "IT-helpdeskdiagnose",
+    "pl": "Diagnoza helpdesku IT",
+    "tr": "BT yardım masası tanısı",
+    "ja": "IT ヘルプデスク診断",
+    "zh-Hans": "IT 服务台诊断"
+  }
+}

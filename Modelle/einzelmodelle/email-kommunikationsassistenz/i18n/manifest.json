@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "email-kommunikationsassistenz",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "E-Mail- und Kommunikationsassistenz",
+    "en": "Email and Communication Assistant",
+    "es": "Asistente de correo y comunicación",
+    "fr": "Assistant e-mail et communication",
+    "pt-BR": "Assistente de e-mail e comunicação",
+    "it": "Assistente email e comunicazione",
+    "nl": "E-mail- en communicatieassistent",
+    "pl": "Asystent poczty i komunikacji",
+    "tr": "E-posta ve iletişim asistanı",
+    "ja": "メールとコミュニケーション支援",
+    "zh-Hans": "电子邮件与沟通助手"
+  }
+}

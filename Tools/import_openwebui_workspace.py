@@ -44,6 +44,7 @@ SKILLS_DIR = OPENWEBUI_EXT / "skills"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md", "beispielergebnis.md")
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
+MODEL_I18N_DIR_NAME = "i18n"
 DEFAULT_CONFIG_NAME = "openwebui_workspace_config.yaml"
 
 PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEBUI_API_KEY"}
@@ -934,12 +935,22 @@ def model_example_files(model_dir: Path) -> list[Path]:
     return sorted(path for path in examples_dir.rglob("*") if path.is_file() and path.suffix.lower() not in {".pyc", ".pyo", ".pyd"})
 
 
+def model_i18n_files(model_dir: Path) -> list[Path]:
+    i18n_dir = model_dir / MODEL_I18N_DIR_NAME
+    if not i18n_dir.exists():
+        return []
+    return sorted(path for path in i18n_dir.rglob("*") if path.is_file() and path.suffix.lower() not in {".pyc", ".pyo", ".pyd"})
+
+
 def model_knowledge_files(model_dir: Path) -> list[Path]:
     files = required_model_knowledge_files(model_dir)
     examples = model_example_files(model_dir)
     if not examples:
         raise RuntimeError(f"Model {model_dir.name} has no reusable example artifact under {model_dir / MODEL_EXAMPLES_DIR_NAME}")
-    return [*files, *examples]
+    product_i18n = model_i18n_files(model_dir)
+    if not product_i18n:
+        raise RuntimeError(f"Model {model_dir.name} has no product i18n profiles under {model_dir / MODEL_I18N_DIR_NAME}")
+    return [*files, *examples, *product_i18n]
 
 
 def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
@@ -1215,7 +1226,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--ca-file", default=None, help="CA bundle file for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--ca-path", default=None, help="Directory with trusted CA certificates for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, beispielergebnis.md and beispiele/ files as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ and i18n/ files as Knowledge.")
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",

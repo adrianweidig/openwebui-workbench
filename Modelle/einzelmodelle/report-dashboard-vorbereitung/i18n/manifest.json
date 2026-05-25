@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "report-dashboard-vorbereitung",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Report- und Dashboard-Vorbereitung",
+    "en": "Report and Dashboard Preparation",
+    "es": "Preparación de informes y dashboards",
+    "fr": "Préparation de rapports et tableaux de bord",
+    "pt-BR": "Preparação de relatórios e dashboards",
+    "it": "Preparazione di report e dashboard",
+    "nl": "Rapport- en dashboardvoorbereiding",
+    "pl": "Przygotowanie raportów i dashboardów",
+    "tr": "Rapor ve dashboard hazırlığı",
+    "ja": "レポートとダッシュボード準備",
+    "zh-Hans": "报告与仪表板准备"
+  }
+}

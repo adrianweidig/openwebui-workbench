@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "meeting-protokoll-auswertung",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Meeting-Protokoll-Auswertung",
+    "en": "Meeting Minutes Analysis",
+    "es": "Análisis de actas de reunión",
+    "fr": "Analyse de comptes rendus de réunion",
+    "pt-BR": "Análise de atas de reunião",
+    "it": "Analisi dei verbali di riunione",
+    "nl": "Analyse van vergaderverslagen",
+    "pl": "Analiza protokołów spotkań",
+    "tr": "Toplantı tutanağı analizi",
+    "ja": "会議議事録分析",
+    "zh-Hans": "会议纪要分析"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "dokumentengenerierung",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Dokumentengenerierung",
+    "en": "Document Generation",
+    "es": "Generación de documentos",
+    "fr": "Génération de documents",
+    "pt-BR": "Geração de documentos",
+    "it": "Generazione di documenti",
+    "nl": "Documentgeneratie",
+    "pl": "Generowanie dokumentów",
+    "tr": "Belge oluşturma",
+    "ja": "文書生成",
+    "zh-Hans": "文档生成"
+  }
+}

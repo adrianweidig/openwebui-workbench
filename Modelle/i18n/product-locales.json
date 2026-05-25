@@ -1,0 +1,1485 @@
+{
+  "schema": "openwebui-workbench-product-i18n/v1",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "locales": [
+    {
+      "code": "de",
+      "name": "Deutsch",
+      "direction": "ltr"
+    },
+    {
+      "code": "en",
+      "name": "English",
+      "direction": "ltr"
+    },
+    {
+      "code": "es",
+      "name": "Español",
+      "direction": "ltr"
+    },
+    {
+      "code": "fr",
+      "name": "Français",
+      "direction": "ltr"
+    },
+    {
+      "code": "pt-BR",
+      "name": "Português (Brasil)",
+      "direction": "ltr"
+    },
+    {
+      "code": "it",
+      "name": "Italiano",
+      "direction": "ltr"
+    },
+    {
+      "code": "nl",
+      "name": "Nederlands",
+      "direction": "ltr"
+    },
+    {
+      "code": "pl",
+      "name": "Polski",
+      "direction": "ltr"
+    },
+    {
+      "code": "tr",
+      "name": "Türkçe",
+      "direction": "ltr"
+    },
+    {
+      "code": "ja",
+      "name": "日本語",
+      "direction": "ltr"
+    },
+    {
+      "code": "zh-Hans",
+      "name": "简体中文",
+      "direction": "ltr"
+    }
+  ],
+  "supported_locales": [
+    {
+      "code": "de",
+      "name": "Deutsch",
+      "direction": "ltr"
+    },
+    {
+      "code": "en",
+      "name": "English",
+      "direction": "ltr"
+    },
+    {
+      "code": "es",
+      "name": "Español",
+      "direction": "ltr"
+    },
+    {
+      "code": "fr",
+      "name": "Français",
+      "direction": "ltr"
+    },
+    {
+      "code": "pt-BR",
+      "name": "Português (Brasil)",
+      "direction": "ltr"
+    },
+    {
+      "code": "it",
+      "name": "Italiano",
+      "direction": "ltr"
+    },
+    {
+      "code": "nl",
+      "name": "Nederlands",
+      "direction": "ltr"
+    },
+    {
+      "code": "pl",
+      "name": "Polski",
+      "direction": "ltr"
+    },
+    {
+      "code": "tr",
+      "name": "Türkçe",
+      "direction": "ltr"
+    },
+    {
+      "code": "ja",
+      "name": "日本語",
+      "direction": "ltr"
+    },
+    {
+      "code": "zh-Hans",
+      "name": "简体中文",
+      "direction": "ltr"
+    }
+  ],
+  "models": [
+    {
+      "id": "allgemein",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Allgemein",
+        "en": "General",
+        "es": "General",
+        "fr": "Général",
+        "pt-BR": "Geral",
+        "it": "Generale",
+        "nl": "Algemeen",
+        "pl": "Ogólne",
+        "tr": "Genel",
+        "ja": "汎用",
+        "zh-Hans": "通用"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/allgemein/i18n/de.md",
+        "en": "Modelle/einzelmodelle/allgemein/i18n/en.md",
+        "es": "Modelle/einzelmodelle/allgemein/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/allgemein/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/allgemein/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/allgemein/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/allgemein/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/allgemein/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/allgemein/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/allgemein/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/allgemein/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "anforderungsanalyse-lastenheft",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Anforderungsanalyse und Lastenheft",
+        "en": "Requirements Analysis and Specification",
+        "es": "Análisis de requisitos y especificación",
+        "fr": "Analyse des exigences et cahier des charges",
+        "pt-BR": "Análise de requisitos e especificação",
+        "it": "Analisi dei requisiti e specifica",
+        "nl": "Requirementsanalyse en specificatie",
+        "pl": "Analiza wymagań i specyfikacja",
+        "tr": "Gereksinim analizi ve şartname",
+        "ja": "要件分析と仕様書",
+        "zh-Hans": "需求分析与规格说明"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/de.md",
+        "en": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/en.md",
+        "es": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "api-schnittstellenentwurf",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "API- und Schnittstellenentwurf",
+        "en": "API and Interface Design",
+        "es": "Diseño de API e interfaces",
+        "fr": "Conception d'API et d'interfaces",
+        "pt-BR": "Design de APIs e interfaces",
+        "it": "Progettazione di API e interfacce",
+        "nl": "API- en interfaceontwerp",
+        "pl": "Projektowanie API i interfejsów",
+        "tr": "API ve arayüz tasarımı",
+        "ja": "API とインターフェース設計",
+        "zh-Hans": "API 与接口设计"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/de.md",
+        "en": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/en.md",
+        "es": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "code-dokumentation",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Code-Dokumentation",
+        "en": "Code Documentation",
+        "es": "Documentación de código",
+        "fr": "Documentation du code",
+        "pt-BR": "Documentação de código",
+        "it": "Documentazione del codice",
+        "nl": "Codedocumentatie",
+        "pl": "Dokumentacja kodu",
+        "tr": "Kod dokümantasyonu",
+        "ja": "コードドキュメント",
+        "zh-Hans": "代码文档"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/code-dokumentation/i18n/de.md",
+        "en": "Modelle/einzelmodelle/code-dokumentation/i18n/en.md",
+        "es": "Modelle/einzelmodelle/code-dokumentation/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/code-dokumentation/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/code-dokumentation/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/code-dokumentation/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/code-dokumentation/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/code-dokumentation/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/code-dokumentation/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/code-dokumentation/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/code-dokumentation/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "code-review",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Code-Review",
+        "en": "Code Review",
+        "es": "Revisión de código",
+        "fr": "Revue de code",
+        "pt-BR": "Revisão de código",
+        "it": "Revisione del codice",
+        "nl": "Codebeoordeling",
+        "pl": "Przegląd kodu",
+        "tr": "Kod incelemesi",
+        "ja": "コードレビュー",
+        "zh-Hans": "代码审查"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/code-review/i18n/de.md",
+        "en": "Modelle/einzelmodelle/code-review/i18n/en.md",
+        "es": "Modelle/einzelmodelle/code-review/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/code-review/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/code-review/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/code-review/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/code-review/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/code-review/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/code-review/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/code-review/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/code-review/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "codeanalyse",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Codeanalyse",
+        "en": "Code Analysis",
+        "es": "Análisis de código",
+        "fr": "Analyse de code",
+        "pt-BR": "Análise de código",
+        "it": "Analisi del codice",
+        "nl": "Codeanalyse",
+        "pl": "Analiza kodu",
+        "tr": "Kod analizi",
+        "ja": "コード分析",
+        "zh-Hans": "代码分析"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/codeanalyse/i18n/de.md",
+        "en": "Modelle/einzelmodelle/codeanalyse/i18n/en.md",
+        "es": "Modelle/einzelmodelle/codeanalyse/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/codeanalyse/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/codeanalyse/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/codeanalyse/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/codeanalyse/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/codeanalyse/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/codeanalyse/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/codeanalyse/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/codeanalyse/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "codegenerierung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Codegenerierung",
+        "en": "Code Generation",
+        "es": "Generación de código",
+        "fr": "Génération de code",
+        "pt-BR": "Geração de código",
+        "it": "Generazione di codice",
+        "nl": "Codegeneratie",
+        "pl": "Generowanie kodu",
+        "tr": "Kod üretimi",
+        "ja": "コード生成",
+        "zh-Hans": "代码生成"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/codegenerierung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/codegenerierung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/codegenerierung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/codegenerierung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/codegenerierung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/codegenerierung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/codegenerierung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/codegenerierung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/codegenerierung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/codegenerierung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/codegenerierung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "compliance-richtlinienprüfung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Compliance- und Richtlinienprüfung",
+        "en": "Compliance and Policy Review",
+        "es": "Revisión de cumplimiento y políticas",
+        "fr": "Contrôle de conformité et de politiques",
+        "pt-BR": "Revisão de conformidade e políticas",
+        "it": "Verifica di conformità e policy",
+        "nl": "Compliance- en beleidscontrole",
+        "pl": "Przegląd zgodności i polityk",
+        "tr": "Uyumluluk ve politika incelemesi",
+        "ja": "コンプライアンスとポリシー確認",
+        "zh-Hans": "合规与政策审查"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "debugging-fehleranalyse",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Debugging und Fehleranalyse",
+        "en": "Debugging and Error Analysis",
+        "es": "Depuración y análisis de errores",
+        "fr": "Débogage et analyse des erreurs",
+        "pt-BR": "Depuração e análise de erros",
+        "it": "Debugging e analisi degli errori",
+        "nl": "Debugging en foutanalyse",
+        "pl": "Debugowanie i analiza błędów",
+        "tr": "Hata ayıklama ve hata analizi",
+        "ja": "デバッグとエラー分析",
+        "zh-Hans": "调试与错误分析"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/de.md",
+        "en": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/en.md",
+        "es": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "dokumentenanalyse",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Dokumentenanalyse",
+        "en": "Document Analysis",
+        "es": "Análisis de documentos",
+        "fr": "Analyse de documents",
+        "pt-BR": "Análise de documentos",
+        "it": "Analisi dei documenti",
+        "nl": "Documentanalyse",
+        "pl": "Analiza dokumentów",
+        "tr": "Belge analizi",
+        "ja": "文書分析",
+        "zh-Hans": "文档分析"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/dokumentenanalyse/i18n/de.md",
+        "en": "Modelle/einzelmodelle/dokumentenanalyse/i18n/en.md",
+        "es": "Modelle/einzelmodelle/dokumentenanalyse/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/dokumentenanalyse/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/dokumentenanalyse/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/dokumentenanalyse/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/dokumentenanalyse/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/dokumentenanalyse/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/dokumentenanalyse/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/dokumentenanalyse/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/dokumentenanalyse/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "dokumentengenerierung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Dokumentengenerierung",
+        "en": "Document Generation",
+        "es": "Generación de documentos",
+        "fr": "Génération de documents",
+        "pt-BR": "Geração de documentos",
+        "it": "Generazione di documenti",
+        "nl": "Documentgeneratie",
+        "pl": "Generowanie dokumentów",
+        "tr": "Belge oluşturma",
+        "ja": "文書生成",
+        "zh-Hans": "文档生成"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/dokumentengenerierung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/dokumentengenerierung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/dokumentengenerierung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/dokumentengenerierung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/dokumentengenerierung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/dokumentengenerierung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/dokumentengenerierung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/dokumentengenerierung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/dokumentengenerierung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/dokumentengenerierung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/dokumentengenerierung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "dokumentenvergleich",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Dokumentenvergleich",
+        "en": "Document Comparison",
+        "es": "Comparación de documentos",
+        "fr": "Comparaison de documents",
+        "pt-BR": "Comparação de documentos",
+        "it": "Confronto di documenti",
+        "nl": "Documentvergelijking",
+        "pl": "Porównanie dokumentów",
+        "tr": "Belge karşılaştırma",
+        "ja": "文書比較",
+        "zh-Hans": "文档比较"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/dokumentenvergleich/i18n/de.md",
+        "en": "Modelle/einzelmodelle/dokumentenvergleich/i18n/en.md",
+        "es": "Modelle/einzelmodelle/dokumentenvergleich/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/dokumentenvergleich/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/dokumentenvergleich/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/dokumentenvergleich/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/dokumentenvergleich/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/dokumentenvergleich/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/dokumentenvergleich/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/dokumentenvergleich/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/dokumentenvergleich/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "dokumentenzusammenfassung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Dokumentenzusammenfassung",
+        "en": "Document Summarization",
+        "es": "Resumen de documentos",
+        "fr": "Synthèse de documents",
+        "pt-BR": "Resumo de documentos",
+        "it": "Sintesi di documenti",
+        "nl": "Documentsamenvatting",
+        "pl": "Streszczanie dokumentów",
+        "tr": "Belge özetleme",
+        "ja": "文書要約",
+        "zh-Hans": "文档摘要"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "email-kommunikationsassistenz",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "E-Mail- und Kommunikationsassistenz",
+        "en": "Email and Communication Assistant",
+        "es": "Asistente de correo y comunicación",
+        "fr": "Assistant e-mail et communication",
+        "pt-BR": "Assistente de e-mail e comunicação",
+        "it": "Assistente email e comunicazione",
+        "nl": "E-mail- en communicatieassistent",
+        "pl": "Asystent poczty i komunikacji",
+        "tr": "E-posta ve iletişim asistanı",
+        "ja": "メールとコミュニケーション支援",
+        "zh-Hans": "电子邮件与沟通助手"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/de.md",
+        "en": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/en.md",
+        "es": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "informationsextraktion",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Informationsextraktion",
+        "en": "Information Extraction",
+        "es": "Extracción de información",
+        "fr": "Extraction d'informations",
+        "pt-BR": "Extração de informações",
+        "it": "Estrazione di informazioni",
+        "nl": "Informatie-extractie",
+        "pl": "Ekstrakcja informacji",
+        "tr": "Bilgi çıkarımı",
+        "ja": "情報抽出",
+        "zh-Hans": "信息提取"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/informationsextraktion/i18n/de.md",
+        "en": "Modelle/einzelmodelle/informationsextraktion/i18n/en.md",
+        "es": "Modelle/einzelmodelle/informationsextraktion/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/informationsextraktion/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/informationsextraktion/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/informationsextraktion/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/informationsextraktion/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/informationsextraktion/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/informationsextraktion/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/informationsextraktion/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/informationsextraktion/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "it-helpdesk-diagnose",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "IT-Helpdesk-Diagnose",
+        "en": "IT Helpdesk Diagnosis",
+        "es": "Diagnóstico de mesa de ayuda de TI",
+        "fr": "Diagnostic support informatique",
+        "pt-BR": "Diagnóstico de helpdesk de TI",
+        "it": "Diagnosi helpdesk IT",
+        "nl": "IT-helpdeskdiagnose",
+        "pl": "Diagnoza helpdesku IT",
+        "tr": "BT yardım masası tanısı",
+        "ja": "IT ヘルプデスク診断",
+        "zh-Hans": "IT 服务台诊断"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/de.md",
+        "en": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/en.md",
+        "es": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "json-csv-log-analyse",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "JSON-, CSV- und Log-Analyse",
+        "en": "JSON, CSV and Log Analysis",
+        "es": "Análisis de JSON, CSV y logs",
+        "fr": "Analyse JSON, CSV et logs",
+        "pt-BR": "Análise de JSON, CSV e logs",
+        "it": "Analisi di JSON, CSV e log",
+        "nl": "JSON-, CSV- en loganalyse",
+        "pl": "Analiza JSON, CSV i logów",
+        "tr": "JSON, CSV ve log analizi",
+        "ja": "JSON・CSV・ログ分析",
+        "zh-Hans": "JSON、CSV 与日志分析"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/de.md",
+        "en": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/en.md",
+        "es": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "meeting-protokoll-auswertung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Meeting-Protokoll-Auswertung",
+        "en": "Meeting Minutes Analysis",
+        "es": "Análisis de actas de reunión",
+        "fr": "Analyse de comptes rendus de réunion",
+        "pt-BR": "Análise de atas de reunião",
+        "it": "Analisi dei verbali di riunione",
+        "nl": "Analyse van vergaderverslagen",
+        "pl": "Analiza protokołów spotkań",
+        "tr": "Toplantı tutanağı analizi",
+        "ja": "会議議事録分析",
+        "zh-Hans": "会议纪要分析"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "mistral-vision-workbench",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Mistral Vision Workbench",
+        "en": "Mistral Vision Workbench",
+        "es": "Mistral Vision Workbench",
+        "fr": "Mistral Vision Workbench",
+        "pt-BR": "Mistral Vision Workbench",
+        "it": "Mistral Vision Workbench",
+        "nl": "Mistral Vision Workbench",
+        "pl": "Mistral Vision Workbench",
+        "tr": "Mistral Vision Workbench",
+        "ja": "Mistral Vision Workbench",
+        "zh-Hans": "Mistral Vision Workbench"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/de.md",
+        "en": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/en.md",
+        "es": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "n8n-workflow-architect",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "n8n Workflow Architect",
+        "en": "n8n Workflow Architect",
+        "es": "Arquitecto de workflows n8n",
+        "fr": "Architecte de workflows n8n",
+        "pt-BR": "Arquiteto de workflows n8n",
+        "it": "Architetto di workflow n8n",
+        "nl": "n8n-workflowarchitect",
+        "pl": "Architekt workflow n8n",
+        "tr": "n8n iş akışı mimarı",
+        "ja": "n8n ワークフローアーキテクト",
+        "zh-Hans": "n8n 工作流架构师"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/de.md",
+        "en": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/en.md",
+        "es": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "offline-workbench-agent",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Offline Workbench Agent",
+        "en": "Offline Workbench Agent",
+        "es": "Agente de Workbench sin conexión",
+        "fr": "Agent Workbench hors ligne",
+        "pt-BR": "Agente Workbench offline",
+        "it": "Agente Workbench offline",
+        "nl": "Offline Workbench Agent",
+        "pl": "Agent Offline Workbench",
+        "tr": "Çevrimdışı Workbench ajanı",
+        "ja": "オフライン Workbench エージェント",
+        "zh-Hans": "离线 Workbench 代理"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/offline-workbench-agent/i18n/de.md",
+        "en": "Modelle/einzelmodelle/offline-workbench-agent/i18n/en.md",
+        "es": "Modelle/einzelmodelle/offline-workbench-agent/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/offline-workbench-agent/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/offline-workbench-agent/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/offline-workbench-agent/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/offline-workbench-agent/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/offline-workbench-agent/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/offline-workbench-agent/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/offline-workbench-agent/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/offline-workbench-agent/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "openwebui-model-builder",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "OpenWebUI Model Builder",
+        "en": "OpenWebUI Model Builder",
+        "es": "Constructor de modelos OpenWebUI",
+        "fr": "Générateur de modèles OpenWebUI",
+        "pt-BR": "Construtor de modelos OpenWebUI",
+        "it": "Generatore di modelli OpenWebUI",
+        "nl": "OpenWebUI-modelbouwer",
+        "pl": "Kreator modeli OpenWebUI",
+        "tr": "OpenWebUI model oluşturucu",
+        "ja": "OpenWebUI モデルビルダー",
+        "zh-Hans": "OpenWebUI 模型构建器"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/openwebui-model-builder/i18n/de.md",
+        "en": "Modelle/einzelmodelle/openwebui-model-builder/i18n/en.md",
+        "es": "Modelle/einzelmodelle/openwebui-model-builder/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/openwebui-model-builder/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/openwebui-model-builder/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/openwebui-model-builder/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/openwebui-model-builder/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/openwebui-model-builder/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/openwebui-model-builder/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/openwebui-model-builder/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/openwebui-model-builder/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "promptforge",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "PromptForge",
+        "en": "PromptForge",
+        "es": "PromptForge",
+        "fr": "PromptForge",
+        "pt-BR": "PromptForge",
+        "it": "PromptForge",
+        "nl": "PromptForge",
+        "pl": "PromptForge",
+        "tr": "PromptForge",
+        "ja": "PromptForge",
+        "zh-Hans": "PromptForge"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/promptforge/i18n/de.md",
+        "en": "Modelle/einzelmodelle/promptforge/i18n/en.md",
+        "es": "Modelle/einzelmodelle/promptforge/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/promptforge/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/promptforge/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/promptforge/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/promptforge/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/promptforge/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/promptforge/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/promptforge/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/promptforge/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "prozess-workflow-dokumentation",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Prozess- und Workflow-Dokumentation",
+        "en": "Process and Workflow Documentation",
+        "es": "Documentación de procesos y workflows",
+        "fr": "Documentation de processus et workflows",
+        "pt-BR": "Documentação de processos e workflows",
+        "it": "Documentazione di processi e workflow",
+        "nl": "Proces- en workflowdocumentatie",
+        "pl": "Dokumentacja procesów i workflow",
+        "tr": "Süreç ve iş akışı dokümantasyonu",
+        "ja": "プロセスとワークフロードキュメント",
+        "zh-Hans": "流程与工作流文档"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/de.md",
+        "en": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/en.md",
+        "es": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "präsentationserstellung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Präsentationserstellung",
+        "en": "Presentation Creation",
+        "es": "Creación de presentaciones",
+        "fr": "Création de présentations",
+        "pt-BR": "Criação de apresentações",
+        "it": "Creazione di presentazioni",
+        "nl": "Presentatiecreatie",
+        "pl": "Tworzenie prezentacji",
+        "tr": "Sunum oluşturma",
+        "ja": "プレゼンテーション作成",
+        "zh-Hans": "演示文稿创建"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/präsentationserstellung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/präsentationserstellung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/präsentationserstellung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/präsentationserstellung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/präsentationserstellung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/präsentationserstellung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/präsentationserstellung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/präsentationserstellung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/präsentationserstellung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/präsentationserstellung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/präsentationserstellung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "refactoring-unterstützung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Refactoring-Unterstützung",
+        "en": "Refactoring Support",
+        "es": "Soporte de refactorización",
+        "fr": "Assistance au refactoring",
+        "pt-BR": "Suporte a refatoração",
+        "it": "Supporto al refactoring",
+        "nl": "Refactoringondersteuning",
+        "pl": "Wsparcie refaktoryzacji",
+        "tr": "Refactoring desteği",
+        "ja": "リファクタリング支援",
+        "zh-Hans": "重构支持"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "report-dashboard-vorbereitung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Report- und Dashboard-Vorbereitung",
+        "en": "Report and Dashboard Preparation",
+        "es": "Preparación de informes y dashboards",
+        "fr": "Préparation de rapports et tableaux de bord",
+        "pt-BR": "Preparação de relatórios e dashboards",
+        "it": "Preparazione di report e dashboard",
+        "nl": "Rapport- en dashboardvoorbereiding",
+        "pl": "Przygotowanie raportów i dashboardów",
+        "tr": "Rapor ve dashboard hazırlığı",
+        "ja": "レポートとダッシュボード準備",
+        "zh-Hans": "报告与仪表板准备"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "support-ticket-vorbereitung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Support-Ticket-Vorbereitung",
+        "en": "Support Ticket Preparation",
+        "es": "Preparación de tickets de soporte",
+        "fr": "Préparation de tickets support",
+        "pt-BR": "Preparação de tickets de suporte",
+        "it": "Preparazione di ticket di supporto",
+        "nl": "Supportticketvoorbereiding",
+        "pl": "Przygotowanie zgłoszeń supportu",
+        "tr": "Destek talebi hazırlığı",
+        "ja": "サポートチケット準備",
+        "zh-Hans": "支持工单准备"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "tabellen-csv-datenanalyse",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Tabellen- und CSV-Datenanalyse",
+        "en": "Table and CSV Data Analysis",
+        "es": "Análisis de tablas y CSV",
+        "fr": "Analyse de tableaux et CSV",
+        "pt-BR": "Análise de tabelas e CSV",
+        "it": "Analisi di tabelle e CSV",
+        "nl": "Tabel- en CSV-dataanalyse",
+        "pl": "Analiza tabel i CSV",
+        "tr": "Tablo ve CSV veri analizi",
+        "ja": "表と CSV データ分析",
+        "zh-Hans": "表格与 CSV 数据分析"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/de.md",
+        "en": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/en.md",
+        "es": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "testfall-generierung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Testfall-Generierung",
+        "en": "Test Case Generation",
+        "es": "Generación de casos de prueba",
+        "fr": "Génération de cas de test",
+        "pt-BR": "Geração de casos de teste",
+        "it": "Generazione di casi di test",
+        "nl": "Testcasegeneratie",
+        "pl": "Generowanie przypadków testowych",
+        "tr": "Test senaryosu üretimi",
+        "ja": "テストケース生成",
+        "zh-Hans": "测试用例生成"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/testfall-generierung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/testfall-generierung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/testfall-generierung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/testfall-generierung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/testfall-generierung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/testfall-generierung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/testfall-generierung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/testfall-generierung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/testfall-generierung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/testfall-generierung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/testfall-generierung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "übersetzung-lokalisierung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Übersetzung und Lokalisierung",
+        "en": "Translation and Localization",
+        "es": "Traducción y localización",
+        "fr": "Traduction et localisation",
+        "pt-BR": "Tradução e localização",
+        "it": "Traduzione e localizzazione",
+        "nl": "Vertaling en lokalisatie",
+        "pl": "Tłumaczenie i lokalizacja",
+        "tr": "Çeviri ve yerelleştirme",
+        "ja": "翻訳とローカライズ",
+        "zh-Hans": "翻译与本地化"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/zh-Hans.md"
+      }
+    }
+  ]
+}

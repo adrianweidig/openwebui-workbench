@@ -104,10 +104,106 @@
         "mainprompt.md",
         "fachwissen.md",
         "beispielergebnis.md"
-      ]
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "Testfall-Generierung",
+          "description": "Dieses Produktprofil beschreibt das Modell Testfall-Generierung für die deutschsprachige Standardnutzung und für mehrsprachige OpenWebUI-Workflows.",
+          "suggestion": "Nutze Testfall-Generierung auf Deutsch und beachte vorhandene Fachbegriffe.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "Test Case Generation",
+          "description": "This product profile describes the Test Case Generation model for English usage and multilingual OpenWebUI workflows.",
+          "suggestion": "Use Test Case Generation in English and preserve existing technical terms.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Generación de casos de prueba",
+          "description": "Este perfil describe el modelo Generación de casos de prueba para uso en español y flujos multilingües de OpenWebUI.",
+          "suggestion": "Usa Generación de casos de prueba en español y conserva la terminología técnica existente.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Génération de cas de test",
+          "description": "Ce profil décrit le modèle Génération de cas de test pour l'usage en français et les workflows OpenWebUI multilingues.",
+          "suggestion": "Utilise Génération de cas de test en français et conserve les termes techniques existants.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Geração de casos de teste",
+          "description": "Este perfil descreve o modelo Geração de casos de teste para uso em português do Brasil e fluxos multilíngues no OpenWebUI.",
+          "suggestion": "Use Geração de casos de teste em português do Brasil e preserve os termos técnicos existentes.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Generazione di casi di test",
+          "description": "Questo profilo descrive il modello Generazione di casi di test per l'uso in italiano e per workflow OpenWebUI multilingue.",
+          "suggestion": "Usa Generazione di casi di test in italiano e conserva la terminologia tecnica esistente.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "Testcasegeneratie",
+          "description": "Dit profiel beschrijft het model Testcasegeneratie voor Nederlands gebruik en meertalige OpenWebUI-workflows.",
+          "suggestion": "Gebruik Testcasegeneratie in het Nederlands en behoud bestaande technische termen.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Generowanie przypadków testowych",
+          "description": "Ten profil opisuje model Generowanie przypadków testowych do użycia po polsku i w wielojęzycznych przepływach OpenWebUI.",
+          "suggestion": "Użyj Generowanie przypadków testowych po polsku i zachowaj istniejące terminy techniczne.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "Test senaryosu üretimi",
+          "description": "Bu profil, Test senaryosu üretimi modelini Türkçe kullanım ve çok dilli OpenWebUI iş akışları için açıklar.",
+          "suggestion": "Test senaryosu üretimi modelini Türkçe kullan ve mevcut teknik terimleri koru.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "テストケース生成",
+          "description": "このプロファイルは、日本語利用と多言語 OpenWebUI ワークフロー向けの テストケース生成 モデルを説明します。",
+          "suggestion": "テストケース生成 を日本語で使い、既存の技術用語を保持してください。",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "测试用例生成",
+          "description": "此配置文件说明 测试用例生成 模型在简体中文和多语言 OpenWebUI 工作流中的用法。",
+          "suggestion": "用简体中文使用 测试用例生成，并保留现有技术术语。",
+          "profile": "i18n/zh-Hans.md"
+        }
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `testfall-generierung`. Mainprompt, Fachwissen und Beispielwissen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `repo_tree_analyzer`, `json_csv_text_validator`, `air_gapped_jupyter_python`, `parallel_tools`. Relevante Skills: `code-review-deep`, `repository-maintenance`, `data-cleaning-analysis`. Fokus: Anforderungen, Codepfade, Testdaten und erwartete Ergebnisse mit lokalen Prüfpfaden absichern.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `testfall-generierung`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `repo_tree_analyzer`, `json_csv_text_validator`, `air_gapped_jupyter_python`, `parallel_tools`. Relevante Skills: `code-review-deep`, `repository-maintenance`, `data-cleaning-analysis`. Fokus: Anforderungen, Codepfade, Testdaten und erwartete Ergebnisse mit lokalen Prüfpfaden absichern.",
       "temperature": 0.3,
       "top_p": 0.9,
       "stop": [],

@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "refactoring-unterstützung",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Refactoring-Unterstützung",
+    "en": "Refactoring Support",
+    "es": "Soporte de refactorización",
+    "fr": "Assistance au refactoring",
+    "pt-BR": "Suporte a refatoração",
+    "it": "Supporto al refactoring",
+    "nl": "Refactoringondersteuning",
+    "pl": "Wsparcie refaktoryzacji",
+    "tr": "Refactoring desteği",
+    "ja": "リファクタリング支援",
+    "zh-Hans": "重构支持"
+  }
+}

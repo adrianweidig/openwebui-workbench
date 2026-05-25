@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "api-schnittstellenentwurf",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "API- und Schnittstellenentwurf",
+    "en": "API and Interface Design",
+    "es": "Diseño de API e interfaces",
+    "fr": "Conception d'API et d'interfaces",
+    "pt-BR": "Design de APIs e interfaces",
+    "it": "Progettazione di API e interfacce",
+    "nl": "API- en interfaceontwerp",
+    "pl": "Projektowanie API i interfejsów",
+    "tr": "API ve arayüz tasarımı",
+    "ja": "API とインターフェース設計",
+    "zh-Hans": "API 与接口设计"
+  }
+}

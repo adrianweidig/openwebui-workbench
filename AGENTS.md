@@ -9,6 +9,8 @@ Dieses Repository ist ein portabler OpenWebUI-Workbench-Arbeitsbereich für Mode
 - `OpenWebUI Model Builder/`: Vorgaben, Generatorlogik und Builder-Arbeitsbereich.
 - `Problemfälle/`: fachliche Briefings; nicht destruktiv bearbeiten.
 - `Modelle/einzelmodelle/`: menschenlesbare Modellpakete.
+- `Modelle/einzelmodelle/<modell>/i18n/`: produktbezogene Sprachprofile der Modellpakete.
+- `Modelle/i18n/`: zentrales Produktsprachen-Manifest.
 - `Modelle/dist/`: kanonische Air-Gap-Handover-Artefakte.
 - `Tools/jupyter/`: produktives Jupyter-Tool.
 - `Tools/openwebui_ext/`: importierbare Tools, Filter, Skills, Doku und Tests.
@@ -64,6 +66,7 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 - Keine neuen externen Abhängigkeiten ohne konkreten Prüf- oder Laufzeitnutzen.
 - Kein globales Formatieren und keine breitflächigen Refactors.
 - JSON-Artefakte mit UTF-8 und stabiler Sortierung/Formatierung des Generators pflegen.
+- Produkt-i18n-Profile nicht manuell breit auseinanderziehen; bei Sprachänderungen zuerst `scripts/generate_model_i18n_profiles.py` anpassen und danach Dist-Artefakte mit `scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips` regenerieren.
 
 ## Dokumentationskonventionen
 
