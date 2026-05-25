@@ -77,15 +77,27 @@ async function api(path, options = {}) {
     headers: { "Content-Type": "application/json", "X-Workbench-Locale": state.locale, ...(options.headers || {}) },
     ...options,
   });
-  const payload = await response.json();
+  let payload = {};
+  try {
+    payload = await response.json();
+  } catch {
+    payload = { error: `HTTP ${response.status}` };
+  }
   if (!response.ok) {
-    throw new Error(payload.error || `HTTP ${response.status}`);
+    const error = new Error(payload.error || `HTTP ${response.status}`);
+    error.status = response.status;
+    error.payload = payload;
+    throw error;
   }
   return payload;
 }
 
 function setText(id, value) {
   el(id).textContent = value;
+}
+
+function formatActionResult(result) {
+  return `$ ${result.command.join(" ")}\n\n${t("log.exitCode")}: ${result.returncode}\n${t("log.duration")}: ${formatNumber(result.duration_seconds, 1)}s\n\n${result.output}`;
 }
 
 function escapeHtml(value) {
@@ -539,12 +551,16 @@ async function runAction(action) {
   log.textContent = t("log.starting", { action });
   try {
     const result = await api(`/api/actions/${encodeURIComponent(action)}`, { method: "POST", body: "{}" });
-    log.textContent = `$ ${result.command.join(" ")}\n\n${t("log.exitCode")}: ${result.returncode}\n${t("log.duration")}: ${formatNumber(result.duration_seconds, 1)}s\n\n${result.output}`;
+    log.textContent = formatActionResult(result);
     await refreshStatus();
     await refreshModels(false);
     await refreshResources(false);
   } catch (error) {
-    log.textContent += `\n\n${t("state.error")}: ${error.message}`;
+    if (error.payload?.command && typeof error.payload.output === "string") {
+      log.textContent = `${formatActionResult(error.payload)}\n\n${t("state.error")}: ${error.message}`;
+    } else {
+      log.textContent += `\n\n${t("state.error")}: ${error.message}`;
+    }
   }
 }
 

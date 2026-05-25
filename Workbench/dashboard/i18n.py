@@ -10,6 +10,7 @@ SUPPORTED_LOCALES = ("de", "en")
 
 MESSAGES: dict[str, dict[str, str]] = {
     "de": {
+        "action_failed": "Aktion fehlgeschlagen (Exit-Code {returncode}). Details stehen in der Ausgabe.",
         "auth_required": "Authentifizierung erforderlich.",
         "content_too_large": "Dateiinhalt ist größer als {max_bytes} Bytes.",
         "dashboard_listening": "OpenWebUI Workbench Dashboard läuft auf http://{host}:{port}",
@@ -31,6 +32,7 @@ MESSAGES: dict[str, dict[str, str]] = {
         "write_disabled": "Schreibzugriff ist deaktiviert.",
     },
     "en": {
+        "action_failed": "Action failed (exit code {returncode}). See the output for details.",
         "auth_required": "Authentication required.",
         "content_too_large": "File content is larger than {max_bytes} bytes.",
         "dashboard_listening": "OpenWebUI Workbench dashboard listening on http://{host}:{port}",

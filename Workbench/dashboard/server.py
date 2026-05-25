@@ -449,7 +449,10 @@ class WorkbenchState:
         return self.read_resource(kind, resource_id)
 
     def run_action(self, action: str) -> dict[str, Any]:
-        command_env: dict[str, str] = {}
+        command_env: dict[str, str] = {
+            "PYTHONUTF8": "1",
+            "PYTHONIOENCODING": "utf-8",
+        }
         if action == "check":
             command = [sys.executable, "scripts/verify_openwebui_workspace.py"]
             label = "Verify workspace"
@@ -469,9 +472,6 @@ class WorkbenchState:
             ]
             label = "Import dry-run"
         elif action == "import-openwebui":
-            token = self.config.admin_token
-            if not token:
-                raise PermissionError(t("token_missing", self.config.locale))
             command = [
                 sys.executable,
                 "scripts/configure_openwebui_tool_models.py",
@@ -479,16 +479,21 @@ class WorkbenchState:
                 "--check",
                 "--rebuild-zips",
                 "--import-openwebui",
-                "--base-url",
-                self.config.openwebui_base_url,
-                "--token",
-                token,
             ]
-            command_env = {
-                "OPENWEBUI_TLS_VERIFY": "true" if self.config.tls_verify else "false",
-                "OPENWEBUI_CA_FILE": self.config.ca_file,
-                "OPENWEBUI_CA_PATH": self.config.ca_path,
-            }
+            if self.config_file.exists():
+                command.extend(["--config", str(self.config_file)])
+            if os.environ.get("OPENWEBUI_BASE_URL"):
+                command.extend(["--base-url", self.config.openwebui_base_url])
+            token = self.config.admin_token
+            if token:
+                command.extend(["--token", token])
+            command_env.update(
+                {
+                    "OPENWEBUI_TLS_VERIFY": "true" if self.config.tls_verify else "false",
+                    "OPENWEBUI_CA_FILE": self.config.ca_file,
+                    "OPENWEBUI_CA_PATH": self.config.ca_path,
+                }
+            )
             label = "Import to OpenWebUI"
         else:
             raise ValueError(t("unknown_action", self.config.locale, action=action))
@@ -515,6 +520,7 @@ class WorkbenchState:
             "duration_seconds": round(time.time() - started, 1),
             "ok": completed.returncode == 0,
             "output": output[-20000:],
+            "error": "" if completed.returncode == 0 else t("action_failed", self.config.locale, returncode=completed.returncode),
         }
 
 

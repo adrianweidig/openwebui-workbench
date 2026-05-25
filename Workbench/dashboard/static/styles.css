@@ -825,8 +825,14 @@ textarea:focus-visible {
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand > div,
+.status-box > div {
+  min-width: 0;
 }
 
 .brand-mark {
@@ -853,8 +859,9 @@ textarea:focus-visible {
   align-items: center;
 }
 
-.nav-item span {
+.nav-item span[aria-hidden="true"] {
   display: grid;
+  flex: 0 0 28px;
   width: 28px;
   height: 28px;
   place-items: center;
@@ -865,8 +872,17 @@ textarea:focus-visible {
   font-size: 12px;
 }
 
-.nav-item.active span,
-.nav-item:hover span {
+.nav-item span:not([aria-hidden="true"]) {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-item.active span[aria-hidden="true"],
+.nav-item:hover span[aria-hidden="true"] {
   border-color: rgba(56, 189, 248, 0.46);
   background: rgba(56, 189, 248, 0.16);
 }

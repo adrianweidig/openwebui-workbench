@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import threading
 import tempfile
 import unittest
 from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import Workbench.dashboard.server as dashboard_server
 from Workbench.dashboard.i18n import detect_locale, normalize_locale, t
@@ -165,6 +168,29 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(detect_locale("en-US,en;q=0.9"), "en")
         self.assertEqual(t("auth_required", "de"), "Authentifizierung erforderlich.")
         self.assertEqual(t("auth_required", "en"), "Authentication required.")
+
+    def test_import_action_uses_local_config_and_returns_failure_output(self) -> None:
+        config_dir = self.root / "scripts"
+        config_dir.mkdir(parents=True)
+        (config_dir / "openwebui_workspace_config.yaml").write_text(
+            "openwebui:\n  base_url: http://127.0.0.1:3000\n  admin_token: YOUR_OPEN_WEBUI_API_KEY\n",
+            encoding="utf-8",
+        )
+        state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://openwebui:8080"))
+        completed = SimpleNamespace(returncode=2, stdout="import failed\n")
+
+        with (
+            patch.dict(os.environ, {"OPENWEBUI_BASE_URL": "", "OPENWEBUI_ADMIN_TOKEN": "", "OPENWEBUI_ADMIN_TOKEN_FILE": ""}),
+            patch("Workbench.dashboard.server.subprocess.run", return_value=completed) as run,
+        ):
+            result = state.run_action("import-openwebui")
+
+        command = run.call_args.kwargs["args"] if "args" in run.call_args.kwargs else run.call_args.args[0]
+        self.assertIn("--config", command)
+        self.assertNotIn("--base-url", command)
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["output"], "import failed\n")
+        self.assertEqual(result["error"], "Aktion fehlgeschlagen (Exit-Code 2). Details stehen in der Ausgabe.")
 
     def test_basic_auth_protects_dashboard_routes(self) -> None:
         state = WorkbenchState(
