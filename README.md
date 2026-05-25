@@ -48,6 +48,8 @@ Deutsch ist die Standardsprache des Repositorys, der README, der Standarddokumen
 - [`docs/en/`](docs/en/) enthält den englischen Dokumentationseinstieg und i18n-Hinweise.
 - Community-Dateien wie [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), [`SUPPORT.md`](SUPPORT.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) und [`CHANGELOG.md`](CHANGELOG.md) haben englische `.en.md`-Varianten.
 - Das Workbench-Dashboard nutzt `WORKBENCH_LOCALE`, Browser-/Systemsprache und eine manuelle Sprachwahl. Unbekannte oder fehlende Locale-Informationen fallen stabil auf Deutsch zurück.
+- Die Produktkomponenten der 31 Modellpakete sind zusätzlich in `Modelle/einzelmodelle/<modell-id>/i18n/` gepflegt. Direkt integriert sind `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja` und `zh-Hans`.
+- [`Modelle/i18n/product-locales.json`](Modelle/i18n/product-locales.json) ist das zentrale Manifest für Produktsprachen. Der Generator [`scripts/generate_model_i18n_profiles.py`](scripts/generate_model_i18n_profiles.py) hält `model.json`, Sprachprofile und Manifest synchron.
 
 UTF-8 bleibt für alle menschenlesbaren Dateien und JSON-Artefakte verbindlich. Umlaute, Akzente, Emojis und nicht-lateinische Zeichen werden nicht transliteriert, sofern sie fachlich sichtbarer Text sind. Details zum Ergänzen weiterer Sprachen stehen in [`docs/de/I18N.md`](docs/de/I18N.md).
 
@@ -65,7 +67,8 @@ UTF-8 bleibt für alle menschenlesbaren Dateien und JSON-Artefakte verbindlich. 
 |---|---|
 | [`OpenWebUI Model Builder/`](OpenWebUI%20Model%20Builder/) | Vorgaben, Generatorlogik und Builder-Arbeitsbereich |
 | [`Problemfälle/`](Problemfälle/) | Fachliche Briefings, aus denen Aufgabenmodelle entstehen |
-| [`Modelle/einzelmodelle/`](Modelle/einzelmodelle/) | Menschenlesbare Modellpakete mit `model.json`, Prompts, Fachwissen und Beispielen |
+| [`Modelle/einzelmodelle/`](Modelle/einzelmodelle/) | Menschenlesbare Modellpakete mit `model.json`, Prompts, Fachwissen, Beispielen und produktbezogenen `i18n/`-Profilen |
+| [`Modelle/i18n/`](Modelle/i18n/) | Zentrales Manifest der unterstützten Produktsprachen |
 | [`Modelle/icons/`](Modelle/icons/) | Generische SVG-/PNG-Profilicons für OpenWebUI-Modelle |
 | [`Modelle/dist/`](Modelle/dist/) | Kanonische Air-Gap-Handover-Artefakte, Importdateien und ZIP |
 | [`Tools/jupyter/`](Tools/jupyter/) | Produktives Jupyter-Tool mit Beispielkonfiguration |
@@ -162,7 +165,7 @@ In der lokalen YAML werden unter anderem gesetzt:
 
 Das direkte Importskript [`Tools/import_openwebui_workspace.py`](Tools/import_openwebui_workspace.py) bleibt als Fallback nutzbar und liest dieselbe zentrale Konfigurationsdatei. CLI-Parameter wie `--token`, `--base-url` oder `--jupyter-url` sind nur für bewusste Einmal-Overrides gedacht.
 
-Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien aus `beispiele/` als Knowledge pro Modell an, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
+Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien aus `beispiele/` und `i18n/` als Knowledge pro Modell an, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
 
 Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist möglich:
 

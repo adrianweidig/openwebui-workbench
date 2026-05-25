@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "json-csv-log-analyse",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "JSON-, CSV- und Log-Analyse",
+    "en": "JSON, CSV and Log Analysis",
+    "es": "Análisis de JSON, CSV y logs",
+    "fr": "Analyse JSON, CSV et logs",
+    "pt-BR": "Análise de JSON, CSV e logs",
+    "it": "Analisi di JSON, CSV e log",
+    "nl": "JSON-, CSV- en loganalyse",
+    "pl": "Analiza JSON, CSV i logów",
+    "tr": "JSON, CSV ve log analizi",
+    "ja": "JSON・CSV・ログ分析",
+    "zh-Hans": "JSON、CSV 与日志分析"
+  }
+}

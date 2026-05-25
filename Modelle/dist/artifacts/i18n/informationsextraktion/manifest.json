@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "informationsextraktion",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Informationsextraktion",
+    "en": "Information Extraction",
+    "es": "Extracción de información",
+    "fr": "Extraction d'informations",
+    "pt-BR": "Extração de informações",
+    "it": "Estrazione di informazioni",
+    "nl": "Informatie-extractie",
+    "pl": "Ekstrakcja informacji",
+    "tr": "Bilgi çıkarımı",
+    "ja": "情報抽出",
+    "zh-Hans": "信息提取"
+  }
+}

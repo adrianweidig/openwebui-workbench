@@ -277,19 +277,25 @@ class WorkbenchState:
                         payload = raw[0]
                 except Exception:
                     payload = {}
+            meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
+            product_i18n = meta.get("productI18n") if isinstance(meta.get("productI18n"), dict) else {}
             files = self.model_files(model_id)
             models.append(
                 {
                     "id": model_id,
                     "name": payload.get("name") or model_id,
                     "base_model_id": payload.get("base_model_id") or "",
-                    "description": ((payload.get("meta") or {}).get("description") if isinstance(payload.get("meta"), dict) else "") or "",
+                    "description": meta.get("description") or "",
+                    "default_locale": meta.get("defaultLocale") or "de",
+                    "fallback_locale": meta.get("fallbackLocale") or "en",
+                    "supported_locales": meta.get("supportedLocales") if isinstance(meta.get("supportedLocales"), list) else [],
+                    "i18n": product_i18n,
                     "path": rel(directory),
                     "mtime": format_mtime(directory),
                     "files": files,
                     "tags": [
                         item.get("name")
-                        for item in ((payload.get("meta") or {}).get("tags") or [])
+                        for item in (meta.get("tags") or [])
                         if isinstance(item, dict) and item.get("name")
                     ],
                 }
@@ -322,6 +328,18 @@ class WorkbenchState:
                         "mtime": format_mtime(path),
                     }
                 )
+        i18n_dir = directory / "i18n"
+        if i18n_dir.exists():
+            for path in sorted(i18n_dir.glob("*.md")):
+                files.append(
+                    {
+                        "name": f"i18n/{path.name}",
+                        "exists": True,
+                        "path": rel(path),
+                        "bytes": path.stat().st_size,
+                        "mtime": format_mtime(path),
+                    }
+                )
         return files
 
     def model_dir(self, model_id: str) -> Path:
@@ -341,6 +359,10 @@ class WorkbenchState:
             example_name = clean.removeprefix("beispiele/")
             safe_example_name = require_safe_path_segment(example_name, t("invalid_example_filename", self.config.locale))
             return directory / "beispiele" / safe_example_name
+        if clean.startswith("i18n/") and clean.endswith(".md"):
+            locale_name = clean.removeprefix("i18n/")
+            safe_locale_name = require_safe_path_segment(locale_name, t("invalid_model_filename", self.config.locale))
+            return directory / "i18n" / safe_locale_name
         raise ValueError(t("only_model_markdown", self.config.locale))
 
     def read_model_file(self, model_id: str, name: str) -> dict[str, Any]:

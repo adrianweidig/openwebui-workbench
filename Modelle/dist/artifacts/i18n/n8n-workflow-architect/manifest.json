@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "n8n-workflow-architect",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "n8n Workflow Architect",
+    "en": "n8n Workflow Architect",
+    "es": "Arquitecto de workflows n8n",
+    "fr": "Architecte de workflows n8n",
+    "pt-BR": "Arquiteto de workflows n8n",
+    "it": "Architetto di workflow n8n",
+    "nl": "n8n-workflowarchitect",
+    "pl": "Architekt workflow n8n",
+    "tr": "n8n iş akışı mimarı",
+    "ja": "n8n ワークフローアーキテクト",
+    "zh-Hans": "n8n 工作流架构师"
+  }
+}

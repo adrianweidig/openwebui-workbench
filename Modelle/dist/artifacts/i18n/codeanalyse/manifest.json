@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "codeanalyse",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Codeanalyse",
+    "en": "Code Analysis",
+    "es": "Análisis de código",
+    "fr": "Analyse de code",
+    "pt-BR": "Análise de código",
+    "it": "Analisi del codice",
+    "nl": "Codeanalyse",
+    "pl": "Analiza kodu",
+    "tr": "Kod analizi",
+    "ja": "コード分析",
+    "zh-Hans": "代码分析"
+  }
+}

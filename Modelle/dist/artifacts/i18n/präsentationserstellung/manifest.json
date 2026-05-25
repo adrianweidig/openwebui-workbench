@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "präsentationserstellung",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Präsentationserstellung",
+    "en": "Presentation Creation",
+    "es": "Creación de presentaciones",
+    "fr": "Création de présentations",
+    "pt-BR": "Criação de apresentações",
+    "it": "Creazione di presentazioni",
+    "nl": "Presentatiecreatie",
+    "pl": "Tworzenie prezentacji",
+    "tr": "Sunum oluşturma",
+    "ja": "プレゼンテーション作成",
+    "zh-Hans": "演示文稿创建"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "codegenerierung",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Codegenerierung",
+    "en": "Code Generation",
+    "es": "Generación de código",
+    "fr": "Génération de code",
+    "pt-BR": "Geração de código",
+    "it": "Generazione di codice",
+    "nl": "Codegeneratie",
+    "pl": "Generowanie kodu",
+    "tr": "Kod üretimi",
+    "ja": "コード生成",
+    "zh-Hans": "代码生成"
+  }
+}

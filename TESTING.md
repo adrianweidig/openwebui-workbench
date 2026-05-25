@@ -33,6 +33,7 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
 4. Wenn Tool-, Filter-, Skill- oder Modellartefakte bewusst geändert wurden, Dist-Artefakte neu erzeugen und danach erneut prüfen:
 
    ```powershell
+   python scripts/generate_model_i18n_profiles.py
    python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
    python scripts/verify_openwebui_workspace.py
    ```
@@ -41,6 +42,7 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
 
 ```powershell
 python -m compileall -q scripts Tools Workbench
+python scripts/generate_model_i18n_profiles.py
 python scripts/validate_openwebui_extensions.py
 python scripts/configure_openwebui_tool_models.py --check
 python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.example.yaml
@@ -52,10 +54,11 @@ JSON-Artefakte werden durch `scripts/verify_openwebui_workspace.py` mitgeprüft.
 
 ## Internationalisierung prüfen
 
-Das Dashboard muss Deutsch als Fallback und Englisch als Alternativsprache unterstützen. Die relevanten Tests liegen in `Workbench.dashboard.tests` und prüfen Locale-Normalisierung, `Accept-Language`-Auswertung, englische Auth-Fehlermeldungen und Unicode-Modell-IDs. Für eine manuelle Prüfung:
+Das Dashboard muss Deutsch als Fallback und Englisch als Alternativsprache unterstützen. Die Produktkomponenten der Modelle müssen zusätzlich die direkt integrierten Locales `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja` und `zh-Hans` enthalten. Die relevanten Tests liegen in `Workbench.dashboard.tests` und `Tools.openwebui_ext.tests`; sie prüfen Locale-Normalisierung, `Accept-Language`-Auswertung, englische Auth-Fehlermeldungen, Produkt-i18n-Metadaten und Unicode-Modell-IDs. Für eine manuelle Prüfung:
 
 ```powershell
 $env:WORKBENCH_LOCALE="en"
+python scripts/generate_model_i18n_profiles.py
 python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
 ```
 

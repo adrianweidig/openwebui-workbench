@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "tabellen-csv-datenanalyse",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Tabellen- und CSV-Datenanalyse",
+    "en": "Table and CSV Data Analysis",
+    "es": "Análisis de tablas y CSV",
+    "fr": "Analyse de tableaux et CSV",
+    "pt-BR": "Análise de tabelas e CSV",
+    "it": "Analisi di tabelle e CSV",
+    "nl": "Tabel- en CSV-dataanalyse",
+    "pl": "Analiza tabel i CSV",
+    "tr": "Tablo ve CSV veri analizi",
+    "ja": "表と CSV データ分析",
+    "zh-Hans": "表格与 CSV 数据分析"
+  }
+}

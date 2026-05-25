@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "mistral-vision-workbench",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Mistral Vision Workbench",
+    "en": "Mistral Vision Workbench",
+    "es": "Mistral Vision Workbench",
+    "fr": "Mistral Vision Workbench",
+    "pt-BR": "Mistral Vision Workbench",
+    "it": "Mistral Vision Workbench",
+    "nl": "Mistral Vision Workbench",
+    "pl": "Mistral Vision Workbench",
+    "tr": "Mistral Vision Workbench",
+    "ja": "Mistral Vision Workbench",
+    "zh-Hans": "Mistral Vision Workbench"
+  }
+}
