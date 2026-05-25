@@ -176,7 +176,7 @@ class WorkbenchStateTests(unittest.TestCase):
             "openwebui:\n  base_url: http://127.0.0.1:3000\n  admin_token: YOUR_OPEN_WEBUI_API_KEY\n",
             encoding="utf-8",
         )
-        state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://openwebui:8080"))
+        state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://openwebui:8080", locale="de"))
         completed = SimpleNamespace(returncode=2, stdout="import failed\n")
 
         with (
