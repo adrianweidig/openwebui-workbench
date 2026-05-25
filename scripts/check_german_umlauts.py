@@ -81,6 +81,8 @@ LITERAL_REPLACEMENTS = {
     "Grossen": "Großen",
     "gueltig": "gültig",
     "Gueltig": "Gültig",
+    "Klaere": "Kläre",
+    "klaere": "kläre",
     "koennen": "können",
     "Koennen": "Können",
     "Klaerung": "Klärung",

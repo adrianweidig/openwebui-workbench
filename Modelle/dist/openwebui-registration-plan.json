@@ -698,7 +698,7 @@
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 1497
+        "bytes": 1491
       },
       "vision-ui-qa-vorlage.md": {
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
@@ -866,7 +866,7 @@
         "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 7631
+        "bytes": 7530
       }
     },
     "refactoring-unterstützung": {
