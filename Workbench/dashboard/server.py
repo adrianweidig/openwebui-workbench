@@ -19,7 +19,13 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, unquote, urlparse
 from urllib.request import Request, urlopen
 
-from Workbench.dashboard.i18n import DEFAULT_LOCALE, SUPPORTED_LOCALES, detect_locale, t
+try:
+    from Workbench.dashboard.i18n import DEFAULT_LOCALE, SUPPORTED_LOCALES, detect_locale, t
+except ModuleNotFoundError as exc:
+    if exc.name != "Workbench":
+        raise
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from Workbench.dashboard.i18n import DEFAULT_LOCALE, SUPPORTED_LOCALES, detect_locale, t
 
 
 REPO_ROOT = Path(os.environ.get("WORKBENCH_ROOT", Path(__file__).resolve().parents[2])).resolve()
@@ -33,6 +39,15 @@ MODEL_MARKDOWN_FILES = {
     "customgpt_infos.md",
 }
 MAX_BODY_BYTES = int(os.environ.get("WORKBENCH_MAX_BODY_BYTES", "1048576"))
+
+
+def configure_utf8_stdio() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
+
+
+configure_utf8_stdio()
 
 
 def env_bool(name: str, default: bool = False) -> bool:

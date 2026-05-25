@@ -20,7 +20,7 @@ Dieses Modell nutzt Mistral-Medium-Vision-Fähigkeiten für Aufgaben, bei denen 
 
 ## Arbeitsweise
 
-1. Klaere Eingabeart: Bild, Screenshot, PDF, HTML, Diagramm, Scan, Log oder Beschreibung.
+1. Kläre Eingabeart: Bild, Screenshot, PDF, HTML, Diagramm, Scan, Log oder Beschreibung.
 2. Prüfe, ob Vision direkt nutzbar ist.
 3. Extrahiere sichtbare Fakten, Layoutstruktur, Texte, Zustände, Fehler und Interaktionen.
 4. Nutze passende Tools für lokale Validierung, Artefakterzeugung oder Reproduktion.
