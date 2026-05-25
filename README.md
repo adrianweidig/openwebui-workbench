@@ -39,7 +39,7 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 - Dieses Repository startet keine vollständige OpenWebUI-Instanz und enthält keine produktiven Tokens.
 - Der API-Import benötigt eine lokale, ignorierte `scripts/openwebui_workspace_config.yaml` mit Zielinstanz, Admin-API-Key, Jupyter- und Backend-Pfaden.
 - Öffentliche Netzwerktools sind nicht Teil des Offline-Standardimports; sie müssen bewusst aktiviert und geprüft werden.
-- Der lokale Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` ist ein dokumentierter Zielpfad dieser Umgebung, aber kein Bestandteil des Repositorys.
+- Offline-Addon-Bundles mit vorbefüllten Caches, NLTK, Playwright, Tiktoken oder zusätzlichen Python-Paketen sind optional und kein Bestandteil des Repositorys.
 - Lizenz- und Copyright-Angaben sollten vor externer oder kommerziell wichtiger Veröffentlichung rechtlich geprüft werden.
 
 ## Repository-Struktur
@@ -76,7 +76,7 @@ Danach:
 - Workbench: `http://localhost:8088`
 - Optional mit lokalem `top.secret`-Edge-Proxy: `https://workbench.top.secret`
 
-Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` zur OpenWebUI-API synchronisieren. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
+Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` zur OpenWebUI-API synchronisieren. Das Dashboard nutzt HTTP Basic Auth, sobald `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` gesetzt sind. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
 
 Wenn OpenWebUI bereits läuft, kann nur der Workbench-Container gestartet werden:
 
@@ -200,9 +200,8 @@ services:
       - <OPENWEBUI_WORKSPACE>\Modelle\dist:/app/backend/data/openwebui-import
       - <OPENWEBUI_WORKSPACE>\Tools\jupyter:/app/backend/data/openwebui-tools/jupyter
       - <OPENWEBUI_WORKSPACE>\Artefakte\output:/app/backend/data/offline_artifacts
-      - F:\offline-ai-stack\openwebui-offline-addons\cache:/app/backend/data/cache
-      - F:\offline-ai-stack\openwebui-offline-addons\nltk_data:/app/backend/data/nltk_data
-      - F:\offline-ai-stack\openwebui-offline-addons\python:/app/backend/data/python
+      - openwebui-cache:/app/backend/data/cache
+      - openwebui-python-addons:/app/backend/data/python
 ```
 
 Der exakte Zielpfad im Container hängt von der eingesetzten OpenWebUI-Variante ab. Falls die Instanz keinen direkten Dateiscan für Modelle unterstützt, `Modelle/dist/openwebui-models-import.json` oder ein einzelnes `Modelle/einzelmodelle/<modell-id>/model.json` direkt über die GUI importieren.

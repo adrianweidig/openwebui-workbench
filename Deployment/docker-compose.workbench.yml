@@ -1,6 +1,16 @@
 name: openwebui-workbench
 
 services:
+  # OpenWebUI runtime
+  #
+  # Purpose:
+  # - Provides the chat/runtime UI.
+  # - Persists OpenWebUI state in the named volume below.
+  # - Mounts this repo's generated model/tool artifacts read-only for manual import.
+  #
+  # Required local decisions:
+  # - Set WEBUI_SECRET_KEY in an ignored .env for stable sessions across restarts.
+  # - Change OPENWEBUI_PORT only if localhost:3000 is already occupied.
   openwebui:
     image: ghcr.io/open-webui/open-webui:${OPENWEBUI_IMAGE_TAG:-main}
     container_name: ${OPENWEBUI_CONTAINER_NAME:-openwebui}
@@ -21,6 +31,17 @@ services:
     networks:
       - workbench
 
+  # Workbench dashboard
+  #
+  # Purpose:
+  # - Serves the repository dashboard on localhost.
+  # - Edits model Markdown, tool Python files and skill Markdown directly in /workspace.
+  # - Runs fixed repository actions such as validation, artifact generation and import dry-runs.
+  #
+  # Required local decisions:
+  # - Set WORKBENCH_AUTH_USERNAME and WORKBENCH_AUTH_PASSWORD or WORKBENCH_AUTH_PASSWORD_FILE
+  #   in an ignored .env before exposing the dashboard beyond a short local development session.
+  # - Set OPENWEBUI_ADMIN_TOKEN only when the dashboard should perform real OpenWebUI sync.
   workbench:
     build:
       context: ..
@@ -36,6 +57,9 @@ services:
       WORKBENCH_PORT: 8088
       WORKBENCH_ALLOW_WRITE: ${WORKBENCH_ALLOW_WRITE:-true}
       WORKBENCH_COMMAND_TIMEOUT_SECONDS: ${WORKBENCH_COMMAND_TIMEOUT_SECONDS:-300}
+      WORKBENCH_AUTH_USERNAME: ${WORKBENCH_AUTH_USERNAME:-}
+      WORKBENCH_AUTH_PASSWORD: ${WORKBENCH_AUTH_PASSWORD:-}
+      WORKBENCH_AUTH_PASSWORD_FILE: ${WORKBENCH_AUTH_PASSWORD_FILE:-}
       OPENWEBUI_BASE_URL: ${OPENWEBUI_BASE_URL:-http://openwebui:8080}
       OPENWEBUI_PUBLIC_URL: ${OPENWEBUI_PUBLIC_URL:-http://localhost:${OPENWEBUI_PORT:-3000}}
       OPENWEBUI_TLS_VERIFY: ${OPENWEBUI_TLS_VERIFY:-true}
@@ -51,8 +75,10 @@ services:
       - workbench
 
 volumes:
+  # OpenWebUI database, files, settings and uploaded data.
   openwebui-data:
 
 networks:
+  # Private bridge used by the dashboard to reach OpenWebUI via http://openwebui:8080.
   workbench:
     driver: bridge

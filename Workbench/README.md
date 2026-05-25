@@ -10,6 +10,14 @@ python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
 
 Danach ist das Dashboard unter `http://127.0.0.1:8088` erreichbar.
 
+Optional schützt der Server alle Routen per HTTP Basic Auth:
+
+```powershell
+$env:WORKBENCH_AUTH_USERNAME="workbench"
+$env:WORKBENCH_AUTH_PASSWORD=Read-Host "Workbench-Passwort"
+python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
+```
+
 ## Start mit Docker Compose
 
 ```powershell
@@ -68,4 +76,4 @@ $env:OPENWEBUI_TLS_VERIFY="false"
 
 ## Sicherheitsgrenzen
 
-Das Dashboard ist für lokale Nutzung gedacht. Die Compose-Datei bindet es bewusst nur an `127.0.0.1`. Es gibt keine eigene Benutzerverwaltung; bei Veröffentlichung im Netzwerk muss ein Reverse Proxy mit Authentifizierung davorstehen.
+Das Dashboard ist für lokale Nutzung gedacht. Die Compose-Datei bindet es bewusst nur an `127.0.0.1`. Bei gesetztem `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` nutzt es HTTP Basic Auth; ohne diese Variablen darf es nicht öffentlich exponiert werden.

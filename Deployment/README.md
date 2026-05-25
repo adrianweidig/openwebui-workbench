@@ -6,7 +6,7 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 
 - `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können.
 - `docker-compose.top-secret.yml`: optionaler lokaler Override, der den Workbench-Container zusätzlich an das bestehende `top.secret`-Edge-Netz hängt und dort als `workbench` sowie `workbench.top.secret` verfügbar macht.
-- `docker-compose.openwebui-offline.example.yml`: ältere Offline-Beispielvorlage mit lokalem OpenWebUI-/Jupyter-Image und maschinenspezifischen Addon-Pfaden.
+- `docker-compose.openwebui-offline.example.yml`: portable Offline-Beispielvorlage mit repo-relativen Mounts, named volumes und optional überschreibbaren OpenWebUI-/Jupyter-Images.
 
 Start der neuen Workbench-Umgebung:
 
@@ -14,6 +14,8 @@ Start der neuen Workbench-Umgebung:
 Copy-Item Deployment/workbench.env.example .env
 docker compose -f Deployment/docker-compose.workbench.yml up -d --build
 ```
+
+Setze in der lokalen `.env` `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE`, wenn das Dashboard nicht nur in einer kurzlebigen lokalen Entwicklersitzung läuft.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
 
@@ -35,7 +37,7 @@ Weitere Details stehen in [`../docs/WORKBENCH_DASHBOARD.md`](../docs/WORKBENCH_D
 
 - OpenWebUI läuft ohne Internetzugriff.
 - OpenWebUI nutzt die Standardfunktionen der Zielinstanz maximal: natives Tool Calling, Code Interpreter, Datei-/Knowledge-Kontext, Citations und Statusmeldungen, soweit die eingesetzte OpenWebUI-Version sie bereitstellt.
-- Der lokale Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` stellt vorbereitete Caches, Playwright/Chromium, NLTK, Tiktoken und zusätzliche Python-Pakete bereit.
+- Optionale Offline-Addon-Bundles können vorbereitete Caches, Playwright/Chromium, NLTK, Tiktoken und zusätzliche Python-Pakete bereitstellen; die Standard-Compose-Datei startet auch ohne diese Inhalte.
 - Ein lokaler oder intern erreichbarer Jupyter-Server übernimmt kontrollierte Python-Ausführung.
 - Modelle, Tools und Skills werden aus diesem Repository importiert.
 - Erzeugte HTML-, PDF-, ZIP- und Datenartefakte landen in einem persistenten Volume.
@@ -46,11 +48,9 @@ Weitere Details stehen in [`../docs/WORKBENCH_DASHBOARD.md`](../docs/WORKBENCH_D
 - `<OPENWEBUI_WORKSPACE>\Modelle\dist` nach `/app/backend/data/openwebui-import`
 - `<OPENWEBUI_WORKSPACE>\Tools` nach `/app/backend/data/openwebui-tools`
 - `<OPENWEBUI_WORKSPACE>\Artefakte\output` nach `/app/backend/data/offline_artifacts`
-- `F:\offline-ai-stack\openwebui-offline-addons\cache` nach `/app/backend/data/cache`
-- `F:\offline-ai-stack\openwebui-offline-addons\nltk_data` nach `/app/backend/data/nltk_data`
-- `F:\offline-ai-stack\openwebui-offline-addons\python` nach `/app/backend/data/python`
-- `F:\offline-ai-stack\openwebui-offline-addons\python\openwebui_offline_addons.pth` nach `/usr/local/lib/python3.11/site-packages/openwebui_offline_addons.pth`
-- `F:\offline-ai-stack\openwebui-offline-addons\bin\start-offline.sh` nach `/app/backend/start-offline.sh`
+- Named volume `openwebui-cache` nach `/app/backend/data/cache`; darf leer sein, wenn keine Offline-Caches vorhanden sind
+- Named volume `openwebui-python-addons` nach `/app/backend/data/python`; darf leer sein, wenn keine zusätzlichen Python-Pakete vorhanden sind
+- Lokale Addon-Pfade nur über einen eigenen, ignorierten Compose-Override einbinden, wenn die Dateien auf der Zielmaschine wirklich existieren
 
 ## Zentrale Import-Konfiguration
 
@@ -82,7 +82,7 @@ PLAYWRIGHT_BROWSERS_PATH
 
 Für direkte PDF-Erzeugung muss im OpenWebUI-Container oder in der Tool-Laufzeit lokal ein Konverter vorhanden sein:
 
-- bevorzugt der lokale Playwright/Chromium-Cache aus `F:\offline-ai-stack\openwebui-offline-addons`
+- bevorzugt ein lokal eingebundener Playwright/Chromium-Cache aus einem vorhandenen Addon-Bundle
 - danach Python-Paket `weasyprint`
 - alternativ lokal installiertes `wkhtmltopdf`, nur wenn die Tool-Valve `allow_wkhtmltopdf` aktiviert wird
 

@@ -1,39 +1,94 @@
+name: openwebui-workbench-offline
+
 services:
+  # OpenWebUI runtime
+  #
+  # Purpose:
+  # - Starts a portable OpenWebUI instance that can consume this repository's
+  #   generated model, tool and artifact folders.
+  # - Uses only repo-relative bind mounts and named Docker volumes by default.
+  # - Starts without a predownloaded offline-addon bundle; empty cache volumes are valid.
+  #
+  # Required local decisions:
+  # - For internet-connected setup, the default upstream image can be pulled.
+  # - For air-gapped setup, set OPENWEBUI_IMAGE to a local image tag that already exists.
+  # - Set WEBUI_SECRET_KEY in an ignored .env for stable sessions.
   openwebui:
-    image: open-webui:offline-cuda
-    container_name: openwebui-offline
+    image: ${OPENWEBUI_IMAGE:-ghcr.io/open-webui/open-webui:main}
+    container_name: ${OPENWEBUI_CONTAINER_NAME:-openwebui-offline}
     restart: unless-stopped
-    command: ["bash", "/app/backend/start-offline.sh"]
     ports:
-      - "3000:8080"
-    env_file:
-      - ./openwebui.env
+      - "127.0.0.1:${OPENWEBUI_PORT:-3000}:8080"
+    environment:
+      WEBUI_AUTH: ${WEBUI_AUTH:-true}
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:-}
+      OFFLINE_MODE: ${OFFLINE_MODE:-true}
+      ENABLE_MODEL_FILTER: ${ENABLE_MODEL_FILTER:-true}
+      ENABLE_RAG_WEB_SEARCH: ${ENABLE_RAG_WEB_SEARCH:-false}
+      ENABLE_WEB_SEARCH: ${ENABLE_WEB_SEARCH:-false}
+      DO_NOT_TRACK: ${DO_NOT_TRACK:-true}
+      SCARF_NO_ANALYTICS: ${SCARF_NO_ANALYTICS:-true}
+      ANONYMIZED_TELEMETRY: ${ANONYMIZED_TELEMETRY:-false}
+      OPENWEBUI_JUPYTER_URL: ${OPENWEBUI_JUPYTER_URL:-http://jupyter:8888}
+      OPENWEBUI_JUPYTER_TOKEN: ${OPENWEBUI_JUPYTER_TOKEN:-local-dev-token}
+      OPENWEBUI_JUPYTER_TIMEOUT_SECONDS: ${OPENWEBUI_JUPYTER_TIMEOUT_SECONDS:-60}
+      OPENWEBUI_JUPYTER_ALLOWED_WORKDIR: ${OPENWEBUI_JUPYTER_ALLOWED_WORKDIR:-/workspace}
+      OPENWEBUI_ARTIFACT_ROOT: ${OPENWEBUI_ARTIFACT_ROOT:-/app/backend/data/offline_artifacts}
+      OPENWEBUI_OFFLINE_ADDONS_ROOT: ${OPENWEBUI_OFFLINE_ADDONS_ROOT:-/app/backend/data}
+      OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH: ${OPENWEBUI_OFFLINE_ADDONS_PYTHON_PATH:-/app/backend/data/python}
+      NLTK_DATA: ${NLTK_DATA:-/app/backend/data/cache/nltk_data}
+      HF_HOME: ${HF_HOME:-/app/backend/data/cache/embedding/models}
+      SENTENCE_TRANSFORMERS_HOME: ${SENTENCE_TRANSFORMERS_HOME:-/app/backend/data/cache/embedding/models}
+      TIKTOKEN_CACHE_DIR: ${TIKTOKEN_CACHE_DIR:-/app/backend/data/cache/tiktoken}
+      WHISPER_MODEL_DIR: ${WHISPER_MODEL_DIR:-/app/backend/data/cache/whisper/models}
+      PLAYWRIGHT_BROWSERS_PATH: ${PLAYWRIGHT_BROWSERS_PATH:-/app/backend/data/cache/ms-playwright}
     volumes:
       - openwebui-data:/app/backend/data
-      - "E:\\openwebui-workbench\\Modelle\\dist:/app/backend/data/openwebui-import:ro"
-      - "E:\\openwebui-workbench\\Tools:/app/backend/data/openwebui-tools:ro"
-      - "E:\\openwebui-workbench\\Artefakte\\output:/app/backend/data/offline_artifacts"
-      - "F:\\offline-ai-stack\\openwebui-offline-addons\\cache:/app/backend/data/cache"
-      - "F:\\offline-ai-stack\\openwebui-offline-addons\\nltk_data:/app/backend/data/nltk_data"
-      - "F:\\offline-ai-stack\\openwebui-offline-addons\\python:/app/backend/data/python"
-      - "F:\\offline-ai-stack\\openwebui-offline-addons\\python\\openwebui_offline_addons.pth:/usr/local/lib/python3.11/site-packages/openwebui_offline_addons.pth:ro"
-      - "F:\\offline-ai-stack\\openwebui-offline-addons\\bin\\start-offline.sh:/app/backend/start-offline.sh:ro"
+      - openwebui-cache:/app/backend/data/cache
+      - openwebui-python-addons:/app/backend/data/python
+      - ../Modelle/dist:/app/backend/data/openwebui-import:ro
+      - ../Tools:/app/backend/data/openwebui-tools:ro
+      - ../Artefakte/output:/app/backend/data/offline_artifacts
     networks:
       - offline-ai
 
+  # Jupyter execution service
+  #
+  # Purpose:
+  # - Provides a local notebook/server endpoint for tools that execute Python.
+  # - Uses a named image variable so offline users can point to a preloaded image.
+  #
+  # Required local decisions:
+  # - Set JUPYTER_IMAGE to a local image tag in air-gapped environments.
+  # - Set OPENWEBUI_JUPYTER_TOKEN in an ignored .env before real use.
   jupyter:
-    image: local-jupyter:offline
-    container_name: openwebui-jupyter
+    image: ${JUPYTER_IMAGE:-quay.io/jupyter/base-notebook:python-3.12}
+    container_name: ${JUPYTER_CONTAINER_NAME:-openwebui-jupyter}
     restart: unless-stopped
-    command: ["jupyter", "server", "--ip=0.0.0.0", "--no-browser", "--ServerApp.token=${OPENWEBUI_JUPYTER_TOKEN}"]
+    command:
+      - jupyter
+      - server
+      - --ip=0.0.0.0
+      - --no-browser
+      - --ServerApp.token=${OPENWEBUI_JUPYTER_TOKEN:-local-dev-token}
+      - --ServerApp.allow_origin=*
+    environment:
+      JUPYTER_TOKEN: ${OPENWEBUI_JUPYTER_TOKEN:-local-dev-token}
     volumes:
-      - "E:\\openwebui-workbench\\Artefakte\\output:/workspace/artifacts"
+      - ../Artefakte/output:/workspace/artifacts
     networks:
       - offline-ai
 
 volumes:
+  # Persistent OpenWebUI state.
   openwebui-data:
 
+  # Optional offline caches. These volumes may stay empty; missing NLTK,
+  # Playwright, Tiktoken or model cache content must not prevent the stack from starting.
+  openwebui-cache:
+  openwebui-python-addons:
+
 networks:
+  # Private network used by OpenWebUI to reach Jupyter via http://jupyter:8888.
   offline-ai:
     driver: bridge

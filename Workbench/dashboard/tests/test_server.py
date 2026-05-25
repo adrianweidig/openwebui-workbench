@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+import base64
 import json
+import threading
 import tempfile
 import unittest
+from http.client import HTTPConnection
+from http.server import ThreadingHTTPServer
 from pathlib import Path
 
+import Workbench.dashboard.server as dashboard_server
 from Workbench.dashboard.server import WorkbenchConfig, WorkbenchState, openwebui_ssl_context
 
 
@@ -97,6 +102,70 @@ class WorkbenchStateTests(unittest.TestCase):
         state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://127.0.0.1:9", tls_verify=False))
         summary = state.summary()
         self.assertFalse(summary["openwebui"]["tls_verify"])
+
+    def test_summary_reports_dashboard_auth_settings(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        summary = state.summary()
+        self.assertTrue(summary["dashboard"]["auth_enabled"])
+        self.assertTrue(summary["dashboard"]["auth_username_configured"])
+        self.assertTrue(summary["dashboard"]["auth_password_configured"])
+
+    def test_basic_auth_protects_dashboard_routes(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        base_url = self.start_server(state)
+
+        self.assertEqual(self.request_status(base_url), 401)
+        self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "wrong")), 401)
+        self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "secret")), 200)
+
+    def request_status(self, base_url: str, authorization: str = "") -> int:
+        host_port = base_url.removeprefix("http://")
+        host, raw_port = host_port.rsplit(":", 1)
+        connection = HTTPConnection(host, int(raw_port), timeout=5)
+        try:
+            headers = {"Authorization": authorization} if authorization else {}
+            connection.request("GET", "/api/status", headers=headers)
+            response = connection.getresponse()
+            response.read()
+            return response.status
+        finally:
+            connection.close()
+
+    def start_server(self, state: WorkbenchState) -> str:
+        previous_state = dashboard_server.STATE
+        dashboard_server.STATE = state
+        server = ThreadingHTTPServer(("127.0.0.1", 0), dashboard_server.WorkbenchHandler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+
+        def cleanup() -> None:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+            dashboard_server.STATE = previous_state
+
+        self.addCleanup(cleanup)
+        host, port = server.server_address
+        return f"http://{host}:{port}"
+
+    @staticmethod
+    def basic_auth(username: str, password: str) -> str:
+        token = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
+        return f"Basic {token}"
 
 
 if __name__ == "__main__":

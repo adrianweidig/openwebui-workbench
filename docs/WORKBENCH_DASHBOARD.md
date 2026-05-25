@@ -55,7 +55,7 @@ Voraussetzungen außerhalb dieses Repositorys:
 - Edge-Netzwerk: `ki_infra_seu_test` oder per `TOPSECRET_EDGE_NETWORK` gesetzt
 - Nginx-Route im Edge-Proxy nach `http://workbench:8088`
 
-Der Nginx-Server-Block dafür liegt als Vorlage unter [`../Deployment/top-secret-nginx.workbench.conf`](../Deployment/top-secret-nginx.workbench.conf). Die Adresse ist für lokale Nutzung gedacht; das Dashboard hat keine eigene Authentifizierung.
+Der Nginx-Server-Block dafür liegt als Vorlage unter [`../Deployment/top-secret-nginx.workbench.conf`](../Deployment/top-secret-nginx.workbench.conf). Die Adresse ist für lokale Nutzung gedacht; vor der Nutzung über diese Adresse sollten `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` gesetzt sein.
 
 ## Nur Workbench zu vorhandener OpenWebUI-Instanz starten
 
@@ -99,13 +99,17 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `OPENWEBUI_ADMIN_TOKEN` | Admin-API-Key für echte Synchronisierung. Nicht nötig für Lesen, Bearbeiten, Generieren oder Dry-Run. |
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternativer Pfad zu einer Token-Datei im Container. |
 | `WEBUI_SECRET_KEY` | Stabiler lokaler OpenWebUI-Secret-Key, damit Sessions nach Container-Neustarts erhalten bleiben. |
+| `WORKBENCH_AUTH_USERNAME` | Benutzername für die HTTP-Basic-Auth des Dashboards. Auth ist aktiv, wenn Benutzername und Passwort gesetzt sind. |
+| `WORKBENCH_AUTH_PASSWORD` | Passwort für die HTTP-Basic-Auth des Dashboards. Nicht committen. |
+| `WORKBENCH_AUTH_PASSWORD_FILE` | Alternativer Pfad zu einer Passwortdatei im Container. |
 | `WORKBENCH_ALLOW_WRITE` | `true` erlaubt Markdown-Schreibzugriff. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Import- und Verify-Aktionen. |
 
 ## Sicherheit
 
 - Das Dashboard ist in der Compose-Datei nur an `127.0.0.1` gebunden.
-- Es hat keine eigene Authentifizierung.
+- Wenn `WORKBENCH_AUTH_USERNAME` und ein Passwort gesetzt sind, schützt das Dashboard alle Routen per HTTP Basic Auth.
+- Ohne beide Auth-Variablen bleibt der lokale Entwicklerstart ungeschützt und sollte nicht ins Netzwerk exponiert werden.
 - Dark Mode ist der Standard; die Theme-Auswahl bleibt lokal im Browser gespeichert.
 - API-Token werden nur über Umgebung oder Token-Datei gelesen und in Aktionsausgaben redigiert.
 - Für HTTPS zu OpenWebUI wird Zertifikatsprüfung standardmäßig beibehalten. Eine deaktivierte Prüfung ist nur für lokale, vertrauenswürdige Testendpunkte vorgesehen.

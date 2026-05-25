@@ -102,6 +102,7 @@ class MediaWikiLegacyCrawlerTests(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.server.shutdown()
         cls.thread.join(timeout=5)
+        cls.server.server_close()
 
     def test_legacy_login_and_crawl(self) -> None:
         tool = load_tool()

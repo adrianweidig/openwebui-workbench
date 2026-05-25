@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import hmac
 import json
 import os
 import ssl
@@ -115,6 +117,8 @@ def openwebui_ssl_context(tls_verify: bool | None = None, ca_file: str = "", ca_
 class WorkbenchConfig:
     root: Path = REPO_ROOT
     allow_write: bool = env_bool("WORKBENCH_ALLOW_WRITE", True)
+    auth_username: str = os.environ.get("WORKBENCH_AUTH_USERNAME", "").strip()
+    auth_password: str = read_secret_from_env("WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE")
     openwebui_base_url: str = os.environ.get("OPENWEBUI_BASE_URL", "http://openwebui:8080").rstrip("/")
     openwebui_public_url: str = os.environ.get("OPENWEBUI_PUBLIC_URL", "http://localhost:3000").rstrip("/")
     command_timeout: int = int(os.environ.get("WORKBENCH_COMMAND_TIMEOUT_SECONDS", "300"))
@@ -125,6 +129,10 @@ class WorkbenchConfig:
     @property
     def admin_token(self) -> str:
         return read_secret_from_env("OPENWEBUI_ADMIN_TOKEN", "OPENWEBUI_ADMIN_TOKEN_FILE")
+
+    @property
+    def auth_enabled(self) -> bool:
+        return bool(self.auth_username and self.auth_password)
 
 
 class WorkbenchState:
@@ -146,6 +154,11 @@ class WorkbenchState:
         return {
             "root": str(self.root),
             "write_enabled": self.config.allow_write,
+            "dashboard": {
+                "auth_enabled": self.config.auth_enabled,
+                "auth_username_configured": bool(self.config.auth_username),
+                "auth_password_configured": bool(self.config.auth_password),
+            },
             "openwebui": {
                 "base_url": self.config.openwebui_base_url,
                 "public_url": self.config.openwebui_public_url,
@@ -433,7 +446,7 @@ class WorkbenchState:
             timeout=self.config.command_timeout,
             env={**os.environ, **command_env},
         )
-        output = redact(completed.stdout or "", [self.config.admin_token])
+        output = redact(completed.stdout or "", [self.config.admin_token, self.config.auth_password])
         safe_command = [part if part != self.config.admin_token else "[REDACTED]" for part in command]
         return {
             "action": action,
@@ -453,6 +466,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
     server_version = "OpenWebUIWorkbench/1.0"
 
     def do_GET(self) -> None:  # noqa: N802
+        if not self.require_auth():
+            return
         parsed = urlparse(self.path)
         try:
             if parsed.path == "/":
@@ -484,6 +499,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             self.handle_exception(exc)
 
     def do_PUT(self) -> None:  # noqa: N802
+        if not self.require_auth():
+            return
         parsed = urlparse(self.path)
         try:
             if parsed.path.startswith("/api/models/") and parsed.path.endswith("/file"):
@@ -502,6 +519,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             self.handle_exception(exc)
 
     def do_POST(self) -> None:  # noqa: N802
+        if not self.require_auth():
+            return
         parsed = urlparse(self.path)
         try:
             if parsed.path.startswith("/api/actions/"):
@@ -513,6 +532,35 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 self.send_error_json(HTTPStatus.NOT_FOUND, "Route nicht gefunden.")
         except Exception as exc:
             self.handle_exception(exc)
+
+    def require_auth(self) -> bool:
+        if not STATE.config.auth_enabled:
+            return True
+        header = self.headers.get("Authorization", "")
+        authenticated = False
+        if header.startswith("Basic "):
+            try:
+                decoded = base64.b64decode(header.removeprefix("Basic ").strip(), validate=True).decode("utf-8")
+                username, password = decoded.split(":", 1)
+                user_ok = hmac.compare_digest(username, STATE.config.auth_username)
+                password_ok = hmac.compare_digest(password, STATE.config.auth_password)
+                authenticated = user_ok and password_ok
+            except (ValueError, UnicodeDecodeError):
+                authenticated = False
+        if authenticated:
+            return True
+        self.send_auth_required()
+        return False
+
+    def send_auth_required(self) -> None:
+        body = json.dumps({"ok": False, "error": "Authentifizierung erforderlich."}, ensure_ascii=False).encode("utf-8")
+        self.send_response(HTTPStatus.UNAUTHORIZED)
+        self.send_header("WWW-Authenticate", 'Basic realm="OpenWebUI Workbench", charset="UTF-8"')
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(body)
 
     def send_static(self, path: Path, content_type: str) -> None:
         resolved = ensure_inside(path, STATIC_ROOT)
