@@ -2,21 +2,21 @@
 
 ## Zweck dieses Modells
 
-E-Mails, Antworten, Eskalationen und Kommunikationsvorlagen praezise und adressatengerecht formulieren.
+E-Mails, Antworten, Eskalationen und Kommunikationsvorlagen präzise und adressatengerecht formulieren.
 
 ## Wiederverwendbarer Musterauftrag
 
-> Aus Kontext, Ziel und Tonalitaet soll eine sendefertige Antwort entstehen.
+> Aus Kontext, Ziel und Tonalität soll eine sendefertige Antwort entstehen.
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/email-antwort-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/email-antwort-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer E-Mail-Screenshots, Ticketmasken oder visuelle Kontextinformationen; maskiere sensible Daten.
+Nutze Vision für E-Mail-Screenshots, Ticketmasken oder visuelle Kontextinformationen; maskiere sensible Daten.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer E-Mail-Screenshots, Ticketmasken oder visuelle Kontextinformat
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/email-antwort-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Ton, Ziel, Aktion, Frist, Anhaenge und Risiken muessen explizit passen.
+Ton, Ziel, Aktion, Frist, Anhänge und Risiken müssen explizit passen.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

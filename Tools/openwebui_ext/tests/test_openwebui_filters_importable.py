@@ -78,7 +78,7 @@ class OpenWebUIFilterImportTests(unittest.TestCase):
         filter_obj.valves.reserved_output_tokens = 4096
         filter_obj.valves.safety_margin_tokens = 2048
         huge_prompt = (
-            "LETZTE ANWEISUNG: Analysiere diesen uebergrossen Kontext.\n"
+            "LETZTE ANWEISUNG: Analysiere diesen übergroßen Kontext.\n"
             "Traceback: maximum context length exceeded\n"
             + ("x" * 170000)
             + "\nENDE DES KONTEXTS"

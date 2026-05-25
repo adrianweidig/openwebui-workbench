@@ -10,13 +10,13 @@ IT-Probleme aus Nutzerbeschreibung, Screenshots, Logs und Konfigurationen schnel
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/helpdesk-diagnose-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/helpdesk-diagnose-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer Fehlermasken, Taskleisten-/Tray-Zustaende, Dialoge oder Netzwerksymbole.
+Nutze Vision für Fehlermasken, Taskleisten-/Tray-Zustände, Dialoge oder Netzwerksymbole.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer Fehlermasken, Taskleisten-/Tray-Zustaende, Dialoge oder Netzwe
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/helpdesk-diagnose-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Antwort muss Sofortmassnahmen, Rueckfragen, Diagnosepfad und Eskalationskriterium enthalten.
+Antwort muss Sofortmaßnahmen, Rückfragen, Diagnosepfad und Eskalationskriterium enthalten.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

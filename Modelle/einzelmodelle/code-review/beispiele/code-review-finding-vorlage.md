@@ -1,4 +1,4 @@
-# Code-Review - befuellbare Ergebnisvorlage
+# Code-Review - befüllbare Ergebnisvorlage
 
 ## 1. Auftrag
 
@@ -6,26 +6,26 @@
 
 **Eingaben:** [Dateien, Text, Screenshots, Daten, Constraints]
 
-**Nutzerkontext:** [Zielgruppe, Umgebung, Sprache, Prioritaeten]
+**Nutzerkontext:** [Zielgruppe, Umgebung, Sprache, Prioritäten]
 
 ## 2. Tool- und Vision-Check
 
-| Pruefpunkt | Entscheidung | Begruendung |
+| Prüfpunkt | Entscheidung | Begruendung |
 |---|---|---|
 | Bild/Screenshot vorhanden | [ja/nein] | [sichtbarer Nutzen] |
-| Vision direkt nutzbar | [ja/nein/unklar] | [OpenWebUI/Basismodell-Faehigkeit] |
+| Vision direkt nutzbar | [ja/nein/unklar] | [OpenWebUI/Basismodell-Fähigkeit] |
 | Lokales Tool erforderlich | [Tool-ID] | [Validierung/Artefakt/Analyse] |
-| Rueckfrage noetig | [ja/nein] | [fehlende Pflichtangabe] |
+| Rückfrage nötig | [ja/nein] | [fehlende Pflichtangabe] |
 
 ## 3. Strukturierter Ergebnisentwurf
 
 ### Kurzfazit
 
-[2-4 Saetze]
+[2-4 Sätze]
 
 ### Hauptteil
 
-[fachliches Ergebnis in der fuer den Use Case passenden Struktur]
+[fachliches Ergebnis in der für den Use Case passenden Struktur]
 
 ### Sichtbare oder belegte Quellen
 
@@ -33,18 +33,18 @@
 
 ### Unsicherheiten
 
-- [Was ist nicht belegt, unscharf, unvollstaendig oder nicht pruefbar?]
+- [Was ist nicht belegt, unscharf, unvollständig oder nicht prüfbar?]
 
 ## 4. Akzeptanzcheck
 
-- [ ] Zweck des Modells erfuellt: Diffs, Risiken, Regressionen, Sicherheitsprobleme und fehlende Tests wie in einem professionellen Review priorisieren.
-- [ ] Vision-/Screenshot-Regel beachtet: Nutze Vision fuer UI-Regressionsscreenshots, Vorher-/Nachher-Bilder oder visuelle Testfehler.
-- [ ] Qualitaetslatte erfuellt: Findings stehen vor Zusammenfassung und referenzieren konkrete Dateien, Zeilen oder sichtbare UI-Zustaende.
-- [ ] Tool-Ausgaben kritisch geprueft.
+- [ ] Zweck des Modells erfüllt: Diffs, Risiken, Regressionen, Sicherheitsprobleme und fehlende Tests wie in einem professionellen Review priorisieren.
+- [ ] Vision-/Screenshot-Regel beachtet: Nutze Vision für UI-Regressionsscreenshots, Vorher-/Nachher-Bilder oder visuelle Testfehler.
+- [ ] Qualitätslatte erfüllt: Findings stehen vor Zusammenfassung und referenzieren konkrete Dateien, Zeilen oder sichtbare UI-Zustände.
+- [ ] Tool-Ausgaben kritisch geprüft.
 - [ ] Ergebnis ist offline weiterverwendbar.
 
-## 5. Naechste Schritte
+## 5. Nächste Schritte
 
-1. [Naechster konkreter Schritt]
+1. [Nächster konkreter Schritt]
 2. [Optionaler Test oder Review]
-3. [Freigabe-/Rueckfragepunkt]
+3. [Freigabe-/Rückfragepunkt]

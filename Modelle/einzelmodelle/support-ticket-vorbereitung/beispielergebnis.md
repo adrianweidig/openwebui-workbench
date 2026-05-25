@@ -2,7 +2,7 @@
 
 ## Zweck dieses Modells
 
-Supportfaelle aus Symptomen, Screenshots, Logs und Nutzertexten in klare Tickets ueberfuehren.
+Supportfälle aus Symptomen, Screenshots, Logs und Nutzertexten in klare Tickets überführen.
 
 ## Wiederverwendbarer Musterauftrag
 
@@ -10,13 +10,13 @@ Supportfaelle aus Symptomen, Screenshots, Logs und Nutzertexten in klare Tickets
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/support-ticket-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/support-ticket-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer Fehlerscreenshots, Statusanzeigen, Dialoge oder betroffene UI-Elemente.
+Nutze Vision für Fehlerscreenshots, Statusanzeigen, Dialoge oder betroffene UI-Elemente.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer Fehlerscreenshots, Statusanzeigen, Dialoge oder betroffene UI-
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/support-ticket-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Ticket braucht Kurzbeschreibung, Impact, Repro, Environment, Anhaenge, Prioritaet und offene Fragen.
+Ticket braucht Kurzbeschreibung, Impact, Repro, Environment, Anhänge, Priorität und offene Fragen.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

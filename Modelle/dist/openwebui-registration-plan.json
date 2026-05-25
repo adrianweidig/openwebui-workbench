@@ -698,7 +698,7 @@
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 1497
+        "bytes": 1491
       },
       "vision-ui-qa-vorlage.md": {
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
@@ -866,7 +866,7 @@
         "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 7631
+        "bytes": 7530
       }
     },
     "refactoring-unterstützung": {
@@ -1326,7 +1326,7 @@
           "parallel-tools-subagents",
           "secure-tool-usage"
         ],
-        "focus": "Mistral-Medium-Vision fuer Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern."
+        "focus": "Mistral-Medium-Vision für Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern."
       },
       "offline-workbench-agent": {
         "tools": [
@@ -1389,7 +1389,7 @@
           "model-tool-skill-overlays",
           "native-tool-calling-rollout"
         ],
-        "focus": "Vollstaendige direkt kopierbare Markdown-Promptvorlagen nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Zielsystem erzeugen."
+        "focus": "Vollständige direkt kopierbare Markdown-Promptvorlagen nach Prompting-Best-Practices, Tool-first-Regeln, Sicherheitsgrenzen und konkretem Zielsystem erzeugen."
       },
       "n8n-workflow-architect": {
         "tools": [
@@ -1406,7 +1406,7 @@
           "secure-tool-usage",
           "offline-use-case-router"
         ],
-        "focus": "Importierbare n8n-Workflow-JSONs wie der Custom GPT n8n Workflow Architect planen, pruefen, validieren und mit Test- sowie Sicherheitshinweisen ausgeben."
+        "focus": "Importierbare n8n-Workflow-JSONs wie der Custom GPT n8n Workflow Architect planen, prüfen, validieren und mit Test- sowie Sicherheitshinweisen ausgeben."
       },
       "openwebui-model-builder": {
         "tools": [
@@ -1425,7 +1425,7 @@
           "secure-tool-usage",
           "native-tool-calling-rollout"
         ],
-        "focus": "Vollstaendige OpenWebUI-Modellpakete mit JSON, Systemprompt, Mainprompt, Fachwissen, Tool-/Skill-Zuordnung, Knowledge und Import-QA erzeugen."
+        "focus": "Vollständige OpenWebUI-Modellpakete mit JSON, Systemprompt, Mainprompt, Fachwissen, Tool-/Skill-Zuordnung, Knowledge und Import-QA erzeugen."
       },
       "präsentationserstellung": {
         "tools": [

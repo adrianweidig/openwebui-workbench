@@ -28,7 +28,7 @@ class Filter:
     """OpenWebUI inlet filter for tool-first chats in offline workspaces."""
 
     LOCAL_TOOL_RULES: Sequence[Tuple[str, Sequence[str]]] = (
-        ("ask_user", ("unklar", "ruckfrage", "rueckfrage", "clarify", "missing input", "fehlende eingabe", "ambiguous", "frage den nutzer")),
+        ("ask_user", ("unklar", "ruckfrage", "rückfrage", "clarify", "missing input", "fehlende eingabe", "ambiguous", "frage den nutzer")),
         ("json_csv_text_validator", ("json", "csv", "yaml", "xml", "tabelle", "tabular", "log", "validier", "schema", "strukturierte")),
         ("air_gapped_jupyter_python", ("python", "berechne", "calculate", "analyse", "statistik", "daten", "dataframe", "plot", "transform")),
         ("repo_tree_analyzer", ("repo", "repository", "code", "diff", "review", "refactor", "test", "dateibaum", "git")),
@@ -37,7 +37,7 @@ class Filter:
         ("visuals_toolkit_v4", ("diagramm", "diagram", "chart", "mermaid", "dashboard", "visual", "ascii", "wireframe")),
         ("docker_compose_triage", ("docker", "compose", "container", "image", "volume", "openwebui fehler", "betrieb")),
         ("openapi_schema_inspector", ("openapi", "swagger", "api schema", "mcp", "schnittstelle", "toolserver")),
-        ("parallel_task_planner", ("parallel", "mehrere teilaufgaben", "arbeitspaket", "plan", "abhangigkeit", "abhaengigkeit", "wellen")),
+        ("parallel_task_planner", ("parallel", "mehrere teilaufgaben", "arbeitspaket", "plan", "abhangigkeit", "abhängigkeit", "wellen")),
         ("parallel_tools", ("parallel", "mehrere tools", "gleichzeitig", "concurrent", "tool calls", "batch")),
         ("subagent_orchestrator", ("subagent", "agent", "rolle", "delegier", "parallel agent", "mehrere rollen")),
         ("sub_agent", ("subagent", "agent", "rolle", "delegier", "parallel agent", "isoliert")),

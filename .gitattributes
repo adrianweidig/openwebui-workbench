@@ -1,7 +1,12 @@
 * text=auto
 
 *.md text
+*.html text
+*.css text
+*.js text
 *.py text
+*.ps1 text
+*.txt text
 *.json text
 *.yml text
 *.yaml text

@@ -2,7 +2,7 @@
 
 ## Zweck dieses Modells
 
-Aus Anforderungen, Code, UI-Screenshots und Risiken konkrete Testfaelle und Akzeptanztests erzeugen.
+Aus Anforderungen, Code, UI-Screenshots und Risiken konkrete Testfälle und Akzeptanztests erzeugen.
 
 ## Wiederverwendbarer Musterauftrag
 
@@ -10,13 +10,13 @@ Aus Anforderungen, Code, UI-Screenshots und Risiken konkrete Testfaelle und Akze
 
 ## Erwartetes Ergebnisartefakt
 
-- Primaere Datei: `beispiele/testfallkatalog-vorlage.md`
-- Format: befuellbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
+- Primäre Datei: `beispiele/testfallkatalog-vorlage.md`
+- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
 - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
 
 ## Vision- und Screenshot-Nutzung
 
-Nutze Vision fuer UI-Screenshots, Fehlzustaende, Formularlayouts und visuelle Akzeptanzkriterien.
+Nutze Vision für UI-Screenshots, Fehlzustände, Formularlayouts und visuelle Akzeptanzkriterien.
 
 ## Tool-first-Ablauf
 
@@ -24,11 +24,11 @@ Nutze Vision fuer UI-Screenshots, Fehlzustaende, Formularlayouts und visuelle Ak
 2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
 3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
 4. Ergebnis in der Vorlage unter `beispiele/testfallkatalog-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitaets- und Akzeptanzkriterien pruefen.
+5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
 
-## Qualitaetslatte
+## Qualitätslatte
 
-Testfaelle brauchen Preconditions, Schritte, Testdaten, erwartetes Ergebnis und Prioritaet.
+Testfälle brauchen Preconditions, Schritte, Testdaten, erwartetes Ergebnis und Priorität.
 
 ## Copy/Paste-Starterprompt
 
@@ -44,6 +44,6 @@ Eingaben:
 Gewuenschtes Ergebnisformat:
 [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
 
-Qualitaetskriterien:
-[Was muss geprueft, validiert, visuell bewertet oder offline nutzbar sein?]
+Qualitätskriterien:
+[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
 ```

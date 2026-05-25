@@ -137,5 +137,5 @@
     "promptforge": "generic-workflow",
     "allgemein": "generic-chat"
   },
-  "usage_note": "OpenWebUI-Modelle nutzen meta.profile_image_url. Diese SVGs oder PNGs koennen per GUI als Profilbild gesetzt oder in eine OpenWebUI-statisch erreichbare Ablage kopiert und dann als URL referenziert werden."
+  "usage_note": "OpenWebUI-Modelle nutzen meta.profile_image_url. Diese SVGs oder PNGs können per GUI als Profilbild gesetzt oder in eine OpenWebUI-statisch erreichbare Ablage kopiert und dann als URL referenziert werden."
 }

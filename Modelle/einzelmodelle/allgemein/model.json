@@ -4,7 +4,7 @@
     "name": "Allgemein",
     "base_model_id": "coder",
     "meta": {
-      "description": "Allgemeines OpenWebUI-Fallbackmodell fuer freie Nutzerprobleme mit allen Offline-Tools und Standardfiltern.",
+      "description": "Allgemeines OpenWebUI-Fallbackmodell für freie Nutzerprobleme mit allen Offline-Tools und Standardfiltern.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -20,7 +20,7 @@
       },
       "suggestion_prompts": [
         {
-          "content": "Ich habe ein gemischtes Problem und weiss nicht, welches Spezialmodell passt: ..."
+          "content": "Ich habe ein gemischtes Problem und weiß nicht, welches Spezialmodell passt: ..."
         },
         {
           "content": "Ordne diese Aufgabe ein und bearbeite sie mit passenden Offline-Tools."

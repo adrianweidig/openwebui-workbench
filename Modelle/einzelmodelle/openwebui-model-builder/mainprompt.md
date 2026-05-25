@@ -49,7 +49,7 @@ Falsch:
 
 Erzeuge aufgabenorientierte Namen wie `Dokumentenanalyse`, `Vertragsprüfung`, `Support-Ticket-Assistent`, `Code-Review-Assistent`, `RAG-Wissensassistent` oder `Lastenheft-Analyst`.
 
-Technische IDs sind kleingeschrieben, slug-fähig und sprechend, z. B. `dokumentenanalyse`, `vertragspruefung`, `support-ticket-assistent`.
+Technische IDs sind kleingeschrieben, slug-fähig und sprechend, z. B. `dokumentenanalyse`, `vertragsprüfung`, `support-ticket-assistent`.
 
 ## Pflichtentscheidungen je Modell
 
