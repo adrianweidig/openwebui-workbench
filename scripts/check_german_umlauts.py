@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -27,11 +28,26 @@ TEXT_SUFFIXES = {
 
 SKIP_PARTS = {
     ".git",
+    ".venv",
     "__pycache__",
     ".pytest_cache",
     ".mypy_cache",
     ".ruff_cache",
+    "Artefakte",
+    "node_modules",
 }
+
+FALLBACK_ROOTS = (
+    ".github",
+    "Deployment",
+    "docs",
+    "Modelle",
+    "OpenWebUI Model Builder",
+    "Problemfälle",
+    "scripts",
+    "Tools",
+    "Workbench",
+)
 
 PROTECTED_PATTERN = re.compile(r"(`[^`]*`|[\w./\\-]+\.(?:css|html|json|md|py|svg|txt|yaml|yml|zip))")
 
@@ -159,6 +175,8 @@ REGEX_REPLACEMENTS = (
 
 
 def tracked_files() -> list[Path]:
+    if shutil.which("git") is None:
+        return fallback_files()
     completed = subprocess.run(
         ["git", "ls-files"],
         cwd=ROOT,
@@ -168,6 +186,19 @@ def tracked_files() -> list[Path]:
         stdout=subprocess.PIPE,
     )
     return [ROOT / line for line in completed.stdout.splitlines() if line.strip()]
+
+
+def fallback_files() -> list[Path]:
+    """Return repository text candidates in minimal containers without git."""
+    files: list[Path] = []
+    for path in ROOT.iterdir():
+        if path.is_file():
+            files.append(path)
+    for rel_root in FALLBACK_ROOTS:
+        path = ROOT / rel_root
+        if path.exists():
+            files.extend(item for item in path.rglob("*") if item.is_file())
+    return sorted(files)
 
 
 def iter_text_files(paths: Iterable[Path]) -> Iterable[Path]:
