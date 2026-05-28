@@ -422,6 +422,15 @@ class WorkbenchState:
         path.write_text(content, encoding="utf-8", newline="\n")
         return self.read_model_file(model_id, name)
 
+    def delete_model_file(self, model_id: str, name: str) -> dict[str, Any]:
+        if not self.config.allow_write:
+            raise PermissionError(t("write_disabled", self.config.locale))
+        path = self.normalize_model_file(model_id, name)
+        if not path.exists() or not path.is_file():
+            raise FileNotFoundError(t("file_not_found", self.config.locale))
+        path.unlink()
+        return {"model_id": model_id, "name": name, "path": rel(path), "deleted": True}
+
     def list_tools(self) -> list[dict[str, Any]]:
         return self._list_markdown_or_python(self.tools_root, "*.py", "tool")
 
@@ -460,6 +469,22 @@ class WorkbenchState:
             raise FileNotFoundError(t("resource_not_found", self.config.locale, kind=kind, resource_id=resource_id))
         return path
 
+    def resource_target_path(self, kind: str, resource_id: str) -> Path:
+        safe_resource_id = require_safe_path_segment(resource_id, t("invalid_resource_id", self.config.locale))
+        if kind == "tool":
+            if not safe_resource_id.endswith(".py"):
+                safe_resource_id = f"{safe_resource_id}.py"
+            if safe_resource_id == "__init__.py":
+                raise ValueError(t("invalid_resource_id", self.config.locale))
+            return self.tools_root / safe_resource_id
+        if kind == "skill":
+            if not safe_resource_id.endswith(".md"):
+                safe_resource_id = f"{safe_resource_id}.md"
+            if safe_resource_id.upper() == "README.MD":
+                raise ValueError(t("invalid_resource_id", self.config.locale))
+            return self.skills_root / safe_resource_id
+        raise ValueError(t("resource_type", self.config.locale))
+
     def read_resource(self, kind: str, resource_id: str) -> dict[str, Any]:
         path = self.resource_path(kind, resource_id)
         return {
@@ -480,6 +505,26 @@ class WorkbenchState:
         path = self.resource_path(kind, resource_id)
         path.write_text(content, encoding="utf-8", newline="\n")
         return self.read_resource(kind, resource_id)
+
+    def create_resource(self, kind: str, resource_id: str, content: str) -> dict[str, Any]:
+        if not self.config.allow_write:
+            raise PermissionError(t("write_disabled", self.config.locale))
+        encoded = content.encode("utf-8")
+        if len(encoded) > MAX_BODY_BYTES:
+            raise ValueError(t("content_too_large", self.config.locale, max_bytes=MAX_BODY_BYTES))
+        path = self.resource_target_path(kind, resource_id)
+        if path.exists():
+            raise ValueError(t("resource_exists", self.config.locale, resource_id=path.stem))
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8", newline="\n")
+        return self.read_resource(kind, path.stem)
+
+    def delete_resource(self, kind: str, resource_id: str) -> dict[str, Any]:
+        if not self.config.allow_write:
+            raise PermissionError(t("write_disabled", self.config.locale))
+        path = self.resource_path(kind, resource_id)
+        path.unlink()
+        return {"kind": kind, "id": resource_id, "path": rel(path), "deleted": True}
 
     def run_action(self, action: str) -> dict[str, Any]:
         command_env: dict[str, str] = {
@@ -690,6 +735,35 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 result = STATE.run_action(action)
                 status = HTTPStatus.OK if result["ok"] else HTTPStatus.BAD_GATEWAY
                 self.send_json(result, status)
+            elif parsed.path == "/api/resources":
+                payload = self.read_json_body()
+                self.send_json(
+                    STATE.create_resource(
+                        str(payload.get("kind") or ""),
+                        str(payload.get("id") or ""),
+                        str(payload.get("content") or ""),
+                    ),
+                    HTTPStatus.CREATED,
+                )
+            else:
+                self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
+        except Exception as exc:
+            self.handle_exception(exc)
+
+    def do_DELETE(self) -> None:  # noqa: N802
+        if not self.require_auth():
+            return
+        parsed = urlparse(self.path)
+        try:
+            if parsed.path.startswith("/api/models/") and parsed.path.endswith("/file"):
+                model_id = unquote(parsed.path.split("/")[3])
+                name = parse_qs(parsed.query).get("name", [""])[0]
+                self.send_json(STATE.delete_model_file(model_id, name))
+            elif parsed.path.startswith("/api/resources/") and parsed.path.endswith("/file"):
+                parts = parsed.path.split("/")
+                kind = unquote(parts[3])
+                resource_id = unquote(parts[4])
+                self.send_json(STATE.delete_resource(kind, resource_id))
             else:
                 self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
         except Exception as exc:

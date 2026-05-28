@@ -108,7 +108,16 @@
                 <a id="open-openwebui" class="secondary-link" href="http://localhost:3000" target="_blank" rel="noreferrer" data-i18n="models.open">OpenWebUI öffnen</a>
               </div>
 
-              <div class="file-tabs" id="file-tabs" aria-label="Modelldateien"></div>
+              <div class="file-management">
+                <div class="file-management-head">
+                  <strong data-i18n="files.title">Dateien</strong>
+                  <div>
+                    <button id="add-model-file" class="ghost compact" type="button" data-i18n="action.addFile">Datei hinzufügen</button>
+                    <button id="delete-model-file" class="ghost compact danger-action" type="button" disabled data-i18n="action.deleteFile">Entfernen</button>
+                  </div>
+                </div>
+                <div class="file-tabs file-list" id="file-tabs" aria-label="Modelldateien"></div>
+              </div>
               <div class="viewer-toolbar" aria-label="Markdown Ansicht" data-i18n-aria-label="view.markdownAria">
                 <button class="view-mode active" data-editor="model" data-mode="split" type="button" data-i18n="view.split">Split</button>
                 <button class="view-mode" data-editor="model" data-mode="edit" type="button" data-i18n="view.editor">Editor</button>
@@ -134,7 +143,10 @@
                   <h3 data-i18n="resources.title">Tools & Skills</h3>
                   <p id="resource-filter-state" data-i18n="resources.all">Alle Ressourcen</p>
                 </div>
-                <input id="resource-search" type="search" placeholder="Filtern" data-i18n-placeholder="search.placeholder" autocomplete="off" />
+                <div class="pane-actions">
+                  <input id="resource-search" type="search" placeholder="Filtern" data-i18n-placeholder="search.placeholder" autocomplete="off" />
+                  <button id="add-resource" class="ghost compact" type="button" data-i18n="action.add">Hinzufügen</button>
+                </div>
               </div>
               <div id="resource-list" class="model-list"></div>
             </section>
@@ -158,7 +170,10 @@
               </div>
               <div class="editor-actions">
                 <span id="resource-state" data-i18n="state.ready">Bereit</span>
-                <button id="save-resource" class="primary" disabled data-i18n="action.save">Speichern</button>
+                <div class="editor-action-buttons">
+                  <button id="delete-resource" class="ghost danger-action" disabled data-i18n="action.delete">Entfernen</button>
+                  <button id="save-resource" class="primary" disabled data-i18n="action.save">Speichern</button>
+                </div>
               </div>
             </section>
           </div>

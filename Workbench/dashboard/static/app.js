@@ -454,18 +454,63 @@ function renderEmpty(container, message) {
   container.append(empty);
 }
 
+function modelFileGroup(name) {
+  if (name.startsWith("beispiele/")) return "examples";
+  if (name.startsWith("i18n/")) return "i18n";
+  if (name.startsWith("beispielergebnis.")) return "artifacts";
+  return "core";
+}
+
+function modelFileTemplate(name) {
+  if (name.endsWith(".html")) return "<!doctype html>\n<html lang=\"de\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Beispiel</title>\n  </head>\n  <body>\n    <main>\n      <h1>Beispiel</h1>\n    </main>\n  </body>\n</html>\n";
+  if (name.endsWith(".json")) return "{\n  \"name\": \"Beispiel\"\n}\n";
+  if (name.endsWith(".yaml") || name.endsWith(".yml")) return "name: Beispiel\n";
+  if (name.endsWith(".py")) return "from __future__ import annotations\n\n\ndef main() -> None:\n    print(\"Beispiel\")\n\n\nif __name__ == \"__main__\":\n    main()\n";
+  if (name.endsWith(".js")) return "\"use strict\";\n\nconsole.log(\"Beispiel\");\n";
+  if (name.endsWith(".css")) return ":root {\n  color-scheme: light dark;\n}\n";
+  if (name.endsWith(".csv")) return "name,value\nBeispiel,1\n";
+  if (name.endsWith(".sql")) return "select 1 as beispiel;\n";
+  if (name.endsWith(".svg")) return "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 180\" role=\"img\" aria-label=\"Beispielgrafik\"><rect width=\"320\" height=\"180\" fill=\"#f8fafc\"/><text x=\"24\" y=\"96\" font-family=\"Arial\" font-size=\"24\" fill=\"#17202e\">Beispiel</text></svg>\n";
+  return "# Neue Datei\n\nBeschreibe hier den Zweck dieser Datei.\n";
+}
+
+function selectedModelFileExists() {
+  return Boolean(state.selectedModel?.files.find((file) => file.name === state.selectedFile && file.exists));
+}
+
 function renderFileTabs() {
   const tabs = el("file-tabs");
   tabs.replaceChildren();
   if (!state.selectedModel) return;
+  const grouped = new Map();
   state.selectedModel.files.forEach((file) => {
-    const button = document.createElement("button");
-    button.className = `file-tab${state.selectedFile === file.name ? " active" : ""}`;
-    button.type = "button";
-    button.textContent = file.name;
-    button.addEventListener("click", () => loadFile(file.name));
-    tabs.append(button);
+    const group = modelFileGroup(file.name);
+    if (!grouped.has(group)) grouped.set(group, []);
+    grouped.get(group).push(file);
   });
+  ["core", "artifacts", "examples", "i18n"].forEach((group) => {
+    const files = grouped.get(group) || [];
+    if (!files.length) return;
+    const section = document.createElement("section");
+    section.className = "file-group";
+    const heading = document.createElement("h4");
+    heading.textContent = t(`files.group.${group}`);
+    section.append(heading);
+    files.forEach((file) => {
+      const button = document.createElement("button");
+      button.className = `file-tab${state.selectedFile === file.name ? " active" : ""}${file.exists ? "" : " missing"}`;
+      button.type = "button";
+      const name = document.createElement("span");
+      name.textContent = file.name;
+      const meta = document.createElement("small");
+      meta.textContent = file.exists ? `${formatBytes(file.bytes)} · ${formatDateTime(file.mtime)}` : t("state.missing");
+      button.append(name, meta);
+      button.addEventListener("click", () => loadFile(file.name));
+      section.append(button);
+    });
+    tabs.append(section);
+  });
+  el("delete-model-file").disabled = !selectedModelFileExists();
 }
 
 async function selectResource(kind, resourceId) {
@@ -480,6 +525,7 @@ async function selectResource(kind, resourceId) {
   el("resource-editor").value = payload.content;
   updateResourcePreview();
   el("save-resource").disabled = false;
+  el("delete-resource").disabled = false;
   setText("resource-state", t("state.loaded", { path: payload.path }));
 }
 
@@ -504,8 +550,103 @@ async function loadFile(name) {
   el("markdown-editor").value = payload.content;
   updateModelPreview();
   el("save-file").disabled = false;
+  el("delete-model-file").disabled = !payload.exists;
   state.dirty = false;
   setText("editor-state", payload.exists ? t("state.loaded", { path: payload.path }) : t("state.newFile", { path: payload.path }));
+}
+
+async function addModelFile() {
+  if (!state.selectedModel) return;
+  const name = window.prompt(t("prompt.modelFileName"), "beispiele/neues-beispiel.md");
+  if (!name) return;
+  if (state.selectedModel.files.some((file) => file.name === name && file.exists)) {
+    window.alert(t("files.exists"));
+    return;
+  }
+  setText("editor-state", t("state.saving"));
+  try {
+    await api(`/api/models/${encodeURIComponent(state.selectedModel.id)}/file`, {
+      method: "PUT",
+      body: JSON.stringify({ name, content: modelFileTemplate(name) }),
+    });
+    await refreshModels(true);
+    await loadFile(name);
+  } catch (error) {
+    setText("editor-state", error.message);
+  }
+}
+
+async function deleteModelFile() {
+  if (!state.selectedModel || !state.selectedFile) return;
+  if (!window.confirm(t("prompt.deleteFile", { name: state.selectedFile }))) return;
+  setText("editor-state", t("state.deleting"));
+  try {
+    await api(`/api/models/${encodeURIComponent(state.selectedModel.id)}/file?name=${encodeURIComponent(state.selectedFile)}`, {
+      method: "DELETE",
+    });
+    const deleted = state.selectedFile;
+    await refreshModels(true);
+    const nextFile = state.selectedModel?.files.find((file) => file.exists && file.name !== deleted)?.name
+      || state.selectedModel?.files[0]?.name
+      || "systemprompt.md";
+    await loadFile(nextFile);
+  } catch (error) {
+    setText("editor-state", error.message);
+  }
+}
+
+function resourceTemplate(kind, id) {
+  if (kind === "tool") {
+    let methodName = String(id || "new_tool").replace(/[^A-Za-z0-9_]/g, "_");
+    if (!/^[A-Za-z_]/.test(methodName)) methodName = `tool_${methodName}`;
+    return `from __future__ import annotations\n\n\nclass Tools:\n    def __init__(self) -> None:\n        pass\n\n    async def ${methodName}(self, text: str) -> str:\n        \"\"\"Kurze Beschreibung der Tool-Funktion.\"\"\"\n        return text\n`;
+  }
+  return `# ${id}\n\n## Zweck\n\nBeschreibe, wann dieser Skill genutzt werden soll.\n\n## Arbeitsweise\n\n- Prüfe zuerst die Eingaben.\n- Arbeite offline-fähig und ohne Secrets.\n- Gib konkrete, prüfbare Ergebnisse aus.\n`;
+}
+
+async function addResource() {
+  const rawKind = window.prompt(t("prompt.resourceKind"), "skill");
+  if (!rawKind) return;
+  const kind = rawKind.trim().toLowerCase();
+  if (!["tool", "skill"].includes(kind)) {
+    window.alert(t("resource.kind.invalid"));
+    return;
+  }
+  const id = window.prompt(t("prompt.resourceId"), kind === "tool" ? "neues_tool" : "neuer-skill");
+  if (!id) return;
+  setText("resource-state", t("state.saving"));
+  try {
+    const payload = await api("/api/resources", {
+      method: "POST",
+      body: JSON.stringify({ kind, id, content: resourceTemplate(kind, id) }),
+    });
+    await refreshResources(true);
+    await selectResource(payload.kind, payload.id);
+  } catch (error) {
+    setText("resource-state", error.message);
+  }
+}
+
+async function deleteResource() {
+  if (!state.selectedResource) return;
+  const { kind, id } = state.selectedResource;
+  if (!window.confirm(t("prompt.deleteResource", { name: `${kind}/${id}` }))) return;
+  setText("resource-state", t("state.deleting"));
+  try {
+    await api(`/api/resources/${encodeURIComponent(kind)}/${encodeURIComponent(id)}/file`, { method: "DELETE" });
+    state.selectedResource = null;
+    el("resource-editor").value = "";
+    el("resource-editor").disabled = true;
+    el("resource-preview").innerHTML = "";
+    el("save-resource").disabled = true;
+    el("delete-resource").disabled = true;
+    setText("resource-title", t("resources.none"));
+    setText("resource-description", t("resources.pick"));
+    setText("resource-state", t("state.deleted"));
+    await refreshResources(false);
+  } catch (error) {
+    setText("resource-state", error.message);
+  }
 }
 
 async function saveResource() {
@@ -654,6 +795,10 @@ function wireEvents() {
     setText("editor-state", t("state.refreshed"));
   });
   el("save-file").addEventListener("click", saveFile);
+  el("add-model-file").addEventListener("click", addModelFile);
+  el("delete-model-file").addEventListener("click", deleteModelFile);
+  el("add-resource").addEventListener("click", addResource);
+  el("delete-resource").addEventListener("click", deleteResource);
   el("save-resource").addEventListener("click", saveResource);
   document.querySelectorAll("[data-action]").forEach((button) => {
     button.addEventListener("click", () => runAction(button.dataset.action));

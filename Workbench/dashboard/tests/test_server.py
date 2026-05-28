@@ -123,6 +123,12 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(after["content"], "# Aktualisiertes Profil\n")
         self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "i18n" / "de.md").is_file())
 
+    def test_deletes_allowed_model_file(self) -> None:
+        self.state.write_model_file("demo-model", "beispiele/delete-me.md", "Delete me\n")
+        result = self.state.delete_model_file("demo-model", "beispiele/delete-me.md")
+        self.assertTrue(result["deleted"])
+        self.assertFalse((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispiele" / "delete-me.md").exists())
+
     def test_rejects_path_traversal(self) -> None:
         with self.assertRaises(ValueError):
             self.state.read_model_file("demo-model", "../README.md")
@@ -149,6 +155,19 @@ class WorkbenchStateTests(unittest.TestCase):
     def test_reads_skill_resource(self) -> None:
         payload = self.state.read_resource("skill", "demo-skill")
         self.assertEqual(payload["content"], "# Demo Skill\n")
+
+    def test_creates_and_deletes_skill_resource(self) -> None:
+        created = self.state.create_resource("skill", "new-skill", "# New Skill\n")
+        self.assertEqual(created["id"], "new-skill")
+        self.assertTrue((self.root / "Tools" / "openwebui_ext" / "skills" / "new-skill.md").is_file())
+        deleted = self.state.delete_resource("skill", "new-skill")
+        self.assertTrue(deleted["deleted"])
+        self.assertFalse((self.root / "Tools" / "openwebui_ext" / "skills" / "new-skill.md").exists())
+
+    def test_creates_tool_resource_with_py_suffix(self) -> None:
+        created = self.state.create_resource("tool", "new_tool", "# New Tool\n")
+        self.assertEqual(created["id"], "new_tool")
+        self.assertTrue((self.root / "Tools" / "openwebui_ext" / "tools" / "new_tool.py").is_file())
 
     def test_rejects_resource_path_traversal(self) -> None:
         with self.assertRaises(ValueError):
