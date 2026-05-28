@@ -39,8 +39,8 @@ services:
   # - Runs fixed repository actions such as validation, artifact generation and import dry-runs.
   #
   # Required local decisions:
-  # - Set WORKBENCH_AUTH_USERNAME and WORKBENCH_AUTH_PASSWORD or WORKBENCH_AUTH_PASSWORD_FILE
-  #   in an ignored .env before exposing the dashboard beyond a short local development session.
+  # - Set WORKBENCH_AUTH_PASSWORD in an ignored .env before starting the dashboard.
+  #   WORKBENCH_AUTH_USERNAME defaults to "workbench".
   # - Set OPENWEBUI_ADMIN_TOKEN only when the dashboard should perform real OpenWebUI sync.
   workbench:
     build:
@@ -58,8 +58,8 @@ services:
       WORKBENCH_ALLOW_WRITE: ${WORKBENCH_ALLOW_WRITE:-true}
       WORKBENCH_COMMAND_TIMEOUT_SECONDS: ${WORKBENCH_COMMAND_TIMEOUT_SECONDS:-300}
       WORKBENCH_LOCALE: ${WORKBENCH_LOCALE:-de}
-      WORKBENCH_AUTH_USERNAME: ${WORKBENCH_AUTH_USERNAME:-}
-      WORKBENCH_AUTH_PASSWORD: ${WORKBENCH_AUTH_PASSWORD:-}
+      WORKBENCH_AUTH_USERNAME: ${WORKBENCH_AUTH_USERNAME:-workbench}
+      WORKBENCH_AUTH_PASSWORD: ${WORKBENCH_AUTH_PASSWORD:?Set WORKBENCH_AUTH_PASSWORD in your local .env before starting the Workbench dashboard}
       WORKBENCH_AUTH_PASSWORD_FILE: ${WORKBENCH_AUTH_PASSWORD_FILE:-}
       OPENWEBUI_BASE_URL: ${OPENWEBUI_BASE_URL:-http://openwebui:8080}
       OPENWEBUI_PUBLIC_URL: ${OPENWEBUI_PUBLIC_URL:-http://localhost:${OPENWEBUI_PORT:-3000}}

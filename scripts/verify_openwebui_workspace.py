@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -17,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class CommandStep:
     label: str
     command: list[str]
+    env: dict[str, str] | None = None
 
 
 @dataclass(frozen=True)
@@ -57,8 +59,9 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
         steps.append(CommandStep("Unit tests", [python, "-m", "unittest", "discover", "Tools.openwebui_ext.tests"]))
         steps.append(CommandStep("Workbench dashboard tests", [python, "-m", "unittest", "discover", "Workbench.dashboard.tests"]))
     if args.include_docker_compose:
+        compose_auth_env = {"WORKBENCH_AUTH_PASSWORD": "verify-only-placeholder"}
         steps.append(CommandStep("Docker compose example config", ["docker", "compose", "-f", "Deployment/docker-compose.openwebui-offline.example.yml", "config"]))
-        steps.append(CommandStep("Docker compose workbench config", ["docker", "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"]))
+        steps.append(CommandStep("Docker compose workbench config", ["docker", "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"], env=compose_auth_env))
         steps.append(
             CommandStep(
                 "Docker compose top.secret workbench config",
@@ -71,6 +74,7 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
                     "Deployment/docker-compose.top-secret.yml",
                     "config",
                 ],
+                env=compose_auth_env,
             )
         )
     return steps
@@ -101,7 +105,11 @@ def run_command_step(step: CommandStep) -> StepResult:
 
     print(f"\n## {step.label}", flush=True)
     print(" ".join(step.command), flush=True)
-    completed = subprocess.run(step.command, cwd=ROOT)
+    env = None
+    if step.env:
+        env = dict(os.environ)
+        env.update(step.env)
+    completed = subprocess.run(step.command, cwd=ROOT, env=env)
     if completed.returncode != 0:
         return StepResult(step.label, "Fehlgeschlagen", f"Exit-Code {completed.returncode}")
     return StepResult(step.label, "Erfolgreich")

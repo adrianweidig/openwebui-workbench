@@ -33,8 +33,10 @@ The editable source remains the repository:
 ```powershell
 Copy-Item Deployment/workbench.env.example .env
 notepad .env
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
+
+The local `.env` must set `WORKBENCH_AUTH_PASSWORD`. Without this password Docker Compose fails before starting the dashboard; with a password set, all dashboard routes are protected with HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` is optional and defaults to `workbench`.
 
 Then open:
 
@@ -77,8 +79,8 @@ The dashboard defaults to German. It can switch to English through the language 
 | `OPENWEBUI_CA_PATH` | Optional CA directory for private local certificates. |
 | `OPENWEBUI_ADMIN_TOKEN` | Admin API key for real synchronization. |
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternative path to a token file in the container. |
-| `WORKBENCH_AUTH_USERNAME` | Username for dashboard HTTP Basic Auth. |
-| `WORKBENCH_AUTH_PASSWORD` | Password for dashboard HTTP Basic Auth. Do not commit it. |
+| `WORKBENCH_AUTH_USERNAME` | Username for dashboard HTTP Basic Auth. Compose default: `workbench`. |
+| `WORKBENCH_AUTH_PASSWORD` | Password for dashboard HTTP Basic Auth. Required by Compose. Do not commit it. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternative path to a password file in the container. |
 | `WORKBENCH_ALLOW_WRITE` | `true` allows Markdown write access. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout for generator, dry-run, and verification actions. |

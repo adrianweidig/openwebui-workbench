@@ -13,10 +13,10 @@ Start der neuen Workbench-Umgebung:
 
 ```powershell
 Copy-Item Deployment/workbench.env.example .env
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
-Setze in der lokalen `.env` `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE`, wenn das Dashboard nicht nur in einer kurzlebigen lokalen Entwicklersitzung läuft.
+Setze in der lokalen `.env` mindestens `WORKBENCH_AUTH_PASSWORD`; `WORKBENCH_AUTH_USERNAME` fällt sonst auf `workbench` zurück. Die Compose-Datei startet das Dashboard nicht ohne Passwort, damit die Workbench immer über HTTP Basic Auth erreichbar ist.
 
 ## Unternehmensnetz mit eigener Root-CA
 
@@ -32,7 +32,7 @@ OPENWEBUI_TLS_VERIFY=true
 Start mit CA-Override:
 
 ```powershell
-docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.enterprise-ca.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.enterprise-ca.yml up -d --build
 ```
 
 Der Workbench-Container installiert `ca-certificates` im Image und führt beim Start immer `update-ca-certificates` aus. Wenn `WORKBENCH_CA_BUNDLE` gesetzt ist, wird die gemountete PEM-Datei vorab geprüft: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte führen zu einem klaren Startfehler. Secrets, Tokens und Private Keys gehören nicht in diese CA-Datei.
@@ -72,7 +72,7 @@ Ausgabe:
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
 
 ```powershell
-docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
 ```
 
 Der Edge-Proxy benötigt zusätzlich einen Host `workbench.top.secret`, eine Nginx-Route nach `http://workbench:8088` und einen lokalen Windows-Hosts-Eintrag `127.0.0.1 workbench.top.secret`. Die passende Nginx-Server-Block-Vorlage liegt in [`top-secret-nginx.workbench.conf`](top-secret-nginx.workbench.conf). Wenn der lokale Edge HTTPS nicht auf Host-Port 443 veröffentlicht, die URL mit veröffentlichtem Port öffnen, zum Beispiel `https://workbench.top.secret:25443`.

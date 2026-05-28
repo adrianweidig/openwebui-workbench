@@ -33,8 +33,10 @@ Die bearbeitbare Quelle bleibt das Repository:
 ```powershell
 Copy-Item Deployment/workbench.env.example .env
 notepad .env
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
+
+Die lokale `.env` muss `WORKBENCH_AUTH_PASSWORD` setzen. Ohne dieses Passwort bricht Docker Compose vor dem Start ab; mit gesetztem Passwort schützt das Dashboard alle Routen per HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` ist optional und nutzt standardmäßig `workbench`.
 
 Danach:
 
@@ -103,8 +105,8 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `OPENWEBUI_ADMIN_TOKEN` | Admin-API-Key für echte Synchronisierung. Nicht nötig für Lesen, Bearbeiten, Generieren oder Dry-Run. |
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternativer Pfad zu einer Token-Datei im Container. |
 | `WEBUI_SECRET_KEY` | Stabiler lokaler OpenWebUI-Secret-Key, damit Sessions nach Container-Neustarts erhalten bleiben. |
-| `WORKBENCH_AUTH_USERNAME` | Benutzername für die HTTP-Basic-Auth des Dashboards. Auth ist aktiv, wenn Benutzername und Passwort gesetzt sind. |
-| `WORKBENCH_AUTH_PASSWORD` | Passwort für die HTTP-Basic-Auth des Dashboards. Nicht committen. |
+| `WORKBENCH_AUTH_USERNAME` | Benutzername für die HTTP-Basic-Auth des Dashboards. Standard in Compose: `workbench`. |
+| `WORKBENCH_AUTH_PASSWORD` | Passwort für die HTTP-Basic-Auth des Dashboards. In Compose erforderlich und nicht committen. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternativer Pfad zu einer Passwortdatei im Container. |
 | `WORKBENCH_ALLOW_WRITE` | `true` erlaubt Markdown-Schreibzugriff. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Dry-Run- und Verify-Aktionen. |
