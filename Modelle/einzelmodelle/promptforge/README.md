@@ -4,7 +4,7 @@ OpenWebUI-Modellumsetzung des Custom GPT `PromptForge` / `Promptgenerator` aus `
 
 ## Zweck
 
-Erstellt vollständige, direkt kopierbare Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows. Die Arbeitsweise folgt den Referenzdateien `systemprompt.md`, `bootloader.md` und `fachwissen.md` aus dem Custom-GPT-Repo.
+Erstellt vollständige, direkt kopierbare Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows. Das Modell nutzt `beispielergebnis.md` als Goldstandard für fertige Promptvorlagen ohne Platzhalter und `beispiele/promptforge-goldstandard-briefing.md` als Few-Shot-Material.
 
 ## Referenz
 
@@ -20,4 +20,4 @@ Quelle: `https://github.com/adrianweidig/custom-gpts/tree/main/Promptgenerator`
 
 ## Import
 
-`model.json` ist ein OpenWebUI-kompatibles JSON-Array mit genau einem Modellobjekt. `mainprompt.md` und `fachwissen.md` werden beim API-Import als Knowledge für dieses Modell hinterlegt.
+`model.json` ist ein OpenWebUI-kompatibles JSON-Array mit genau einem Modellobjekt. `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/` werden beim API-Import als Knowledge für dieses Modell hinterlegt.

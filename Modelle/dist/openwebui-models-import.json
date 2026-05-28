@@ -4691,7 +4691,7 @@
     "name": "OpenWebUI Model Builder",
     "base_model_id": "coder",
     "meta": {
-      "description": "Erstellt vollständige OpenWebUI-Modellpakete mit model.json, systemprompt.md, mainprompt.md und fachwissen.md wie der Custom GPT OpenWebUI Model Builder.",
+      "description": "Erstellt vollständige OpenWebUI-Modellpakete mit model.json, kurzem Bootloader-Systemprompt, mainprompt.md, fachwissen.md, Beispielartefakt und Importcheck.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -4901,7 +4901,7 @@
     "name": "PromptForge",
     "base_model_id": "coder",
     "meta": {
-      "description": "Erstellt vollständige, direkt kopierbare Markdown-Promptvorlagen wie der Custom GPT PromptForge/Promptgenerator.",
+      "description": "Erstellt vollständige, direkt kopierbare Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows.",
       "capabilities": {
         "file_context": true,
         "vision": true,

@@ -4372,25 +4372,25 @@
           "path": "Modelle/einzelmodelle/offline-workbench-agent/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 2292
+          "bytes": 3723
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/offline-workbench-agent/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1343
+          "bytes": 9358
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/offline-workbench-agent/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1857
+          "bytes": 2720
         },
-        "beispiele/offline-workbench-auftrag-vorlage.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/beispiele/offline-workbench-auftrag-vorlage.md",
+        "beispiele/offline-workbench-auftrag-goldstandard.md": {
+          "path": "Modelle/einzelmodelle/offline-workbench-agent/beispiele/offline-workbench-auftrag-goldstandard.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1570
+          "bytes": 2535
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/de.md",
@@ -4588,25 +4588,25 @@
           "path": "Modelle/einzelmodelle/openwebui-model-builder/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 7605
+          "bytes": 4619
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/openwebui-model-builder/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 31399
+          "bytes": 11601
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/openwebui-model-builder/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1811
+          "bytes": 4805
         },
-        "beispiele/modellpaket-vorlage.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/beispiele/modellpaket-vorlage.md",
+        "beispiele/openwebui-modellpaket-goldstandard.md": {
+          "path": "Modelle/einzelmodelle/openwebui-model-builder/beispiele/openwebui-modellpaket-goldstandard.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1590
+          "bytes": 2657
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/de.md",
@@ -4793,25 +4793,25 @@
           "path": "Modelle/einzelmodelle/promptforge/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4707
+          "bytes": 3586
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/promptforge/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 20451
+          "bytes": 11499
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/promptforge/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1833
+          "bytes": 2239
         },
-        "beispiele/promptforge-vorlage.md": {
-          "path": "Modelle/einzelmodelle/promptforge/beispiele/promptforge-vorlage.md",
+        "beispiele/promptforge-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/promptforge/beispiele/promptforge-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1602
+          "bytes": 3227
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/promptforge/i18n/de.md",

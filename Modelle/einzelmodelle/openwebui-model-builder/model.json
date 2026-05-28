@@ -4,7 +4,7 @@
     "name": "OpenWebUI Model Builder",
     "base_model_id": "coder",
     "meta": {
-      "description": "Erstellt vollständige OpenWebUI-Modellpakete mit model.json, systemprompt.md, mainprompt.md und fachwissen.md wie der Custom GPT OpenWebUI Model Builder.",
+      "description": "Erstellt vollständige OpenWebUI-Modellpakete mit model.json, kurzem Bootloader-Systemprompt, mainprompt.md, fachwissen.md, Beispielartefakt und Importcheck.",
       "capabilities": {
         "file_context": true,
         "vision": true,

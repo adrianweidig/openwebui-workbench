@@ -27,9 +27,9 @@ Dieses Inventar priorisiert die Offline-Verbesserung der Custom-Modelle. Es ist 
 | `meeting-protokoll-auswertung` | Protokolle, Aufgaben, Entscheidungen | `fachwissen.md`, Beispiele | Aktionslisten- und Entscheidungsformat prüfen | `.md`, `.csv` | P1 | offen |
 | `mistral-vision-workbench` | Vision- und Screenshot-Analyse | `fachwissen.md`, Beispiele, HTML-Demo | visuelle QA und Grenzen prüfen | `.md`, `.html` | P1 | offen |
 | `n8n-workflow-architect` | n8n-Workflow-Design | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.json`, Beispiele, `model.json` | Markdown-Goldstandard durch importierbares Workflow-JSON ersetzen | `.json` | P0 | Batch 2 fertig |
-| `offline-workbench-agent` | lokale Workbench-Orchestrierung | `fachwissen.md`, Beispiele, Tools | Tool-Fallbacks und Sicherheitsregeln prüfen | `.md`, `.json` | P0 | offen |
-| `openwebui-model-builder` | OpenWebUI-Modellpakete erzeugen | `fachwissen.md`, Beispiele | Repository-nahe Artefaktformate wichtig | `.json`, `.md` | P0 | offen |
-| `promptforge` | Promptvorlagen erzeugen | `fachwissen.md`, Beispiele | Few-Shot-Qualität und Promptgrenzen prüfen | `.md`, `.json` | P0 | offen |
+| `offline-workbench-agent` | lokale Workbench-Orchestrierung | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele, Tools | Tool-Wellen, Artefaktmanifest und Offline-Fallbacks geschärft | `.md`, ergänzend `.json`, `.html`, `.zip` | P0 | Batch 3 fertig |
+| `openwebui-model-builder` | OpenWebUI-Modellpakete erzeugen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | vollständiges Modellpaket mit kurzem Bootloader und Importcheck ergänzt | `.md` als Paketcontainer, enthaltenes `.json` | P0 | Batch 3 fertig |
+| `promptforge` | Promptvorlagen erzeugen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Goldstandard-Promptvorlage ohne Platzhalter und robuste Few-Shots ergänzt | `.md` | P0 | Batch 3 fertig |
 | `prozess-workflow-dokumentation` | Prozesse und Workflows dokumentieren | `fachwissen.md`, Beispiele | Diagramm- und Tabellenmuster prüfen | `.md`, optional `.svg` | P1 | offen |
 | `präsentationserstellung` | browserbasierte HTML-Keynotes | `fachwissen.md`, `mainprompt.md`, `systemprompt.md`, `beispielergebnis.html`, Beispiele, Scripts | Markdown-Goldstandard durch fertiges HTML-Artefakt ersetzen | `.html` | P0 | Batch 1 fertig |
 | `refactoring-unterstützung` | Code-Refactoring | `fachwissen.md`, Beispiele | sichere Änderungsvorschläge und Tests prüfen | `.md`, `.diff`, `.py` | P1 | offen |

@@ -1,49 +1,84 @@
-# Beispielergebnis und Arbeitsvorlage: Offline Workbench Agent
+# Goldstandard-Ergebnis: Offline Workbench Agent
 
-## Zweck dieses Modells
+## Nutzerauftrag
 
-Komplexe Offline-Aufgaben routen, Tools kombinieren und HTML/PDF/ZIP/Tabellen/Code-Artefakte lokal erzeugen.
+Erstelle aus einer CSV mit Ticketkennzahlen und einem kurzen Projekttext einen offline nutzbaren HTML-Report, eine JSON-Zusammenfassung und ein ZIP-Übergabepaket. Es gibt keinen Internetzugang und keine freigegebenen Logos.
 
-## Wiederverwendbarer Musterauftrag
+## Annahmen
 
-> Eine mehrteilige Aufgabe soll mit Jupyter, Artefakt-Tools und Validierung end-to-end erledigt werden.
+- Die CSV-Datei liegt im erlaubten Arbeitsverzeichnis.
+- Es werden keine externen Bilder, Fonts, CDNs oder APIs genutzt.
+- Konkrete Kennzahlen werden nur aus der bereitgestellten CSV übernommen.
+- PDF-Erzeugung ist optional und nur möglich, wenn ein lokaler Konverter vorhanden ist.
 
-## Erwartetes Ergebnisartefakt
+## Tool-Plan
 
-- Primäre Datei: `beispiele/offline-workbench-auftrag-vorlage.md`
-- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-- Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+| Welle | Zweck | Werkzeugklasse | Ergebnis |
+|---|---|---|---|
+| 1 | Eingaben prüfen | Datei-/Textvalidierung | Dateiliste, Schema, fehlende Spalten |
+| 2 | Daten berechnen | lokales Python/Jupyter | aggregierte Kennzahlen, Plausibilitätsnotizen |
+| 3 | Artefakte bauen | Offline-HTML/ZIP | `ticket-report.html`, `summary.json`, `handover.zip` |
+| 4 | Qualität prüfen | JSON-/HTML-/Linkprüfung | Validierungsprotokoll |
 
-## Vision- und Screenshot-Nutzung
+## Artefaktmanifest
 
-Nutze Vision für Screenshots, Artefakt-QA, Diagramme, UI-Zustände und visuelle Eingaben.
+```json
+{
+  "artifacts": [
+    {
+      "path": "Artefakte/output/ticket-report.html",
+      "purpose": "Offline lesbarer Management-Report mit eingebettetem CSS",
+      "offlineSafe": true
+    },
+    {
+      "path": "Artefakte/output/summary.json",
+      "purpose": "Maschinenlesbare Zusammenfassung der berechneten Kennzahlen",
+      "offlineSafe": true
+    },
+    {
+      "path": "Artefakte/output/handover.zip",
+      "purpose": "Übergabepaket aus Report, JSON und Validierungsnotiz",
+      "offlineSafe": true
+    }
+  ],
+  "validation": [
+    "CSV-Spalten geprüft",
+    "JSON syntaktisch geprüft",
+    "HTML auf externe URLs geprüft",
+    "ZIP-Inhaltsliste geprüft"
+  ],
+  "openItems": [
+    "PDF wurde nicht erzeugt, falls kein lokaler Browser- oder PDF-Konverter verfügbar ist",
+    "Kennzahlen müssen fachlich freigegeben werden"
+  ]
+}
+```
 
-## Tool-first-Ablauf
+## HTML-Offlineregeln
 
-1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-4. Ergebnis in der Vorlage unter `beispiele/offline-workbench-auftrag-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
+- CSS direkt in `<style>`.
+- Keine `http://`- oder `https://`-Ressourcen.
+- Systemschriften statt Webfonts.
+- Tabellen mit Umbruchregeln.
+- Druckstylesheet für A4.
+- Keine Tracker, Telemetrie oder externen Skripte.
 
-## Qualitätslatte
+## Abschlussbericht
 
-Der Plan muss Tool-Wellen, Artefaktpfade, Validierung und Übergabeformat enthalten.
+```md
+# Ergebnis
 
-## Copy/Paste-Starterprompt
+Erstellt wurden ein offline nutzbarer HTML-Report, eine JSON-Zusammenfassung und ein ZIP-Übergabepaket.
 
-```text
-Nutze das Modell Offline Workbench Agent. Verwende `beispielergebnis.md` und `beispiele/offline-workbench-auftrag-vorlage.md` als Vorlage.
+# Validierung
 
-Ziel:
-[Was soll am Ende konkret vorliegen?]
+- CSV-Struktur gelesen und Pflichtspalten geprüft.
+- Kennzahlen aus den bereitgestellten Daten berechnet.
+- HTML enthält keine externen Runtime-URLs.
+- JSON ist syntaktisch gültig.
+- ZIP enthält nur die vorgesehenen Artefakte.
 
-Eingaben:
-[Dateien, Text, Screenshots, Daten, Constraints]
+# Grenzen
 
-Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-Qualitätskriterien:
-[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
+Die Auswertung ersetzt keine fachliche Freigabe. Fehlende CSV-Spalten, unklare Definitionen und nicht bereitgestellte Zielwerte wurden als offene Punkte markiert.
 ```
