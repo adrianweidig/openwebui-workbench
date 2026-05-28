@@ -204,6 +204,14 @@
       "path": "models/compliance-richtlinienprüfung/model.json"
     },
     {
+      "id": "internetwissen",
+      "name": "Internetwissen",
+      "source_problem_file": "27_internetwissen.md",
+      "base_model_id": "coder",
+      "jupyter_tool_mode": "optional",
+      "path": "models/internetwissen/model.json"
+    },
+    {
       "id": "offline-workbench-agent",
       "name": "Offline Workbench Agent",
       "source_problem_file": "Sammelmodell: Offline ChatGPT Workbench",
@@ -228,6 +236,7 @@
     "Web Search ist für alle Modelle deaktiviert.",
     "Jupyter wird nur nach Modellzuordnung und lokaler Konfiguration genutzt.",
     "Der Offline Workbench Agent ist das Sammelmodell für ChatGPT-ähnliche Offline-Nutzung.",
-    "Mistral Vision Workbench ist das Spezialmodell für Screenshots, UI-Tests, visuelle Artefakt-QA, Diagramme, Scans und Präsentationsabnahme."
+    "Mistral Vision Workbench ist das Spezialmodell für Screenshots, UI-Tests, visuelle Artefakt-QA, Diagramme, Scans und Präsentationsabnahme.",
+    "Internetwissen ist das initiale Offline-Recherchemodell mit repo-interner KnowledgeBase ohne Live-Websuche und ohne große externe Webkorpora."
   ]
 }

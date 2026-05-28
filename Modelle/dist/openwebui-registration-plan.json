@@ -1711,6 +1711,122 @@
         "bytes": 976
       }
     },
+    "internetwissen": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 2602
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 11681
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 2144
+      },
+      "beispiele/allgemeine_recherchefrage.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/allgemeine_recherchefrage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 849
+      },
+      "beispiele/anleitung_ohne_live_web.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/anleitung_ohne_live_web.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 900
+      },
+      "beispiele/quellenkritik.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/quellenkritik.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 855
+      },
+      "beispiele/unbekanntes_oder_aktuelles_thema.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/unbekanntes_oder_aktuelles_thema.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 738
+      },
+      "i18n/de.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/de.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1179
+      },
+      "i18n/en.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/en.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1082
+      },
+      "i18n/es.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/es.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1096
+      },
+      "i18n/fr.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/fr.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1099
+      },
+      "i18n/it.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/it.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1084
+      },
+      "i18n/ja.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/ja.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1180
+      },
+      "i18n/manifest.json": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/manifest.json",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 919
+      },
+      "i18n/nl.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/nl.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1051
+      },
+      "i18n/pl.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/pl.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1054
+      },
+      "i18n/pt-BR.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/pt-BR.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1088
+      },
+      "i18n/tr.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/tr.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1075
+      },
+      "i18n/zh-Hans.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/zh-Hans.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1113
+      }
+    },
     "it-helpdesk-diagnose": {
       "mainprompt.md": {
         "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/mainprompt.md",
@@ -2028,7 +2144,7 @@
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 1491
+        "bytes": 1497
       },
       "beispiele/vision-ui-qa-vorlage.md": {
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
@@ -2628,7 +2744,7 @@
         "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 7530
+        "bytes": 7631
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/de.md",
@@ -3913,6 +4029,7 @@
     "dokumentenzusammenfassung",
     "email-kommunikationsassistenz",
     "informationsextraktion",
+    "internetwissen",
     "it-helpdesk-diagnose",
     "json-csv-log-analyse",
     "meeting-protokoll-auswertung",

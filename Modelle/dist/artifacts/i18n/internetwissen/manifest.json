@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "internetwissen",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "Internetwissen",
+    "en": "Internet Knowledge",
+    "es": "Conocimiento de Internet",
+    "fr": "Connaissance Internet",
+    "pt-BR": "Conhecimento da Internet",
+    "it": "Conoscenza di Internet",
+    "nl": "Internetkennis",
+    "pl": "Wiedza internetowa",
+    "tr": "İnternet Bilgisi",
+    "ja": "インターネット知識",
+    "zh-Hans": "互联网知识"
+  }
+}

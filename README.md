@@ -31,12 +31,40 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 
 ## Was dieses Repository liefert
 
-- 31 geprüfte Chat-Modellprofile für wiederkehrende Arbeitsfälle wie Codeanalyse, Dokumentengenerierung, Präsentationen, n8n-Workflow-Entwurf, Prompting, Datenanalyse und Offline-Workbench-Nutzung.
+- 32 geprüfte Chat-Modellprofile für wiederkehrende Arbeitsfälle wie Codeanalyse, Dokumentengenerierung, Präsentationen, n8n-Workflow-Entwurf, Prompting, Datenanalyse und Offline-Workbench-Nutzung.
 - Direkt importierbare OpenWebUI-JSON-Artefakte für Modelle, Tools und Functions/Filter.
 - Offline-Default-Tooling für Jupyter, Artefakterzeugung, JSON/CSV/Text-Validierung, Visuals, Subagentenplanung, Markdown-Normalisierung und Kontextkomprimierung.
 - Einen reproduzierbaren Generator für Tool-/Filter-Registries, Modellprofile, eingebettete Icons, ZIP-Handover und Importpläne.
 - Nicht-mutierende Prüfskripte, die Python-Syntax, OpenWebUI-Erweiterungen, Generatorzustand, Import-Payloads, JSON-Dateien und Unit-Tests validieren.
 - Deployment-Vorlagen für einen offline nutzbaren OpenWebUI-Betrieb mit optionalem Jupyter-Server und lokalem Addon-Stack.
+
+## Geplant: Internetwissen-Modell
+
+Das Repository wird um ein Modellpaket `internetwissen` ergänzt. Ziel ist ein offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung.
+
+Der initiale Ausbau ist bewusst klein gehalten: Das Modell bringt keine großen externen Webkorpora mit, sondern nutzt eine kompakte, selbst geschriebene KnowledgeBase direkt im Repository. Dadurch bleibt das Modell sofort importierbar, air-gap-tauglich und ohne zusätzliche GB-/TB-Daten nutzbar.
+
+### Initialer Umfang
+
+- neues Modellpaket `Modelle/einzelmodelle/internetwissen/`
+- repo-interne KnowledgeBase über `mainprompt.md`, `fachwissen.md` und `beispielergebnis.md`
+- keine Live-Websuche im Offline-Default
+- Fokus auf allgemeine Erklärungen, Anleitungen, Recherchemethodik und Quellenkritik
+- klare Kennzeichnung von Aktualitätsgrenzen
+- Beispielantworten für allgemeine Recherchefragen, Anleitungen ohne Live-Web, Quellenkritik und stark zeitabhängige Themen
+
+### Nicht im Initialumfang
+
+- keine FineWeb-/Common-Crawl-Daten
+- keine Wikipedia-/Kiwix-Dumps
+- kein externer Vektorindex
+- keine automatische Webarchiv-Pipeline
+- keine großen Datenartefakte im Git-Repository
+- keine versteckte Online-Abhängigkeit
+
+### Spätere Ausbaurichtung
+
+Langfristig kann das Modell über optionale KnowledgePacks erweitert werden. Diese sollen nicht als große Datenbestände in diesem Repository liegen, sondern über Manifeste, Importskripte und lokale Artefaktpfade angebunden werden. Denkbare spätere Ausbaustufen sind kuratierte Offline-Dokumentationspakete, optionale Wikipedia-/Kiwix- oder Wikimedia-Dump-Integration, lokale KnowledgePacks für technische Dokumentationen, FineWeb-/FineWeb-Edu-/Common-Crawl-basierte Webkorpora, externe lokale Retrieval-Indizes und Import- sowie Lizenzreports für große Offline-Wissensquellen.
 
 ## Internationalisierung
 
@@ -48,7 +76,7 @@ Deutsch ist die Standardsprache des Repositorys, der README, der Standarddokumen
 - [`docs/en/`](docs/en/) enthält den englischen Dokumentationseinstieg und i18n-Hinweise.
 - Community-Dateien wie [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), [`SUPPORT.md`](SUPPORT.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) und [`CHANGELOG.md`](CHANGELOG.md) haben englische `.en.md`-Varianten.
 - Das Workbench-Dashboard nutzt `WORKBENCH_LOCALE`, Browser-/Systemsprache und eine manuelle Sprachwahl. Unbekannte oder fehlende Locale-Informationen fallen stabil auf Deutsch zurück.
-- Die Produktkomponenten der 31 Modellpakete sind zusätzlich in `Modelle/einzelmodelle/<modell-id>/i18n/` gepflegt. Direkt integriert sind `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja` und `zh-Hans`.
+- Die Produktkomponenten der 32 Modellpakete sind zusätzlich in `Modelle/einzelmodelle/<modell-id>/i18n/` gepflegt. Direkt integriert sind `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja` und `zh-Hans`.
 - [`Modelle/i18n/product-locales.json`](Modelle/i18n/product-locales.json) ist das zentrale Manifest für Produktsprachen. Der Generator [`scripts/generate_model_i18n_profiles.py`](scripts/generate_model_i18n_profiles.py) hält `model.json`, Sprachprofile und Manifest synchron.
 
 UTF-8 bleibt für alle menschenlesbaren Dateien und JSON-Artefakte verbindlich. Umlaute, Akzente, Emojis und nicht-lateinische Zeichen werden nicht transliteriert, sofern sie fachlich sichtbarer Text sind. Details zum Ergänzen weiterer Sprachen stehen in [`docs/de/I18N.md`](docs/de/I18N.md).
@@ -192,6 +220,7 @@ Der generierte Importplan liegt unter [`Modelle/dist/openwebui-registration-plan
 Zusätzlich zu den Problemfallmodellen gibt es mehrere Querschnittsmodelle:
 
 - `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme; nutzt das Basismodell `coder` mit allen importierbaren Tools und Standardfiltern.
+- `Internetwissen`: offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung ohne Live-Websuche.
 - `PromptForge`: erzeugt vollständige Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows.
 - `n8n Workflow Architect`: erstellt oder prüft importierbare n8n-Workflow-JSONs.
 - `OpenWebUI Model Builder`: erzeugt vollständige OpenWebUI-Modellpakete.

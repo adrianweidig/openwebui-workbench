@@ -3198,6 +3198,219 @@
     }
   },
   {
+    "id": "internetwissen",
+    "name": "Internetwissen",
+    "base_model_id": "coder",
+    "meta": {
+      "description": "Offline-Recherchemodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung mit repo-interner KnowledgeBase.",
+      "capabilities": {
+        "file_context": true,
+        "vision": true,
+        "file_upload": true,
+        "web_search": false,
+        "image_generation": false,
+        "code_interpreter": false,
+        "terminal": false,
+        "citations": true,
+        "status_updates": true,
+        "usage": true,
+        "builtin_tools": true
+      },
+      "suggestion_prompts": [
+        {
+          "content": "Erkläre mir dieses Thema offline verständlich und markiere Aktualitätsgrenzen."
+        },
+        {
+          "content": "Erstelle einen Rechercheplan mit Suchaspekten, Prüffragen und geeigneten Quellenarten."
+        },
+        {
+          "content": "Bewerte diese Quelle anhand von Autorität, Aktualität, Belegen und Interessenlage."
+        }
+      ],
+      "tags": [
+        {
+          "name": "internetwissen"
+        },
+        {
+          "name": "offline"
+        },
+        {
+          "name": "recherche"
+        },
+        {
+          "name": "knowledgebase"
+        },
+        {
+          "name": "quellenkritik"
+        }
+      ],
+      "toolIds": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "filterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "defaultFilterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "primaryToolIds": [
+        "ask_user",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3",
+        "visuals_toolkit_v4",
+        "parallel_task_planner",
+        "parallel_tools",
+        "subagent_orchestrator",
+        "sub_agent",
+        "tool_skill_overlay_planner",
+        "repo_tree_analyzer",
+        "docker_compose_triage",
+        "openapi_schema_inspector",
+        "llm_council",
+        "comfyui_workflow_inspector"
+      ],
+      "recommendedSkillIds": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "visual-toolkit-v3-offline"
+      ],
+      "requiredKnowledgeFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "Internetwissen",
+          "description": "Dieses Produktprofil beschreibt das Modell Internetwissen für offline nutzbare Recherche, Anleitungen, Quellenkritik und Wissensstrukturierung.",
+          "suggestion": "Nutze Internetwissen auf Deutsch für Recherche, Anleitungen und Quellenkritik ohne Live-Websuche.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "Internet Knowledge",
+          "description": "This product profile describes the Internet Knowledge model for offline research, instructions, source criticism, and knowledge structuring.",
+          "suggestion": "Use Internet Knowledge in English for research, instructions, and source criticism without live web search.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Conocimiento de Internet",
+          "description": "Este perfil describe el modelo Conocimiento de Internet para investigación offline, instrucciones, crítica de fuentes y estructuración del conocimiento.",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Connaissance Internet",
+          "description": "Ce profil décrit le modèle Connaissance Internet pour la recherche hors ligne, les instructions, la critique des sources et la structuration des connaissances.",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Conhecimento da Internet",
+          "description": "Este perfil descreve o modelo Conhecimento da Internet para pesquisa offline, instruções, crítica de fontes e estruturação do conhecimento.",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Conoscenza di Internet",
+          "description": "Questo profilo descrive il modello Conoscenza di Internet per ricerca offline, istruzioni, critica delle fonti e strutturazione della conoscenza.",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "Internetkennis",
+          "description": "Dit profiel beschrijft het model Internetkennis voor offline onderzoek, instructies, bronkritiek en kennisstructurering.",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Wiedza internetowa",
+          "description": "Ten profil opisuje model Wiedza internetowa do badań offline, instrukcji, krytyki źródeł i strukturyzowania wiedzy.",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "İnternet Bilgisi",
+          "description": "Bu profil, çevrimdışı araştırma, yönergeler, kaynak eleştirisi ve bilgi yapılandırması için İnternet Bilgisi modelini açıklar.",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "インターネット知識",
+          "description": "このプロファイルは、オフライン調査、手順作成、情報源評価、知識整理のためのインターネット知識モデルを説明します。",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "互联网知识",
+          "description": "此配置文件说明用于离线研究、说明编写、来源评估和知识结构化的互联网知识模型。",
+          "suggestion": "Use this model for offline research, instructions, and source criticism without live web search.",
+          "profile": "i18n/zh-Hans.md"
+        }
+      },
+      "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBzZWFyY2ggaWNvbjwvdGl0bGU+CiAgPGRlc2MgaWQ9ImRlc2MiPlNpbXBsZSBtYWduaWZ5aW5nIGdsYXNzIGFuZCBkb2N1bWVudCBsaW5lcyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8Y2lyY2xlIGN4PSIyMjYiIGN5PSIyMjYiIHI9Ijc2IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjIiLz4KICA8cGF0aCBkPSJNMjgyIDI4Mmw3NCA3NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTY0IDM0NGg4OE0xNjQgMzg0aDE0NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg=="
+    },
+    "params": {
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `internetwissen`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `ask_user`, `json_csv_text_validator`, `air_gapped_jupyter_python`, `offline_artifact_workbench`, `inline_visuals_toolkit_v3`, `visuals_toolkit_v4`, `parallel_task_planner`, `parallel_tools`, `subagent_orchestrator`, `sub_agent`, `tool_skill_overlay_planner`, `repo_tree_analyzer`, `docker_compose_triage`, `openapi_schema_inspector`, `llm_council`, `comfyui_workflow_inspector`. Relevante Skills: `offline-use-case-router`, `redundant-fallback-tooling`, `native-tool-calling-rollout`, `parallel-tools-subagents`, `visual-toolkit-v3-offline`. Fokus: Neue Aufgaben routen, passende Tools erzwingen, komplexe Arbeit planen und Artefakte lokal erzeugen.",
+      "temperature": 0.35,
+      "top_p": 0.9,
+      "stop": [],
+      "function_calling": "native"
+    }
+  },
+  {
     "id": "it-helpdesk-diagnose",
     "name": "IT-Helpdesk-Diagnose",
     "base_model_id": "coder",
