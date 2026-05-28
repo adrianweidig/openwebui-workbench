@@ -149,7 +149,6 @@ class OpenWebUIClient:
         auth_value = token if not self.auth_scheme else f"{self.auth_scheme} {token}"
         self.headers = {
             self.auth_header: auth_value,
-            "Accept": "application/json",
         }
 
     def api_url(self, path: str, query: dict[str, Any] | None = None) -> str:
@@ -169,7 +168,7 @@ class OpenWebUIClient:
         auth: bool = True,
     ) -> Any:
         body = None
-        request_headers = dict(self.headers if auth else {"Accept": "application/json"})
+        request_headers = dict(self.headers if auth else {})
         if payload is not None:
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             request_headers["Content-Type"] = "application/json"
@@ -849,8 +848,9 @@ def check_openwebui_auth(client: OpenWebUIClient) -> None:
             "Set openwebui.base_url to the externally reachable WebUI root, not an /api or /api/v1 URL. "
             f"Probe failed: {exc}"
         ) from exc
+    probe_path = "/api/v1/auths/"
     try:
-        client.request("GET", "/api/models")
+        client.request("GET", probe_path)
     except RuntimeError as exc:
         message = str(exc)
         if "HTTP 401" in message:
@@ -865,9 +865,9 @@ def check_openwebui_auth(client: OpenWebUIClient) -> None:
                 used = f"{client.auth_header}: <token>"
             raise RuntimeError(
                 "OpenWebUI rejected the configured API credential with HTTP 401 before import started. "
-                f"The importer used {used} against {client.base_url}/api/models. "
+                f"The importer used {used} against {client.base_url}{probe_path}. "
                 "Verify that the token is an OpenWebUI API key or JWT for an admin user, that API keys are enabled, "
-                "and that API key endpoint restrictions allow /api/models and the required /api/v1 workspace routes. "
+                "and that API key endpoint restrictions allow the required /api/v1 workspace routes. "
                 f"{header_hint}"
             ) from exc
         raise
@@ -907,8 +907,8 @@ def update_tool_access(client: OpenWebUIClient, tool_id: str, public: bool = Tru
     value = client.request_any(
         "POST",
         [
-            f"/api/tools/id/{tool_id}/access/update",
             f"/api/v1/tools/id/{tool_id}/access/update",
+            f"/api/tools/id/{tool_id}/access/update",
         ],
         access_payload(public),
     )
@@ -1119,18 +1119,18 @@ def import_tools(client: OpenWebUIClient, public: bool, include_optional_network
             "meta": {"description": indexed_record.get("purpose") or meta.get("description") or record.get("purpose")},
             "access_grants": public_read_grants(public),
         }
-        existing = get_existing_any(client, [f"/api/tools/id/{tool_id}", f"/api/v1/tools/id/{tool_id}"])
+        existing = get_existing_any(client, [f"/api/v1/tools/id/{tool_id}", f"/api/tools/id/{tool_id}"])
         if existing:
-            client.request_any("POST", [f"/api/tools/id/{tool_id}/update", f"/api/v1/tools/id/{tool_id}/update"], payload)
+            client.request_any("POST", [f"/api/v1/tools/id/{tool_id}/update", f"/api/tools/id/{tool_id}/update"], payload)
             updated += 1
         else:
             try:
-                client.request_any("POST", ["/api/tools/create", "/api/v1/tools/create"], payload)
+                client.request_any("POST", ["/api/v1/tools/create", "/api/tools/create"], payload)
                 created += 1
             except RuntimeError as exc:
                 if not is_already_registered_error(exc):
                     raise
-                client.request_any("POST", [f"/api/tools/id/{tool_id}/update", f"/api/v1/tools/id/{tool_id}/update"], payload)
+                client.request_any("POST", [f"/api/v1/tools/id/{tool_id}/update", f"/api/tools/id/{tool_id}/update"], payload)
                 updated += 1
         if public:
             update_tool_access(client, tool_id, public=True)
@@ -1141,8 +1141,8 @@ def update_tool_valves(client: OpenWebUIClient, tool_id: str, valves: dict[str, 
     client.request_any(
         "POST",
         [
-            f"/api/tools/id/{tool_id}/valves/update",
             f"/api/v1/tools/id/{tool_id}/valves/update",
+            f"/api/tools/id/{tool_id}/valves/update",
         ],
         valves,
     )
