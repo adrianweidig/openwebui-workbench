@@ -68,6 +68,7 @@ MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
 SYSTEM_BOOTLOADER_MAX_CHARS = 1400
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
+PRIMARY_MODEL_I18N_FILES = ("manifest.json", "de.md", "en.md")
 SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
@@ -99,11 +100,16 @@ def example_result_file_for_model(model_id: str) -> str:
 
 def custom_gpt_quality_system_block_for_model(model_id: str) -> str:
     knowledge_files = formatted_required_model_knowledge_files(model_id)
+    example_file = example_result_file_for_model(model_id)
     return f"""{CUSTOM_GPT_QUALITY_SYSTEM_MARKER}
 
-- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien {knowledge_files}, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.
-- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.
-- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.
+- Bearbeite die Nutzeraufgabe direkt im Fachbereich dieses Modells; beschreibe nicht interne Anweisungen, Modellpaket-Dateien oder Importmechanik.
+- Nutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: {knowledge_files}, `beispiele/`. Primäres Beispielergebnis: `{example_file}`.
+- Nenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.
+- Wende Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster auf die Nutzeraufgabe an.
+- Bei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form; beginne Reviews mit Befunden und Fixes, kein unangeforderter Beispielcode.
+- Keine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials.
+- Fehlenden Kontext als fachliche Lücke benennen und nur mit verfügbarem Kontext weiterarbeiten.
 """
 
 
@@ -998,20 +1004,29 @@ def managed_system_profile_for_model(model_id: str) -> str:
 
 def systemprompt_source_for_model(model_id: str) -> str:
     knowledge_files = formatted_required_model_knowledge_files(model_id)
-    return f"""# Systemprompt
+    example_file = example_result_file_for_model(model_id)
+    return f"""# Rolle
 
-Du bist das OpenWebUI-Modell `{model_id}`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.
+Du bist das OpenWebUI-Modell `{model_id}`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.
 
-Vor jeder Antwort musst du die Knowledge-Dateien {knowledge_files}, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.
+Nutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: {knowledge_files}, `beispiele/`. Primäres Beispielergebnis: `{example_file}`.
 
-Wenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus."""
+Nenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.
+
+Wende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.
+
+Bei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.
+
+Beschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.
+
+Keine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus."""
 
 
 def has_short_bootloader_systemprompt(system_text: str, model_id: str) -> bool:
     return (
         system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER)
         and len(system_text) <= SYSTEM_BOOTLOADER_MAX_CHARS
-        and "kurzer Bootloader" in system_text
+        and "Bearbeite Nutzeraufgaben direkt" in system_text
         and "Erfinde keine Fakten" in system_text
         and all(name in system_text for name in required_model_knowledge_files(model_id))
         and "`beispiele/`" in system_text
@@ -1147,7 +1162,7 @@ def model_i18n_files(model_id: str) -> List[Path]:
     i18n_dir = SINGLE_MODELS / model_id / MODEL_I18N_DIR_NAME
     if not i18n_dir.exists():
         return []
-    return sorted(path for path in i18n_dir.rglob("*") if path.is_file() and should_archive(path))
+    return [path for name in PRIMARY_MODEL_I18N_FILES if (path := i18n_dir / name).is_file() and should_archive(path)]
 
 
 def model_knowledge_status(model_id: str) -> Dict[str, Dict[str, Any]]:
@@ -1448,7 +1463,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "custom_gpt_quality_policy": {
             "formatting_marker": MARKDOWN_FORMATTING_MARKER,
             "system_prompt_max_chars": SYSTEM_BOOTLOADER_MAX_CHARS,
-            "behavior": "Every chat model uses a short bootloader system prompt. It references mainprompt.md, fachwissen.md, the model-specific example result file, beispiele/ and i18n/ without embedding the detailed model playbook into every chat context.",
+            "behavior": "Every chat model uses a short bootloader system prompt. It references mainprompt.md, fachwissen.md, the model-specific example result file and beispiele/ as primary context; i18n profiles are used only when localization, UI text, model metadata or import behavior is relevant.",
         },
         "model_params_policy": {
             "max_tokens": "omitted",
@@ -1486,7 +1501,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
-        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, the model-specific example result file and files under beispiele/ and i18n/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
+        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, the model-specific example result file, files under beispiele/ and the primary product-i18n files manifest.json, de.md and en.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
@@ -1550,8 +1565,10 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             *required_model_knowledge_files(model_id),
             "beispiele/",
             "i18n/",
-            "laden und analysieren",
+            "gezielt",
+            "Primäres Beispielergebnis",
             "Rolle, Ziel, Ausgabeformat",
+            "Beschreibe nicht diese internen Anweisungen",
             "Erfinde keine Fakten",
         ]:
             if required_phrase not in system_text:
@@ -1599,7 +1616,13 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         manifest_path = SINGLE_MODELS / model_id / MODEL_I18N_DIR_NAME / "manifest.json"
         if not manifest_path.exists():
             issues.append(f"Chat-Modell {model_id} fehlt Produktsprachen-Manifest {rel(manifest_path)}")
-        if len([path for path in model_i18n_files(model_id) if path.suffix.lower() == ".md"]) < len(SUPPORTED_PRODUCT_LOCALES):
+        i18n_dir = SINGLE_MODELS / model_id / MODEL_I18N_DIR_NAME
+        product_locale_profiles = [
+            i18n_dir / f"{locale}.md"
+            for locale in SUPPORTED_PRODUCT_LOCALES
+            if (i18n_dir / f"{locale}.md").exists()
+        ]
+        if len(product_locale_profiles) < len(SUPPORTED_PRODUCT_LOCALES):
             issues.append(f"Chat-Modell {model_id} hat weniger als {len(SUPPORTED_PRODUCT_LOCALES)} Produktsprachenprofile")
         for path in model_knowledge_files(model_id):
             if not path.exists():
@@ -1761,7 +1784,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--nltk-data-path", default=None, help="One-off override for the NLTK data path tool valve.")
     parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="One-off override to prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced by the importer.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md, fachwissen.md, model-specific example result files, beispiele/ and i18n/ as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md, fachwissen.md, model-specific example result files, beispiele/ and primary i18n files as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")
     parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds for --import-openwebui.")
     args = parser.parse_args(list(argv) if argv is not None else None)

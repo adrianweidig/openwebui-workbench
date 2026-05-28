@@ -55,9 +55,29 @@ MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
 }
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
+PRIMARY_MODEL_I18N_FILES = ("manifest.json", "de.md", "en.md")
 DEFAULT_CONFIG_NAME = "openwebui_workspace_config.yaml"
 
 PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEBUI_API_KEY"}
+TRANSIENT_HTTP_STATUS = {502, 503, 504}
+TEXT_KNOWLEDGE_SUFFIXES = {
+    ".css",
+    ".csv",
+    ".html",
+    ".ipynb",
+    ".js",
+    ".json",
+    ".md",
+    ".py",
+    ".sql",
+    ".svg",
+    ".toml",
+    ".tsv",
+    ".txt",
+    ".xml",
+    ".yaml",
+    ".yml",
+}
 PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 
 
@@ -65,9 +85,15 @@ def is_not_found_error(exc: RuntimeError) -> bool:
     message = str(exc).lower()
     return (
         "http 404" in message
+        or "http 405" in message
         or "could not find what you're looking for" in message
         or "could not find what youre looking for" in message
     )
+
+
+def is_already_registered_error(exc: RuntimeError) -> bool:
+    message = str(exc).lower()
+    return "already registered" in message or "already exists" in message
 
 
 def openwebui_ssl_context(tls_verify: bool, ca_file: str = "", ca_path: str = "") -> ssl.SSLContext | None:
@@ -132,28 +158,36 @@ class OpenWebUIClient:
             request_headers["Content-Type"] = "application/json"
         if headers:
             request_headers.update(headers)
-        request = Request(self.api_url(path, query), data=body, headers=request_headers, method=method)
-        try:
-            with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:
-                raw = response.read()
-                if response.status not in expected:
-                    raise RuntimeError(f"{method} {path} returned HTTP {response.status}: {raw[:500]!r}")
-                if not raw:
+        url = self.api_url(path, query)
+        for attempt in range(3):
+            request = Request(url, data=body, headers=request_headers, method=method)
+            try:
+                with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:
+                    raw = response.read()
+                    if response.status not in expected:
+                        raise RuntimeError(f"{method} {path} returned HTTP {response.status}: {raw[:500]!r}")
+                    if not raw:
+                        return None
+                    content_type = response.headers.get("Content-Type", "")
+                    if "application/json" in content_type:
+                        return json.loads(raw.decode("utf-8"))
+                    try:
+                        return json.loads(raw.decode("utf-8"))
+                    except json.JSONDecodeError:
+                        return raw.decode("utf-8", errors="replace")
+            except HTTPError as exc:
+                raw = exc.read().decode("utf-8", errors="replace")
+                if exc.code in expected:
                     return None
-                content_type = response.headers.get("Content-Type", "")
-                if "application/json" in content_type:
-                    return json.loads(raw.decode("utf-8"))
-                try:
-                    return json.loads(raw.decode("utf-8"))
-                except json.JSONDecodeError:
-                    return raw.decode("utf-8", errors="replace")
-        except HTTPError as exc:
-            raw = exc.read().decode("utf-8", errors="replace")
-            if exc.code in expected:
-                return None
-            raise RuntimeError(f"{method} {path} returned HTTP {exc.code}: {raw[:1000]}") from exc
-        except URLError as exc:
-            raise RuntimeError(f"Cannot reach OpenWebUI at {self.base_url}: {exc}") from exc
+                if exc.code in TRANSIENT_HTTP_STATUS and attempt < 2:
+                    time.sleep(2 * (attempt + 1))
+                    continue
+                raise RuntimeError(f"{method} {path} returned HTTP {exc.code}: {raw[:1000]}") from exc
+            except URLError as exc:
+                if attempt < 2:
+                    time.sleep(2 * (attempt + 1))
+                    continue
+                raise RuntimeError(f"Cannot reach OpenWebUI at {self.base_url}: {exc}") from exc
 
     def request_any(
         self,
@@ -178,7 +212,11 @@ class OpenWebUIClient:
 
     def upload_file(self, path: Path) -> dict[str, Any]:
         boundary = f"----openwebui-workspace-{uuid.uuid4().hex}"
-        content_type = mimetypes.guess_type(path.name)[0] or "text/plain"
+        content_type = (
+            "text/plain; charset=utf-8"
+            if path.suffix.lower() in TEXT_KNOWLEDGE_SUFFIXES
+            else mimetypes.guess_type(path.name)[0] or "text/plain"
+        )
         parts = [
             f"--{boundary}\r\n".encode("utf-8"),
             (
@@ -390,6 +428,11 @@ def merge_valves(
     return merged
 
 
+def runtime_env_value(environment: dict[str, Any], name: str) -> Any:
+    """Read a runtime value from YAML first, then from the process environment."""
+    return environment.get(name) or os.environ.get(name)
+
+
 def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
     config, config_path = load_config(args.config)
     environment = clean_mapping(config_section(config, "environment"))
@@ -398,13 +441,13 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
     base_url = (
         args.base_url
         or first_config_value(config, ["openwebui.base_url", "openwebui.url"])
-        or environment.get("OPENWEBUI_BASE_URL")
+        or runtime_env_value(environment, "OPENWEBUI_BASE_URL")
         or OPENWEBUI_BASE_URL
     )
     token = (
         args.token
         or first_config_value(config, ["openwebui.admin_token", "openwebui.api_key", "openwebui.token"])
-        or environment.get("OPENWEBUI_ADMIN_TOKEN")
+        or runtime_env_value(environment, "OPENWEBUI_ADMIN_TOKEN")
         or OPENWEBUI_ADMIN_TOKEN
     )
     auth_header, auth_scheme = auth_header_defaults(
@@ -418,7 +461,9 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
                 "environment.OPENWEBUI_AUTH_HEADER",
                 "environment.CUSTOM_API_KEY_HEADER",
             ],
-        ),
+        )
+        or runtime_env_value(environment, "OPENWEBUI_AUTH_HEADER")
+        or runtime_env_value(environment, "CUSTOM_API_KEY_HEADER"),
         args.auth_scheme
         if args.auth_scheme is not None
         else first_config_value(
@@ -429,7 +474,8 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
                 "environment.OPENWEBUI_AUTH_SCHEME",
             ],
             None,
-        ),
+        )
+        or runtime_env_value(environment, "OPENWEBUI_AUTH_SCHEME"),
     )
     timeout = as_int(
         args.timeout
@@ -953,7 +999,11 @@ def model_i18n_files(model_dir: Path) -> list[Path]:
     i18n_dir = model_dir / MODEL_I18N_DIR_NAME
     if not i18n_dir.exists():
         return []
-    return sorted(path for path in i18n_dir.rglob("*") if path.is_file() and path.suffix.lower() not in {".pyc", ".pyo", ".pyd"})
+    return [
+        path
+        for name in PRIMARY_MODEL_I18N_FILES
+        if (path := i18n_dir / name).is_file() and path.suffix.lower() not in {".pyc", ".pyo", ".pyd"}
+    ]
 
 
 def model_knowledge_files(model_dir: Path) -> list[Path]:
@@ -1015,8 +1065,14 @@ def import_tools(client: OpenWebUIClient, public: bool, include_optional_network
             client.request_any("POST", [f"/api/tools/id/{tool_id}/update", f"/api/v1/tools/id/{tool_id}/update"], payload)
             updated += 1
         else:
-            client.request_any("POST", ["/api/tools/create", "/api/v1/tools/create"], payload)
-            created += 1
+            try:
+                client.request_any("POST", ["/api/tools/create", "/api/v1/tools/create"], payload)
+                created += 1
+            except RuntimeError as exc:
+                if not is_already_registered_error(exc):
+                    raise
+                client.request_any("POST", [f"/api/tools/id/{tool_id}/update", f"/api/v1/tools/id/{tool_id}/update"], payload)
+                updated += 1
         if public:
             update_tool_access(client, tool_id, public=True)
     return ImportResult("tools", created, updated)
@@ -1163,13 +1219,14 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
     for file_path in files:
         uploaded = client.upload_file(file_path)
         file_refs.append({"file_id": uploaded["id"]})
-    result = client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
-    if isinstance(result, dict) and result.get("warnings"):
-        raise RuntimeError(f"Knowledge import failed for {name}: {result['warnings']}")
-    if isinstance(result, dict) and "files" in result:
+    for file_ref in file_refs:
+        client.request("POST", f"/api/v1/knowledge/{knowledge_id}/file/add", file_ref)
+    result = client.request("GET", f"/api/v1/knowledge/{knowledge_id}")
+    files_response = result.get("files") if isinstance(result, dict) else None
+    if files_response:
         linked_file_ids = {
             str(item.get("id") or item.get("file_id"))
-            for item in result.get("files") or []
+            for item in files_response
             if isinstance(item, dict)
         }
         missing_file_ids = [item["file_id"] for item in file_refs if item["file_id"] not in linked_file_ids]
@@ -1240,7 +1297,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--ca-file", default=None, help="CA bundle file for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--ca-path", default=None, help="Directory with trusted CA certificates for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, model-specific example result files, beispiele/ and i18n/ files as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, model-specific example result files, beispiele/ and primary i18n files as Knowledge.")
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",

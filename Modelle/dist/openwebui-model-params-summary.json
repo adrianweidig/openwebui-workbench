@@ -92,7 +92,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 811,
+      "system_prompt_chars": 1138,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "air_gapped_jupyter_python",
@@ -155,6 +155,12 @@
           "non_empty": true,
           "bytes": 5052
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/allgemein/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 777
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/allgemein/i18n/de.md",
           "exists": true,
@@ -166,66 +172,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1003
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1113
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1158
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1049
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1229
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 777
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1032
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1052
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1088
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1054
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/allgemein/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 945
         }
       },
       "vision_enabled": true,
@@ -333,7 +279,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 832,
+      "system_prompt_chars": 1159,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -378,6 +324,12 @@
           "non_empty": true,
           "bytes": 4892
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1099
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/de.md",
           "exists": true,
@@ -389,66 +341,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1120
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1236
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1281
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1145
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1304
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1099
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1134
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1145
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1214
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1153
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1029
         }
       },
       "vision_enabled": true,
@@ -534,7 +426,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 829,
+      "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "openapi_schema_inspector",
@@ -576,6 +468,12 @@
           "non_empty": true,
           "bytes": 2839
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1026
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/de.md",
           "exists": true,
@@ -587,66 +485,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1070
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1189
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1243
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1140
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1338
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1026
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1096
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1143
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1170
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1130
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/api-schnittstellenentwurf/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1000
         }
       },
       "vision_enabled": true,
@@ -729,7 +567,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 820,
+      "system_prompt_chars": 1147,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -772,6 +610,12 @@
           "non_empty": true,
           "bytes": 4734
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 932
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/code-dokumentation/i18n/de.md",
           "exists": true,
@@ -783,66 +627,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1045
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1176
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1203
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1109
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1301
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 932
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1065
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1091
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1157
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1105
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 972
         }
       },
       "vision_enabled": true,
@@ -926,7 +710,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 813,
+      "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -969,6 +753,12 @@
           "non_empty": true,
           "bytes": 4754
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/code-review/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 872
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/code-review/i18n/de.md",
           "exists": true,
@@ -980,66 +770,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1017
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1154
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1172
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1087
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1276
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 872
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1055
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1075
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1132
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1083
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/code-review/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 965
         }
       },
       "vision_enabled": true,
@@ -1123,7 +853,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 813,
+      "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -1166,6 +896,12 @@
           "non_empty": true,
           "bytes": 4717
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/codeanalyse/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 859
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/codeanalyse/i18n/de.md",
           "exists": true,
@@ -1177,66 +913,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1023
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1154
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1178
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1081
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1258
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 859
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1043
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1069
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1132
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1074
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 965
         }
       },
       "vision_enabled": true,
@@ -1320,7 +996,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 817,
+      "system_prompt_chars": 1144,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -1363,6 +1039,12 @@
           "non_empty": true,
           "bytes": 4723
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/codegenerierung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 887
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/codegenerierung/i18n/de.md",
           "exists": true,
@@ -1374,66 +1056,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1033
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1164
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1197
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1094
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1262
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 887
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1053
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1085
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1139
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1081
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 969
         }
       },
       "vision_enabled": true,
@@ -1517,7 +1139,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 831,
+      "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1560,6 +1182,12 @@
           "non_empty": true,
           "bytes": 4779
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1090
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/de.md",
           "exists": true,
@@ -1571,66 +1199,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1087
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1227
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1275
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1142
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1367
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1090
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1119
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1142
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1205
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1156
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1011
         }
       },
       "vision_enabled": true,
@@ -1714,7 +1282,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 825,
+      "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -1759,6 +1327,12 @@
           "non_empty": true,
           "bytes": 4757
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1034
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/de.md",
           "exists": true,
@@ -1770,66 +1344,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1080
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1208
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1241
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1135
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1315
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1034
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1094
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1138
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1180
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1143
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1004
         }
       },
       "vision_enabled": true,
@@ -1915,7 +1429,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 819,
+      "system_prompt_chars": 1146,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -1957,6 +1471,12 @@
           "non_empty": true,
           "bytes": 4781
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 899
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/de.md",
           "exists": true,
@@ -1968,66 +1488,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1041
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1169
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1199
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1096
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1255
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 899
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1061
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1096
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1147
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1086
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 971
         }
       },
       "vision_enabled": true,
@@ -2110,7 +1570,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 823,
+      "system_prompt_chars": 1150,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "offline_artifact_workbench",
@@ -2153,6 +1613,12 @@
           "non_empty": true,
           "bytes": 4818
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 929
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/de.md",
           "exists": true,
@@ -2164,66 +1630,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1051
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1179
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1218
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1109
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1259
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 929
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1071
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1112
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1154
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1099
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 975
         }
       },
       "vision_enabled": true,
@@ -2307,7 +1713,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 821,
+      "system_prompt_chars": 1148,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2349,6 +1755,12 @@
           "non_empty": true,
           "bytes": 4815
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 936
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/de.md",
           "exists": true,
@@ -2360,66 +1772,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1049
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1180
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1213
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1101
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1257
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 936
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1078
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1110
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1161
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1118
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 973
         }
       },
       "vision_enabled": true,
@@ -2502,7 +1854,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 827,
+      "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2544,6 +1896,12 @@
           "non_empty": true,
           "bytes": 4839
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 929
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/de.md",
           "exists": true,
@@ -2555,66 +1913,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1064
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1171
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1213
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1101
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1263
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 929
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1084
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1119
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1149
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1100
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 979
         }
       },
       "vision_enabled": true,
@@ -2697,7 +1995,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 831,
+      "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2738,6 +2036,12 @@
           "non_empty": true,
           "bytes": 4817
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1087
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/de.md",
           "exists": true,
@@ -2749,66 +2053,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1101
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1217
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1250
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1141
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1366
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1087
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1124
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1138
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1201
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1149
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1028
         }
       },
       "vision_enabled": true,
@@ -2890,7 +2134,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 826,
+      "system_prompt_chars": 1155,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -2932,6 +2176,12 @@
           "non_empty": true,
           "bytes": 2826
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 945
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/informationsextraktion/i18n/de.md",
           "exists": true,
@@ -2943,66 +2193,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1061
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1186
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1219
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1116
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1260
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 945
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1081
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1107
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1167
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1106
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/informationsextraktion/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 976
         }
       },
       "vision_enabled": true,
@@ -3085,7 +2275,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 816,
+      "system_prompt_chars": 1143,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -3157,6 +2347,12 @@
           "non_empty": true,
           "bytes": 738
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 917
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/internetwissen/i18n/de.md",
           "exists": true,
@@ -3168,66 +2364,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1041
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1169
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1202
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1087
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1297
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 917
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1055
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1090
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1150
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1095
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/internetwissen/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 977
         }
       },
       "vision_enabled": true,
@@ -3316,7 +2452,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 822,
+      "system_prompt_chars": 1149,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -3359,6 +2495,12 @@
           "non_empty": true,
           "bytes": 4759
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 980
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/de.md",
           "exists": true,
@@ -3370,66 +2512,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1056
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1208
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1235
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1096
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1303
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 980
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1076
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1105
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1174
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1131
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 992
         }
       },
       "vision_enabled": true,
@@ -3513,7 +2595,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 824,
+      "system_prompt_chars": 1153,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -3556,6 +2638,12 @@
           "non_empty": true,
           "bytes": 2855
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 998
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/de.md",
           "exists": true,
@@ -3567,66 +2655,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1071
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1190
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1217
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1114
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1297
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 998
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1094
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1120
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1168
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1122
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/json-csv-log-analyse/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1016
         }
       },
       "vision_enabled": true,
@@ -3710,7 +2738,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 830,
+      "system_prompt_chars": 1157,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -3752,6 +2780,12 @@
           "non_empty": true,
           "bytes": 4810
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1022
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/de.md",
           "exists": true,
@@ -3763,66 +2797,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1073
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1201
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1261
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1137
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1293
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1022
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1114
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1137
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1176
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1142
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1000
         }
       },
       "vision_enabled": true,
@@ -3905,7 +2879,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 826,
+      "system_prompt_chars": 1153,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -3966,6 +2940,12 @@
           "non_empty": true,
           "bytes": 4906
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 979
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/de.md",
           "exists": true,
@@ -3977,66 +2957,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1069
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1179
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1218
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1112
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1298
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 979
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1095
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1118
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1160
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1126
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1014
         }
       },
       "vision_enabled": true,
@@ -4132,7 +3052,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 826,
+      "system_prompt_chars": 1155,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -4178,6 +3098,12 @@
           "non_empty": true,
           "bytes": 5905
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 992
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/de.md",
           "exists": true,
@@ -4189,66 +3115,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1063
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1188
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1227
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1118
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1346
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 992
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1086
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1112
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1166
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1126
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1008
         }
       },
       "vision_enabled": true,
@@ -4335,7 +3201,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 825,
+      "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -4392,6 +3258,12 @@
           "non_empty": true,
           "bytes": 2535
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1011
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/de.md",
           "exists": true,
@@ -4403,66 +3275,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1065
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1205
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1223
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1111
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1357
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1011
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1091
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1114
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1159
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1146
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/offline-workbench-agent/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1010
         }
       },
       "vision_enabled": true,
@@ -4560,7 +3372,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 825,
+      "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -4608,6 +3420,12 @@
           "non_empty": true,
           "bytes": 2657
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1016
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/de.md",
           "exists": true,
@@ -4619,66 +3437,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1065
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1202
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1247
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1132
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1318
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1016
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1085
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1117
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1180
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1134
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/openwebui-model-builder/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1016
         }
       },
       "vision_enabled": true,
@@ -4767,7 +3525,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 813,
+      "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -4813,6 +3571,12 @@
           "non_empty": true,
           "bytes": 3227
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/promptforge/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 823
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/promptforge/i18n/de.md",
           "exists": true,
@@ -4824,66 +3588,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1017
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1127
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1166
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1060
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1246
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 823
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1043
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1066
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1108
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1074
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/promptforge/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 962
         }
       },
       "vision_enabled": true,
@@ -4970,7 +3674,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 832,
+      "system_prompt_chars": 1159,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "parallel_task_planner",
@@ -5017,6 +3721,12 @@
           "non_empty": true,
           "bytes": 4849
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1121
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/de.md",
           "exists": true,
@@ -5028,66 +3738,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1105
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1227
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1269
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1157
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1385
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1121
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1122
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1151
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1211
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1177
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1020
         }
       },
       "vision_enabled": true,
@@ -5175,7 +3825,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 827,
+      "system_prompt_chars": 1156,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
@@ -5226,6 +3876,12 @@
           "non_empty": true,
           "bytes": 7564
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 974
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/de.md",
           "exists": true,
@@ -5237,66 +3893,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1062
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1190
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1229
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1120
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1327
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 974
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1079
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1111
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1174
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1104
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 998
         }
       },
       "vision_enabled": true,
@@ -5382,7 +3978,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 827,
+      "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -5424,6 +4020,12 @@
           "non_empty": true,
           "bytes": 4733
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 969
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/de.md",
           "exists": true,
@@ -5435,66 +4037,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1056
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1190
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1223
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1111
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1318
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 969
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1097
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1117
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1159
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1116
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 980
         }
       },
       "vision_enabled": true,
@@ -5577,7 +4119,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 833,
+      "system_prompt_chars": 1162,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -5621,6 +4163,12 @@
           "non_empty": true,
           "bytes": 2866
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1111
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/de.md",
           "exists": true,
@@ -5632,66 +4180,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1098
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1223
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1283
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1147
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1357
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1111
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1130
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1165
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1213
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1155
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/report-dashboard-vorbereitung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1019
         }
       },
       "vision_enabled": true,
@@ -5776,7 +4264,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 829,
+      "system_prompt_chars": 1156,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -5818,6 +4306,12 @@
           "non_empty": true,
           "bytes": 4802
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1038
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/de.md",
           "exists": true,
@@ -5829,66 +4323,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1078
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1212
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1242
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1145
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1319
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1038
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1104
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1148
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1193
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1138
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 999
         }
       },
       "vision_enabled": true,
@@ -5971,7 +4405,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 827,
+      "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -6014,6 +4448,12 @@
           "non_empty": true,
           "bytes": 2844
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 994
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/de.md",
           "exists": true,
@@ -6025,66 +4465,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1079
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1183
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1225
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1113
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1305
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 994
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1099
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1104
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1164
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1130
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/tabellen-csv-datenanalyse/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1021
         }
       },
       "vision_enabled": true,
@@ -6168,7 +4548,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 822,
+      "system_prompt_chars": 1149,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -6211,6 +4591,12 @@
           "non_empty": true,
           "bytes": 4738
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 977
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/testfall-generierung/i18n/de.md",
           "exists": true,
@@ -6222,66 +4608,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1053
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1193
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1223
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1117
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1294
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 977
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1070
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1141
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1165
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1119
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 992
         }
       },
       "vision_enabled": true,
@@ -6365,7 +4691,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 827,
+      "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "json_csv_text_validator",
@@ -6406,6 +4732,12 @@
           "non_empty": true,
           "bytes": 4800
         },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1001
+        },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/de.md",
           "exists": true,
@@ -6417,66 +4749,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 1083
-        },
-        "i18n/es.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/es.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1190
-        },
-        "i18n/fr.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/fr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1226
-        },
-        "i18n/it.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/it.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1123
-        },
-        "i18n/ja.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/ja.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1309
-        },
-        "i18n/manifest.json": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/manifest.json",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1001
-        },
-        "i18n/nl.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/nl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1097
-        },
-        "i18n/pl.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/pl.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1126
-        },
-        "i18n/pt-BR.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/pt-BR.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1168
-        },
-        "i18n/tr.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/tr.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 1131
-        },
-        "i18n/zh-Hans.md": {
-          "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/zh-Hans.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 998
         }
       },
       "vision_enabled": true,

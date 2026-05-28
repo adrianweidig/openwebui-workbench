@@ -32,7 +32,7 @@ def required_knowledge_files(model_id: str) -> list[str]:
 
 
 def knowledge_phrases(model_id: str) -> list[str]:
-    return [*required_knowledge_files(model_id), "beispiele/", "i18n/", "laden und analysieren"]
+    return [*required_knowledge_files(model_id), "beispiele/", "i18n/", "gezielt"]
 
 
 def read_json(path: Path):
@@ -72,7 +72,7 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 params = model.get("params", {})
                 system = params.get("system", "")
 
-                self.assertIn("kurzer Bootloader", system)
+                self.assertIn("Bearbeite Nutzeraufgaben direkt", system)
                 self.assertIn("Erfinde keine Fakten", system)
                 self.assertIn("Toolhinweise", system)
                 self.assertNotIn("## Verbindliche Tool- und Skill-Nutzung", system)
