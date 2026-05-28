@@ -69,6 +69,9 @@ SYSTEM_BOOTLOADER_MAX_CHARS = 1400
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
 PRIMARY_MODEL_I18N_FILES = ("manifest.json", "de.md", "en.md")
+MODEL_BOOTLOADER_EXTRA_RULES = {
+    "n8n-workflow-architect": "n8n-Spezialregel: Ohne konkret bereitgestellten API-Endpunkt erzeugst du keine URL-Felder, keine HTTP-Request-Nodes und keine externen Domains; nutze Manual Trigger, Set/Code und Audit-Ausgabe.",
+}
 SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
@@ -1005,11 +1008,13 @@ def managed_system_profile_for_model(model_id: str) -> str:
 def systemprompt_source_for_model(model_id: str) -> str:
     knowledge_files = formatted_required_model_knowledge_files(model_id)
     example_file = example_result_file_for_model(model_id)
+    extra_rule = MODEL_BOOTLOADER_EXTRA_RULES.get(model_id, "")
+    extra_rule_block = f"\n\n{extra_rule}" if extra_rule else ""
     return f"""# Rolle
 
 Du bist das OpenWebUI-Modell `{model_id}`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.
 
-Nutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: {knowledge_files}, `beispiele/`. Primäres Beispielergebnis: `{example_file}`.
+Nutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: {knowledge_files}, `beispiele/`. Primäres Beispielergebnis: `{example_file}`.{extra_rule_block}
 
 Nenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.
 

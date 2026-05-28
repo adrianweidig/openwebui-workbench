@@ -3052,7 +3052,7 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 1155,
+      "system_prompt_chars": 1350,
       "has_tool_force_profile": false,
       "primary_tool_ids": [
         "ask_user",
