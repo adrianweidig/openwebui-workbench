@@ -45,6 +45,7 @@ Diese Sammlung enthält Markdown-Briefings, die direkt als Eingabe für den Cust
 | `24_übersetzung-lokalisierung.md` | Übersetzung und Lokalisierung | Nutzer möchten Texte übersetzen, vereinfachen, lokalisieren oder sprachlich an Zielgruppen anpassen. |
 | `25_compliance-richtlinienprüfung.md` | Compliance- und Richtlinienprüfung | Nutzer möchten Inhalte gegen bereitgestellte interne Regeln, Checklisten, Datenschutzvorgaben oder Qualitätsrichtlinien prüfen. |
 | `26_bewerbungsunterlagen-optimierung.md` | Bewerbungsunterlagen-Optimierung | Nutzer möchten Lebenslauf, Anschreiben oder Profiltexte verbessern, strukturieren oder auf eine konkrete Stelle zuschneiden. |
+| `27_internetwissen.md` | Internetwissen | Nutzer möchten allgemeine Recherchefragen, Anleitungen, Erklärungen, Quellenkritik oder Wissensstrukturen offline ohne Live-Websuche bearbeiten. |
 
 ## Nutzung
 

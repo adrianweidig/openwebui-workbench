@@ -33,7 +33,7 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 - Tools nur Modellen zuordnen, deren Aufgabe den Tool-Zweck benötigt.
 - Skills können modellgebunden werden, wenn sie regelmäßig gebraucht werden.
 - Für Tools Native Function Calling bevorzugen und Status-/Citation-Events nutzen.
-- Der Standard-Workflow ist der API-Import mit zentraler YAML, weil dabei Tool-Valves, Function-/Filter-Valves, Skills, modellbezogene Knowledge inklusive `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/` sowie Modellprofile in der richtigen Reihenfolge gesetzt werden. Der manuelle Offline-Fallback ist: zuerst `Tools/dist/openwebui-tools-offline-import.json` importieren, danach `Tools/dist/openwebui-functions-import.json` und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
+- Der Standard-Workflow ist der API-Import mit zentraler YAML, weil dabei Tool-Valves, Function-/Filter-Valves, Skills, modellbezogene Knowledge inklusive `mainprompt.md`, `fachwissen.md`, modellseitig definierter Beispielergebnis-Datei und `beispiele/` sowie Modellprofile in der richtigen Reihenfolge gesetzt werden. Der manuelle Offline-Fallback ist: zuerst `Tools/dist/openwebui-tools-offline-import.json` importieren, danach `Tools/dist/openwebui-functions-import.json` und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
 - Öffentliche Netzwerktools wie `safe_http_fetcher.py` und `github_repo_inspector.py` sowie optionale Rich-UI-/Crawl-Tools wie `openui_generative_ui.py` und `web_search_and_crawl.py` sind nicht Teil des Offline-Standardimports und werden keinem Modellprofil standardmäßig zugewiesen.
 
 ## Rechtevergabe

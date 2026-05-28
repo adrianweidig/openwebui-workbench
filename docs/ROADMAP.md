@@ -9,6 +9,92 @@ Diese Roadmap ist nicht als Release-Zusage zu verstehen. Sie beschreibt eine vor
 - Offline-Default ohne öffentliche Netzwerkabhängigkeiten bewahren.
 - `Modelle/dist/` und `Tools/dist/` als kanonische Handover-Bereiche pflegen.
 
+## Geplant: Internetwissen-Modell
+
+Das Repository soll um ein Modellpaket `internetwissen` erweitert werden. Das Modell soll allgemeine Recherchefragen, Anleitungen, Erklärungen, Quellenkritik und Wissensstrukturierung offline unterstützen.
+
+### Phase 1: Initiales Internetwissenmodell
+
+Ziel der ersten Phase ist ein sofort nutzbares Modell ohne große externe Datenbestände.
+
+Geplant:
+
+- Modellpaket `Modelle/einzelmodelle/internetwissen/` anlegen.
+- Problemfall-Briefing `Problemfälle/27_internetwissen.md` ergänzen.
+- `model.json`, `systemprompt.md`, `mainprompt.md`, `fachwissen.md` und `beispielergebnis.md` erstellen.
+- Kompakte, selbst geschriebene Wissensbasis in `fachwissen.md` pflegen.
+- Beispiele für Recherchefragen, Anleitungen, Quellenkritik und Aktualitätsgrenzen ergänzen.
+- Produkt-i18n-Dateien für die unterstützten Locales ergänzen.
+- Websuche im Modellprofil deaktiviert lassen.
+- Keine externen GB-/TB-Daten in das Repository aufnehmen.
+- Generator- und Verify-Prüfung für das neue Modell erfolgreich halten.
+
+Nicht Bestandteil von Phase 1:
+
+- FineWeb
+- Common Crawl
+- Wikipedia-Dumps
+- Kiwix-/ZIM-Dateien
+- externe Vektorindizes
+- automatische Webarchiv-Pipelines
+- Live-Websuche
+
+### Phase 2: Kleine optionale Knowledge-Erweiterungen
+
+Nach dem initialen Modell können kleine, repo-taugliche Knowledge-Erweiterungen geprüft werden.
+
+Mögliche Ergänzungen:
+
+- zusätzliche selbst geschriebene Kompaktmodule für Recherchemethodik, Web-Grundlagen, technische Grundbegriffe und Anleitungsmuster
+- kleine lizenzklare Beispielquellen
+- Quellen- und Lizenztemplates
+- Importbeispiele für lokale KnowledgeBases
+- Smoke-Tests für Knowledge-Nutzung im Modell
+
+Grenze:
+
+- keine großen externen Datensätze im Git-Repository
+- keine unklare Übernahme fremder Webinhalte
+
+### Phase 3: Optionale lokale KnowledgePacks
+
+Für größere Installationen kann ein KnowledgePack-Konzept vorbereitet werden. Das Repository soll dabei nur Manifeste, Skripte und Dokumentation enthalten. Die eigentlichen Daten liegen lokal beim Nutzer und bleiben unversioniert.
+
+Mögliche KnowledgePacks:
+
+- technische Dokumentationssammlungen
+- lokale Markdown-/Textsammlungen
+- exportierte OpenWebUI-KnowledgeBases
+- lokale Wiki- oder Dokumentationsarchive
+- lizenzklar kuratierte Fachkorpora
+
+Geplante Artefakte:
+
+- `KnowledgePacks/internetwissen/README.md`
+- Manifestformat für lokale Wissenspakete
+- Beispielkonfiguration für lokale Pfade
+- Lizenz- und Snapshot-Report
+- Import-Dry-Run ohne produktive Tokens
+
+### Phase 4: Web-Scale-Ausbau als spätere Option
+
+Langfristig kann geprüft werden, ob sehr große Offline-Webkorpora angebunden werden sollen. Diese Ausbaustufe ist bewusst nicht Teil des initialen Modells.
+
+Denkbare spätere Themen:
+
+- FineWeb
+- FineWeb-Edu
+- Common Crawl
+- Wikimedia-/Kiwix-Dumps
+- lokale Such- und Retrieval-Indizes
+- Qdrant, OpenSearch, PGVector oder vergleichbare lokale Indexdienste
+- dedizierte Import-, Chunking-, Deduplizierungs- und Lizenzprüfpfade
+- lokale Web-Korpus-Suche als optionales OpenWebUI-Tool
+
+Grundsatz:
+
+Große Webkorpora werden nicht in dieses Repository eingecheckt. Das Repository darf dafür nur reproduzierbare Manifeste, Importskripte, Sicherheitsregeln, Lizenzhinweise und Deployment-Beispiele enthalten.
+
 ## Naheliegende Verbesserungen
 
 - Weitere Unit-Tests für Tools mit komplexerer Valve- oder Dateisystemlogik ergänzen.
@@ -23,9 +109,12 @@ Diese Roadmap ist nicht als Release-Zusage zu verstehen. Sie beschreibt eine vor
 - Private Vulnerability Reporting oder einen privaten Sicherheitskontakt aktivieren.
 - Release- und Tagging-Strategie festlegen, falls Artefaktstände versioniert werden sollen.
 - Entscheiden, ob GitHub Pages oder ein separates Docs-Hosting genutzt werden soll.
+- Entscheiden, ob `internetwissen` langfristig ein einzelnes Modell bleibt oder in zusätzliche Profile wie `internetwissen-kurator` oder `internetwissen-max` aufgeteilt wird.
 
 ## Nicht-Ziele im aktuellen Stand
 
 - Kein automatischer produktiver OpenWebUI-Import ohne ausdrücklichen Auftrag.
 - Keine versteckten Online-Abhängigkeiten für Offline-Default-Tools.
 - Keine Änderung öffentlicher Tool- oder Import-Schnittstellen ohne klare Validierung.
+- Keine großen externen Webkorpora im Git-Repository.
+- Keine ungeprüfte Übernahme fremder Webinhalte ohne Lizenz- und Attributionsprüfung.

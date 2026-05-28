@@ -778,6 +778,50 @@
       }
     },
     {
+      "id": "internetwissen",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Internetwissen",
+        "en": "Internet Knowledge",
+        "es": "Conocimiento de Internet",
+        "fr": "Connaissances Internet",
+        "pt-BR": "Conhecimento da internet",
+        "it": "Conoscenza internet",
+        "nl": "Internetkennis",
+        "pl": "Wiedza internetowa",
+        "tr": "İnternet bilgisi",
+        "ja": "インターネット知識",
+        "zh-Hans": "互联网知识"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/internetwissen/i18n/de.md",
+        "en": "Modelle/einzelmodelle/internetwissen/i18n/en.md",
+        "es": "Modelle/einzelmodelle/internetwissen/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/internetwissen/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/internetwissen/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/internetwissen/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/internetwissen/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/internetwissen/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/internetwissen/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/internetwissen/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/internetwissen/i18n/zh-Hans.md"
+      }
+    },
+    {
       "id": "it-helpdesk-diagnose",
       "default_locale": "de",
       "fallback_locale": "en",

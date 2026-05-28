@@ -3024,6 +3024,236 @@
       ]
     },
     {
+      "id": "internetwissen",
+      "name": "Internetwissen",
+      "product_i18n_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "it",
+        "ja",
+        "nl",
+        "pl",
+        "pt-BR",
+        "tr",
+        "zh-Hans"
+      ],
+      "product_locale_files": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "temperature": 0.25,
+      "top_p": 0.9,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_markdown_formatting_enabled": true,
+      "has_systemprompt_mainprompt_fachwissen": true,
+      "has_high_reasoning_profile": true,
+      "has_custom_gpt_quality_profile": true,
+      "has_vision_profile": true,
+      "has_explicit_tool_call_playbook": true,
+      "has_openwebui_builtin_and_addon_policy": true,
+      "system_prompt_chars": 2871,
+      "has_tool_force_profile": true,
+      "primary_tool_ids": [
+        "ask_user",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "repo_tree_analyzer",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "recommended_skill_ids": [
+        "research-grounding",
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2602
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 11681
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2009
+        },
+        "beispiele/allgemeine_recherchefrage.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/beispiele/allgemeine_recherchefrage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 849
+        },
+        "beispiele/anleitung_ohne_live_web.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/beispiele/anleitung_ohne_live_web.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 900
+        },
+        "beispiele/internetwissen-rechercheplan-vorlage.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/beispiele/internetwissen-rechercheplan-vorlage.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1690
+        },
+        "beispiele/quellenkritik.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/beispiele/quellenkritik.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 855
+        },
+        "beispiele/unbekanntes_oder_aktuelles_thema.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/beispiele/unbekanntes_oder_aktuelles_thema.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 738
+        },
+        "i18n/de.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/de.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1142
+        },
+        "i18n/en.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/en.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1041
+        },
+        "i18n/es.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/es.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1169
+        },
+        "i18n/fr.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/fr.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1202
+        },
+        "i18n/it.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/it.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1087
+        },
+        "i18n/ja.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/ja.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1297
+        },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 917
+        },
+        "i18n/nl.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/nl.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1055
+        },
+        "i18n/pl.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/pl.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1090
+        },
+        "i18n/pt-BR.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/pt-BR.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1150
+        },
+        "i18n/tr.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/tr.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1095
+        },
+        "i18n/zh-Hans.md": {
+          "path": "Modelle/einzelmodelle/internetwissen/i18n/zh-Hans.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 977
+        }
+      },
+      "vision_enabled": true,
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "ask_user",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "repo_tree_analyzer",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "meta_recommended_skill_ids": [
+        "research-grounding",
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ]
+    },
+    {
       "id": "it-helpdesk-diagnose",
       "name": "IT-Helpdesk-Diagnose",
       "product_i18n_locales": [
@@ -4919,7 +5149,7 @@
       "has_vision_profile": true,
       "has_explicit_tool_call_playbook": true,
       "has_openwebui_builtin_and_addon_policy": true,
-      "system_prompt_chars": 2883,
+      "system_prompt_chars": 2887,
       "has_tool_force_profile": true,
       "primary_tool_ids": [
         "ask_user",
@@ -4937,74 +5167,74 @@
       "required_knowledge_files": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.html"
       ],
       "knowledge_files": {
         "mainprompt.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5326
+          "bytes": 4513
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 19378
+          "bytes": 16571
         },
-        "beispielergebnis.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/beispielergebnis.md",
+        "beispielergebnis.html": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/beispielergebnis.html",
           "exists": true,
           "non_empty": true,
-          "bytes": 1908
+          "bytes": 29911
         },
-        "beispiele/praesentation-briefing-vorlage.md": {
-          "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-briefing-vorlage.md",
+        "beispiele/praesentation-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1643
+          "bytes": 8063
         },
         "beispiele/praesentation-premium-demo.html": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
           "exists": true,
           "non_empty": true,
-          "bytes": 7530
+          "bytes": 7564
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/de.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1182
+          "bytes": 1184
         },
         "i18n/en.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/en.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1060
+          "bytes": 1062
         },
         "i18n/es.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/es.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1188
+          "bytes": 1190
         },
         "i18n/fr.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/fr.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1227
+          "bytes": 1229
         },
         "i18n/it.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/it.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1118
+          "bytes": 1120
         },
         "i18n/ja.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/ja.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1325
+          "bytes": 1327
         },
         "i18n/manifest.json": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/manifest.json",
@@ -5016,31 +5246,31 @@
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/nl.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1077
+          "bytes": 1079
         },
         "i18n/pl.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/pl.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1109
+          "bytes": 1111
         },
         "i18n/pt-BR.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/pt-BR.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1172
+          "bytes": 1174
         },
         "i18n/tr.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/tr.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1102
+          "bytes": 1104
         },
         "i18n/zh-Hans.md": {
           "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/zh-Hans.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 996
+          "bytes": 998
         }
       },
       "vision_enabled": true,

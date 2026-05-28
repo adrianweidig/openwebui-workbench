@@ -38,7 +38,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Antworten, Tabellen, Checklisten, Artefaktentwürfe, Prüfnotizen und Rückfragen werden in der gewählten Nutzersprache formuliert.",
         "language_text": "Deutsch ist der Standard. Wenn die Nutzeranfrage klar eine andere unterstützte Sprache nutzt oder explizit auswählt, antworte in dieser Sprache. Bei unsicherer Locale fällt die Ausgabe auf Deutsch zurück.",
         "quality_text": "Bewahre technische IDs, Dateinamen, Befehle, API-Felder und maschinenlesbare Statuswerte. Übersetze sichtbare Prosa, aber keine kompatibilitätsrelevanten Tokens.",
-        "usage_text": "Dieses Profil wird zusammen mit mainprompt.md, fachwissen.md, beispielergebnis.md und beispiele/ als Knowledge hochgeladen.",
+        "usage_text": "Dieses Profil wird zusammen mit mainprompt.md, fachwissen.md, {example_result} und beispiele/ als Knowledge hochgeladen.",
         "suggestion": "Nutze {name} auf Deutsch und beachte vorhandene Fachbegriffe.",
     },
     "en": {
@@ -54,7 +54,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Responses, tables, checklists, artifact drafts, review notes, and clarification questions are written in the selected user language.",
         "language_text": "German is the project default. If the user clearly uses or selects another supported language, answer in that language. If the locale is uncertain, fall back to German.",
         "quality_text": "Preserve technical IDs, file names, commands, API fields, and machine-readable status values. Translate visible prose, not compatibility-critical tokens.",
-        "usage_text": "This profile is uploaded as Knowledge together with mainprompt.md, fachwissen.md, beispielergebnis.md, and beispiele/.",
+        "usage_text": "This profile is uploaded as Knowledge together with mainprompt.md, fachwissen.md, {example_result}, and beispiele/.",
         "suggestion": "Use {name} in English and preserve existing technical terms.",
     },
     "es": {
@@ -70,7 +70,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Respuestas, tablas, listas de verificación, borradores de artefactos, notas de revisión y preguntas se redactan en el idioma elegido por el usuario.",
         "language_text": "El idioma predeterminado del proyecto es alemán. Si el usuario usa o elige claramente otro idioma admitido, responde en ese idioma. Si la configuración regional no es segura, vuelve al alemán.",
         "quality_text": "Conserva identificadores técnicos, nombres de archivo, comandos, campos de API y valores legibles por máquina. Traduce la prosa visible, no los tokens críticos de compatibilidad.",
-        "usage_text": "Este perfil se carga como Knowledge junto con mainprompt.md, fachwissen.md, beispielergebnis.md y beispiele/.",
+        "usage_text": "Este perfil se carga como Knowledge junto con mainprompt.md, fachwissen.md, {example_result} y beispiele/.",
         "suggestion": "Usa {name} en español y conserva la terminología técnica existente.",
     },
     "fr": {
@@ -86,7 +86,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Les réponses, tableaux, listes de contrôle, brouillons d'artefacts, notes de revue et questions sont rédigés dans la langue choisie par l'utilisateur.",
         "language_text": "L'allemand est la langue par défaut du projet. Si l'utilisateur utilise ou choisit clairement une autre langue prise en charge, réponds dans cette langue. Si la locale est incertaine, reviens à l'allemand.",
         "quality_text": "Préserve les identifiants techniques, noms de fichiers, commandes, champs d'API et valeurs lisibles par machine. Traduis la prose visible, pas les tokens critiques pour la compatibilité.",
-        "usage_text": "Ce profil est téléversé comme Knowledge avec mainprompt.md, fachwissen.md, beispielergebnis.md et beispiele/.",
+        "usage_text": "Ce profil est téléversé comme Knowledge avec mainprompt.md, fachwissen.md, {example_result} et beispiele/.",
         "suggestion": "Utilise {name} en français et conserve les termes techniques existants.",
     },
     "pt-BR": {
@@ -102,7 +102,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Respostas, tabelas, listas de verificação, rascunhos de artefatos, notas de revisão e perguntas são escritos no idioma escolhido pelo usuário.",
         "language_text": "Alemão é o padrão do projeto. Se o usuário usar ou selecionar claramente outro idioma compatível, responda nesse idioma. Se a localidade for incerta, volte para alemão.",
         "quality_text": "Preserve IDs técnicos, nomes de arquivos, comandos, campos de API e valores legíveis por máquina. Traduza a prosa visível, não tokens críticos de compatibilidade.",
-        "usage_text": "Este perfil é enviado como Knowledge junto com mainprompt.md, fachwissen.md, beispielergebnis.md e beispiele/.",
+        "usage_text": "Este perfil é enviado como Knowledge junto com mainprompt.md, fachwissen.md, {example_result} e beispiele/.",
         "suggestion": "Use {name} em português do Brasil e preserve os termos técnicos existentes.",
     },
     "it": {
@@ -118,7 +118,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Risposte, tabelle, checklist, bozze di artefatti, note di revisione e domande sono scritte nella lingua scelta dall'utente.",
         "language_text": "Il tedesco è la lingua predefinita del progetto. Se l'utente usa o seleziona chiaramente un'altra lingua supportata, rispondi in quella lingua. Se la locale è incerta, usa il tedesco.",
         "quality_text": "Mantieni ID tecnici, nomi di file, comandi, campi API e valori leggibili dalla macchina. Traduci la prosa visibile, non i token critici per la compatibilità.",
-        "usage_text": "Questo profilo viene caricato come Knowledge insieme a mainprompt.md, fachwissen.md, beispielergebnis.md e beispiele/.",
+        "usage_text": "Questo profilo viene caricato come Knowledge insieme a mainprompt.md, fachwissen.md, {example_result} e beispiele/.",
         "suggestion": "Usa {name} in italiano e conserva la terminologia tecnica esistente.",
     },
     "nl": {
@@ -134,7 +134,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Antwoorden, tabellen, checklists, artefactconcepten, reviewnotities en vragen worden geschreven in de gekozen gebruikerstaal.",
         "language_text": "Duits is de standaardtaal van het project. Als de gebruiker duidelijk een andere ondersteunde taal gebruikt of kiest, antwoord dan in die taal. Bij onzekere locale val je terug op Duits.",
         "quality_text": "Behoud technische ID's, bestandsnamen, commando's, API-velden en machineleesbare waarden. Vertaal zichtbare tekst, niet compatibiliteitskritische tokens.",
-        "usage_text": "Dit profiel wordt als Knowledge geüpload samen met mainprompt.md, fachwissen.md, beispielergebnis.md en beispiele/.",
+        "usage_text": "Dit profiel wordt als Knowledge geüpload samen met mainprompt.md, fachwissen.md, {example_result} en beispiele/.",
         "suggestion": "Gebruik {name} in het Nederlands en behoud bestaande technische termen.",
     },
     "pl": {
@@ -150,7 +150,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Odpowiedzi, tabele, listy kontrolne, szkice artefaktów, notatki z przeglądu i pytania są tworzone w języku wybranym przez użytkownika.",
         "language_text": "Niemiecki jest językiem domyślnym projektu. Jeśli użytkownik wyraźnie używa lub wybiera inny obsługiwany język, odpowiadaj w tym języku. Przy niepewnej locale wróć do niemieckiego.",
         "quality_text": "Zachowuj identyfikatory techniczne, nazwy plików, polecenia, pola API i wartości czytelne maszynowo. Tłumacz widoczną prozę, nie tokeny krytyczne dla zgodności.",
-        "usage_text": "Ten profil jest przesyłany jako Knowledge razem z mainprompt.md, fachwissen.md, beispielergebnis.md i beispiele/.",
+        "usage_text": "Ten profil jest przesyłany jako Knowledge razem z mainprompt.md, fachwissen.md, {example_result} i beispiele/.",
         "suggestion": "Użyj {name} po polsku i zachowaj istniejące terminy techniczne.",
     },
     "tr": {
@@ -166,7 +166,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "Yanıtlar, tablolar, kontrol listeleri, artefakt taslakları, inceleme notları ve sorular kullanıcının seçtiği dilde yazılır.",
         "language_text": "Projenin varsayılan dili Almancadır. Kullanıcı açıkça desteklenen başka bir dili kullanır veya seçerse o dilde yanıt ver. Locale belirsizse Almancaya dön.",
         "quality_text": "Teknik ID'leri, dosya adlarını, komutları, API alanlarını ve makine tarafından okunabilir değerleri koru. Görünür metni çevir, uyumluluk açısından kritik tokenları çevirme.",
-        "usage_text": "Bu profil mainprompt.md, fachwissen.md, beispielergebnis.md ve beispiele/ ile birlikte Knowledge olarak yüklenir.",
+        "usage_text": "Bu profil mainprompt.md, fachwissen.md, {example_result} ve beispiele/ ile birlikte Knowledge olarak yüklenir.",
         "suggestion": "{name} modelini Türkçe kullan ve mevcut teknik terimleri koru.",
     },
     "ja": {
@@ -182,7 +182,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "回答、表、チェックリスト、成果物ドラフト、レビュー notes、確認質問は、ユーザーが選んだ言語で作成します。",
         "language_text": "プロジェクトの既定言語はドイツ語です。ユーザーが対応言語を明確に使う、または選択した場合はその言語で回答します。Locale が不確かな場合はドイツ語に戻します。",
         "quality_text": "技術 ID、ファイル名、コマンド、API フィールド、機械可読値は保持します。表示される文章は翻訳し、互換性に関わる token は翻訳しません。",
-        "usage_text": "このプロファイルは mainprompt.md、fachwissen.md、beispielergebnis.md、beispiele/ と一緒に Knowledge としてアップロードされます。",
+        "usage_text": "このプロファイルは mainprompt.md、fachwissen.md、{example_result}、beispiele/ と一緒に Knowledge としてアップロードされます。",
         "suggestion": "{name} を日本語で使い、既存の技術用語を保持してください。",
     },
     "zh-Hans": {
@@ -198,7 +198,7 @@ LANGUAGE_TEXT = {
         "outputs_text": "回答、表格、检查清单、产物草稿、审查说明和澄清问题都会使用用户选择的语言。",
         "language_text": "项目默认语言是德语。如果用户明确使用或选择其他受支持语言，则使用该语言回答。如果 locale 不明确，则回退到德语。",
         "quality_text": "保留技术 ID、文件名、命令、API 字段和机器可读状态值。翻译可见文本，不翻译影响兼容性的 token。",
-        "usage_text": "此配置文件会与 mainprompt.md、fachwissen.md、beispielergebnis.md 和 beispiele/ 一起作为 Knowledge 上传。",
+        "usage_text": "此配置文件会与 mainprompt.md、fachwissen.md、{example_result} 和 beispiele/ 一起作为 Knowledge 上传。",
         "suggestion": "用简体中文使用 {name}，并保留现有技术术语。",
     },
 }
@@ -398,6 +398,19 @@ MODEL_TITLES = {
         "tr": "Bilgi çıkarımı",
         "ja": "情報抽出",
         "zh-Hans": "信息提取",
+    },
+    "internetwissen": {
+        "de": "Internetwissen",
+        "en": "Internet Knowledge",
+        "es": "Conocimiento de Internet",
+        "fr": "Connaissances Internet",
+        "pt-BR": "Conhecimento da internet",
+        "it": "Conoscenza internet",
+        "nl": "Internetkennis",
+        "pl": "Wiedza internetowa",
+        "tr": "İnternet bilgisi",
+        "ja": "インターネット知識",
+        "zh-Hans": "互联网知识",
     },
     "it-helpdesk-diagnose": {
         "de": "IT-Helpdesk-Diagnose",
@@ -628,6 +641,10 @@ def product_title(model_id: str, locale: str, fallback_name: str) -> str:
     return MODEL_TITLES.get(model_id, {}).get(locale) or MODEL_TITLES.get(model_id, {}).get("de") or fallback_name
 
 
+def example_result_file_for_model(model_id: str) -> str:
+    return "beispielergebnis.html" if model_id == "präsentationserstellung" else "beispielergebnis.md"
+
+
 def localized_profile(model_id: str, locale: str, fallback_name: str) -> dict[str, str]:
     texts = LANGUAGE_TEXT[locale]
     title = product_title(model_id, locale, fallback_name)
@@ -641,6 +658,7 @@ def localized_profile(model_id: str, locale: str, fallback_name: str) -> dict[st
 def profile_markdown(model_id: str, locale: str, fallback_name: str) -> str:
     texts = LANGUAGE_TEXT[locale]
     title = product_title(model_id, locale, fallback_name)
+    example_result = example_result_file_for_model(model_id)
     return f"""# {title}
 
 ## {texts["heading"]}
@@ -671,7 +689,7 @@ def profile_markdown(model_id: str, locale: str, fallback_name: str) -> str:
 
 ## {texts["usage"]}
 
-{texts["usage_text"]}
+{texts["usage_text"].format(example_result=example_result)}
 """
 
 

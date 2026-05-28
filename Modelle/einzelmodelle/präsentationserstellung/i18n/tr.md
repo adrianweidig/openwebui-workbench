@@ -28,4 +28,4 @@ Teknik ID'leri, dosya adlarını, komutları, API alanlarını ve makine tarafı
 
 ## OpenWebUI kullanımı
 
-Bu profil mainprompt.md, fachwissen.md, beispielergebnis.md ve beispiele/ ile birlikte Knowledge olarak yüklenir.
+Bu profil mainprompt.md, fachwissen.md, beispielergebnis.html ve beispiele/ ile birlikte Knowledge olarak yüklenir.

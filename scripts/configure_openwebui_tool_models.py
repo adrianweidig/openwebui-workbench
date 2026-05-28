@@ -55,6 +55,9 @@ OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "s
 PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
+MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
+}
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
 SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
@@ -71,16 +74,35 @@ MANAGED_SYSTEM_SECTION_MARKERS = [
     TOOL_CALL_PLAYBOOK_SYSTEM_MARKER,
     TOOL_FORCE_SYSTEM_MARKER,
 ]
+def required_model_knowledge_files(model_id: str) -> List[str]:
+    return MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES.get(model_id, REQUIRED_MODEL_KNOWLEDGE_FILES)
+
+
+def formatted_required_model_knowledge_files(model_id: str) -> str:
+    return ", ".join(f"`{name}`" for name in required_model_knowledge_files(model_id))
+
+
+def example_result_file_for_model(model_id: str) -> str:
+    return next(
+        (name for name in required_model_knowledge_files(model_id) if name.startswith("beispielergebnis.")),
+        "modellseitig definierte Beispielergebnis-Datei",
+    )
+
+
+def custom_gpt_quality_system_block_for_model(model_id: str) -> str:
+    knowledge_files = formatted_required_model_knowledge_files(model_id)
+    return f"""{CUSTOM_GPT_QUALITY_SYSTEM_MARKER}
+
+- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien {knowledge_files}, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.
+- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.
+- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.
+"""
+
+
 HIGH_REASONING_SYSTEM_BLOCK = f"""{HIGH_REASONING_SYSTEM_MARKER}
 
 - Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.
 - Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.
-"""
-CUSTOM_GPT_QUALITY_SYSTEM_BLOCK = f"""{CUSTOM_GPT_QUALITY_SYSTEM_MARKER}
-
-- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.
-- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.
-- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.
 """
 VISION_SYSTEM_BLOCK = f"""{VISION_SYSTEM_MARKER}
 
@@ -103,6 +125,7 @@ MODEL_TEMPERATURES = {
     "dokumentenzusammenfassung": 0.25,
     "email-kommunikationsassistenz": 0.7,
     "informationsextraktion": 0.0,
+    "internetwissen": 0.25,
     "it-helpdesk-diagnose": 0.25,
     "json-csv-log-analyse": 0.15,
     "meeting-protokoll-auswertung": 0.35,
@@ -195,6 +218,11 @@ TOOL_FORCE_PROFILES = {
         "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
         "skills": ["data-cleaning-analysis", "research-grounding", "secure-tool-usage"],
         "focus": "Extraktionsschema, JSON/CSV-Ausgabe und Datenqualität vor der finalen Antwort validieren.",
+    },
+    "internetwissen": {
+        "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "repo_tree_analyzer", "parallel_task_planner", "llm_council"],
+        "skills": ["research-grounding", "offline-use-case-router", "redundant-fallback-tooling", "parallel-tools-subagents", "secure-tool-usage"],
+        "focus": "Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen, Recherchepläne und Wissensstrukturierung ohne behauptete Live-Webprüfung absichern.",
     },
     "it-helpdesk-diagnose": {
         "tools": ["ask_user", "docker_compose_triage", "json_csv_text_validator", "repo_tree_analyzer"],
@@ -859,10 +887,10 @@ def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
     return f"{HIGH_REASONING_SYSTEM_BLOCK}\n\n{system_prompt}"
 
 
-def ensure_custom_gpt_quality_profile(system_prompt: Any) -> Any:
+def ensure_custom_gpt_quality_profile(system_prompt: Any, model_id: str = "") -> Any:
     if not isinstance(system_prompt, str):
         return system_prompt
-    block = CUSTOM_GPT_QUALITY_SYSTEM_BLOCK.rstrip()
+    block = custom_gpt_quality_system_block_for_model(model_id).rstrip()
     start = system_prompt.find(CUSTOM_GPT_QUALITY_SYSTEM_MARKER)
     if start != -1:
         next_heading = re.search(r"\n\n[ \t]*## ", system_prompt[start + len(CUSTOM_GPT_QUALITY_SYSTEM_MARKER) :])
@@ -952,7 +980,7 @@ def strip_managed_system_sections(system_prompt: str) -> str:
 def managed_system_profile_for_model(model_id: str) -> str:
     sections = [
         HIGH_REASONING_SYSTEM_BLOCK.rstrip(),
-        CUSTOM_GPT_QUALITY_SYSTEM_BLOCK.rstrip(),
+        custom_gpt_quality_system_block_for_model(model_id).rstrip(),
         VISION_SYSTEM_BLOCK.rstrip(),
         tool_call_playbook_block_for_model(model_id).rstrip(),
         tool_force_block_for_model(model_id).rstrip(),
@@ -961,9 +989,10 @@ def managed_system_profile_for_model(model_id: str) -> str:
 
 
 def systemprompt_source_for_model(model_id: str) -> str:
+    knowledge_files = formatted_required_model_knowledge_files(model_id)
     return f"""# Systemprompt
 
-Dies ist nur der kurze Bootstrap-Prompt für das Modell `{model_id}`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.
+Dies ist nur der kurze Bootstrap-Prompt für das Modell `{model_id}`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in {knowledge_files}, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.
 
 {managed_system_profile_for_model(model_id)}"""
 
@@ -979,10 +1008,10 @@ def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
 
 def normalize_base_prompt_text(system_prompt: str) -> str:
     replacements = {
-        "`systemprompt.md`, `mainprompt.md` und `fachwissen.md`": "`systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien unter `beispiele/` und `i18n/`",
-        "`mainprompt.md` und `fachwissen.md`": "`mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien unter `beispiele/` und `i18n/`",
+        "`systemprompt.md`, `mainprompt.md` und `fachwissen.md`": "`systemprompt.md`, `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei sowie Dateien unter `beispiele/` und `i18n/`",
+        "`mainprompt.md` und `fachwissen.md`": "`mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei sowie Dateien unter `beispiele/` und `i18n/`",
         "Systemprompt, Mainprompt und Fachwissen": "Systemprompt, Mainprompt, Fachwissen, Beispielwissen und Produktsprachen",
-        "systemprompt.md, mainprompt.md und fachwissen.md": "systemprompt.md, mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ und i18n/",
+        "systemprompt.md, mainprompt.md und fachwissen.md": "systemprompt.md, mainprompt.md, fachwissen.md, modellseitig definierte Beispielergebnis-Datei, beispiele/ und i18n/",
     }
     normalized = system_prompt
     for old, new in replacements.items():
@@ -1051,7 +1080,7 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
     meta["defaultFilterIds"] = merge_unique(filter_ids, meta.get("defaultFilterIds"))
     meta["primaryToolIds"] = list(profile["tools"])
     meta["recommendedSkillIds"] = list(profile["skills"])
-    meta["requiredKnowledgeFiles"] = list(REQUIRED_MODEL_KNOWLEDGE_FILES)
+    meta["requiredKnowledgeFiles"] = list(required_model_knowledge_files(model_id))
     meta["defaultLocale"] = "de"
     meta["fallbackLocale"] = "en"
     meta["supportedLocales"] = list(SUPPORTED_PRODUCT_LOCALES)
@@ -1079,7 +1108,7 @@ def skill_ids() -> List[str]:
 
 def model_knowledge_files(model_id: str) -> List[Path]:
     model_dir = SINGLE_MODELS / model_id
-    files = [model_dir / name for name in REQUIRED_MODEL_KNOWLEDGE_FILES]
+    files = [model_dir / name for name in required_model_knowledge_files(model_id)]
     files.extend(model_example_files(model_id))
     files.extend(model_i18n_files(model_id))
     return files
@@ -1214,7 +1243,7 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 else False,
                 "primary_tool_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("tools", []),
                 "recommended_skill_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("skills", []),
-                "required_knowledge_files": REQUIRED_MODEL_KNOWLEDGE_FILES,
+                "required_knowledge_files": required_model_knowledge_files(str(model.get("id"))),
                 "knowledge_files": model_knowledge_status(str(model.get("id"))),
                 "vision_enabled": bool(
                     model.get("meta", {}).get("capabilities", {}).get("vision")
@@ -1295,10 +1324,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "behavior": "Use Mistral-Medium vision when OpenWebUI forwards image inputs. Apply it to screenshots, UI tests, scans, charts, presentations and visual artifact QA; fall back to OCR, files or user descriptions when image input is unavailable.",
         },
         "model_example_policy": {
-            "required_knowledge_file": "beispielergebnis.md",
+            "default_required_knowledge_file": "beispielergebnis.md",
+            "model_required_knowledge_file_overrides": MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES,
             "example_dir": MODEL_EXAMPLES_DIR_NAME,
             "dist_examples_dir": rel(MODEL_EXAMPLE_ARTIFACTS),
-            "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and beispielergebnis.md.",
+            "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and the model-specific example result file.",
         },
         "model_product_i18n_policy": {
             "default_locale": "de",
@@ -1363,6 +1393,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "skills_before_models": workspace_skill_ids,
         "skill_source_dir": rel(SKILLS_DIR),
         "model_knowledge_files_required": REQUIRED_MODEL_KNOWLEDGE_FILES,
+        "model_knowledge_file_overrides": MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES,
         "model_product_locales_supported": SUPPORTED_PRODUCT_LOCALES,
         "knowledge_before_models": {
             str(model.get("id")): model_knowledge_status(str(model.get("id")))
@@ -1392,7 +1423,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "custom_gpt_quality_policy": {
             "formatting_marker": MARKDOWN_FORMATTING_MARKER,
             "system_marker": CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
-            "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ and i18n/ before applying role, scope, output format, quality rules, examples and language behavior to the task.",
+            "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, the model-specific example result file, beispiele/ and i18n/ before applying role, scope, output format, quality rules, examples and language behavior to the task.",
         },
         "model_params_policy": {
             "max_tokens": "omitted",
@@ -1434,7 +1465,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
-        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, beispielergebnis.md and files under beispiele/ and i18n/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
+        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, the model-specific example result file and files under beispiele/ and i18n/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
         "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
@@ -1500,9 +1531,7 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if CUSTOM_GPT_QUALITY_SYSTEM_MARKER not in system_text:
             issues.append(f"Chat-Modell {model_id} hat kein CustomGPT-Qualitätsprofil")
         for required_phrase in [
-            "mainprompt.md",
-            "fachwissen.md",
-            "beispielergebnis.md",
+            *required_model_knowledge_files(model_id),
             "beispiele/",
             "laden und analysieren",
             "Rolle, Ziel, Scope",
@@ -1539,7 +1568,7 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if not isinstance(meta_skills, list) or profile_skills - set(meta_skills):
             issues.append(f"Chat-Modell {model_id} hat meta.recommendedSkillIds nicht passend zum Skill-Profil")
         required_knowledge = meta.get("requiredKnowledgeFiles", [])
-        if required_knowledge != REQUIRED_MODEL_KNOWLEDGE_FILES:
+        if required_knowledge != required_model_knowledge_files(model_id):
             issues.append(f"Chat-Modell {model_id} hat meta.requiredKnowledgeFiles nicht vollständig")
         if meta.get("defaultLocale") != "de":
             issues.append(f"Chat-Modell {model_id} hat Deutsch nicht als meta.defaultLocale")
@@ -1730,7 +1759,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--nltk-data-path", default=None, help="One-off override for the NLTK data path tool valve.")
     parser.add_argument("--prefer-playwright-pdf", action="store_true", default=False, help="One-off override to prefer local Playwright/Chromium for artifact PDF conversion.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced by the importer.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ and i18n/ as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Import model profiles without uploading mainprompt.md, fachwissen.md, model-specific example result files, beispiele/ and i18n/ as Knowledge.")
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")
     parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds for --import-openwebui.")
     args = parser.parse_args(list(argv) if argv is not None else None)

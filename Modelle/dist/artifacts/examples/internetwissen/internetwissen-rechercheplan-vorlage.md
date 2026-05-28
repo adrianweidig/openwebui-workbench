@@ -1,4 +1,4 @@
-# Präsentationserstellung - befüllbare Ergebnisvorlage
+# Internetwissen - befüllbare Ergebnisvorlage
 
 ## 1. Auftrag
 
@@ -37,9 +37,9 @@
 
 ## 4. Akzeptanzcheck
 
-- [ ] Zweck des Modells erfüllt: Premium-Browser-Keynotes als einzelne offline lauffähige `präsentation.html` mit Interaktion, Animation und Designsystem erzeugen.
-- [ ] Vision-/Screenshot-Regel beachtet: Nutze Vision für Designreferenzen, Folien-Screenshots, Logo-/Layoutprüfung und visuelle Abnahme.
-- [ ] Qualitätslatte erfüllt: HTML muss 16:9, Tastatur/Maus/Touch-Navigation, Dark Mode, Hover-Toolbar, Offline-CSS und reduzierte Bewegung unterstützen.
+- [ ] Zweck des Modells erfüllt: Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen und Recherchepläne strukturiert bearbeiten, ohne Live-Webzugriff vorzutäuschen.
+- [ ] Vision-/Screenshot-Regel beachtet: Nutze Vision nur für sichtbare Quellen-Screenshots, Tabellen oder Webseitenausschnitte; markiere alles Nicht-Sichtbare als unbestätigt.
+- [ ] Qualitätslatte erfüllt: Antworten trennen bekannte Fakten, Nutzerangaben, Annahmen, Aktualitätsrisiken, Quellenarten, Prüffragen und nächsten Recherchepfad.
 - [ ] Tool-Ausgaben kritisch geprüft.
 - [ ] Ergebnis ist offline weiterverwendbar.
 

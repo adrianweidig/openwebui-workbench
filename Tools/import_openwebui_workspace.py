@@ -43,6 +43,9 @@ FUNCTION_REGISTRY = TOOLS_DIR / "dist" / "openwebui-function-registry.json"
 SKILLS_DIR = OPENWEBUI_EXT / "skills"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md", "beispielergebnis.md")
+MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "präsentationserstellung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.html"),
+}
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
 DEFAULT_CONFIG_NAME = "openwebui_workspace_config.yaml"
@@ -914,8 +917,12 @@ def skill_files() -> list[Path]:
     return [path for path in sorted(SKILLS_DIR.glob("*.md")) if path.name.upper() != "README.MD"]
 
 
+def required_model_knowledge_file_names(model_id: str) -> tuple[str, ...]:
+    return MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES.get(model_id, REQUIRED_MODEL_KNOWLEDGE_FILES)
+
+
 def required_model_knowledge_files(model_dir: Path) -> list[Path]:
-    files = [model_dir / name for name in REQUIRED_MODEL_KNOWLEDGE_FILES]
+    files = [model_dir / name for name in required_model_knowledge_file_names(model_dir.name)]
     missing = [path for path in files if not path.exists()]
     empty = [path for path in files if path.exists() and path.stat().st_size == 0]
     if missing or empty:
@@ -1226,7 +1233,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--ca-file", default=None, help="CA bundle file for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--ca-path", default=None, help="Directory with trusted CA certificates for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ and i18n/ files as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, model-specific example result files, beispiele/ and i18n/ files as Knowledge.")
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",

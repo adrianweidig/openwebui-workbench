@@ -31,12 +31,40 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 
 ## Was dieses Repository liefert
 
-- 31 geprüfte Chat-Modellprofile für wiederkehrende Arbeitsfälle wie Codeanalyse, Dokumentengenerierung, Präsentationen, n8n-Workflow-Entwurf, Prompting, Datenanalyse und Offline-Workbench-Nutzung.
+- 32 geprüfte Chat-Modellprofile für wiederkehrende Arbeitsfälle wie Codeanalyse, Dokumentengenerierung, Präsentationen, n8n-Workflow-Entwurf, Prompting, Datenanalyse und Offline-Workbench-Nutzung.
 - Direkt importierbare OpenWebUI-JSON-Artefakte für Modelle, Tools und Functions/Filter.
 - Offline-Default-Tooling für Jupyter, Artefakterzeugung, JSON/CSV/Text-Validierung, Visuals, Subagentenplanung, Markdown-Normalisierung und Kontextkomprimierung.
 - Einen reproduzierbaren Generator für Tool-/Filter-Registries, Modellprofile, eingebettete Icons, ZIP-Handover und Importpläne.
 - Nicht-mutierende Prüfskripte, die Python-Syntax, OpenWebUI-Erweiterungen, Generatorzustand, Import-Payloads, JSON-Dateien und Unit-Tests validieren.
 - Deployment-Vorlagen für einen offline nutzbaren OpenWebUI-Betrieb mit optionalem Jupyter-Server und lokalem Addon-Stack.
+
+## Geplant: Internetwissen-Modell
+
+Das Repository wird um ein Modellpaket `internetwissen` ergänzt. Ziel ist ein offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung.
+
+Der initiale Ausbau ist bewusst klein gehalten: Das Modell bringt keine großen externen Webkorpora mit, sondern nutzt eine kompakte, selbst geschriebene KnowledgeBase direkt im Repository. Dadurch bleibt das Modell sofort importierbar, air-gap-tauglich und ohne zusätzliche GB-/TB-Daten nutzbar.
+
+### Initialer Umfang
+
+- neues Modellpaket `Modelle/einzelmodelle/internetwissen/`
+- repo-interne KnowledgeBase über `mainprompt.md`, `fachwissen.md` und modellseitige Beispielergebnis-Dateien
+- keine Live-Websuche im Offline-Default
+- Fokus auf allgemeine Erklärungen, Anleitungen, Recherchemethodik und Quellenkritik
+- klare Kennzeichnung von Aktualitätsgrenzen
+- Beispielantworten für allgemeine Recherchefragen, Anleitungen ohne Live-Web, Quellenkritik und stark zeitabhängige Themen
+
+### Nicht im Initialumfang
+
+- keine FineWeb-/Common-Crawl-Daten
+- keine Wikipedia-/Kiwix-Dumps
+- kein externer Vektorindex
+- keine automatische Webarchiv-Pipeline
+- keine großen Datenartefakte im Git-Repository
+- keine versteckte Online-Abhängigkeit
+
+### Spätere Ausbaurichtung
+
+Langfristig kann das Modell über optionale KnowledgePacks erweitert werden. Diese sollen nicht als große Datenbestände in diesem Repository liegen, sondern über Manifeste, Importskripte und lokale Artefaktpfade angebunden werden. Denkbare spätere Ausbaustufen sind kuratierte Offline-Dokumentationspakete, optionale Wikipedia-/Kiwix- oder Wikimedia-Dump-Integration, lokale KnowledgePacks für technische Dokumentationen, FineWeb-/FineWeb-Edu-/Common-Crawl-basierte Webkorpora, externe lokale Retrieval-Indizes und Import- sowie Lizenzreports für große Offline-Wissensquellen.
 
 ## Internationalisierung
 
@@ -48,7 +76,7 @@ Deutsch ist die Standardsprache des Repositorys, der README, der Standarddokumen
 - [`docs/en/`](docs/en/) enthält den englischen Dokumentationseinstieg und i18n-Hinweise.
 - Community-Dateien wie [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), [`SUPPORT.md`](SUPPORT.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) und [`CHANGELOG.md`](CHANGELOG.md) haben englische `.en.md`-Varianten.
 - Das Workbench-Dashboard nutzt `WORKBENCH_LOCALE`, Browser-/Systemsprache und eine manuelle Sprachwahl. Unbekannte oder fehlende Locale-Informationen fallen stabil auf Deutsch zurück.
-- Die Produktkomponenten der 31 Modellpakete sind zusätzlich in `Modelle/einzelmodelle/<modell-id>/i18n/` gepflegt. Direkt integriert sind `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja` und `zh-Hans`.
+- Die Produktkomponenten der 32 Modellpakete sind zusätzlich in `Modelle/einzelmodelle/<modell-id>/i18n/` gepflegt. Direkt integriert sind `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja` und `zh-Hans`.
 - [`Modelle/i18n/product-locales.json`](Modelle/i18n/product-locales.json) ist das zentrale Manifest für Produktsprachen. Der Generator [`scripts/generate_model_i18n_profiles.py`](scripts/generate_model_i18n_profiles.py) hält `model.json`, Sprachprofile und Manifest synchron.
 
 UTF-8 bleibt für alle menschenlesbaren Dateien und JSON-Artefakte verbindlich. Umlaute, Akzente, Emojis und nicht-lateinische Zeichen werden nicht transliteriert, sofern sie fachlich sichtbarer Text sind. Details zum Ergänzen weiterer Sprachen stehen in [`docs/de/I18N.md`](docs/de/I18N.md).
@@ -127,7 +155,7 @@ python scripts/verify_openwebui_workspace.py --include-docker-compose
 2. In [`Modelle/einzelmodelle/<modell-id>/`](Modelle/einzelmodelle/) das passende Paket wählen.
 3. Entweder das einzelne `model.json` importieren oder ein neues Modell anlegen.
 4. Jedes `model.json` ist ein direkt importierbares OpenWebUI-JSON-Array mit genau einem Modellobjekt.
-5. Falls die Instanz Paketdateien oder Knowledge-Dateien pro Modell erlaubt, `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien aus `beispiele/` zusätzlich hinterlegen.
+5. Falls die Instanz Paketdateien oder Knowledge-Dateien pro Modell erlaubt, `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei und Dateien aus `beispiele/` zusätzlich hinterlegen.
 6. Optional ein schlichtes Profilicon aus [`Modelle/icons/generic/`](Modelle/icons/generic/) oder [`Modelle/dist/artifacts/icons/generic/`](Modelle/dist/artifacts/icons/generic/) zuweisen.
 7. Das Jupyter-Tool nur dann zuordnen, wenn es im Modellprofil genannt ist.
 
@@ -165,7 +193,7 @@ In der lokalen YAML werden unter anderem gesetzt:
 
 Das direkte Importskript [`Tools/import_openwebui_workspace.py`](Tools/import_openwebui_workspace.py) bleibt als Fallback nutzbar und liest dieselbe zentrale Konfigurationsdatei. CLI-Parameter wie `--token`, `--base-url` oder `--jupyter-url` sind nur für bewusste Einmal-Overrides gedacht.
 
-Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` sowie Dateien aus `beispiele/` und `i18n/` als Knowledge pro Modell an, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
+Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei sowie Dateien aus `beispiele/` und `i18n/` als Knowledge pro Modell an, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
 
 Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist möglich:
 
@@ -183,7 +211,7 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 
 Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf natives Tool-Calling, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte und einen kurzen Bootstrap-Systemprompt.
 
-Dieser Systemprompt verpflichtet jedes Modell, vor der Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien aus `beispiele/` als Knowledge zu laden, zu analysieren und für Rolle, Scope, Ausgabeformat, Tool-Nutzung und Qualitätsmaßstab anzuwenden. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
+Dieser Systemprompt verpflichtet jedes Modell, vor der Antwort `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei und Dateien aus `beispiele/` als Knowledge zu laden, zu analysieren und für Rolle, Scope, Ausgabeformat, Tool-Nutzung und Qualitätsmaßstab anzuwenden. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
 
 Der generierte Importplan liegt unter [`Modelle/dist/openwebui-registration-plan.json`](Modelle/dist/openwebui-registration-plan.json). Die Datei [`Modelle/dist/openwebui-model-params-summary.json`](Modelle/dist/openwebui-model-params-summary.json) listet Parameter, Toolprofile und Knowledge-Dateien je Modell zur schnellen Kontrolle.
 
@@ -192,6 +220,7 @@ Der generierte Importplan liegt unter [`Modelle/dist/openwebui-registration-plan
 Zusätzlich zu den Problemfallmodellen gibt es mehrere Querschnittsmodelle:
 
 - `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme; nutzt das Basismodell `coder` mit allen importierbaren Tools und Standardfiltern.
+- `Internetwissen`: offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung ohne Live-Websuche.
 - `PromptForge`: erzeugt vollständige Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows.
 - `n8n Workflow Architect`: erstellt oder prüft importierbare n8n-Workflow-JSONs.
 - `OpenWebUI Model Builder`: erzeugt vollständige OpenWebUI-Modellpakete.
@@ -283,6 +312,7 @@ python scripts/verify_openwebui_workspace.py
 - [`Deployment/README.md`](Deployment/README.md): Offline-Betrieb und Volumes
 - [`Dokumentation/OFFLINE_CHATGPT_WORKBENCH.md`](Dokumentation/OFFLINE_CHATGPT_WORKBENCH.md): Zielbild für die Offline-Workbench
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Komponenten und Datenfluss
+- [`docs/MODEL_QUALITY_INVENTORY.md`](docs/MODEL_QUALITY_INVENTORY.md): Custom-Modell-Inventar, Prioritäten und Batch-Status
 - [`docs/FAQ.md`](docs/FAQ.md): häufige Fragen und Fehlerbilder
 - [`docs/ROADMAP.md`](docs/ROADMAP.md): vorsichtige, nicht verbindliche Wartungsrichtung
 - [`docs/RELEASE_PROCESS.md`](docs/RELEASE_PROCESS.md): Release- und Handover-Ablauf

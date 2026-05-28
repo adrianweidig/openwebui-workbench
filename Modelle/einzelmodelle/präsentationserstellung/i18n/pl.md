@@ -28,4 +28,4 @@ Zachowuj identyfikatory techniczne, nazwy plików, polecenia, pola API i wartoś
 
 ## Użycie w OpenWebUI
 
-Ten profil jest przesyłany jako Knowledge razem z mainprompt.md, fachwissen.md, beispielergebnis.md i beispiele/.
+Ten profil jest przesyłany jako Knowledge razem z mainprompt.md, fachwissen.md, beispielergebnis.html i beispiele/.

@@ -119,6 +119,7 @@
     "dokumentenzusammenfassung": "generic-document",
     "email-kommunikationsassistenz": "generic-chat",
     "informationsextraktion": "generic-search",
+    "internetwissen": "generic-search",
     "it-helpdesk-diagnose": "generic-tools",
     "json-csv-log-analyse": "generic-data-table",
     "meeting-protokoll-auswertung": "generic-chat",

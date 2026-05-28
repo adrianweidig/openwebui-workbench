@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="data:,">
+  <title>Lokale KI-Workbench – Entscheidungsvorlage</title>
+  <style>
+    :root {
+      --bg: #09111f;
+      --bg-soft: #111c2f;
+      --panel: #17243a;
+      --panel-strong: #20334f;
+      --text: #f6f8fb;
+      --muted: #b8c2d6;
+      --line: rgba(255,255,255,.14);
+      --accent: #70d6ff;
+      --accent-2: #b8f7d4;
+      --accent-3: #ffd166;
+      --danger: #ff8a8a;
+      --shadow: 0 24px 80px rgba(0,0,0,.35);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --slide-w: min(94vw, 1280px);
+      --slide-h: min(82vh, calc(var(--slide-w) * 9 / 16));
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg: #eef3f8;
+      --bg-soft: #f8fbff;
+      --panel: #ffffff;
+      --panel-strong: #e4edf6;
+      --text: #102033;
+      --muted: #4f617a;
+      --line: rgba(10,30,50,.14);
+      --accent: #006d9c;
+      --accent-2: #0d8f61;
+      --accent-3: #b77900;
+      --danger: #b42318;
+      --shadow: 0 18px 60px rgba(39,63,91,.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(112,214,255,.20), transparent 28rem),
+        radial-gradient(circle at 90% 70%, rgba(184,247,212,.16), transparent 24rem),
+        linear-gradient(135deg, var(--bg), var(--bg-soft));
+      color: var(--text);
+    }
+
+    body {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 1rem;
+      padding: clamp(.8rem, 2vw, 1.6rem);
+      overflow: hidden;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -4rem;
+      z-index: 50;
+      padding: .75rem 1rem;
+      border-radius: .75rem;
+      background: var(--accent);
+      color: #07101c;
+      font-weight: 800;
+      transition: top .2s ease;
+    }
+
+    .skip-link:focus { top: 1rem; }
+
+    .topbar, .bottombar {
+      width: var(--slide-w);
+      max-width: 100%;
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      min-width: 0;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: .02em;
+    }
+
+    .brand-mark {
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 50%;
+      background:
+        linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 .42rem rgba(112,214,255,.10);
+      flex: 0 0 auto;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: .45rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: .58rem .86rem;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      min-height: 2.45rem;
+    }
+
+    button:hover { border-color: var(--accent); }
+    button:focus-visible { outline: 3px solid var(--accent-3); outline-offset: 3px; }
+    button[disabled] { opacity: .45; cursor: not-allowed; }
+
+    .deck {
+      position: relative;
+      width: var(--slide-w);
+      height: var(--slide-h);
+      margin: auto;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+      border: 1px solid var(--line);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(1rem, 2vw, 2rem);
+      padding: clamp(1.4rem, 4vw, 4.2rem);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.10), transparent 40%),
+        var(--panel);
+      opacity: 0;
+      transform: translateX(7%) scale(.98);
+      pointer-events: none;
+      transition: opacity .35s ease, transform .35s ease;
+    }
+
+    .slide.is-active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .slide-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--muted);
+      font-weight: 750;
+      font-size: clamp(.8rem, 1.3vw, 1rem);
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .kicker {
+      color: var(--accent-2);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      max-width: 12ch;
+      font-size: clamp(3rem, 8.8vw, 7.2rem);
+      line-height: .88;
+      letter-spacing: -.08em;
+    }
+
+    h2 {
+      max-width: 15ch;
+      font-size: clamp(2.1rem, 5vw, 4.6rem);
+      line-height: .95;
+      letter-spacing: -.055em;
+    }
+
+    h3 {
+      font-size: clamp(1.15rem, 2vw, 1.55rem);
+      line-height: 1.1;
+      letter-spacing: -.02em;
+    }
+
+    .lead {
+      max-width: 58rem;
+      color: var(--muted);
+      font-size: clamp(1.15rem, 2.4vw, 2rem);
+      line-height: 1.34;
+    }
+
+    .body {
+      display: grid;
+      align-content: center;
+      gap: clamp(1rem, 2vw, 2rem);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: clamp(1rem, 2.5vw, 2rem);
+      align-items: center;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(.8rem, 1.6vw, 1.2rem);
+    }
+
+    .card, .metric, .risk, .step, .node {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.06);
+      padding: clamp(1rem, 2vw, 1.5rem);
+    }
+
+    .card p, .risk p, .step p, .node p {
+      margin-top: .55rem;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: clamp(.95rem, 1.35vw, 1.1rem);
+    }
+
+    .tagline {
+      display: inline-flex;
+      width: fit-content;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: .55rem .8rem;
+      background: rgba(255,255,255,.06);
+      color: var(--accent-2);
+      font-weight: 850;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr minmax(16rem, .7fr);
+      align-items: end;
+      gap: clamp(1rem, 4vw, 4rem);
+    }
+
+    .hero-panel {
+      border-radius: 2rem;
+      padding: clamp(1rem, 2vw, 1.6rem);
+      background:
+        linear-gradient(160deg, rgba(112,214,255,.18), rgba(184,247,212,.10)),
+        rgba(255,255,255,.05);
+      border: 1px solid var(--line);
+    }
+
+    .hero-panel strong {
+      display: block;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: .9;
+      letter-spacing: -.06em;
+      color: var(--accent-3);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 1;
+      letter-spacing: -.06em;
+      color: var(--accent);
+    }
+
+    .metric span { color: var(--muted); font-weight: 700; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: .8rem;
+      align-items: stretch;
+    }
+
+    .node {
+      position: relative;
+      min-height: 9rem;
+    }
+
+    .node:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -.62rem;
+      width: .9rem;
+      height: .9rem;
+      border-top: 3px solid var(--accent);
+      border-right: 3px solid var(--accent);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .risk strong { color: var(--danger); }
+    .risk em { color: var(--accent-2); font-style: normal; font-weight: 800; }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .step small {
+      display: inline-flex;
+      margin-bottom: .8rem;
+      color: var(--accent-3);
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .decision .card:first-child {
+      background: linear-gradient(150deg, rgba(112,214,255,.16), rgba(255,255,255,.05));
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: .75rem;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+    }
+
+    .checklist li {
+      display: grid;
+      grid-template-columns: 1.8rem 1fr;
+      gap: .7rem;
+      align-items: start;
+    }
+
+    .checklist li::before {
+      content: "✓";
+      display: grid;
+      place-items: center;
+      width: 1.55rem;
+      height: 1.55rem;
+      border-radius: 50%;
+      background: rgba(184,247,212,.15);
+      color: var(--accent-2);
+      font-weight: 900;
+    }
+
+    .slide-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .progress-wrap {
+      flex: 1;
+      height: .55rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .25s ease;
+    }
+
+    .counter { min-width: 5.5rem; text-align: right; }
+
+    .overview {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      padding: clamp(1rem, 3vw, 2rem);
+      background: rgba(3,8,16,.86);
+      backdrop-filter: blur(10px);
+      overflow: auto;
+    }
+
+    .overview.is-open { display: block; }
+
+    .overview-grid {
+      width: min(1180px, 96vw);
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .thumb {
+      border: 1px solid var(--line);
+      border-radius: 1.2rem;
+      padding: 1rem;
+      background: var(--panel);
+      color: var(--text);
+      text-align: left;
+      min-height: 8rem;
+    }
+
+    .thumb strong { display: block; margin-bottom: .6rem; color: var(--accent); }
+    .thumb span { color: var(--muted); line-height: 1.35; }
+
+    .sr-status {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .topbar, .bottombar { width: min(96vw, 1280px); }
+      .deck { height: auto; aspect-ratio: 16 / 9; min-height: 620px; }
+      .two-col, .hero-grid, .decision { grid-template-columns: 1fr; }
+      .cards, .metrics, .risk-grid, .timeline, .flow { grid-template-columns: 1fr 1fr; }
+      .node:not(:last-child)::after { display: none; }
+    }
+
+    @media (max-width: 620px) {
+      :root { --slide-w: 96vw; --slide-h: auto; }
+      .deck { min-height: 720px; border-radius: 1.4rem; }
+      .slide { padding: 1.1rem; }
+      .cards, .metrics, .risk-grid, .timeline, .flow { grid-template-columns: 1fr; }
+      .toolbar button { padding-inline: .7rem; }
+      .brand span { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+    }
+
+    @media print {
+      html, body {
+        background: #fff !important;
+        color: #111 !important;
+        height: auto;
+        overflow: visible;
+        padding: 0;
+      }
+      .topbar, .bottombar, .overview, .skip-link { display: none !important; }
+      .deck {
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        border: 0;
+        overflow: visible;
+      }
+      .slide {
+        position: relative;
+        opacity: 1 !important;
+        transform: none !important;
+        display: grid;
+        min-height: 100vh;
+        page-break-after: always;
+        border: 1px solid #ddd;
+        background: #fff !important;
+        color: #111 !important;
+      }
+      .slide * { color: #111 !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#slide-title">Zur aktuellen Folie springen</a>
+
+  <header class="topbar" aria-label="Präsentationssteuerung">
+    <div class="brand" aria-label="Lokale KI-Workbench">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Lokale KI-Workbench</span>
+    </div>
+    <nav class="toolbar" aria-label="Navigation">
+      <button type="button" id="prevBtn" aria-label="Vorherige Folie">Zurück</button>
+      <button type="button" id="nextBtn" aria-label="Nächste Folie">Weiter</button>
+      <button type="button" id="overviewBtn" aria-label="Folienübersicht öffnen">Übersicht</button>
+      <button type="button" id="themeBtn" aria-label="Hell-Dunkel-Modus umschalten">Design</button>
+      <button type="button" id="printBtn" aria-label="Drucken oder als PDF speichern">Drucken</button>
+    </nav>
+  </header>
+
+  <main class="deck" id="deck" aria-label="Präsentationsfolien">
+    <section class="slide is-active" id="slide-title" data-title="Titel" aria-label="Folie 1: Titel">
+      <div class="slide-header"><span class="kicker">Entscheidungsvorlage</span><span>30-Tage-Pilot</span></div>
+      <div class="body hero-grid">
+        <div>
+          <span class="tagline">Offline nutzbar · prüfbar · sofort vorführbar</span>
+          <h1>Lokale KI-Modelle produktiv machen</h1>
+          <p class="lead">Eine Workbench bündelt Modellprofile, Fachwissen, Tools und Beispielartefakte, damit Teams ohne Cloud-Abhängigkeit belastbare KI-Ergebnisse erzeugen.</p>
+        </div>
+        <aside class="hero-panel" aria-label="Kernaussage">
+          <strong>1 Datei</strong>
+          <p class="lead">Importierbares Modellpaket mit klarer Rolle, Wissensbasis und Goldstandard-Beispiel.</p>
+        </aside>
+      </div>
+      <footer class="slide-footer"><span>Beispielartefakt für Präsentationserstellung</span><span>Folie 1</span></footer>
+    </section>
+
+    <section class="slide" data-title="Ausgangslage" aria-label="Folie 2: Ausgangslage">
+      <div class="slide-header"><span class="kicker">Warum jetzt?</span><span>Ausgangslage</span></div>
+      <div class="body two-col">
+        <div>
+          <h2>Generische Modelle liefern generische Ergebnisse</h2>
+          <p class="lead">Ohne lokale Wissensbasis, Beispiele und Prüfregeln müssen Nutzer dieselben Qualitätsanforderungen immer wieder neu erklären.</p>
+        </div>
+        <div class="cards">
+          <article class="card"><h3>Wissenslücken</h3><p>Offline-Modelle kennen interne Standards, Templates und Projektregeln nicht automatisch.</p></article>
+          <article class="card"><h3>Formatdrift</h3><p>Antworten wechseln zwischen Text, Code und halbfertigen Artefakten statt ein Zielartefakt zu liefern.</p></article>
+          <article class="card"><h3>Prüfaufwand</h3><p>Teams investieren Zeit in Nacharbeit, weil Beispiele, Grenzen und Validierung fehlen.</p></article>
+        </div>
+      </div>
+      <footer class="slide-footer"><span>Eine Hauptaussage pro Folie</span><span>Folie 2</span></footer>
+    </section>
+
+    <section class="slide" data-title="Zielbild" aria-label="Folie 3: Zielbild">
+      <div class="slide-header"><span class="kicker">Zielbild</span><span>Modellpakete</span></div>
+      <div class="body">
+        <h2>Jedes Modell wird als wiederholbares Arbeitsprodukt paketiert</h2>
+        <div class="metrics" role="list" aria-label="Zielmetriken">
+          <div class="metric" role="listitem"><strong>31</strong><span>Modellordner als kuratierbare Einheiten</span></div>
+          <div class="metric" role="listitem"><strong>0</strong><span>zwingende Online-Abhängigkeiten in Beispielen</span></div>
+          <div class="metric" role="listitem"><strong>3</strong><span>Kernartefakte: Prompt, Fachwissen, Beispiel</span></div>
+          <div class="metric" role="listitem"><strong>1</strong><span>lokale Prüfstrecke vor Import</span></div>
+        </div>
+      </div>
+      <footer class="slide-footer"><span>Kennzahlen hier sind Repository-Strukturannahmen, keine Leistungsversprechen</span><span>Folie 3</span></footer>
+    </section>
+
+    <section class="slide" data-title="Architektur" aria-label="Folie 4: Architektur">
+      <div class="slide-header"><span class="kicker">Architektur</span><span>Offline-first</span></div>
+      <div class="body">
+        <h2>Qualität entsteht durch gekoppelte Wissens- und Artefaktpfade</h2>
+        <div class="flow" aria-label="Architekturfluss">
+          <article class="node"><h3>Nutzerauftrag</h3><p>Ziel, Kontext, Dateien und gewünschtes Ausgabeformat.</p></article>
+          <article class="node"><h3>Systemprompt</h3><p>Rolle, Grenzen, Fokus und Arbeitsmodus.</p></article>
+          <article class="node"><h3>Fachwissen</h3><p>Domänenlogik, Checklisten, Fehlerbilder und Fallbacks.</p></article>
+          <article class="node"><h3>Beispiele</h3><p>Few-Shot-Muster für Stil, Format und Qualität.</p></article>
+          <article class="node"><h3>Artefakt</h3><p>Direkt nutzbare Datei statt reiner Beschreibung.</p></article>
+        </div>
+      </div>
+      <footer class="slide-footer"><span>Vanilla HTML, CSS und JavaScript ohne Build-Schritt</span><span>Folie 4</span></footer>
+    </section>
+
+    <section class="slide" data-title="Betriebsmodell" aria-label="Folie 5: Betriebsmodell">
+      <div class="slide-header"><span class="kicker">Betriebsmodell</span><span>Rollen</span></div>
+      <div class="body two-col">
+        <div>
+          <h2>Drei Rollen halten Modellqualität stabil</h2>
+          <p class="lead">Modellpakete bleiben wirksam, wenn Fachlichkeit, Technik und Abnahme nicht in einer Person verschwimmen.</p>
+        </div>
+        <ul class="checklist">
+          <li><strong>Domänenverantwortliche</strong> definieren Fachlogik, Grenzen und Qualitätskriterien.</li>
+          <li><strong>Model Curators</strong> pflegen Prompts, Beispiele, Artefaktformate und Importmetadaten.</li>
+          <li><strong>QA-Verantwortliche</strong> prüfen Offline-Fähigkeit, Sicherheit, Formatstabilität und Regressionen.</li>
+        </ul>
+      </div>
+      <footer class="slide-footer"><span>Klare Zuständigkeiten verhindern Prompt-Wildwuchs</span><span>Folie 5</span></footer>
+    </section>
+
+    <section class="slide" data-title="Qualität" aria-label="Folie 6: Qualität">
+      <div class="slide-header"><span class="kicker">Qualitätskriterien</span><span>Messbar machen</span></div>
+      <div class="body">
+        <h2>Ein Modellpaket ist nur gut, wenn lokale Modelle daraus Verhalten lernen</h2>
+        <div class="cards">
+          <article class="card"><h3>Fachliche Präzision</h3><p>Zweck, Eingaben, Entscheidungslogik, Grenzen und gute Gegenbeispiele sind explizit beschrieben.</p></article>
+          <article class="card"><h3>Formatklarheit</h3><p>Das Beispielergebnis nutzt das tatsächliche Zielformat, nicht eine Beschreibung des Zielformats.</p></article>
+          <article class="card"><h3>Validierbarkeit</h3><p>JSON, Python, HTML und Markdown werden mit lokalen, nicht-destruktiven Checks geprüft.</p></article>
+        </div>
+      </div>
+      <footer class="slide-footer"><span>Goldstandard-Beispiele sind Trainingsmaterial für schwächere Modelle</span><span>Folie 6</span></footer>
+    </section>
+
+    <section class="slide" data-title="Risiken" aria-label="Folie 7: Risiken und Gegenmaßnahmen">
+      <div class="slide-header"><span class="kicker">Risiken</span><span>Gegenmaßnahmen</span></div>
+      <div class="body">
+        <h2>Offline-Betrieb reduziert Abhängigkeiten, erhöht aber die Pflicht zur Kuratierung</h2>
+        <div class="risk-grid">
+          <article class="risk"><h3><strong>Halluzinierte Fakten</strong></h3><p><em>Gegenmaßnahme:</em> Fakten, Annahmen und offene Punkte trennen; keine Quellen oder Kennzahlen erfinden.</p></article>
+          <article class="risk"><h3><strong>Veraltete Tool-Annahmen</strong></h3><p><em>Gegenmaßnahme:</em> stabile Workflows dokumentieren und versionskritische Details prüfpflichtig markieren.</p></article>
+          <article class="risk"><h3><strong>Online-Abhängigkeiten</strong></h3><p><em>Gegenmaßnahme:</em> Beispiele ohne CDNs, externe Fonts, APIs oder Bilder erstellen.</p></article>
+          <article class="risk"><h3><strong>Prompt-Überladung</strong></h3><p><em>Gegenmaßnahme:</em> kurze Systemprompts, ausführliches Fachwissen und konkrete Beispiele getrennt halten.</p></article>
+        </div>
+      </div>
+      <footer class="slide-footer"><span>Sicherheit und Qualität werden als Akzeptanzkriterien behandelt</span><span>Folie 7</span></footer>
+    </section>
+
+    <section class="slide" data-title="Roadmap" aria-label="Folie 8: Roadmap">
+      <div class="slide-header"><span class="kicker">30 Tage</span><span>Umsetzung</span></div>
+      <div class="body">
+        <h2>Der Pilot startet mit den Modellen, die Artefaktqualität am stärksten beeinflussen</h2>
+        <div class="timeline">
+          <article class="step"><small>Woche 1</small><h3>Inventar & Priorisierung</h3><p>Modellzwecke, Beispielartefakte und Importpfade prüfen.</p></article>
+          <article class="step"><small>Woche 2</small><h3>Goldstandard-Beispiele</h3><p>Fertige Offline-Artefakte und Fehlerfälle pro Schwerpunktmodell erstellen.</p></article>
+          <article class="step"><small>Woche 3</small><h3>Validierung</h3><p>JSON, Skripte, HTML-Abhängigkeiten und OpenWebUI-Importpfade prüfen.</p></article>
+          <article class="step"><small>Woche 4</small><h3>Rollout-Entscheid</h3><p>Feedback aus Pilotnutzung in Modellpakete und QA-Regeln übernehmen.</p></article>
+        </div>
+      </div>
+      <footer class="slide-footer"><span>Pragmatischer Batch statt Vollumbau ohne Abnahme</span><span>Folie 8</span></footer>
+    </section>
+
+    <section class="slide" data-title="Entscheidung" aria-label="Folie 9: Entscheidung">
+      <div class="slide-header"><span class="kicker">Entscheidung</span><span>Nächster Schritt</span></div>
+      <div class="body decision">
+        <article class="card">
+          <h2>Pilot freigeben</h2>
+          <p class="lead">Start mit Präsentationserstellung, n8n-Workflow-Architekt, OpenWebUI-Model-Builder und PromptForge als erstem Qualitätsbatch.</p>
+        </article>
+        <article class="card">
+          <h3>Erfolgskriterien</h3>
+          <ul class="checklist">
+            <li>Jedes Schwerpunktmodell besitzt eine offline nutzbare Fachwissensdatei.</li>
+            <li>Beispielergebnisse liegen im tatsächlichen Zielformat vor.</li>
+            <li>Import- und Validierungsskripte akzeptieren modellabhängige Artefaktformate.</li>
+            <li>Keine Beispielartefakte laden unkontrolliert externe Ressourcen nach.</li>
+          </ul>
+        </article>
+      </div>
+      <footer class="slide-footer"><span>Ende der Präsentation</span><span>Folie 9</span></footer>
+    </section>
+  </main>
+
+  <footer class="bottombar" aria-label="Fortschritt">
+    <div class="progress-wrap" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="counter" id="counter" aria-live="polite">1 / 9</div>
+  </footer>
+
+  <aside class="overview" id="overview" aria-label="Folienübersicht" aria-modal="true" role="dialog">
+    <div class="overview-grid" id="overviewGrid"></div>
+  </aside>
+
+  <div class="sr-status" id="srStatus" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const overviewBtn = document.getElementById("overviewBtn");
+      const themeBtn = document.getElementById("themeBtn");
+      const printBtn = document.getElementById("printBtn");
+      const progressBar = document.getElementById("progressBar");
+      const counter = document.getElementById("counter");
+      const overview = document.getElementById("overview");
+      const overviewGrid = document.getElementById("overviewGrid");
+      const srStatus = document.getElementById("srStatus");
+      let current = 0;
+      let touchStartX = null;
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function slideTitle(slide, index) {
+        return slide.dataset.title || `Folie ${index + 1}`;
+      }
+
+      function updateSlide(index) {
+        current = clamp(index, 0, slides.length - 1);
+        slides.forEach((slide, idx) => {
+          const active = idx === current;
+          slide.classList.toggle("is-active", active);
+          slide.setAttribute("aria-hidden", active ? "false" : "true");
+          slide.toggleAttribute("inert", !active);
+        });
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === slides.length - 1;
+        const progress = ((current + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        counter.textContent = `${current + 1} / ${slides.length}`;
+        srStatus.textContent = `Folie ${current + 1} von ${slides.length}: ${slideTitle(slides[current], current)}`;
+      }
+
+      function openOverview() {
+        overview.classList.add("is-open");
+        overviewBtn.setAttribute("aria-expanded", "true");
+        const activeThumb = overviewGrid.querySelector(`[data-index="${current}"]`);
+        if (activeThumb) activeThumb.focus();
+      }
+
+      function closeOverview() {
+        overview.classList.remove("is-open");
+        overviewBtn.setAttribute("aria-expanded", "false");
+        overviewBtn.focus();
+      }
+
+      function buildOverview() {
+        overviewGrid.innerHTML = "";
+        slides.forEach((slide, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "thumb";
+          button.dataset.index = String(index);
+          const heading = slide.querySelector("h1, h2")?.textContent || slideTitle(slide, index);
+          button.innerHTML = `<strong>${index + 1}. ${slideTitle(slide, index)}</strong><span>${heading}</span>`;
+          button.addEventListener("click", () => {
+            updateSlide(index);
+            closeOverview();
+          });
+          overviewGrid.appendChild(button);
+        });
+      }
+
+      function toggleTheme() {
+        const nextTheme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+        document.documentElement.dataset.theme = nextTheme;
+        try { localStorage.setItem("presentation-theme", nextTheme); } catch (error) { /* lokale Speicherung optional */ }
+      }
+
+      function restoreTheme() {
+        try {
+          const saved = localStorage.getItem("presentation-theme");
+          if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+        } catch (error) { /* direkte Dateiansicht kann Storage einschränken */ }
+      }
+
+      prevBtn.addEventListener("click", () => updateSlide(current - 1));
+      nextBtn.addEventListener("click", () => updateSlide(current + 1));
+      overviewBtn.addEventListener("click", () => overview.classList.contains("is-open") ? closeOverview() : openOverview());
+      themeBtn.addEventListener("click", toggleTheme);
+      printBtn.addEventListener("click", () => window.print());
+
+      overview.addEventListener("click", (event) => {
+        if (event.target === overview) closeOverview();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (overview.classList.contains("is-open") && event.key === "Escape") {
+          closeOverview();
+          return;
+        }
+        const tag = document.activeElement?.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        switch (event.key) {
+          case "ArrowRight":
+          case "PageDown":
+          case " ":
+            event.preventDefault();
+            updateSlide(current + 1);
+            break;
+          case "ArrowLeft":
+          case "PageUp":
+          case "Backspace":
+            event.preventDefault();
+            updateSlide(current - 1);
+            break;
+          case "Home":
+            event.preventDefault();
+            updateSlide(0);
+            break;
+          case "End":
+            event.preventDefault();
+            updateSlide(slides.length - 1);
+            break;
+          case "o":
+          case "O":
+            event.preventDefault();
+            openOverview();
+            break;
+          case "t":
+          case "T":
+            event.preventDefault();
+            toggleTheme();
+            break;
+          default:
+            break;
+        }
+      });
+
+      document.getElementById("deck").addEventListener("touchstart", (event) => {
+        touchStartX = event.changedTouches[0].clientX;
+      }, { passive: true });
+
+      document.getElementById("deck").addEventListener("touchend", (event) => {
+        if (touchStartX === null) return;
+        const delta = event.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(delta) > 60) updateSlide(current + (delta < 0 ? 1 : -1));
+        touchStartX = null;
+      }, { passive: true });
+
+      restoreTheme();
+      buildOverview();
+      updateSlide(0);
+    })();
+  </script>
+</body>
+</html>
