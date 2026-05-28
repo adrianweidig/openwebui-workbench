@@ -447,7 +447,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBjb2RlIGljb248L3RpdGxlPgogIDxkZXNjIGlkPSJkZXNjIj5TaW1wbGUgY29kZSBicmFja2V0cyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cGF0aCBkPSJNMjA2IDE4NGwtNzQgNzIgNzQgNzJNMzA2IDE4NGw3NCA3Mi03NCA3Mk0yNzggMTY2bC00NCAxODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
-      "description": "Offline-Aufgabenmodell für API- und Schnittstellenentwurf. Nutzer möchten eine API, Datenstruktur, Request/Response-Schemata oder Schnittstellendokumentation entwerfen. Passend, wenn technische Schnittstellen geplant, beschrieben oder für Implementierung vorbereitet werden sollen.",
+      "description": "Entwirft und prüft OpenAPI-nahe HTTP-/JSON-Verträge mit Schemas, Fehlerfällen, Security-Grenzen, Beispielpayloads und lokalen Testfällen.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -544,7 +544,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.yaml"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -644,7 +644,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `api-schnittstellenentwurf`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `api-schnittstellenentwurf`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.yaml`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.35,
       "top_p": 0.9,
       "stop": [],
@@ -2993,7 +2993,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBzZWFyY2ggaWNvbjwvdGl0bGU+CiAgPGRlc2MgaWQ9ImRlc2MiPlNpbXBsZSBtYWduaWZ5aW5nIGdsYXNzIGFuZCBkb2N1bWVudCBsaW5lcyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8Y2lyY2xlIGN4PSIyMjYiIGN5PSIyMjYiIHI9Ijc2IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjIiLz4KICA8cGF0aCBkPSJNMjgyIDI4Mmw3NCA3NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTY0IDM0NGg4OE0xNjQgMzg0aDE0NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==",
-      "description": "Offline-Aufgabenmodell für Informationsextraktion. Nutzer möchten aus unstrukturierten Dokumenten strukturierte Informationen wie Namen, Daten, Fristen, Beträge, Aufgaben, Risiken oder Entitäten extrahieren. Passend, wenn aus Texten maschinenlesbare Tabellen, Listen oder JSON-Strukturen entstehen sollen.",
+      "description": "Extrahiert Informationen aus Texten, Tabellen, Logs, Dokumenten und Screenshots als valides JSON mit Quellenbelegen, Normalisierung und Unsicherheiten.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -3090,7 +3090,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.json"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -3190,7 +3190,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `informationsextraktion`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `informationsextraktion`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.json`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.0,
       "top_p": 0.8,
       "stop": [],
@@ -3618,7 +3618,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBkYXRhIHRhYmxlIGljb248L3RpdGxlPgogIDxkZXNjIGlkPSJkZXNjIj5TaW1wbGUgdGFibGUgZ3JpZCBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cmVjdCB4PSIxMjgiIHk9IjE1MCIgd2lkdGg9IjI1NiIgaGVpZ2h0PSIyMTIiIHJ4PSIxOCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE4Ii8+CiAgPHBhdGggZD0iTTEyOCAyMTBoMjU2TTEyOCAyNzBoMjU2TTEyOCAzMzBoMjU2TTIxMiAxNTB2MjEyTTMwMCAxNTB2MjEyIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K",
-      "description": "Offline-Aufgabenmodell für JSON-, CSV- und Log-Analyse. Nutzer möchten strukturierte Dateien, Logs, Fehlermuster, Events oder Datenströme offline untersuchen und auswerten. Passend, wenn technische oder operative Rohdaten analysiert werden müssen.",
+      "description": "Analysiert JSON, CSV und Logs mit Parsingstatus, Datenqualitätsbefunden, belegten Auffälligkeiten, sicheren lokalen Checks und maschinenlesbarem JSON-Report.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -3716,7 +3716,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.json"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -3816,7 +3816,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `json-csv-log-analyse`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `json-csv-log-analyse`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.json`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.15,
       "top_p": 0.8,
       "stop": [],
@@ -5748,7 +5748,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBjaGFydCBpY29uPC90aXRsZT4KICA8ZGVzYyBpZD0iZGVzYyI+U2ltcGxlIGJsYWNrIGxpbmUgY2hhcnQgb24gYSB3aGl0ZSBiYWNrZ3JvdW5kLjwvZGVzYz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZiIvPgogIDxyZWN0IHg9IjY0IiB5PSI2NCIgd2lkdGg9IjM4NCIgaGVpZ2h0PSIzODQiIHJ4PSI0OCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2Ii8+CiAgPHBhdGggZD0iTTEzNiAzNTJoMjQ4IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMzYgMzUyVjE2MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTYwIDMxMmw3MC03MCA1NCA0OCA4Mi0xMDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMTYwIiBjeT0iMzEyIiByPSIxMiIgZmlsbD0iIzAwMCIvPgogIDxjaXJjbGUgY3g9IjIzMCIgY3k9IjI0MiIgcj0iMTIiIGZpbGw9IiMwMDAiLz4KICA8Y2lyY2xlIGN4PSIyODQiIGN5PSIyOTAiIHI9IjEyIiBmaWxsPSIjMDAwIi8+CiAgPGNpcmNsZSBjeD0iMzY2IiBjeT0iMTgyIiByPSIxMiIgZmlsbD0iIzAwMCIvPgo8L3N2Zz4K",
-      "description": "Offline-Aufgabenmodell für Report- und Dashboard-Vorbereitung. Nutzer möchten aus Daten oder Statusinformationen einen strukturierten Bericht, KPI-Report oder eine Dashboard-Grundlage erzeugen. Passend, wenn aus Zahlen, Tabellen oder Projektständen ein wiederverwendbarer Bericht entstehen soll.",
+      "description": "Bereitet Reports und Dashboards mit Nutzerfragen, KPI-Definitionen, Datenqualität, Visualisierung und offline lauffähigem HTML-Prototyp vor.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -5847,7 +5847,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.html"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -5947,7 +5947,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `report-dashboard-vorbereitung`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `report-dashboard-vorbereitung`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.html`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.4,
       "top_p": 0.9,
       "stop": [],
@@ -6170,7 +6170,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBkYXRhIHRhYmxlIGljb248L3RpdGxlPgogIDxkZXNjIGlkPSJkZXNjIj5TaW1wbGUgdGFibGUgZ3JpZCBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cmVjdCB4PSIxMjgiIHk9IjE1MCIgd2lkdGg9IjI1NiIgaGVpZ2h0PSIyMTIiIHJ4PSIxOCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE4Ii8+CiAgPHBhdGggZD0iTTEyOCAyMTBoMjU2TTEyOCAyNzBoMjU2TTEyOCAzMzBoMjU2TTIxMiAxNTB2MjEyTTMwMCAxNTB2MjEyIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K",
-      "description": "Offline-Aufgabenmodell für Tabellen- und CSV-Datenanalyse. Nutzer möchten CSV-, XLSX- oder tabellarische Daten offline untersuchen, bereinigen, aggregieren, visualisieren und interpretieren. Passend, wenn strukturierte Daten analysiert oder in Erkenntnisse, Tabellen, Diagramme oder Reports überführt werden sollen.",
+      "description": "Analysiert Tabellen und CSVs mit reproduzierbarem Profiling, Datenqualitätschecks, Kennzahlen, Bereinigungsplan und ausführbarem Offline-Python-Artefakt.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -6271,7 +6271,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.py"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -6371,7 +6371,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `tabellen-csv-datenanalyse`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `tabellen-csv-datenanalyse`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.py`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.15,
       "top_p": 0.8,
       "stop": [],

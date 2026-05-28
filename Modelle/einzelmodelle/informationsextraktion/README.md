@@ -22,6 +22,8 @@ Erzeugt aus `04_informationsextraktion.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.json`: valides JSON-Goldstandardergebnis mit Belegen, Normalisierung und Unsicherheiten
+- `beispiele/informationsextraktion-goldstandard-briefing.md`: Few-Shot-Beispiele für Schemaextraktion und Datenschutzgrenzen
 
 ## Hinweis
 

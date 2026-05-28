@@ -22,6 +22,8 @@ Erzeugt aus `08_report-dashboard-vorbereitung.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.html`: offline lauffähiger Dashboard-Goldstandard ohne externe Ressourcen
+- `beispiele/dashboard-goldstandard-briefing.md`: Few-Shot-Beispiele für KPI-Definition, Datenqualität und Dashboard-Storyline
 
 ## Hinweis
 

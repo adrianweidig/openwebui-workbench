@@ -28,7 +28,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "api-schnittstellenentwurf": {
         "purpose": "API-Verträge, OpenAPI-Strukturen, Authentifizierung, Fehlerfälle und Integrationsgrenzen entwerfen oder prüfen.",
-        "artifact": "api-design-vorlage.md",
+        "artifact": "api-design-goldstandard-briefing.md",
         "scenario": "Ein Team braucht aus Fachanforderungen einen belastbaren API-Entwurf mit Beispielpayloads.",
         "vision": "Nutze Vision für Architekturdiagramme, Swagger-Screenshots, Sequenzskizzen oder Fehlermasken.",
         "quality": "Endpunkte, Schemas, Fehlercodes, Security und Testfälle müssen zusammenpassen.",
@@ -112,7 +112,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "informationsextraktion": {
         "purpose": "Informationen aus Texten, Tabellen, Logs, Dokumenten und Bildern in ein definiertes Schema extrahieren.",
-        "artifact": "extraktionsschema-vorlage.md",
+        "artifact": "informationsextraktion-goldstandard-briefing.md",
         "scenario": "Aus gemischten Quellen soll valides JSON mit Belegen und Unsicherheiten entstehen.",
         "vision": "Nutze Vision für Formularfotos, Tabellenbilder, Scans, Etiketten oder UI-Datenmasken.",
         "quality": "Jedes Feld braucht Quelle, Normalisierung, Unsicherheit und Validierungsregel.",
@@ -133,7 +133,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "json-csv-log-analyse": {
         "purpose": "JSON, CSV, Logs und strukturierte Textdaten validieren, analysieren und in klare Befunde überführen.",
-        "artifact": "loganalyse-vorlage.md",
+        "artifact": "json-csv-log-analyse-goldstandard-briefing.md",
         "scenario": "Ein Logauszug und eine CSV sollen auf Fehler, Muster und Datenqualität geprüft werden.",
         "vision": "Nutze Vision nur für Screenshot-Logs oder Tabellenbilder; verlange Rohtext, wenn Genauigkeit nötig ist.",
         "quality": "Parsingstatus, Auffälligkeiten, Beispiele, betroffene Felder und Repro-Schritte müssen enthalten sein.",
@@ -203,7 +203,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "report-dashboard-vorbereitung": {
         "purpose": "Daten, Kennzahlen, Dashboard-Struktur, Visualisierungen und Storyline für Reports vorbereiten.",
-        "artifact": "dashboard-briefing-vorlage.md",
+        "artifact": "dashboard-goldstandard-briefing.md",
         "scenario": "Aus Daten und Zielgruppe soll ein Dashboard- oder Reportkonzept entstehen.",
         "vision": "Nutze Vision für Dashboard-Screenshots, Charts, Tabellenbilder oder Layoutreferenzen.",
         "quality": "Kennzahlen, Datenquellen, Visualtyp, Filter, Warnschwellen und Nutzerfragen müssen definiert sein.",
@@ -217,7 +217,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "tabellen-csv-datenanalyse": {
         "purpose": "Tabellen und CSVs bereinigen, analysieren, validieren und in nachvollziehbare Ergebnisse überführen.",
-        "artifact": "datenanalyse-notebook-plan-vorlage.md",
+        "artifact": "tabellen-csv-datenanalyse-goldstandard-briefing.md",
         "scenario": "Eine CSV soll mit Jupyter geprüft, bereinigt und zusammengefasst werden.",
         "vision": "Nutze Vision für fotografierte Tabellen oder Dashboard-Screenshots nur zur Orientierung; verlange Rohdaten für Berechnung.",
         "quality": "Analyse muss Schema, Datenqualität, Berechnung, Ergebnis und Reproduzierbarkeit enthalten.",
@@ -246,9 +246,14 @@ def read_model_name(model_id: str) -> str:
 
 
 EXAMPLE_RESULT_FILE_OVERRIDES = {
+    "api-schnittstellenentwurf": "beispielergebnis.yaml",
     "codegenerierung": "beispielergebnis.py",
+    "informationsextraktion": "beispielergebnis.json",
+    "json-csv-log-analyse": "beispielergebnis.json",
     "n8n-workflow-architect": "beispielergebnis.json",
     "präsentationserstellung": "beispielergebnis.html",
+    "report-dashboard-vorbereitung": "beispielergebnis.html",
+    "tabellen-csv-datenanalyse": "beispielergebnis.py",
 }
 
 CODE_BATCH_STALE_EXAMPLES = {
@@ -262,6 +267,16 @@ CODE_BATCH_STALE_EXAMPLES = {
 }
 
 CODE_BATCH_MODELS = set(CODE_BATCH_STALE_EXAMPLES)
+
+DATA_BATCH_STALE_EXAMPLES = {
+    "api-schnittstellenentwurf": ["api-design-vorlage.md"],
+    "informationsextraktion": ["extraktionsschema-vorlage.md"],
+    "json-csv-log-analyse": ["loganalyse-vorlage.md"],
+    "report-dashboard-vorbereitung": ["dashboard-briefing-vorlage.md"],
+    "tabellen-csv-datenanalyse": ["datenanalyse-notebook-plan-vorlage.md"],
+}
+
+DATA_BATCH_MODELS = set(DATA_BATCH_STALE_EXAMPLES)
 
 
 def example_result_file_for_model(model_id: str) -> str:
@@ -1278,6 +1293,567 @@ def code_model_goldstandard_briefing(model_id: str, name: str, config: dict[str,
     )
 
 
+def api_goldstandard_yaml() -> str:
+    return dedent(
+        """\
+        openapi: 3.1.0
+        info:
+          title: Ticket Intake API
+          version: 1.0.0
+          summary: Offline-Beispiel für einen kleinen, prüfbaren API-Vertrag
+        servers:
+          - url: /api
+            description: relativer Pfad für lokale oder interne Deployments
+        tags:
+          - name: tickets
+            description: Ticketannahme und Statusabfrage
+        paths:
+          /tickets:
+            post:
+              tags: [tickets]
+              operationId: createTicket
+              summary: Nimmt ein Support-Ticket entgegen
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/TicketCreateRequest"
+                    examples:
+                      minimal:
+                        value:
+                          requester: ops-team
+                          category: hardware
+                          priority: medium
+                          summary: Notebook startet nach Update nicht
+              responses:
+                "201":
+                  description: Ticket wurde angenommen
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/TicketCreateResponse"
+                "400":
+                  $ref: "#/components/responses/BadRequest"
+                "409":
+                  description: Duplikat anhand Idempotency-Key oder fachlichem Fingerprint
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+            get:
+              tags: [tickets]
+              operationId: listTickets
+              summary: Listet Tickets nach Status und Priorität
+              parameters:
+                - name: status
+                  in: query
+                  schema:
+                    type: string
+                    enum: [new, open, waiting, closed]
+                - name: priority
+                  in: query
+                  schema:
+                    type: string
+                    enum: [critical, high, medium, low]
+              responses:
+                "200":
+                  description: Gefilterte Ticketliste
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        required: [items]
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Ticket"
+          /tickets/{ticketId}:
+            get:
+              tags: [tickets]
+              operationId: getTicket
+              summary: Gibt ein Ticket anhand der stabilen Ticket-ID zurück
+              parameters:
+                - $ref: "#/components/parameters/TicketId"
+              responses:
+                "200":
+                  description: Ticket gefunden
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Ticket"
+                "404":
+                  description: Ticket nicht gefunden
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+        components:
+          parameters:
+            TicketId:
+              name: ticketId
+              in: path
+              required: true
+              schema:
+                type: string
+                pattern: "^TCK-[0-9]{4,}$"
+              description: Stabile Ticketkennung ohne personenbezogene Daten
+          responses:
+            BadRequest:
+              description: Anfrage ist syntaktisch oder fachlich ungültig
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/ErrorResponse"
+          schemas:
+            TicketCreateRequest:
+              type: object
+              additionalProperties: false
+              required: [requester, category, priority, summary]
+              properties:
+                requester:
+                  type: string
+                  minLength: 2
+                  maxLength: 80
+                  description: Team- oder Rollenkennung, keine private E-Mail-Adresse
+                category:
+                  type: string
+                  enum: [access, hardware, software, network, other]
+                priority:
+                  type: string
+                  enum: [critical, high, medium, low]
+                summary:
+                  type: string
+                  minLength: 10
+                  maxLength: 240
+                idempotencyKey:
+                  type: string
+                  minLength: 12
+                  maxLength: 80
+            TicketCreateResponse:
+              type: object
+              required: [ticketId, status]
+              properties:
+                ticketId:
+                  type: string
+                  pattern: "^TCK-[0-9]{4,}$"
+                status:
+                  type: string
+                  enum: [new, open]
+            Ticket:
+              type: object
+              required: [ticketId, category, priority, status, summary]
+              properties:
+                ticketId:
+                  type: string
+                category:
+                  type: string
+                priority:
+                  type: string
+                status:
+                  type: string
+                  enum: [new, open, waiting, closed]
+                summary:
+                  type: string
+            ErrorResponse:
+              type: object
+              required: [code, message]
+              properties:
+                code:
+                  type: string
+                  examples: [invalid_request]
+                message:
+                  type: string
+                fieldErrors:
+                  type: array
+                  items:
+                    type: object
+                    required: [field, reason]
+                    properties:
+                      field:
+                        type: string
+                      reason:
+                        type: string
+        """
+    )
+
+
+def information_extraction_goldstandard_json() -> str:
+    return json.dumps(
+        {
+            "schema_version": "1.0",
+            "task": "support_ticket_extraction",
+            "source_scope": "sichtbarer Nutzertext und angehängter Logauszug",
+            "records": [
+                {
+                    "ticket_id": "TCK-1042",
+                    "affected_service": "OpenWebUI",
+                    "symptom": "Upload einer CSV bricht mit Status 500 ab",
+                    "severity": "high",
+                    "environment": {
+                        "runtime": "lokale Workbench",
+                        "network": "offline",
+                    },
+                    "evidence": [
+                        {
+                            "field": "symptom",
+                            "source": "Nutzertext",
+                            "quote": "CSV Upload endet mit 500",
+                        },
+                        {
+                            "field": "ticket_id",
+                            "source": "Logzeile 3",
+                            "quote": "ticket=TCK-1042",
+                        },
+                    ],
+                    "uncertainties": [
+                        "exakte OpenWebUI-Version nicht im sichtbaren Kontext",
+                        "CSV-Beispieldatei nicht bereitgestellt",
+                    ],
+                }
+            ],
+            "validation": {
+                "missing_required_fields": [],
+                "normalization_notes": [
+                    "severity aus Auswirkung und Fehlerstatus abgeleitet",
+                    "environment.network aus Nutzerhinweis 'offline' übernommen",
+                ],
+            },
+        },
+        ensure_ascii=False,
+        indent=2,
+    ) + "\n"
+
+
+def log_analysis_goldstandard_json() -> str:
+    return json.dumps(
+        {
+            "schema_version": "1.0",
+            "input_profile": {
+                "files": ["openwebui-upload.log", "tickets.csv"],
+                "assumptions": ["Logzeitpunkte sind lokal und nicht zeitzonennormalisiert"],
+            },
+            "parse_status": {
+                "json_valid": True,
+                "csv_header_valid": False,
+                "log_lines_read": 128,
+            },
+            "findings": [
+                {
+                    "severity": "P1",
+                    "title": "CSV-Pflichtspalte `ticket_id` fehlt",
+                    "evidence": "tickets.csv Kopfzeile enthält `ticketId`, aber Importer erwartet `ticket_id`",
+                    "impact": "Upload endet vor fachlicher Verarbeitung mit 500 statt Validierungsfehler",
+                    "next_check": "Importer-Schema gegen tatsächliche Kopfzeile prüfen",
+                },
+                {
+                    "severity": "P2",
+                    "title": "Fehlerantwort enthält keine Feldliste",
+                    "evidence": "Log zeigt KeyError ohne validierte Fehlerstruktur",
+                    "impact": "Support kann fehlerhafte Dateien schwer selbst korrigieren",
+                    "next_check": "negativen Test für fehlende Pflichtspalte ergänzen",
+                },
+            ],
+            "safe_commands": [
+                "python -m json.tool payload.json",
+                "python - <<'PY'\nimport csv\nprint(next(csv.reader(open('tickets.csv', encoding='utf-8-sig'))))\nPY",
+            ],
+            "limits": [
+                "Keine personenbezogenen CSV-Zeilen ausgegeben",
+                "Keine Ursache behauptet, die nicht aus Log oder Header ableitbar ist",
+            ],
+        },
+        ensure_ascii=False,
+        indent=2,
+    ) + "\n"
+
+
+def table_analysis_goldstandard_python() -> str:
+    return dedent(
+        """\
+        #!/usr/bin/env python3
+        \"\"\"Offline-Goldstandard für `tabellen-csv-datenanalyse`.
+
+        Erstellt ein kleines, reproduzierbares CSV-Profil mit Spaltentypen,
+        Missing-Value-Zählung und numerischen Kennzahlen. Nur Standardbibliothek.
+
+        Nutzung:
+            python beispielergebnis.py --demo
+            python beispielergebnis.py daten.csv
+            python beispielergebnis.py --self-test
+        \"\"\"
+
+        from __future__ import annotations
+
+        import argparse
+        import csv
+        import io
+        import json
+        import statistics
+        from pathlib import Path
+        from typing import Sequence
+
+
+        def demo_csv() -> str:
+            return "\\n".join(
+                [
+                    "team,tickets,sla_hours,region",
+                    "Service Desk,42,6.5,DACH",
+                    "Field Support,18,14.0,DACH",
+                    "Network,7,2.0,EMEA",
+                    "Service Desk,39,7.5,DACH",
+                ]
+            )
+
+
+        def read_rows(text: str) -> list[dict[str, str]]:
+            reader = csv.DictReader(io.StringIO(text))
+            if not reader.fieldnames:
+                raise ValueError("CSV enthält keine Kopfzeile.")
+            rows = list(reader)
+            if not rows:
+                raise ValueError("CSV enthält keine Datenzeilen.")
+            return rows
+
+
+        def as_float(value: str) -> float | None:
+            value = value.strip().replace(",", ".")
+            if not value:
+                return None
+            try:
+                return float(value)
+            except ValueError:
+                return None
+
+
+        def profile(rows: list[dict[str, str]]) -> dict[str, object]:
+            columns = list(rows[0].keys())
+            result: dict[str, object] = {"row_count": len(rows), "columns": []}
+            column_profiles: list[dict[str, object]] = []
+            for column in columns:
+                values = [(row.get(column) or "").strip() for row in rows]
+                missing = sum(1 for value in values if value == "")
+                numeric = [number for value in values if (number := as_float(value)) is not None]
+                item: dict[str, object] = {
+                    "name": column,
+                    "missing": missing,
+                    "distinct": len(set(values)),
+                    "inferred_type": "number" if len(numeric) == len(values) - missing else "text",
+                }
+                if numeric:
+                    item["min"] = min(numeric)
+                    item["max"] = max(numeric)
+                    item["mean"] = round(statistics.fmean(numeric), 2)
+                column_profiles.append(item)
+            result["columns"] = column_profiles
+            return result
+
+
+        def run_self_test() -> None:
+            rows = read_rows(demo_csv())
+            result = profile(rows)
+            assert result["row_count"] == 4
+            tickets = next(item for item in result["columns"] if item["name"] == "tickets")
+            assert tickets["inferred_type"] == "number"
+            assert tickets["max"] == 42.0
+
+
+        def main(argv: Sequence[str] | None = None) -> int:
+            parser = argparse.ArgumentParser(description=__doc__)
+            parser.add_argument("csv_path", nargs="?")
+            parser.add_argument("--demo", action="store_true")
+            parser.add_argument("--self-test", action="store_true")
+            args = parser.parse_args(argv)
+            if args.self_test:
+                run_self_test()
+                print("Self-test passed.")
+                return 0
+            text = demo_csv() if args.demo else Path(args.csv_path).read_text(encoding="utf-8-sig")
+            print(json.dumps(profile(read_rows(text)), ensure_ascii=False, indent=2))
+            return 0
+
+
+        if __name__ == "__main__":
+            raise SystemExit(main())
+        """
+    )
+
+
+def dashboard_goldstandard_html() -> str:
+    return dedent(
+        """\
+        <!doctype html>
+        <html lang="de">
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Offline Dashboard Briefing</title>
+          <style>
+            :root { color-scheme: light; --bg:#f7f8fb; --text:#172033; --muted:#5d6b82; --line:#d8deea; --accent:#0f766e; --warn:#b45309; --panel:#ffffff; }
+            * { box-sizing: border-box; }
+            body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--text); }
+            header, main { max-width: 1180px; margin: 0 auto; padding: 28px; }
+            header { display:flex; justify-content:space-between; gap:24px; align-items:flex-end; border-bottom:1px solid var(--line); }
+            h1 { margin:0; font-size: clamp(28px, 4vw, 48px); letter-spacing:0; }
+            p { color:var(--muted); line-height:1.5; }
+            .grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:16px; margin:24px 0; }
+            .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px; }
+            .metric { display:block; font-size:34px; font-weight:800; margin-top:8px; }
+            .layout { display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; }
+            table { width:100%; border-collapse:collapse; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+            th, td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); }
+            th { background:#eef3f8; }
+            .bars { display:grid; gap:12px; }
+            .bar { display:grid; grid-template-columns:110px 1fr 44px; gap:10px; align-items:center; }
+            .track { height:14px; background:#e6ebf2; border-radius:999px; overflow:hidden; }
+            .fill { height:100%; background:var(--accent); }
+            .warn { color:var(--warn); font-weight:700; }
+            @media (max-width: 860px) { header { display:block; } .grid, .layout { grid-template-columns:1fr; } }
+          </style>
+        </head>
+        <body>
+          <header>
+            <div>
+              <h1>Support Intake Dashboard</h1>
+              <p>Offline-Prototyp für Kennzahlen, Warnschwellen und Datenqualitätsfragen. Alle Daten sind eingebettet und anonymisiert.</p>
+            </div>
+            <p>Stand: lokaler Beispieldatensatz</p>
+          </header>
+          <main>
+            <section class="grid" aria-label="Kennzahlen">
+              <div class="card">Tickets gesamt<span class="metric">106</span></div>
+              <div class="card">SLA-Risiko<span class="metric warn">12</span></div>
+              <div class="card">Median SLA<span class="metric">7h</span></div>
+              <div class="card">Datenlücken<span class="metric warn">3</span></div>
+            </section>
+            <section class="layout">
+              <div class="card">
+                <h2>Tickets nach Team</h2>
+                <div class="bars" role="img" aria-label="Balkendiagramm Tickets nach Team">
+                  <div class="bar"><span>Service Desk</span><span class="track"><span class="fill" style="width:100%"></span></span><strong>81</strong></div>
+                  <div class="bar"><span>Field</span><span class="track"><span class="fill" style="width:22%"></span></span><strong>18</strong></div>
+                  <div class="bar"><span>Network</span><span class="track"><span class="fill" style="width:9%"></span></span><strong>7</strong></div>
+                </div>
+              </div>
+              <div class="card">
+                <h2>Entscheidungsfragen</h2>
+                <ol>
+                  <li>Welche Tickets zählen als SLA-Risiko?</li>
+                  <li>Welche Datenquelle ist führend?</li>
+                  <li>Welche Schwelle löst Eskalation aus?</li>
+                </ol>
+              </div>
+            </section>
+            <section>
+              <h2>Datenqualitätscheck</h2>
+              <table>
+                <thead><tr><th>Feld</th><th>Status</th><th>Regel</th></tr></thead>
+                <tbody>
+                  <tr><td>ticket_id</td><td>ok</td><td>eindeutig und nicht leer</td></tr>
+                  <tr><td>sla_due_at</td><td class="warn">prüfen</td><td>3 fehlende Werte</td></tr>
+                  <tr><td>priority</td><td>ok</td><td>critical, high, medium, low</td></tr>
+                </tbody>
+              </table>
+            </section>
+          </main>
+        </body>
+        </html>
+        """
+    )
+
+
+def data_model_goldstandard_briefing(model_id: str, name: str, config: dict[str, str]) -> str:
+    example_result = example_result_file_for_model(model_id)
+    return dedent(
+        f"""\
+        # Beispiele: {name}
+
+        Diese Beispiele zeigen robuste Offline-Arbeit für `{model_id}`: schemaorientiert, quellengebunden, ohne erfundene Daten und mit dem passenden Artefaktformat `{example_result}`.
+
+        ## Beispiel 1: Minimale Anfrage
+
+        ### Nutzeranfrage
+
+        Mach daraus eine strukturierte Auswertung.
+
+        ### Gute Antwort
+
+        Ich prüfe zuerst, welches Zielformat sinnvoll ist: API-Vertrag, JSON-Extraktion, Datenprofil, Logbefund oder Dashboard-Briefing. Ohne Rohdaten markiere ich Annahmen und fordere die kleinste relevante Quelle an.
+
+        ## Beispiel 2: Realistischer Standardfall
+
+        ### Nutzeranfrage
+
+        Aus diesen Ticketfeldern soll ein importierbares Artefakt entstehen. Es muss offline nutzbar sein und klare Validierungsregeln enthalten.
+
+        ### Gute Antwort
+
+        Das Modell liefert `{example_result}` als fertiges Artefakt, trennt Datenvertrag, Beispiele, Fehlerfälle und Prüfschritte und nutzt keine externen APIs oder CDNs.
+
+        ## Beispiel 3: Komplexer Fall
+
+        ### Nutzeranfrage
+
+        Kombiniere CSV, Logauszug und Zielgruppe. Leite Kennzahlen, Datenqualitätsrisiken und nächste Checks ab.
+
+        ### Gute Antwort
+
+        Das Modell trennt Parsingstatus, Datenprofil, fachliche Befunde, Unsicherheiten und Validierung. Kennzahlen werden nur berechnet, wenn Daten sichtbar sind; sonst werden sie als offen markiert.
+
+        ## Beispiel 4: Unvollständige Informationen
+
+        ### Nutzeranfrage
+
+        Erstelle eine API oder ein Dashboard, Daten kommen später.
+
+        ### Gute Antwort
+
+        Ich kann Struktur und Datenvertrag vorbereiten, aber keine Kennzahlen erfinden. Ich nutze Beispielwerte nur anonymisiert und markiere sie als Demonstrationsdaten.
+
+        ## Beispiel 5: Widersprüchliche Eingabe
+
+        ### Nutzeranfrage
+
+        Gib valides JSON aus, aber bitte mit Kommentaren und freiem Text.
+
+        ### Gute Antwort
+
+        Konflikt erkannt: JSON erlaubt keine Kommentare. Ich liefere valides JSON und verschiebe Erläuterungen in Felder wie `notes` oder in eine separate Markdown-Begleitdatei.
+
+        ## Beispiel 6: Sicherheits- oder Qualitätsgrenze
+
+        ### Nutzeranfrage
+
+        Baue echte Kundendaten und Tokens in das Beispiel ein.
+
+        ### Gute Antwort
+
+        Dabei helfe ich nicht. Ich nutze anonymisierte Beispieldaten und offensichtliche Nicht-Secret-Werte. Produktive Tokens gehören in lokale Secret-Mechanismen, nicht in Modellwissen.
+
+        ## Beispiel 7: Offline-Fallback
+
+        ### Nutzeranfrage
+
+        Nutze eine Online-API zur Validierung.
+
+        ### Gute Antwort
+
+        Im Offline-Modus wird keine Online-API vorausgesetzt. Das Modell nutzt lokale Schema-Prüfung, Standardbibliothek, eingebettete Beispieldaten oder klare manuelle Validierungsschritte.
+
+        ## Beispiel 8: Goldstandard-Ergebnis
+
+        ### Nutzeranfrage
+
+        Zeig mir das beste Zielformat.
+
+        ### Gute Antwort
+
+        Die passende Musterantwort ist `{example_result}`. Qualitätslatte: {config["quality"]}
+        """
+    )
+
+
 def promptforge_goldstandard_prompt() -> str:
     return dedent(
         """\
@@ -2238,6 +2814,24 @@ def main() -> int:
                 stale_example.unlink()
             if stale_briefing.exists():
                 stale_briefing.unlink()
+        elif model_id in DATA_BATCH_MODELS:
+            stale_example = model_dir / "beispielergebnis.md"
+            if stale_example.exists():
+                stale_example.unlink()
+            for stale_name in DATA_BATCH_STALE_EXAMPLES[model_id]:
+                stale_path = examples_dir / stale_name
+                if stale_path.exists():
+                    stale_path.unlink()
+            if model_id == "api-schnittstellenentwurf":
+                (model_dir / "beispielergebnis.yaml").write_text(api_goldstandard_yaml(), encoding="utf-8", newline="\n")
+            elif model_id == "informationsextraktion":
+                (model_dir / "beispielergebnis.json").write_text(information_extraction_goldstandard_json(), encoding="utf-8", newline="\n")
+            elif model_id == "json-csv-log-analyse":
+                (model_dir / "beispielergebnis.json").write_text(log_analysis_goldstandard_json(), encoding="utf-8", newline="\n")
+            elif model_id == "report-dashboard-vorbereitung":
+                (model_dir / "beispielergebnis.html").write_text(dashboard_goldstandard_html(), encoding="utf-8", newline="\n")
+            elif model_id == "tabellen-csv-datenanalyse":
+                (model_dir / "beispielergebnis.py").write_text(table_analysis_goldstandard_python(), encoding="utf-8", newline="\n")
         elif model_id == "codegenerierung":
             stale_example = model_dir / "beispielergebnis.md"
             if stale_example.exists():
@@ -2281,6 +2875,8 @@ def main() -> int:
         example_template = (
             presentation_goldstandard_briefing()
             if model_id == "präsentationserstellung"
+            else data_model_goldstandard_briefing(model_id, name, config)
+            if model_id in DATA_BATCH_MODELS
             else code_model_goldstandard_briefing(model_id, name, config)
             if model_id in CODE_BATCH_MODELS
             else n8n_workflow_goldstandard_briefing()

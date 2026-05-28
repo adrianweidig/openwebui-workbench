@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline Dashboard Briefing</title>
+  <style>
+    :root { color-scheme: light; --bg:#f7f8fb; --text:#172033; --muted:#5d6b82; --line:#d8deea; --accent:#0f766e; --warn:#b45309; --panel:#ffffff; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--text); }
+    header, main { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    header { display:flex; justify-content:space-between; gap:24px; align-items:flex-end; border-bottom:1px solid var(--line); }
+    h1 { margin:0; font-size: clamp(28px, 4vw, 48px); letter-spacing:0; }
+    p { color:var(--muted); line-height:1.5; }
+    .grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:16px; margin:24px 0; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px; }
+    .metric { display:block; font-size:34px; font-weight:800; margin-top:8px; }
+    .layout { display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; }
+    table { width:100%; border-collapse:collapse; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    th, td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); }
+    th { background:#eef3f8; }
+    .bars { display:grid; gap:12px; }
+    .bar { display:grid; grid-template-columns:110px 1fr 44px; gap:10px; align-items:center; }
+    .track { height:14px; background:#e6ebf2; border-radius:999px; overflow:hidden; }
+    .fill { height:100%; background:var(--accent); }
+    .warn { color:var(--warn); font-weight:700; }
+    @media (max-width: 860px) { header { display:block; } .grid, .layout { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Support Intake Dashboard</h1>
+      <p>Offline-Prototyp für Kennzahlen, Warnschwellen und Datenqualitätsfragen. Alle Daten sind eingebettet und anonymisiert.</p>
+    </div>
+    <p>Stand: lokaler Beispieldatensatz</p>
+  </header>
+  <main>
+    <section class="grid" aria-label="Kennzahlen">
+      <div class="card">Tickets gesamt<span class="metric">106</span></div>
+      <div class="card">SLA-Risiko<span class="metric warn">12</span></div>
+      <div class="card">Median SLA<span class="metric">7h</span></div>
+      <div class="card">Datenlücken<span class="metric warn">3</span></div>
+    </section>
+    <section class="layout">
+      <div class="card">
+        <h2>Tickets nach Team</h2>
+        <div class="bars" role="img" aria-label="Balkendiagramm Tickets nach Team">
+          <div class="bar"><span>Service Desk</span><span class="track"><span class="fill" style="width:100%"></span></span><strong>81</strong></div>
+          <div class="bar"><span>Field</span><span class="track"><span class="fill" style="width:22%"></span></span><strong>18</strong></div>
+          <div class="bar"><span>Network</span><span class="track"><span class="fill" style="width:9%"></span></span><strong>7</strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Entscheidungsfragen</h2>
+        <ol>
+          <li>Welche Tickets zählen als SLA-Risiko?</li>
+          <li>Welche Datenquelle ist führend?</li>
+          <li>Welche Schwelle löst Eskalation aus?</li>
+        </ol>
+      </div>
+    </section>
+    <section>
+      <h2>Datenqualitätscheck</h2>
+      <table>
+        <thead><tr><th>Feld</th><th>Status</th><th>Regel</th></tr></thead>
+        <tbody>
+          <tr><td>ticket_id</td><td>ok</td><td>eindeutig und nicht leer</td></tr>
+          <tr><td>sla_due_at</td><td class="warn">prüfen</td><td>3 fehlende Werte</td></tr>
+          <tr><td>priority</td><td>ok</td><td>critical, high, medium, low</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

@@ -22,6 +22,8 @@ Erzeugt aus `17_json-csv-log-analyse.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.json`: strukturierter Analysebericht mit Parsingstatus, Findings und sicheren lokalen Checks
+- `beispiele/json-csv-log-analyse-goldstandard-briefing.md`: Few-Shot-Beispiele für JSON-, CSV- und Loganalyse
 
 ## Hinweis
 

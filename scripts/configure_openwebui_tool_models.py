@@ -56,9 +56,14 @@ PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission"
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "api-schnittstellenentwurf": ["mainprompt.md", "fachwissen.md", "beispielergebnis.yaml"],
     "codegenerierung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.py"],
+    "informationsextraktion": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
+    "json-csv-log-analyse": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
     "n8n-workflow-architect": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
     "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
+    "report-dashboard-vorbereitung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
+    "tabellen-csv-datenanalyse": ["mainprompt.md", "fachwissen.md", "beispielergebnis.py"],
 }
 SYSTEM_BOOTLOADER_MAX_CHARS = 1400
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
