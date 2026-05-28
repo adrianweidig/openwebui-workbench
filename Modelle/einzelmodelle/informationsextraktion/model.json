@@ -5,7 +5,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBzZWFyY2ggaWNvbjwvdGl0bGU+CiAgPGRlc2MgaWQ9ImRlc2MiPlNpbXBsZSBtYWduaWZ5aW5nIGdsYXNzIGFuZCBkb2N1bWVudCBsaW5lcyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8Y2lyY2xlIGN4PSIyMjYiIGN5PSIyMjYiIHI9Ijc2IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjIiLz4KICA8cGF0aCBkPSJNMjgyIDI4Mmw3NCA3NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTY0IDM0NGg4OE0xNjQgMzg0aDE0NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==",
-      "description": "Offline-Aufgabenmodell für Informationsextraktion. Nutzer möchten aus unstrukturierten Dokumenten strukturierte Informationen wie Namen, Daten, Fristen, Beträge, Aufgaben, Risiken oder Entitäten extrahieren. Passend, wenn aus Texten maschinenlesbare Tabellen, Listen oder JSON-Strukturen entstehen sollen.",
+      "description": "Extrahiert Informationen aus Texten, Tabellen, Logs, Dokumenten und Screenshots als valides JSON mit Quellenbelegen, Normalisierung und Unsicherheiten.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -102,7 +102,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.json"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -202,7 +202,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `informationsextraktion`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `informationsextraktion`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.json`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.0,
       "top_p": 0.8,
       "stop": [],

@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "input_profile": {
+    "files": [
+      "openwebui-upload.log",
+      "tickets.csv"
+    ],
+    "assumptions": [
+      "Logzeitpunkte sind lokal und nicht zeitzonennormalisiert"
+    ]
+  },
+  "parse_status": {
+    "json_valid": true,
+    "csv_header_valid": false,
+    "log_lines_read": 128
+  },
+  "findings": [
+    {
+      "severity": "P1",
+      "title": "CSV-Pflichtspalte `ticket_id` fehlt",
+      "evidence": "tickets.csv Kopfzeile enthält `ticketId`, aber Importer erwartet `ticket_id`",
+      "impact": "Upload endet vor fachlicher Verarbeitung mit 500 statt Validierungsfehler",
+      "next_check": "Importer-Schema gegen tatsächliche Kopfzeile prüfen"
+    },
+    {
+      "severity": "P2",
+      "title": "Fehlerantwort enthält keine Feldliste",
+      "evidence": "Log zeigt KeyError ohne validierte Fehlerstruktur",
+      "impact": "Support kann fehlerhafte Dateien schwer selbst korrigieren",
+      "next_check": "negativen Test für fehlende Pflichtspalte ergänzen"
+    }
+  ],
+  "safe_commands": [
+    "python -m json.tool payload.json",
+    "python - <<'PY'\nimport csv\nprint(next(csv.reader(open('tickets.csv', encoding='utf-8-sig'))))\nPY"
+  ],
+  "limits": [
+    "Keine personenbezogenen CSV-Zeilen ausgegeben",
+    "Keine Ursache behauptet, die nicht aus Log oder Header ableitbar ist"
+  ]
+}

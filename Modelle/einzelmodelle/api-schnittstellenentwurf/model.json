@@ -5,7 +5,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBjb2RlIGljb248L3RpdGxlPgogIDxkZXNjIGlkPSJkZXNjIj5TaW1wbGUgY29kZSBicmFja2V0cyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cGF0aCBkPSJNMjA2IDE4NGwtNzQgNzIgNzQgNzJNMzA2IDE4NGw3NCA3Mi03NCA3Mk0yNzggMTY2bC00NCAxODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
-      "description": "Offline-Aufgabenmodell für API- und Schnittstellenentwurf. Nutzer möchten eine API, Datenstruktur, Request/Response-Schemata oder Schnittstellendokumentation entwerfen. Passend, wenn technische Schnittstellen geplant, beschrieben oder für Implementierung vorbereitet werden sollen.",
+      "description": "Entwirft und prüft OpenAPI-nahe HTTP-/JSON-Verträge mit Schemas, Fehlerfällen, Security-Grenzen, Beispielpayloads und lokalen Testfällen.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -102,7 +102,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.yaml"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -202,7 +202,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `api-schnittstellenentwurf`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `api-schnittstellenentwurf`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.yaml`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.35,
       "top_p": 0.9,
       "stop": [],

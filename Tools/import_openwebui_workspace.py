@@ -44,9 +44,14 @@ SKILLS_DIR = OPENWEBUI_EXT / "skills"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md", "beispielergebnis.md")
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "api-schnittstellenentwurf": ("mainprompt.md", "fachwissen.md", "beispielergebnis.yaml"),
     "codegenerierung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.py"),
+    "informationsextraktion": ("mainprompt.md", "fachwissen.md", "beispielergebnis.json"),
+    "json-csv-log-analyse": ("mainprompt.md", "fachwissen.md", "beispielergebnis.json"),
     "n8n-workflow-architect": ("mainprompt.md", "fachwissen.md", "beispielergebnis.json"),
     "präsentationserstellung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.html"),
+    "report-dashboard-vorbereitung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.html"),
+    "tabellen-csv-datenanalyse": ("mainprompt.md", "fachwissen.md", "beispielergebnis.py"),
 }
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"

@@ -5,7 +5,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBkYXRhIHRhYmxlIGljb248L3RpdGxlPgogIDxkZXNjIGlkPSJkZXNjIj5TaW1wbGUgdGFibGUgZ3JpZCBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cmVjdCB4PSIxMjgiIHk9IjE1MCIgd2lkdGg9IjI1NiIgaGVpZ2h0PSIyMTIiIHJ4PSIxOCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE4Ii8+CiAgPHBhdGggZD0iTTEyOCAyMTBoMjU2TTEyOCAyNzBoMjU2TTEyOCAzMzBoMjU2TTIxMiAxNTB2MjEyTTMwMCAxNTB2MjEyIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K",
-      "description": "Offline-Aufgabenmodell für Tabellen- und CSV-Datenanalyse. Nutzer möchten CSV-, XLSX- oder tabellarische Daten offline untersuchen, bereinigen, aggregieren, visualisieren und interpretieren. Passend, wenn strukturierte Daten analysiert oder in Erkenntnisse, Tabellen, Diagramme oder Reports überführt werden sollen.",
+      "description": "Analysiert Tabellen und CSVs mit reproduzierbarem Profiling, Datenqualitätschecks, Kennzahlen, Bereinigungsplan und ausführbarem Offline-Python-Artefakt.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -106,7 +106,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.py"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -206,7 +206,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `tabellen-csv-datenanalyse`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `tabellen-csv-datenanalyse`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.\n\nVor jeder Antwort musst du die Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.py`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.\n\nWenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.15,
       "top_p": 0.8,
       "stop": [],

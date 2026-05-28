@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "task": "support_ticket_extraction",
+  "source_scope": "sichtbarer Nutzertext und angehängter Logauszug",
+  "records": [
+    {
+      "ticket_id": "TCK-1042",
+      "affected_service": "OpenWebUI",
+      "symptom": "Upload einer CSV bricht mit Status 500 ab",
+      "severity": "high",
+      "environment": {
+        "runtime": "lokale Workbench",
+        "network": "offline"
+      },
+      "evidence": [
+        {
+          "field": "symptom",
+          "source": "Nutzertext",
+          "quote": "CSV Upload endet mit 500"
+        },
+        {
+          "field": "ticket_id",
+          "source": "Logzeile 3",
+          "quote": "ticket=TCK-1042"
+        }
+      ],
+      "uncertainties": [
+        "exakte OpenWebUI-Version nicht im sichtbaren Kontext",
+        "CSV-Beispieldatei nicht bereitgestellt"
+      ]
+    }
+  ],
+  "validation": {
+    "missing_required_fields": [],
+    "normalization_notes": [
+      "severity aus Auswirkung und Fehlerstatus abgeleitet",
+      "environment.network aus Nutzerhinweis 'offline' übernommen"
+    ]
+  }
+}

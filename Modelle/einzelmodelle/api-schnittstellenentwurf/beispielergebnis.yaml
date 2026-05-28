@@ -1,0 +1,179 @@
+openapi: 3.1.0
+info:
+  title: Ticket Intake API
+  version: 1.0.0
+  summary: Offline-Beispiel für einen kleinen, prüfbaren API-Vertrag
+servers:
+  - url: /api
+    description: relativer Pfad für lokale oder interne Deployments
+tags:
+  - name: tickets
+    description: Ticketannahme und Statusabfrage
+paths:
+  /tickets:
+    post:
+      tags: [tickets]
+      operationId: createTicket
+      summary: Nimmt ein Support-Ticket entgegen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketCreateRequest"
+            examples:
+              minimal:
+                value:
+                  requester: ops-team
+                  category: hardware
+                  priority: medium
+                  summary: Notebook startet nach Update nicht
+      responses:
+        "201":
+          description: Ticket wurde angenommen
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketCreateResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: Duplikat anhand Idempotency-Key oder fachlichem Fingerprint
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      tags: [tickets]
+      operationId: listTickets
+      summary: Listet Tickets nach Status und Priorität
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [new, open, waiting, closed]
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [critical, high, medium, low]
+      responses:
+        "200":
+          description: Gefilterte Ticketliste
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Ticket"
+  /tickets/{ticketId}:
+    get:
+      tags: [tickets]
+      operationId: getTicket
+      summary: Gibt ein Ticket anhand der stabilen Ticket-ID zurück
+      parameters:
+        - $ref: "#/components/parameters/TicketId"
+      responses:
+        "200":
+          description: Ticket gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+        "404":
+          description: Ticket nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  parameters:
+    TicketId:
+      name: ticketId
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^TCK-[0-9]{4,}$"
+      description: Stabile Ticketkennung ohne personenbezogene Daten
+  responses:
+    BadRequest:
+      description: Anfrage ist syntaktisch oder fachlich ungültig
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    TicketCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [requester, category, priority, summary]
+      properties:
+        requester:
+          type: string
+          minLength: 2
+          maxLength: 80
+          description: Team- oder Rollenkennung, keine private E-Mail-Adresse
+        category:
+          type: string
+          enum: [access, hardware, software, network, other]
+        priority:
+          type: string
+          enum: [critical, high, medium, low]
+        summary:
+          type: string
+          minLength: 10
+          maxLength: 240
+        idempotencyKey:
+          type: string
+          minLength: 12
+          maxLength: 80
+    TicketCreateResponse:
+      type: object
+      required: [ticketId, status]
+      properties:
+        ticketId:
+          type: string
+          pattern: "^TCK-[0-9]{4,}$"
+        status:
+          type: string
+          enum: [new, open]
+    Ticket:
+      type: object
+      required: [ticketId, category, priority, status, summary]
+      properties:
+        ticketId:
+          type: string
+        category:
+          type: string
+        priority:
+          type: string
+        status:
+          type: string
+          enum: [new, open, waiting, closed]
+        summary:
+          type: string
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          examples: [invalid_request]
+        message:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            type: object
+            required: [field, reason]
+            properties:
+              field:
+                type: string
+              reason:
+                type: string

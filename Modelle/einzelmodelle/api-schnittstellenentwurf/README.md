@@ -22,6 +22,8 @@ Erzeugt aus `16_api-schnittstellenentwurf.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.yaml`: OpenAPI-Goldstandard mit Schemas, Fehlervertrag und Beispielpayloads
+- `beispiele/api-design-goldstandard-briefing.md`: Few-Shot-Beispiele für API-Verträge, Konflikte und Offline-Fallbacks
 
 ## Hinweis
 

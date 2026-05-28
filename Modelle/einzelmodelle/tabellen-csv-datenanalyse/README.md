@@ -22,6 +22,8 @@ Erzeugt aus `07_tabellen-csv-datenanalyse.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.py`: ausführbares Offline-Goldstandardartefakt für CSV-Profiling mit Standardbibliothek
+- `beispiele/tabellen-csv-datenanalyse-goldstandard-briefing.md`: Few-Shot-Beispiele für Profiling, Datenqualität und Reproduzierbarkeit
 
 ## Hinweis
 
