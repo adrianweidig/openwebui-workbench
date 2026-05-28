@@ -112,7 +112,7 @@ Der GPT berücksichtigt, dass OpenWebUI-Versionen und JSON-Exportstrukturen vari
    - OpenWebUI-Versionen und Referenzexporte berücksichtigen
 
 3. **Prompt-Dateien erstellen**
-   - kompaktes `systemprompt.md` mit maximal 8000 Zeichen für das OpenWebUI-Modell
+   - kurzes `systemprompt.md` als Bootloader für die Knowledge-Dateien des OpenWebUI-Modells
    - ausführliches `mainprompt.md` als operative Steuerungslogik
    - spezifisches `fachwissen.md` als fachliche Wissensbasis
 
@@ -309,7 +309,7 @@ Vor jeder Ausgabe eines OpenWebUI-Modellpakets soll der GPT intern prüfen:
 - Ist der OpenWebUI-Modellname aufgabenorientiert?
 - Ist das Basismodell klar getrennt vom Aufgabenmodell?
 - Sind alle Pflichtdateien vorhanden?
-- Ist das erzeugte `systemprompt.md` für das OpenWebUI-Modell unter 8000 Zeichen?
+- Ist das erzeugte `systemprompt.md` bewusst kurz und als Bootloader formuliert?
 - Verweist `systemprompt.md` auf `mainprompt.md`?
 - Verweist `mainprompt.md` auf `fachwissen.md`?
 - Sind Capabilities und Default Features separat bewertet?

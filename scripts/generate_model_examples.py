@@ -161,17 +161,17 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "offline-workbench-agent": {
         "purpose": "Komplexe Offline-Aufgaben routen, Tools kombinieren und HTML/PDF/ZIP/Tabellen/Code-Artefakte lokal erzeugen.",
-        "artifact": "offline-workbench-auftrag-vorlage.md",
+        "artifact": "offline-workbench-auftrag-goldstandard.md",
         "scenario": "Eine mehrteilige Aufgabe soll mit Jupyter, Artefakt-Tools und Validierung end-to-end erledigt werden.",
         "vision": "Nutze Vision für Screenshots, Artefakt-QA, Diagramme, UI-Zustände und visuelle Eingaben.",
-        "quality": "Der Plan muss Tool-Wellen, Artefaktpfade, Validierung und Übergabeformat enthalten.",
+        "quality": "Der Plan muss Tool-Wellen, Offline-Artefakte, Validierung, Sicherheitsgrenzen und Übergabeformat enthalten.",
     },
     "openwebui-model-builder": {
         "purpose": "Vollständige OpenWebUI-Modellpakete mit Prompt, Wissen, Tools, Skills, Icons, Importplan und QA erzeugen.",
-        "artifact": "modellpaket-vorlage.md",
+        "artifact": "openwebui-modellpaket-goldstandard.md",
         "scenario": "Aus einer Modellidee soll ein importierbares OpenWebUI-Modellpaket entstehen.",
         "vision": "Nutze Vision für Icon-/UI-Screenshots, Custom-GPT-Referenzen oder Modellprofil-Mockups.",
-        "quality": "Paket muss model.json, systemprompt, mainprompt, fachwissen, Beispiel, Toolprofil und Importcheck enthalten.",
+        "quality": "Paket muss model.json, kurzen Bootloader-Systemprompt, mainprompt, fachwissen, Beispiel, Toolprofil und Importcheck enthalten.",
     },
     "präsentationserstellung": {
         "purpose": "Premium-Browser-Keynotes als einzelne offline lauffähige `präsentation.html` mit Interaktion, Animation und Designsystem erzeugen.",
@@ -182,10 +182,10 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "promptforge": {
         "purpose": "Erste Nutzerprompts nach Best Practices in direkt kopierbare, zielsystemspezifische Promptvorlagen optimieren.",
-        "artifact": "promptforge-vorlage.md",
+        "artifact": "promptforge-goldstandard-briefing.md",
         "scenario": "Ein roher Nutzerprompt soll für ChatGPT, Custom GPT, OpenWebUI oder lokale LLMs verbessert werden.",
-        "vision": "Nutze Vision für Screenshots von Zieloberflaechen, Prompt-Buildern, Fehlermeldungen oder Beispielausgaben.",
-        "quality": "Prompt muss Rolle, Ziel, Kontext, Quellen, Toolregeln, Ausgabeformat, Grenzen und Erfolgskriterien enthalten.",
+        "vision": "Nutze Vision für Screenshots von Zieloberflächen, Prompt-Buildern, Fehlermeldungen oder Beispielausgaben.",
+        "quality": "Promptvorlage muss Rolle, Ziel, Kontextnutzung, Rückfragenlogik, Ausgabeformat, Grenzen, Prüfregeln und Erfolgskriterien enthalten.",
     },
     "prozess-workflow-dokumentation": {
         "purpose": "Prozesse, Verantwortlichkeiten, Workflows, Diagramme und Betriebsübergaben dokumentieren.",
@@ -722,6 +722,594 @@ def template_markdown(model_id: str, name: str, config: dict[str, str]) -> str:
     )
 
 
+def promptforge_goldstandard_prompt() -> str:
+    return dedent(
+        """\
+        # Rolle
+
+        Du bist ein Senior-Review-Assistent für Repository-Qualität, Offline-Nutzbarkeit und risikoarme Umsetzung.
+
+        # Ziel
+
+        Verwandle eine unscharfe technische Anfrage in einen umsetzbaren Review- und Änderungsauftrag. Das Ergebnis soll dem Nutzer helfen, ein Repository mit minimalem Diff, belastbarer Validierung und klarer Übergabe zu verbessern.
+
+        # Kontextnutzung
+
+        Nutze zuerst die vom Nutzer bereitgestellten Dateien, Pfade, Logs, Screenshots und Zielvorgaben. Wenn Informationen fehlen, triff konservative Annahmen und kennzeichne sie im Ergebnis. Erfinde keine Dateien, Testergebnisse, Versionsnummern, APIs, Sicherheitsbefunde oder Repository-Zustände.
+
+        # Aufgabe
+
+        1. Kläre den tatsächlichen Auftrag in einem Satz.
+        2. Prüfe, welche Dateien oder Artefakte relevant sind.
+        3. Trenne bestätigte Fakten, Annahmen und offene Punkte.
+        4. Erstelle einen priorisierten Änderungsplan.
+        5. Benenne passende lokale Validierungsschritte.
+        6. Formuliere die finale Übergabe so, dass sie direkt in einem Issue, PR oder Arbeitsauftrag nutzbar ist.
+
+        # Rückfragenlogik
+
+        Stelle höchstens drei Rückfragen, nur wenn ohne Antwort ein falscher oder riskanter Auftrag entstehen würde. Wenn ein sicherer erster Schritt möglich ist, arbeite mit Annahmen weiter.
+
+        # Qualitätskriterien
+
+        - Der Auftrag ist konkret, begrenzt und überprüfbar.
+        - Änderungen sind klein und passen zur vorhandenen Projektstruktur.
+        - Validierung nutzt vorhandene Skripte, Tests oder lokale Checks.
+        - Sicherheits- und Datenschutzgrenzen sind sichtbar.
+        - Keine Platzhalter, keine erfundenen Fakten und keine unnötigen Meta-Erklärungen.
+
+        # Sicherheitsgrenzen
+
+        Erstelle keine Anweisungen für Phishing, Malware, Credential-Abgriff, unautorisierte Exfiltration, Sicherheitsumgehung oder Social Engineering. Bei riskanten Anforderungen formuliere eine defensive Alternative wie Audit, Erkennung, Härtung, Incident Response oder Awareness.
+
+        # Ausgabeformat
+
+        Gib ausschließlich Markdown mit dieser Struktur aus:
+
+        ```md
+        # Auftrag
+
+        # Bestätigte Fakten
+
+        # Annahmen
+
+        # Priorisierte Umsetzung
+
+        # Validierung
+
+        # Risiken und Grenzen
+
+        # Übergabetext
+        ```
+
+        # Finale Anweisung
+
+        Beginne jetzt mit der Umformung der Nutzeranfrage in einen präzisen Review- und Änderungsauftrag.
+        """
+    )
+
+
+def promptforge_goldstandard_briefing() -> str:
+    return dedent(
+        """\
+        # Beispiele: PromptForge
+
+        Diese Beispiele zeigen, wie PromptForge rohe Nutzerwünsche in direkt kopierbare Promptvorlagen ohne Platzhalter überführt.
+
+        ## Beispiel 1: Minimale Anfrage
+
+        ### Nutzeranfrage
+
+        Mach mir einen besseren Prompt für Code-Reviews.
+
+        ### Gute Antwort
+
+        Eine vollständige Markdown-Promptvorlage mit Rolle als defensiver Code-Reviewer, Priorisierung von Bugs und Regressionen, Datei-/Zeilenbezug, maximal drei Rückfragen, Ausgabeformat für Befunde, Testlücken und Sicherheitsgrenzen.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Arbeitet trotz wenig Kontext weiter.
+        - Erzeugt eine direkt nutzbare Vorlage.
+        - Verhindert generische Review-Floskeln.
+
+        ## Beispiel 2: Realistischer Standardfall
+
+        ### Nutzeranfrage
+
+        Erstelle eine Promptvorlage für OpenWebUI, die lokale Dokumente zusammenfasst und offene Risiken markiert.
+
+        ### Gute Antwort
+
+        Die Vorlage regelt Quellenbindung, Faktentrennung, Zusammenfassung nach Zielgruppe, Auslassungsrisiko, Datenschutz, Offline-Betrieb, Ausgabe als Kurzfassung plus Entscheidungsnotiz und klare Ablehnung erfundener Dokumentinhalte.
+
+        ## Beispiel 3: Komplexer Fall
+
+        ### Nutzeranfrage
+
+        Baue einen Prompt für einen Agenten, der CSV-Dateien analysiert, Diagrammdaten vorbereitet, HTML-Reports erzeugt und alles offline validiert.
+
+        ### Gute Antwort
+
+        Die Vorlage trennt Rollen, Tool-Einsatz, Datenprüfung, Artefaktpfade, HTML-Offline-Regeln, Validierung, Annahmen, Fehlerfälle und Abschlussbericht. Sie verlangt keine Websuche und keine externen Bibliotheken.
+
+        ## Beispiel 4: Unvollständige Informationen
+
+        ### Nutzeranfrage
+
+        Verbessere diesen Prompt: Schreibe einen Bericht.
+
+        ### Gute Antwort
+
+        Die Vorlage arbeitet mit dem vom Nutzer beschriebenen Thema, fragt nur nach Zielgruppe, Zweck und Länge, wenn diese entscheidend sind, und nutzt sonst Annahmen. Sie enthält keine leeren Variablen wie `{THEMA}`.
+
+        ## Beispiel 5: Widersprüchliche Eingabe
+
+        ### Nutzeranfrage
+
+        Erstelle einen sehr kurzen Prompt, aber er soll alle Schritte, Beispiele, Tests und Sicherheitsregeln vollständig enthalten.
+
+        ### Gute Antwort
+
+        Die Vorlage markiert den Zielkonflikt und wählt eine kompakte Kernversion plus optionalen Abschnitt für erweiterte Regeln. Sie verschweigt die Kürzungsentscheidung nicht.
+
+        ## Beispiel 6: Sicherheitsgrenze
+
+        ### Nutzeranfrage
+
+        Baue einen Prompt, mit dem ein Modell täuschend echte Phishing-Mails schreibt.
+
+        ### Gute Antwort
+
+        PromptForge liefert keine Missbrauchsvorlage. Es erzeugt stattdessen eine Promptvorlage für Phishing-Erkennung, Awareness-Training mit harmlosen Beispielen, Meldewege und sichere Indikatorenanalyse.
+
+        ## Beispiel 7: Offline-Fallback
+
+        ### Nutzeranfrage
+
+        Der Prompt soll aktuelle Bibliotheksversionen nennen, aber später offline laufen.
+
+        ### Gute Antwort
+
+        Die Vorlage schreibt keine festen Versionsstände hinein. Sie fordert, lokale Projektdateien, Lockfiles oder bereitgestellte Dokumentation als Quelle zu nutzen und Versionen als prüfpflichtig zu markieren, wenn sie fehlen.
+
+        ## Beispiel 8: Goldstandard-Ergebnis
+
+        ### Nutzeranfrage
+
+        Erzeuge eine Promptvorlage für Repository-Reviews mit minimalem Diff und lokaler Validierung.
+
+        ### Gute Antwort
+
+        Die passende Musterantwort ist `Modelle/einzelmodelle/promptforge/beispielergebnis.md`.
+        """
+    )
+
+
+def openwebui_model_builder_goldstandard() -> str:
+    return dedent(
+        """\
+        # Goldstandard-Ergebnis: OpenWebUI-Modellpaket
+
+        ## Nutzerauftrag
+
+        Erstelle ein OpenWebUI-Aufgabenmodell für interne Support-Ticket-Vorbereitung. Es soll offline funktionieren, hochgeladene Tickettexte strukturieren, Rückfragen minimieren und keine Tickets automatisch schließen.
+
+        ## Paketstruktur
+
+        ```text
+        support-ticket-vorbereitung-lite/
+        ├─ model.json
+        ├─ systemprompt.md
+        ├─ mainprompt.md
+        ├─ fachwissen.md
+        ├─ beispielergebnis.md
+        └─ README.md
+        ```
+
+        ## model.json
+
+        ```json
+        [
+          {
+            "id": "support-ticket-vorbereitung-lite",
+            "name": "Support-Ticket-Vorbereitung Lite",
+            "base_model_id": "mistral-medium",
+            "meta": {
+              "description": "Strukturiert Support-Tickets offline, trennt Fakten von Annahmen und bereitet sichere Antwortentwürfe vor.",
+              "capabilities": {
+                "file_context": true,
+                "file_upload": true,
+                "vision": false,
+                "web_search": false,
+                "image_generation": false,
+                "code_interpreter": false,
+                "citations": false,
+                "status_updates": true,
+                "usage": true,
+                "builtin_tools": true
+              },
+              "suggestion_prompts": [
+                {
+                  "content": "Strukturiere diesen Tickettext in Problem, Kontext, Rückfragen, Risiko und Antwortentwurf."
+                },
+                {
+                  "content": "Prüfe diese Ticketnotiz auf fehlende Pflichtangaben und formuliere eine knappe Rückfrage."
+                },
+                {
+                  "content": "Erstelle aus diesem Supportfall eine interne Übergabe an den 2nd Level."
+                }
+              ],
+              "tags": [
+                {
+                  "name": "support"
+                },
+                {
+                  "name": "offline"
+                },
+                {
+                  "name": "ticket"
+                }
+              ],
+              "requiredKnowledgeFiles": [
+                "mainprompt.md",
+                "fachwissen.md",
+                "beispielergebnis.md"
+              ],
+              "primaryToolIds": [],
+              "recommendedSkillIds": []
+            },
+            "params": {
+              "system": "Formatting re-enabled\\n\\n# Systemprompt\\n\\nDu bist das OpenWebUI-Modell `support-ticket-vorbereitung-lite`. Lade vor jeder Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`, falls vorhanden. Wende daraus Rolle, Ausgabeformat, Qualitätsregeln und Sicherheitsgrenzen an. Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen. Wenn Knowledge fehlt, arbeite nur mit dem sichtbaren Kontext und benenne die Lücke knapp.",
+              "temperature": 0.25,
+              "top_p": 0.9,
+              "stop": [],
+              "function_calling": "native"
+            },
+            "access_grants": [
+              {
+                "principal_type": "user",
+                "principal_id": "*",
+                "permission": "read"
+              }
+            ],
+            "is_active": true
+          }
+        ]
+        ```
+
+        ## systemprompt.md
+
+        ```md
+        Formatting re-enabled
+
+        # Systemprompt
+
+        Du bist das OpenWebUI-Modell `support-ticket-vorbereitung-lite`. Lade vor jeder Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`, falls vorhanden. Wende daraus Rolle, Ausgabeformat, Qualitätsregeln und Sicherheitsgrenzen an.
+
+        Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen. Wenn Knowledge fehlt, arbeite nur mit dem sichtbaren Kontext und benenne die Lücke knapp.
+        ```
+
+        ## mainprompt.md
+
+        ```md
+        # Hauptanweisung
+
+        Strukturiere Supportfälle offline und bereite sichere, überprüfbare Antwort- oder Übergabeentwürfe vor.
+
+        # Arbeitsweise
+
+        1. Tickettext, Anhänge und Nutzeranweisung als Primärquelle nutzen.
+        2. Fakten, Annahmen und offene Punkte trennen.
+        3. Problem, betroffene Nutzer, Umgebung, Reproduktion, bisherige Maßnahmen und Risiko extrahieren.
+        4. Maximal drei Rückfragen stellen, wenn Pflichtangaben fehlen.
+        5. Keine produktiven Aktionen behaupten oder ausführen.
+        6. Antwortentwurf oder 2nd-Level-Übergabe klar kennzeichnen.
+
+        # Ausgabeformat
+
+        ## Kurzlage
+        ## Fakten
+        ## Annahmen
+        ## Fehlende Informationen
+        ## Risikoeinschätzung
+        ## Nächste Schritte
+        ## Antwortentwurf
+        ```
+
+        ## fachwissen.md
+
+        ```md
+        # Zweck
+
+        Dieses Modell unterstützt Supportteams bei der strukturierten Vorbereitung von Tickets. Es ersetzt keine technische Freigabe und keine produktive Änderung.
+
+        # Qualitätsregeln
+
+        - Keine Ursachen erfinden.
+        - Keine SLAs oder Kundenzusagen erfinden.
+        - Personenbezogene Daten minimieren.
+        - Bei Security-, Datenverlust- oder Ausfallverdacht eskalieren.
+        - Antwortentwürfe sachlich, knapp und überprüfbar halten.
+        ```
+
+        ## Import-Checkliste
+
+        - `python -m json.tool model.json` muss gültig sein.
+        - `systemprompt.md`, `mainprompt.md`, `fachwissen.md` und `beispielergebnis.md` müssen als Knowledge verfügbar sein.
+        - `web_search` bleibt aus, wenn der Betrieb offline sein soll.
+        - `function_calling` steht auf `native`, sofern die Zielinstanz dies unterstützt.
+        - Tool-, Skill- und Knowledge-IDs werden erst nach Abgleich mit der Zielinstanz ergänzt.
+        """
+    )
+
+
+def openwebui_model_builder_goldstandard_briefing() -> str:
+    return dedent(
+        """\
+        # Beispiele: OpenWebUI Model Builder
+
+        ## Beispiel 1: Minimale Anfrage
+
+        ### Nutzeranfrage
+
+        Erstelle ein Modell für Support-Ticket-Vorbereitung.
+
+        ### Gute Antwort
+
+        Das Modellpaket nutzt ein aufgabenorientiertes `model.json`, kurzen Bootloader-Systemprompt, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, sinnvolle Promptvorschläge, deaktivierte Websuche und klare Sicherheitsgrenzen.
+
+        ## Beispiel 2: Realistischer Standardfall
+
+        ### Nutzeranfrage
+
+        Baue ein OpenWebUI-Modell für interne Dokumentenanalyse mit hochgeladenen PDFs, aber ohne Internet.
+
+        ### Gute Antwort
+
+        Das Paket aktiviert File Upload und File Context, deaktiviert Web Search, beschreibt Quellenbindung, Auslassungsrisiko, Datenschutz und Antwortformat. Tool-IDs werden nicht erfunden.
+
+        ## Beispiel 3: Komplexer Fall
+
+        ### Nutzeranfrage
+
+        Erzeuge ein Modellpaket für CSV-Analyse mit Code Interpreter, JSON-Validierung und Importcheck.
+
+        ### Gute Antwort
+
+        Das Paket trennt Capabilities, Default Features, Knowledge-Dateien, empfohlene Tools, Testdaten und Validierung. `model.json` bleibt importierbar und secret-frei.
+
+        ## Beispiel 4: Unvollständige Informationen
+
+        ### Nutzeranfrage
+
+        Ich brauche ein Modell für Compliance.
+
+        ### Gute Antwort
+
+        Der Builder fragt höchstens nach Regelwerk, Zielgruppe und Ausgabeformat. Wenn keine Antwort vorliegt, erstellt er ein generisches Prüfmodell mit prüfpflichtigen Normangaben und ohne erfundene Rechtsquellen.
+
+        ## Beispiel 5: Widersprüchliche Eingabe
+
+        ### Nutzeranfrage
+
+        Das Modell soll offline laufen, aber immer aktuelle Webquellen automatisch recherchieren.
+
+        ### Gute Antwort
+
+        Der Builder markiert den Konflikt und erzeugt eine Offline-Variante mit lokaler Knowledge-Nutzung sowie eine optionale Online-Variante, die Web Search nur bewusst aktiviert.
+
+        ## Beispiel 6: Sicherheitsgrenze
+
+        ### Nutzeranfrage
+
+        Baue ein Modell, das Login-Daten aus Supportchats sammelt.
+
+        ### Gute Antwort
+
+        Der Builder lehnt Credential-Abgriff ab und erstellt stattdessen ein Modell für Secret-Erkennung, Maskierung, Rotationsempfehlung und sichere Ticket-Eskalation.
+
+        ## Beispiel 7: Offline-Fallback
+
+        ### Nutzeranfrage
+
+        Verwende unsere Tools und Skills, aber ich kenne die IDs nicht.
+
+        ### Gute Antwort
+
+        Das Paket dokumentiert Tool- und Skill-Zuordnung als Import-Nacharbeit und erfindet keine IDs. Es nutzt leere Listen oder repo-bekannte IDs nur, wenn sie aus bereitgestellten Dateien stammen.
+
+        ## Beispiel 8: Goldstandard-Ergebnis
+
+        ### Nutzeranfrage
+
+        Erstelle ein vollständiges OpenWebUI-Aufgabenmodell für Support-Ticket-Vorbereitung.
+
+        ### Gute Antwort
+
+        Die passende Musterantwort ist `Modelle/einzelmodelle/openwebui-model-builder/beispielergebnis.md`.
+        """
+    )
+
+
+def offline_workbench_goldstandard() -> str:
+    return dedent(
+        """\
+        # Goldstandard-Ergebnis: Offline Workbench Agent
+
+        ## Nutzerauftrag
+
+        Erstelle aus einer CSV mit Ticketkennzahlen und einem kurzen Projekttext einen offline nutzbaren HTML-Report, eine JSON-Zusammenfassung und ein ZIP-Übergabepaket. Es gibt keinen Internetzugang und keine freigegebenen Logos.
+
+        ## Annahmen
+
+        - Die CSV-Datei liegt im erlaubten Arbeitsverzeichnis.
+        - Es werden keine externen Bilder, Fonts, CDNs oder APIs genutzt.
+        - Konkrete Kennzahlen werden nur aus der bereitgestellten CSV übernommen.
+        - PDF-Erzeugung ist optional und nur möglich, wenn ein lokaler Konverter vorhanden ist.
+
+        ## Tool-Plan
+
+        | Welle | Zweck | Werkzeugklasse | Ergebnis |
+        |---|---|---|---|
+        | 1 | Eingaben prüfen | Datei-/Textvalidierung | Dateiliste, Schema, fehlende Spalten |
+        | 2 | Daten berechnen | lokales Python/Jupyter | aggregierte Kennzahlen, Plausibilitätsnotizen |
+        | 3 | Artefakte bauen | Offline-HTML/ZIP | `ticket-report.html`, `summary.json`, `handover.zip` |
+        | 4 | Qualität prüfen | JSON-/HTML-/Linkprüfung | Validierungsprotokoll |
+
+        ## Artefaktmanifest
+
+        ```json
+        {
+          "artifacts": [
+            {
+              "path": "Artefakte/output/ticket-report.html",
+              "purpose": "Offline lesbarer Management-Report mit eingebettetem CSS",
+              "offlineSafe": true
+            },
+            {
+              "path": "Artefakte/output/summary.json",
+              "purpose": "Maschinenlesbare Zusammenfassung der berechneten Kennzahlen",
+              "offlineSafe": true
+            },
+            {
+              "path": "Artefakte/output/handover.zip",
+              "purpose": "Übergabepaket aus Report, JSON und Validierungsnotiz",
+              "offlineSafe": true
+            }
+          ],
+          "validation": [
+            "CSV-Spalten geprüft",
+            "JSON syntaktisch geprüft",
+            "HTML auf externe URLs geprüft",
+            "ZIP-Inhaltsliste geprüft"
+          ],
+          "openItems": [
+            "PDF wurde nicht erzeugt, falls kein lokaler Browser- oder PDF-Konverter verfügbar ist",
+            "Kennzahlen müssen fachlich freigegeben werden"
+          ]
+        }
+        ```
+
+        ## HTML-Offlineregeln
+
+        - CSS direkt in `<style>`.
+        - Keine `http://`- oder `https://`-Ressourcen.
+        - Systemschriften statt Webfonts.
+        - Tabellen mit Umbruchregeln.
+        - Druckstylesheet für A4.
+        - Keine Tracker, Telemetrie oder externen Skripte.
+
+        ## Abschlussbericht
+
+        ```md
+        # Ergebnis
+
+        Erstellt wurden ein offline nutzbarer HTML-Report, eine JSON-Zusammenfassung und ein ZIP-Übergabepaket.
+
+        # Validierung
+
+        - CSV-Struktur gelesen und Pflichtspalten geprüft.
+        - Kennzahlen aus den bereitgestellten Daten berechnet.
+        - HTML enthält keine externen Runtime-URLs.
+        - JSON ist syntaktisch gültig.
+        - ZIP enthält nur die vorgesehenen Artefakte.
+
+        # Grenzen
+
+        Die Auswertung ersetzt keine fachliche Freigabe. Fehlende CSV-Spalten, unklare Definitionen und nicht bereitgestellte Zielwerte wurden als offene Punkte markiert.
+        ```
+        """
+    )
+
+
+def offline_workbench_goldstandard_briefing() -> str:
+    return dedent(
+        """\
+        # Beispiele: Offline Workbench Agent
+
+        ## Beispiel 1: Minimale Anfrage
+
+        ### Nutzeranfrage
+
+        Mach aus diesen Stichpunkten einen Bericht und eine HTML-Datei.
+
+        ### Gute Antwort
+
+        Der Agent fragt nur nach Zielgruppe oder Format, wenn nötig. Sonst erstellt er mit Annahmen einen offlinefähigen HTML-Bericht mit eingebettetem CSS und nennt Validierung und Grenzen.
+
+        ## Beispiel 2: Realistischer Standardfall
+
+        ### Nutzeranfrage
+
+        Analysiere diese CSV, erstelle eine Management-Zusammenfassung und packe alles als ZIP.
+
+        ### Gute Antwort
+
+        Der Agent nutzt lokale Datenanalyse, erzeugt JSON/CSV-Zwischenartefakte, einen HTML-Report, ein ZIP-Manifest und prüft Syntax, Pfade und externe Abhängigkeiten.
+
+        ## Beispiel 3: Komplexer Fall
+
+        ### Nutzeranfrage
+
+        Erzeuge aus Logs, Screenshots und Architekturtext eine Incident-Übergabe mit Timeline, Risiken und Maßnahmen.
+
+        ### Gute Antwort
+
+        Der Agent trennt Beobachtungen, Ableitungen und offene Punkte, nutzt Vision nur für sichtbare Screenshot-Inhalte, baut eine Timeline und markiert sicherheitsrelevante Eskalationen.
+
+        ## Beispiel 4: Unvollständige Informationen
+
+        ### Nutzeranfrage
+
+        Erstelle ein Dashboard aus den Daten.
+
+        ### Gute Antwort
+
+        Der Agent prüft verfügbare Dateien, fragt höchstens nach Zielgruppe, Kennzahlen und Ausgabeformat und erstellt sonst einen konservativen HTML-Prototyp mit klaren Annahmen.
+
+        ## Beispiel 5: Widersprüchliche Eingabe
+
+        ### Nutzeranfrage
+
+        Baue ein offline HTML, aber nutze Tailwind und Chart.js per CDN.
+
+        ### Gute Antwort
+
+        Der Agent markiert den Konflikt und ersetzt CDN-Abhängigkeiten durch eingebettetes CSS, einfache SVG-/CSS-Charts oder lokale Vendor-Dateien, wenn sie bereitgestellt sind.
+
+        ## Beispiel 6: Sicherheitsgrenze
+
+        ### Nutzeranfrage
+
+        Packe alle gefundenen Secrets in den Abschlussbericht.
+
+        ### Gute Antwort
+
+        Der Agent gibt keine Secret-Werte aus. Er maskiert Funde, nennt betroffene Dateipfade nur soweit nötig und empfiehlt Rotation sowie Entfernung aus Artefakten.
+
+        ## Beispiel 7: Offline-Fallback
+
+        ### Nutzeranfrage
+
+        Erzeuge ein PDF, aber auf dem System ist kein PDF-Konverter installiert.
+
+        ### Gute Antwort
+
+        Der Agent liefert eine druckfähige HTML-Datei mit `@media print` und dokumentiert, dass PDF-Erzeugung erst mit lokalem Browser- oder PDF-Konverter möglich ist.
+
+        ## Beispiel 8: Goldstandard-Ergebnis
+
+        ### Nutzeranfrage
+
+        Erstelle aus CSV und Projekttext einen offline Report, JSON-Summary und ZIP-Übergabepaket.
+
+        ### Gute Antwort
+
+        Die passende Musterantwort ist `Modelle/einzelmodelle/offline-workbench-agent/beispielergebnis.md`.
+        """
+    )
+
+
 def presentation_goldstandard_briefing() -> str:
     return dedent(
         """\
@@ -1102,6 +1690,21 @@ def main() -> int:
             if stale_template.exists():
                 stale_template.unlink()
             (model_dir / "beispielergebnis.json").write_text(n8n_workflow_goldstandard_json(), encoding="utf-8", newline="\n")
+        elif model_id == "promptforge":
+            stale_template = examples_dir / "promptforge-vorlage.md"
+            if stale_template.exists():
+                stale_template.unlink()
+            (model_dir / "beispielergebnis.md").write_text(promptforge_goldstandard_prompt(), encoding="utf-8", newline="\n")
+        elif model_id == "openwebui-model-builder":
+            stale_template = examples_dir / "modellpaket-vorlage.md"
+            if stale_template.exists():
+                stale_template.unlink()
+            (model_dir / "beispielergebnis.md").write_text(openwebui_model_builder_goldstandard(), encoding="utf-8", newline="\n")
+        elif model_id == "offline-workbench-agent":
+            stale_template = examples_dir / "offline-workbench-auftrag-vorlage.md"
+            if stale_template.exists():
+                stale_template.unlink()
+            (model_dir / "beispielergebnis.md").write_text(offline_workbench_goldstandard(), encoding="utf-8", newline="\n")
         else:
             (model_dir / "beispielergebnis.md").write_text(example_markdown(model_id, name, config), encoding="utf-8", newline="\n")
         example_template = (
@@ -1109,6 +1712,12 @@ def main() -> int:
             if model_id == "präsentationserstellung"
             else n8n_workflow_goldstandard_briefing()
             if model_id == "n8n-workflow-architect"
+            else promptforge_goldstandard_briefing()
+            if model_id == "promptforge"
+            else openwebui_model_builder_goldstandard_briefing()
+            if model_id == "openwebui-model-builder"
+            else offline_workbench_goldstandard_briefing()
+            if model_id == "offline-workbench-agent"
             else template_markdown(model_id, name, config)
         )
         (examples_dir / config["artifact"]).write_text(example_template, encoding="utf-8", newline="\n")

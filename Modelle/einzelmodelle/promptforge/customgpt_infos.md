@@ -37,7 +37,7 @@ Für dieses Projektpaket wurden folgende Annahmen getroffen:
 - Der Custom GPT soll primär deutschsprachig arbeiten.
 - Die Zielgruppe sind Nutzer ohne tiefes Prompt-Engineering-Wissen, aber auch Fortgeschrittene, die robuste Promptvorlagen benötigen.
 - Die wichtigste Ausgabe ist eine fertige `.md`-Promptvorlage ohne Begleittext.
-- Websuche soll aktiviert werden, weil der GPT vor der Erstellung aktuelle Best Practices für den konkreten Anwendungsfall prüfen soll.
+- Websuche ist im OpenWebUI-Offline-Profil standardmäßig deaktiviert. Aktuelle Best Practices dürfen nur genutzt werden, wenn sie aus bereitgestellten Dateien, lokaler Knowledge oder ausdrücklich erlaubter Recherche stammen.
 - Dateierzeugung ist nicht zwingend erforderlich, aber hilfreich, wenn Nutzer explizit eine `.md`-Datei zum Download wünschen.
 - Bildgenerierung ist für den normalen Betrieb nicht erforderlich.
 
