@@ -9,9 +9,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /workspace
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY Workbench /app/Workbench
+COPY Deployment/workbench-entrypoint.sh /usr/local/bin/workbench-entrypoint
+
+RUN chmod +x /usr/local/bin/workbench-entrypoint
 
 EXPOSE 8088
 
+ENTRYPOINT ["/usr/local/bin/workbench-entrypoint"]
 CMD ["python", "-m", "Workbench.dashboard.server"]
-

@@ -6,6 +6,7 @@
 *.js text
 *.py text
 *.ps1 text
+*.sh text eol=lf
 *.txt text
 *.json text
 *.yml text
