@@ -3198,6 +3198,210 @@
     }
   },
   {
+    "id": "internetwissen",
+    "name": "Internetwissen",
+    "base_model_id": "coder",
+    "meta": {
+      "description": "Offline-Recherchemodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung mit repo-interner KnowledgeBase.",
+      "capabilities": {
+        "file_context": true,
+        "vision": true,
+        "file_upload": true,
+        "web_search": false,
+        "image_generation": false,
+        "code_interpreter": false,
+        "terminal": false,
+        "citations": true,
+        "status_updates": true,
+        "usage": true,
+        "builtin_tools": true
+      },
+      "suggestion_prompts": [
+        {
+          "content": "Erkläre mir dieses Thema offline verständlich und markiere Aktualitätsgrenzen."
+        },
+        {
+          "content": "Erstelle einen Rechercheplan mit Suchaspekten, Prüffragen und geeigneten Quellenarten."
+        },
+        {
+          "content": "Bewerte diese Quelle anhand von Autorität, Aktualität, Belegen und Interessenlage."
+        }
+      ],
+      "tags": [
+        {
+          "name": "internetwissen"
+        },
+        {
+          "name": "offline"
+        },
+        {
+          "name": "recherche"
+        },
+        {
+          "name": "knowledgebase"
+        },
+        {
+          "name": "quellenkritik"
+        }
+      ],
+      "toolIds": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "filterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "defaultFilterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "primaryToolIds": [
+        "ask_user",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "repo_tree_analyzer",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "recommendedSkillIds": [
+        "research-grounding",
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
+      "requiredKnowledgeFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "Internetwissen",
+          "description": "Dieses Produktprofil beschreibt das Modell Internetwissen für die deutschsprachige Standardnutzung und für mehrsprachige OpenWebUI-Workflows.",
+          "suggestion": "Nutze Internetwissen auf Deutsch und beachte vorhandene Fachbegriffe.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "Internet Knowledge",
+          "description": "This product profile describes the Internet Knowledge model for English usage and multilingual OpenWebUI workflows.",
+          "suggestion": "Use Internet Knowledge in English and preserve existing technical terms.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Conocimiento de Internet",
+          "description": "Este perfil describe el modelo Conocimiento de Internet para uso en español y flujos multilingües de OpenWebUI.",
+          "suggestion": "Usa Conocimiento de Internet en español y conserva la terminología técnica existente.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Connaissances Internet",
+          "description": "Ce profil décrit le modèle Connaissances Internet pour l'usage en français et les workflows OpenWebUI multilingues.",
+          "suggestion": "Utilise Connaissances Internet en français et conserve les termes techniques existants.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Conhecimento da internet",
+          "description": "Este perfil descreve o modelo Conhecimento da internet para uso em português do Brasil e fluxos multilíngues no OpenWebUI.",
+          "suggestion": "Use Conhecimento da internet em português do Brasil e preserve os termos técnicos existentes.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Conoscenza internet",
+          "description": "Questo profilo descrive il modello Conoscenza internet per l'uso in italiano e per workflow OpenWebUI multilingue.",
+          "suggestion": "Usa Conoscenza internet in italiano e conserva la terminologia tecnica esistente.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "Internetkennis",
+          "description": "Dit profiel beschrijft het model Internetkennis voor Nederlands gebruik en meertalige OpenWebUI-workflows.",
+          "suggestion": "Gebruik Internetkennis in het Nederlands en behoud bestaande technische termen.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Wiedza internetowa",
+          "description": "Ten profil opisuje model Wiedza internetowa do użycia po polsku i w wielojęzycznych przepływach OpenWebUI.",
+          "suggestion": "Użyj Wiedza internetowa po polsku i zachowaj istniejące terminy techniczne.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "İnternet bilgisi",
+          "description": "Bu profil, İnternet bilgisi modelini Türkçe kullanım ve çok dilli OpenWebUI iş akışları için açıklar.",
+          "suggestion": "İnternet bilgisi modelini Türkçe kullan ve mevcut teknik terimleri koru.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "インターネット知識",
+          "description": "このプロファイルは、日本語利用と多言語 OpenWebUI ワークフロー向けの インターネット知識 モデルを説明します。",
+          "suggestion": "インターネット知識 を日本語で使い、既存の技術用語を保持してください。",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "互联网知识",
+          "description": "此配置文件说明 互联网知识 模型在简体中文和多语言 OpenWebUI 工作流中的用法。",
+          "suggestion": "用简体中文使用 互联网知识，并保留现有技术术语。",
+          "profile": "i18n/zh-Hans.md"
+        }
+      },
+      "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBzZWFyY2ggaWNvbjwvdGl0bGU+CiAgPGRlc2MgaWQ9ImRlc2MiPlNpbXBsZSBtYWduaWZ5aW5nIGdsYXNzIGFuZCBkb2N1bWVudCBsaW5lcyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8Y2lyY2xlIGN4PSIyMjYiIGN5PSIyMjYiIHI9Ijc2IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjIiLz4KICA8cGF0aCBkPSJNMjgyIDI4Mmw3NCA3NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTY0IDM0NGg4OE0xNjQgMzg0aDE0NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg=="
+    },
+    "params": {
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `internetwissen`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `ask_user`, `json_csv_text_validator`, `air_gapped_jupyter_python`, `offline_artifact_workbench`, `repo_tree_analyzer`, `parallel_task_planner`, `llm_council`. Relevante Skills: `research-grounding`, `offline-use-case-router`, `redundant-fallback-tooling`, `parallel-tools-subagents`, `secure-tool-usage`. Fokus: Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen, Recherchepläne und Wissensstrukturierung ohne behauptete Live-Webprüfung absichern.",
+      "temperature": 0.25,
+      "top_p": 0.9,
+      "stop": [],
+      "function_calling": "native"
+    }
+  },
+  {
     "id": "it-helpdesk-diagnose",
     "name": "IT-Helpdesk-Diagnose",
     "base_model_id": "coder",
@@ -5124,7 +5328,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBwcmVzZW50YXRpb24gaWNvbjwvdGl0bGU+CiAgPGRlc2MgaWQ9ImRlc2MiPlNpbXBsZSBwcmVzZW50YXRpb24gc2NyZWVuIG9uIGEgd2hpdGUgYmFja2dyb3VuZC48L2Rlc2M+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiNmZmYiLz4KICA8cmVjdCB4PSI2NCIgeT0iNjQiIHdpZHRoPSIzODQiIGhlaWdodD0iMzg0IiByeD0iNDgiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxNiIvPgogIDxwYXRoIGQ9Ik0xMzAgMTUyaDI1MnYxNzBIMTMwWiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTI1NiAzMjJ2NTRNMjA0IDM4MmgxMDQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTE3NiAyNzhsNTItNTIgMzggMzQgNjgtNzYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
-      "description": "Erstellt hochwertige browserbasierte Präsentationen wie der Custom GPT Präsentationscreator: eine moderne, animierte, interaktive präsentation.html statt langweiliger PDF-Folien.",
+      "description": "Erzeugt hochwertige offline lauffähige 16:9-HTML-Keynotes mit Storyline, Designsystem, Tastatursteuerung, Druckmodus und klarer Faktentrennung.",
       "capabilities": {
         "file_context": true,
         "vision": true,
@@ -5146,7 +5350,7 @@
           "content": "Baue aus diesen Stichpunkten eine interaktive Web-Keynote für eine Geschäftsführung."
         },
         {
-          "content": "Analysiere unsere Webseite und erstelle daraus eine Unternehmenspräsentation im Premium-Tech-Stil."
+          "content": "Erstelle aus den bereitgestellten Informationen eine offline lauffähige Premium-HTML-Präsentation."
         }
       ],
       "tags": [
@@ -5221,7 +5425,7 @@
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.html"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -5321,7 +5525,7 @@
       }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `präsentationserstellung`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `ask_user`, `offline_artifact_workbench`, `inline_visuals_toolkit_v3`, `visuals_toolkit_v4`, `air_gapped_jupyter_python`, `json_csv_text_validator`. Relevante Skills: `offline-artifact-production`, `visual-toolkit-v3-offline`, `offline-creative-media-workflows`. Fokus: Hochwertige browserbasierte Keynote-Präsentationen wie der Custom GPT Präsentationscreator als einzelne `präsentation.html` erzeugen; PDF/PPTX nur auf expliziten Wunsch oder als Fallback.",
+      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDies ist nur der kurze Bootstrap-Prompt für das Modell `präsentationserstellung`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in `mainprompt.md`, `fachwissen.md`, `beispielergebnis.html`, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.\n\n## Laufzeit- und Qualitätsprofil\n\n- Arbeite intern im Reasoning-Profil `high`: plane, prüfe und validiere Tool-Ausgaben kritisch; gib nur das fachlich notwendige Ergebnis aus.\n- Nutze keine erfundenen Runtime-Parameter und setze kein festes `max_tokens`; OpenWebUI und Modellserver bestimmen Kontext- und Antwortlimits.\n\n## CustomGPT-Qualitätsprofil\n\n- Vor jeder Aufgabe MUSST du die modellbezogenen Knowledge-Dateien `mainprompt.md`, `fachwissen.md`, `beispielergebnis.html`, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren.\n- Wende daraus Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster aktiv auf die Nutzeraufgabe an.\n- Wenn Knowledge in OpenWebUI fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter.\n\n## Vision- und UI-Bildanalyse\n\n- Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.\n- Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.\n\n## Explizite Tool-Aufrufmuster\n\n- Prüfe OpenWebUI-Builtins wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool-Calls und `openwebui-offline-addons` vor Spezialtools.\n- Wenn passend, nutze zuerst eines der primären Modelltools aus dem Tool-Profil unten.\n- Bei unabhängigen Teilaufgaben sind Parallelisierung oder Subagenten zu bevorzugen; bei Dateien, Code, Tabellen, HTML/PDF/Präsentationen, APIs, Docker/OpenWebUI-Fehlern oder visuellen Artefakten muss ein geeignetes Tool geprüft werden.\n\n## Verbindliche Tool- und Skill-Nutzung\n\n- Beginne jede nicht-triviale Aufgabe mit einer kurzen Tool-/Skill-Inventur anhand verfügbarer Tools, Skills, Dateien, Knowledge und Zielartefakte.\n- Nutze passende Tools früh und mit dem kleinsten ausreichenden Tool-Satz; verschweige fehlende Tools, Fehler oder Grenzen nicht.\n- Primäre Tools: `ask_user`, `offline_artifact_workbench`, `inline_visuals_toolkit_v3`, `visuals_toolkit_v4`, `air_gapped_jupyter_python`, `json_csv_text_validator`. Relevante Skills: `offline-artifact-production`, `visual-toolkit-v3-offline`, `offline-creative-media-workflows`. Fokus: Hochwertige browserbasierte Keynote-Präsentationen wie der Custom GPT Präsentationscreator als einzelne `präsentation.html` erzeugen; PDF/PPTX nur auf expliziten Wunsch oder als Fallback.",
       "temperature": 0.7,
       "top_p": 0.95,
       "stop": [],

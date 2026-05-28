@@ -54,10 +54,17 @@
     "behavior": "Use Mistral-Medium vision when OpenWebUI forwards image inputs. Apply it to screenshots, UI tests, scans, charts, presentations and visual artifact QA; fall back to OCR, files or user descriptions when image input is unavailable."
   },
   "model_example_policy": {
-    "required_knowledge_file": "beispielergebnis.md",
+    "default_required_knowledge_file": "beispielergebnis.md",
+    "model_required_knowledge_file_overrides": {
+      "präsentationserstellung": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.html"
+      ]
+    },
     "example_dir": "beispiele",
     "dist_examples_dir": "Modelle/dist/artifacts/examples",
-    "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and beispielergebnis.md."
+    "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and the model-specific example result file."
   },
   "model_product_i18n_policy": {
     "default_locale": "de",
@@ -227,6 +234,13 @@
     "fachwissen.md",
     "beispielergebnis.md"
   ],
+  "model_knowledge_file_overrides": {
+    "präsentationserstellung": [
+      "mainprompt.md",
+      "fachwissen.md",
+      "beispielergebnis.html"
+    ]
+  },
   "model_product_locales_supported": [
     "de",
     "en",
@@ -1711,6 +1725,128 @@
         "bytes": 976
       }
     },
+    "internetwissen": {
+      "mainprompt.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/mainprompt.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 2602
+      },
+      "fachwissen.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/fachwissen.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 11681
+      },
+      "beispielergebnis.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispielergebnis.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 2009
+      },
+      "beispiele/allgemeine_recherchefrage.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/allgemeine_recherchefrage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 849
+      },
+      "beispiele/anleitung_ohne_live_web.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/anleitung_ohne_live_web.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 900
+      },
+      "beispiele/internetwissen-rechercheplan-vorlage.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/internetwissen-rechercheplan-vorlage.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1690
+      },
+      "beispiele/quellenkritik.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/quellenkritik.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 855
+      },
+      "beispiele/unbekanntes_oder_aktuelles_thema.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/beispiele/unbekanntes_oder_aktuelles_thema.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 738
+      },
+      "i18n/de.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/de.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1142
+      },
+      "i18n/en.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/en.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1041
+      },
+      "i18n/es.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/es.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1169
+      },
+      "i18n/fr.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/fr.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1202
+      },
+      "i18n/it.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/it.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1087
+      },
+      "i18n/ja.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/ja.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1297
+      },
+      "i18n/manifest.json": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/manifest.json",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 917
+      },
+      "i18n/nl.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/nl.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1055
+      },
+      "i18n/pl.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/pl.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1090
+      },
+      "i18n/pt-BR.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/pt-BR.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1150
+      },
+      "i18n/tr.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/tr.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 1095
+      },
+      "i18n/zh-Hans.md": {
+        "path": "Modelle/einzelmodelle/internetwissen/i18n/zh-Hans.md",
+        "exists": true,
+        "non_empty": true,
+        "bytes": 977
+      }
+    },
     "it-helpdesk-diagnose": {
       "mainprompt.md": {
         "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/mainprompt.md",
@@ -2604,67 +2740,67 @@
         "path": "Modelle/einzelmodelle/präsentationserstellung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5326
+        "bytes": 4513
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 19378
+        "bytes": 16571
       },
-      "beispielergebnis.md": {
-        "path": "Modelle/einzelmodelle/präsentationserstellung/beispielergebnis.md",
+      "beispielergebnis.html": {
+        "path": "Modelle/einzelmodelle/präsentationserstellung/beispielergebnis.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 1908
+        "bytes": 29911
       },
-      "beispiele/praesentation-briefing-vorlage.md": {
-        "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-briefing-vorlage.md",
+      "beispiele/praesentation-goldstandard-briefing.md": {
+        "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-goldstandard-briefing.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1643
+        "bytes": 8063
       },
       "beispiele/praesentation-premium-demo.html": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-premium-demo.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 7530
+        "bytes": 7564
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/de.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1182
+        "bytes": 1184
       },
       "i18n/en.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/en.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1060
+        "bytes": 1062
       },
       "i18n/es.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/es.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1188
+        "bytes": 1190
       },
       "i18n/fr.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/fr.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1227
+        "bytes": 1229
       },
       "i18n/it.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/it.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1118
+        "bytes": 1120
       },
       "i18n/ja.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/ja.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1325
+        "bytes": 1327
       },
       "i18n/manifest.json": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/manifest.json",
@@ -2676,31 +2812,31 @@
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/nl.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1077
+        "bytes": 1079
       },
       "i18n/pl.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/pl.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1109
+        "bytes": 1111
       },
       "i18n/pt-BR.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/pt-BR.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1172
+        "bytes": 1174
       },
       "i18n/tr.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/tr.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1102
+        "bytes": 1104
       },
       "i18n/zh-Hans.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/i18n/zh-Hans.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 996
+        "bytes": 998
       }
     },
     "refactoring-unterstützung": {
@@ -3527,6 +3663,25 @@
         ],
         "focus": "Extraktionsschema, JSON/CSV-Ausgabe und Datenqualität vor der finalen Antwort validieren."
       },
+      "internetwissen": {
+        "tools": [
+          "ask_user",
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench",
+          "repo_tree_analyzer",
+          "parallel_task_planner",
+          "llm_council"
+        ],
+        "skills": [
+          "research-grounding",
+          "offline-use-case-router",
+          "redundant-fallback-tooling",
+          "parallel-tools-subagents",
+          "secure-tool-usage"
+        ],
+        "focus": "Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen, Recherchepläne und Wissensstrukturierung ohne behauptete Live-Webprüfung absichern."
+      },
       "it-helpdesk-diagnose": {
         "tools": [
           "ask_user",
@@ -3806,7 +3961,7 @@
   "custom_gpt_quality_policy": {
     "formatting_marker": "Formatting re-enabled",
     "system_marker": "## CustomGPT-Qualitätsprofil",
-    "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, beispielergebnis.md, beispiele/ and i18n/ before applying role, scope, output format, quality rules, examples and language behavior to the task."
+    "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, the model-specific example result file, beispiele/ and i18n/ before applying role, scope, output format, quality rules, examples and language behavior to the task."
   },
   "model_params_policy": {
     "max_tokens": "omitted",
@@ -3845,6 +4000,7 @@
       "dokumentenzusammenfassung": 0.25,
       "email-kommunikationsassistenz": 0.7,
       "informationsextraktion": 0.0,
+      "internetwissen": 0.25,
       "it-helpdesk-diagnose": 0.25,
       "json-csv-log-analyse": 0.15,
       "meeting-protokoll-auswertung": 0.35,
@@ -3895,7 +4051,7 @@
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
   "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
   "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
-  "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, beispielergebnis.md and files under beispiele/ and i18n/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
+  "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, the model-specific example result file and files under beispiele/ and i18n/ for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
   "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
   "chat_models_configured": [
     "allgemein",
@@ -3913,6 +4069,7 @@
     "dokumentenzusammenfassung",
     "email-kommunikationsassistenz",
     "informationsextraktion",
+    "internetwissen",
     "it-helpdesk-diagnose",
     "json-csv-log-analyse",
     "meeting-protokoll-auswertung",

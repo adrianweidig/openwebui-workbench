@@ -37,6 +37,34 @@ This repository bundles domain briefings, human-readable model packages, OpenWeb
 - Non-mutating validation scripts that check Python syntax, OpenWebUI extensions, generator state, import payloads, JSON files, and unit tests.
 - Deployment templates for offline OpenWebUI operation with an optional Jupyter server and local addon stack.
 
+## Planned: Internet Knowledge model
+
+The repository is being extended with an `internetwissen` model package. The goal is an offline-capable research and explanation model for general knowledge, how-to guidance, source criticism, and knowledge structuring.
+
+The initial scope is intentionally small: the model does not ship large external web corpora. It uses a compact, self-written KnowledgeBase stored directly in the repository. This keeps the model immediately importable, air-gap friendly, and usable without additional GB/TB-scale data.
+
+### Initial scope
+
+- new model package `Modelle/einzelmodelle/internetwissen/`
+- repository-internal KnowledgeBase via `mainprompt.md`, `fachwissen.md`, and `beispielergebnis.md`
+- no live web search in the offline default
+- focus on general explanations, instructions, research methodology, and source criticism
+- explicit handling of freshness limits
+- example answers for general research questions, offline instructions, source criticism, and time-sensitive topics
+
+### Not in initial scope
+
+- no FineWeb or Common Crawl data
+- no Wikipedia/Kiwix dumps
+- no external vector index
+- no automated web archive pipeline
+- no large data artifacts in the Git repository
+- no hidden online dependency
+
+### Later expansion direction
+
+Longer term, the model can be extended through optional KnowledgePacks. These should not be committed as large datasets. The repository should only provide manifests, import scripts, local artifact paths, safety rules, and documentation. Possible later stages include curated offline documentation packs, optional Wikimedia/Kiwix integrations, local technical documentation packs, FineWeb/FineWeb-Edu/Common-Crawl based corpora, external local retrieval indexes, and import/license reports for large offline knowledge sources.
+
 ## Internationalization
 
 German is the default language for the repository, dashboard UI, primary README, default documentation, and human-readable fallback messages. English is maintained as the main alternative language. GitHub does not automatically switch the normal repository view by visitor language, so the project uses explicit language files and visible links:

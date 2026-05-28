@@ -28,6 +28,7 @@
 | `23_email-kommunikationsassistenz.md` | E-Mail- und Kommunikationsassistenz | `email-kommunikationsassistenz` | optional_disabled |
 | `24_übersetzung-lokalisierung.md` | Übersetzung und Lokalisierung | `übersetzung-lokalisierung` | optional |
 | `25_compliance-richtlinienprüfung.md` | Compliance- und Richtlinienprüfung | `compliance-richtlinienprüfung` | optional |
+| `27_internetwissen.md` | Internetwissen | `internetwissen` | optional |
 | Sammelmodell Offline Workbench | Offline Workbench Agent | `offline-workbench-agent` | required |
 | Allgemeines Fallbackmodell | Allgemein | `allgemein` | required |
 | Custom GPT PromptForge | PromptForge | `promptforge` | optional |

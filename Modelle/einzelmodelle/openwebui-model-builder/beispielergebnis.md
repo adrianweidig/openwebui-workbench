@@ -42,7 +42,7 @@ Eingaben:
 [Dateien, Text, Screenshots, Daten, Constraints]
 
 Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Praesentation, Codeplan]
+[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
 
 Qualitätskriterien:
 [Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]

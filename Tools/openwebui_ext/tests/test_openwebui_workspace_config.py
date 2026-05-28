@@ -17,9 +17,17 @@ IMPORT_SCRIPT = ROOT / "Tools" / "import_openwebui_workspace.py"
 CONFIG_EXAMPLE = ROOT / "scripts" / "openwebui_workspace_config.example.yaml"
 
 REQUIRED_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
+MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
+}
 TOOL_FORCE_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
 VISION_MARKER = "## Vision- und UI-Bildanalyse"
-KNOWLEDGE_PHRASES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md", "beispiele/", "laden und analysieren"]
+def required_knowledge_files(model_id: str) -> list[str]:
+    return MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES.get(model_id, REQUIRED_KNOWLEDGE_FILES)
+
+
+def knowledge_phrases(model_id: str) -> list[str]:
+    return [*required_knowledge_files(model_id), "beispiele/", "laden und analysieren"]
 
 
 def read_json(path: Path):
@@ -45,7 +53,8 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
 
         for model_file in model_files:
             with self.subTest(model=model_file.parent.name):
-                for name in REQUIRED_KNOWLEDGE_FILES:
+                model_id = model_file.parent.name
+                for name in required_knowledge_files(model_id):
                     knowledge_file = model_file.parent / name
                     self.assertTrue(knowledge_file.exists(), f"Missing {knowledge_file}")
                     self.assertGreater(knowledge_file.stat().st_size, 0, f"Empty {knowledge_file}")
@@ -62,9 +71,9 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 self.assertIn(VISION_MARKER, system)
                 self.assertIn("Tool-/Skill-Inventur", system)
                 self.assertLess(len(system), 3500)
-                for phrase in KNOWLEDGE_PHRASES:
+                for phrase in knowledge_phrases(model_id):
                     self.assertIn(phrase, system)
-                self.assertEqual(meta.get("requiredKnowledgeFiles"), REQUIRED_KNOWLEDGE_FILES)
+                self.assertEqual(meta.get("requiredKnowledgeFiles"), required_knowledge_files(model_id))
                 self.assertTrue(meta.get("capabilities", {}).get("vision"))
                 self.assertGreater(len(meta.get("primaryToolIds", [])), 0)
                 self.assertGreater(len(meta.get("recommendedSkillIds", [])), 0)
@@ -102,7 +111,8 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
             {"principal_type": "user", "principal_id": "*", "permission": "read"},
         )
         self.assertEqual(plan.get("vision_policy", {}).get("specialist_model_id"), "mistral-vision-workbench")
-        self.assertEqual(plan.get("model_example_policy", {}).get("required_knowledge_file"), "beispielergebnis.md")
+        self.assertEqual(plan.get("model_example_policy", {}).get("default_required_knowledge_file"), "beispielergebnis.md")
+        self.assertEqual(plan.get("model_knowledge_file_overrides"), MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES)
         self.assertEqual(plan.get("offline_addons_runtime", {}).get("container_playwright_browsers_path"), "/app/backend/data/cache/ms-playwright")
         self.assertIn(
             "function_valves.context_compressor_filter.reserved_output_tokens",
@@ -121,7 +131,7 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 self.assertTrue(model.get("vision_enabled"))
                 self.assertTrue(model.get("has_openwebui_builtin_and_addon_policy"))
                 self.assertLess(model.get("system_prompt_chars", 999999), 3500)
-                self.assertEqual(model.get("required_knowledge_files"), REQUIRED_KNOWLEDGE_FILES)
+                self.assertEqual(model.get("required_knowledge_files"), required_knowledge_files(str(model.get("id"))))
                 for info in model.get("knowledge_files", {}).values():
                     self.assertTrue(info.get("exists"))
                     self.assertTrue(info.get("non_empty"))

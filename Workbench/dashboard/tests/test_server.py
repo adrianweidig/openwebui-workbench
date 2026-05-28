@@ -103,6 +103,11 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(after["content"], "Example note\n")
         self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispiele" / "demo.md").is_file())
 
+    def test_reads_and_writes_allowed_html_example(self) -> None:
+        after = self.state.write_model_file("demo-model", "beispielergebnis.html", "<!doctype html>\n")
+        self.assertEqual(after["content"], "<!doctype html>\n")
+        self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispielergebnis.html").is_file())
+
     def test_reads_and_writes_allowed_product_i18n_markdown(self) -> None:
         after = self.state.write_model_file("demo-model", "i18n/de.md", "# Aktualisiertes Profil\n")
         self.assertEqual(after["content"], "# Aktualisiertes Profil\n")

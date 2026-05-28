@@ -47,7 +47,7 @@ Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN`
   - `systemprompt.md`
   - `mainprompt.md`
   - `fachwissen.md`
-  - `beispielergebnis.md`
+  - modellseitig definierte Beispielergebnis-Datei, zum Beispiel `beispielergebnis.md` oder `beispielergebnis.html`
   - `customgpt_infos.md`
   - `beispiele/*.md`
 - Tool-Quellen unter `Tools/openwebui_ext/tools/*.py` bearbeiten.

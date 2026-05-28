@@ -31,11 +31,12 @@ except ModuleNotFoundError as exc:
 REPO_ROOT = Path(os.environ.get("WORKBENCH_ROOT", Path(__file__).resolve().parents[2])).resolve()
 STATIC_ROOT = Path(__file__).resolve().with_name("static")
 SAFE_SEGMENT_PATTERN = re.compile(r"^[^\x00-\x1f/\\:<>\"|?*]+$")
-MODEL_MARKDOWN_FILES = {
+MODEL_TEXT_FILES = {
     "systemprompt.md",
     "mainprompt.md",
     "fachwissen.md",
     "beispielergebnis.md",
+    "beispielergebnis.html",
     "customgpt_infos.md",
 }
 MAX_BODY_BYTES = int(os.environ.get("WORKBENCH_MAX_BODY_BYTES", "1048576"))
@@ -305,7 +306,7 @@ class WorkbenchState:
     def model_files(self, model_id: str) -> list[dict[str, Any]]:
         directory = self.model_dir(model_id)
         files: list[dict[str, Any]] = []
-        for name in sorted(MODEL_MARKDOWN_FILES):
+        for name in sorted(MODEL_TEXT_FILES):
             path = directory / name
             files.append(
                 {
@@ -318,7 +319,9 @@ class WorkbenchState:
             )
         examples = directory / "beispiele"
         if examples.exists():
-            for path in sorted(examples.glob("*.md")):
+            for path in sorted(
+                item for item in examples.glob("*") if item.is_file() and item.suffix.lower() in {".md", ".html"}
+            ):
                 files.append(
                     {
                         "name": f"beispiele/{path.name}",
@@ -352,10 +355,10 @@ class WorkbenchState:
     def normalize_model_file(self, model_id: str, name: str) -> Path:
         directory = self.model_dir(model_id)
         clean = name.strip().replace("\\", "/")
-        if clean in MODEL_MARKDOWN_FILES:
+        if clean in MODEL_TEXT_FILES:
             safe_name = require_safe_path_segment(clean, t("invalid_model_filename", self.config.locale))
             return directory / safe_name
-        if clean.startswith("beispiele/") and clean.endswith(".md"):
+        if clean.startswith("beispiele/") and Path(clean).suffix.lower() in {".md", ".html"}:
             example_name = clean.removeprefix("beispiele/")
             safe_example_name = require_safe_path_segment(example_name, t("invalid_example_filename", self.config.locale))
             return directory / "beispiele" / safe_example_name
