@@ -12,6 +12,6 @@ Artefakte/temp/*
 *.log
 .env
 .env.*
+Deployment/generated/
 scripts/openwebui_workspace_config.yaml
 openwebui_workspace_config.yaml
-

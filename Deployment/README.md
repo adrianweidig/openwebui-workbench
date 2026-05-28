@@ -5,6 +5,7 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 ## Compose-Varianten
 
 - `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können.
+- `docker-compose.enterprise-ca.yml`: optionaler Override für Unternehmensnetze mit eigener Root-CA. Die CA wird in OpenWebUI und Workbench gemountet; der Workbench-Container aktualisiert den System-Truststore bei jedem Start.
 - `docker-compose.top-secret.yml`: optionaler lokaler Override, der den Workbench-Container zusätzlich an das bestehende `top.secret`-Edge-Netz hängt und dort als `workbench` sowie `workbench.top.secret` verfügbar macht.
 - `docker-compose.openwebui-offline.example.yml`: portable Offline-Beispielvorlage mit repo-relativen Mounts, named volumes und optional überschreibbaren OpenWebUI-/Jupyter-Images.
 
@@ -16,6 +17,57 @@ docker compose -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
 Setze in der lokalen `.env` `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE`, wenn das Dashboard nicht nur in einer kurzlebigen lokalen Entwicklersitzung läuft.
+
+## Unternehmensnetz mit eigener Root-CA
+
+Für OpenWebUI-Instanzen hinter internen HTTPS-Zertifikaten muss der Workbench-Container die Unternehmens-CA kennen. Lege in `.env` den Host-Pfad so ab, wie Docker oder Portainer ihn sieht:
+
+```env
+WORKBENCH_ENTERPRISE_CA_HOST_FILE=/opt/company-ca/root-ca.pem
+WORKBENCH_CA_BUNDLE=/certs/company-root-ca.pem
+OPENWEBUI_CA_FILE=/certs/company-root-ca.pem
+OPENWEBUI_TLS_VERIFY=true
+```
+
+Start mit CA-Override:
+
+```powershell
+docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.enterprise-ca.yml up -d --build
+```
+
+Der Workbench-Container installiert `ca-certificates` im Image und führt beim Start immer `update-ca-certificates` aus. Wenn `WORKBENCH_CA_BUNDLE` gesetzt ist, wird die gemountete PEM-Datei vorab geprüft: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte führen zu einem klaren Startfehler. Secrets, Tokens und Private Keys gehören nicht in diese CA-Datei.
+
+Bei einem bereits vorhandenen OpenWebUI über HTTPS setzt du zusätzlich:
+
+```env
+OPENWEBUI_BASE_URL=https://openwebui.intern
+OPENWEBUI_PUBLIC_URL=https://openwebui.intern
+```
+
+`OPENWEBUI_TLS_VERIFY=false` bleibt nur eine Diagnoseoption für kurzlebige lokale Tests. Für Unternehmensbetrieb ist die gemountete Root-CA der vorgesehene Weg.
+
+## Portainer-Wizard
+
+Für Portainer oder schnelle Erstinstallation erzeugt der interaktive Assistent eine Stack-Compose-Datei und eine passende Env-Datei:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File Deployment/configure-workbench-enterprise.ps1
+```
+
+Der Assistent fragt ab:
+
+- ob OpenWebUI im Stack mitgestartet oder eine vorhandene Instanz genutzt wird
+- die interne und öffentliche OpenWebUI-URL
+- den Docker-/Portainer-sichtbaren Repository-Pfad
+- optional den Root-CA-Pfad
+- Dashboard-Login und optionalen OpenWebUI-Admin-Token
+
+Ausgabe:
+
+- `Deployment/generated/portainer-compose.yml`
+- `Deployment/generated/workbench.env`
+
+`Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
 

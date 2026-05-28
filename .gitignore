@@ -21,6 +21,7 @@ OpenWebUI Model Builder/.backup/
 .env.*
 !.env.example
 *.local
+Deployment/generated/
 scripts/openwebui_workspace_config.yaml
 Tools/openwebui_workspace_config.yaml
 openwebui_workspace_config.yaml
