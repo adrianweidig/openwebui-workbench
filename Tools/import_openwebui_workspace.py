@@ -826,6 +826,8 @@ def get_existing(client: OpenWebUIClient, path: str) -> dict[str, Any] | None:
     except RuntimeError as exc:
         if is_not_found_error(exc):
             return None
+        if "HTTP 401" in str(exc):
+            return None
         raise
 
 
@@ -848,9 +850,21 @@ def check_openwebui_auth(client: OpenWebUIClient) -> None:
             "Set openwebui.base_url to the externally reachable WebUI root, not an /api or /api/v1 URL. "
             f"Probe failed: {exc}"
         ) from exc
-    probe_path = "/api/v1/auths/"
+    probe_paths = ["/api/v1/auths/", "/api/models"]
+    probe_path = probe_paths[0]
     try:
-        client.request("GET", probe_path)
+        last_auth_error: RuntimeError | None = None
+        for candidate in probe_paths:
+            try:
+                client.request("GET", candidate)
+                return
+            except RuntimeError as candidate_exc:
+                if "HTTP 401" in str(candidate_exc):
+                    last_auth_error = candidate_exc
+                    continue
+                raise
+        if last_auth_error:
+            raise last_auth_error
     except RuntimeError as exc:
         message = str(exc)
         if "HTTP 401" in message:
