@@ -641,8 +641,14 @@ def product_title(model_id: str, locale: str, fallback_name: str) -> str:
     return MODEL_TITLES.get(model_id, {}).get(locale) or MODEL_TITLES.get(model_id, {}).get("de") or fallback_name
 
 
+EXAMPLE_RESULT_FILE_OVERRIDES = {
+    "n8n-workflow-architect": "beispielergebnis.json",
+    "präsentationserstellung": "beispielergebnis.html",
+}
+
+
 def example_result_file_for_model(model_id: str) -> str:
-    return "beispielergebnis.html" if model_id == "präsentationserstellung" else "beispielergebnis.md"
+    return EXAMPLE_RESULT_FILE_OVERRIDES.get(model_id, "beispielergebnis.md")
 
 
 def localized_profile(model_id: str, locale: str, fallback_name: str) -> dict[str, str]:

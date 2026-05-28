@@ -172,6 +172,8 @@ def tracked_files() -> list[Path]:
 
 def iter_text_files(paths: Iterable[Path]) -> Iterable[Path]:
     for path in paths:
+        if not path.exists():
+            continue
         if path.resolve() == SELF:
             continue
         if path.suffix.lower() not in TEXT_SUFFIXES:

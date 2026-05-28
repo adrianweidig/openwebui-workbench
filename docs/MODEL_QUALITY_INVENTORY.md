@@ -26,7 +26,7 @@ Dieses Inventar priorisiert die Offline-Verbesserung der Custom-Modelle. Es ist 
 | `json-csv-log-analyse` | Strukturierte Daten- und Loganalyse | `fachwissen.md`, Beispiele | Datenartefakte und Parser-Fallbacks prüfen | `.json`, `.csv`, `.md` | P1 | offen |
 | `meeting-protokoll-auswertung` | Protokolle, Aufgaben, Entscheidungen | `fachwissen.md`, Beispiele | Aktionslisten- und Entscheidungsformat prüfen | `.md`, `.csv` | P1 | offen |
 | `mistral-vision-workbench` | Vision- und Screenshot-Analyse | `fachwissen.md`, Beispiele, HTML-Demo | visuelle QA und Grenzen prüfen | `.md`, `.html` | P1 | offen |
-| `n8n-workflow-architect` | n8n-Workflow-Design | `fachwissen.md`, Beispiele, `model.json` | Beispielergebnis sollte importierbares Workflow-JSON sein | `.json` | P0 | offen |
+| `n8n-workflow-architect` | n8n-Workflow-Design | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.json`, Beispiele, `model.json` | Markdown-Goldstandard durch importierbares Workflow-JSON ersetzen | `.json` | P0 | Batch 2 fertig |
 | `offline-workbench-agent` | lokale Workbench-Orchestrierung | `fachwissen.md`, Beispiele, Tools | Tool-Fallbacks und Sicherheitsregeln prüfen | `.md`, `.json` | P0 | offen |
 | `openwebui-model-builder` | OpenWebUI-Modellpakete erzeugen | `fachwissen.md`, Beispiele | Repository-nahe Artefaktformate wichtig | `.json`, `.md` | P0 | offen |
 | `promptforge` | Promptvorlagen erzeugen | `fachwissen.md`, Beispiele | Few-Shot-Qualität und Promptgrenzen prüfen | `.md`, `.json` | P0 | offen |

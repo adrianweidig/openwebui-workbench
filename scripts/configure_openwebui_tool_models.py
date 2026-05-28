@@ -56,8 +56,10 @@ PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission"
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "n8n-workflow-architect": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
     "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
 }
+SYSTEM_BOOTLOADER_MAX_CHARS = 1400
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
 SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
@@ -992,9 +994,23 @@ def systemprompt_source_for_model(model_id: str) -> str:
     knowledge_files = formatted_required_model_knowledge_files(model_id)
     return f"""# Systemprompt
 
-Dies ist nur der kurze Bootstrap-Prompt für das Modell `{model_id}`. Mainprompt, Fachwissen, Beispielwissen und Produktsprachen liegen in {knowledge_files}, `beispiele/` und `i18n/`; diese Knowledge muss vor der Antwort geladen und analysiert werden.
+Du bist das OpenWebUI-Modell `{model_id}`. Dieser Systemprompt ist bewusst nur ein kurzer Bootloader, damit Offline-Chats nicht durch wiederholte Langregeln überladen werden.
 
-{managed_system_profile_for_model(model_id)}"""
+Vor jeder Antwort musst du die Knowledge-Dateien {knowledge_files}, Dateien unter `beispiele/` und produktbezogene Sprachprofile unter `i18n/` laden und analysieren. Wende daraus Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die aktuelle Aufgabe an.
+
+Wenn Knowledge fehlt oder nicht sichtbar ist, benenne die Lücke knapp und arbeite nur mit dem verfügbaren Kontext weiter. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs, Credentials oder Ergebnisse. Gib keine internen Gedankengänge aus."""
+
+
+def has_short_bootloader_systemprompt(system_text: str, model_id: str) -> bool:
+    return (
+        system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER)
+        and len(system_text) <= SYSTEM_BOOTLOADER_MAX_CHARS
+        and "kurzer Bootloader" in system_text
+        and "Erfinde keine Fakten" in system_text
+        and all(name in system_text for name in required_model_knowledge_files(model_id))
+        and "`beispiele/`" in system_text
+        and "`i18n/`" in system_text
+    )
 
 
 def ensure_markdown_formatting_enabled(system_prompt: Any) -> Any:
@@ -1220,6 +1236,12 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 if isinstance(model.get("params"), dict)
                 else False,
                 "has_systemprompt_mainprompt_fachwissen": has_prompt_sections(model),
+                "has_short_bootloader_systemprompt": has_short_bootloader_systemprompt(
+                    str(model.get("params", {}).get("system", "")),
+                    str(model.get("id")),
+                )
+                if isinstance(model.get("params"), dict)
+                else False,
                 "has_high_reasoning_profile": HIGH_REASONING_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 and "Reasoning-Profil `high`" in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
@@ -1320,8 +1342,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "vision_policy": {
             "enabled_for_chat_models": True,
             "specialist_model_id": "mistral-vision-workbench",
-            "system_marker": VISION_SYSTEM_MARKER,
-            "behavior": "Use Mistral-Medium vision when OpenWebUI forwards image inputs. Apply it to screenshots, UI tests, scans, charts, presentations and visual artifact QA; fall back to OCR, files or user descriptions when image input is unavailable.",
+            "behavior": "Vision remains enabled in model metadata. Detailed image, screenshot and artifact-QA rules live in Knowledge so the OpenWebUI system prompt can stay a short bootloader.",
         },
         "model_example_policy": {
             "default_required_knowledge_file": "beispielergebnis.md",
@@ -1405,30 +1426,28 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
         "tool_force_policy": {
-            "system_marker": TOOL_FORCE_SYSTEM_MARKER,
-            "behavior": "Every chat model starts non-trivial work with a compact tool/skill inventory and uses the smallest suitable available tool set early when files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals or parallel work are involved.",
+            "behavior": "Every chat model keeps primaryToolIds and recommendedSkillIds in metadata. Detailed tool routing stays in mainprompt.md and fachwissen.md instead of expanding the OpenWebUI system prompt.",
             "model_profiles": TOOL_FORCE_PROFILES,
         },
         "tool_call_playbook_policy": {
-            "system_marker": TOOL_CALL_PLAYBOOK_SYSTEM_MARKER,
             "target_model_runtime": "local Mistral Medium 128B",
-            "behavior": "Every chat model receives a short system-level reminder to prefer OpenWebUI builtins, model primary tools, parallelization/subagents and visual/artifact tooling when the use case requires them. Detailed call syntax stays in Knowledge and skills.",
+            "behavior": "Tool-call guidance is model-specific Knowledge. The system prompt only tells the model to load Knowledge and apply the relevant tool hints.",
             "required_prompt_phrases": [
-                "OpenWebUI-Builtins",
-                "primären Modelltools",
-                "Parallelisierung oder Subagenten",
-                "geeignetes Tool geprüft",
+                "Toolhinweise",
+                "Knowledge-Dateien",
+                "beispiele/",
+                "i18n/",
             ],
         },
         "custom_gpt_quality_policy": {
             "formatting_marker": MARKDOWN_FORMATTING_MARKER,
-            "system_marker": CUSTOM_GPT_QUALITY_SYSTEM_MARKER,
-            "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, the model-specific example result file, beispiele/ and i18n/ before applying role, scope, output format, quality rules, examples and language behavior to the task.",
+            "system_prompt_max_chars": SYSTEM_BOOTLOADER_MAX_CHARS,
+            "behavior": "Every chat model uses a short bootloader system prompt. It references mainprompt.md, fachwissen.md, the model-specific example result file, beispiele/ and i18n/ without embedding the detailed model playbook into every chat context.",
         },
         "model_params_policy": {
             "max_tokens": "omitted",
             "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
-            "reasoning_profile": "high_prompted_in_system",
+            "reasoning_profile": "knowledge_driven_not_runtime_param",
             "reasoning_effort_runtime_param": "omitted_for_mistral_medium_128b_compatibility",
             "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
             "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
@@ -1454,12 +1473,8 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "params.temperature",
             "params.top_p",
             "params.stop",
-            "params.system markdown formatting marker",
-            "params.system high-reasoning section",
-            "params.system custom-gpt quality section",
-            "params.system vision and UI image analysis section",
-            "params.system explicit tool-call playbook section",
-            "params.system tool-force section",
+            "params.system short bootloader",
+            "params.system model-specific Knowledge references",
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
@@ -1521,39 +1536,20 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         system_text = str(params.get("system", ""))
         if not system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER):
             issues.append(f"Chat-Modell {model_id} aktiviert Markdown-Formatierung nicht am Promptanfang")
-        if len(system_text) > 3500:
-            issues.append(f"Chat-Modell {model_id} hat einen zu langen Systemprompt ({len(system_text)} Zeichen)")
-        if HIGH_REASONING_SYSTEM_MARKER not in system_text or "Reasoning-Profil `high`" not in system_text:
-            issues.append(f"Chat-Modell {model_id} hat kein durchgängiges High-Reasoning-Systemprofil")
-        for required_phrase in ["OpenWebUI-Builtins", "openwebui-offline-addons"]:
-            if required_phrase not in system_text:
-                issues.append(f"Chat-Modell {model_id} fehlt Builtin-/Addon-Laufzeitvorgabe: {required_phrase}")
-        if CUSTOM_GPT_QUALITY_SYSTEM_MARKER not in system_text:
-            issues.append(f"Chat-Modell {model_id} hat kein CustomGPT-Qualitätsprofil")
+        if len(system_text) > SYSTEM_BOOTLOADER_MAX_CHARS:
+            issues.append(f"Chat-Modell {model_id} hat keinen kurzen Bootloader-Systemprompt ({len(system_text)} Zeichen)")
+        if not has_short_bootloader_systemprompt(system_text, model_id):
+            issues.append(f"Chat-Modell {model_id} hat keinen vollständigen Bootloader-Systemprompt")
         for required_phrase in [
             *required_model_knowledge_files(model_id),
             "beispiele/",
+            "i18n/",
             "laden und analysieren",
-            "Rolle, Ziel, Scope",
+            "Rolle, Ziel, Ausgabeformat",
+            "Erfinde keine Fakten",
         ]:
             if required_phrase not in system_text:
-                issues.append(f"Chat-Modell {model_id} fehlt CustomGPT-Qualitätskriterium: {required_phrase}")
-        if VISION_SYSTEM_MARKER not in system_text:
-            issues.append(f"Chat-Modell {model_id} hat keine Vision-/UI-Bildanalyse-Sektion")
-        if TOOL_CALL_PLAYBOOK_SYSTEM_MARKER not in system_text:
-            issues.append(f"Chat-Modell {model_id} hat keine expliziten Tool-Aufrufmuster")
-        for required_phrase in [
-            "OpenWebUI-Builtins",
-            "primären Modelltools",
-            "Parallelisierung oder Subagenten",
-            "geeignetes Tool geprüft",
-        ]:
-            if required_phrase not in system_text:
-                issues.append(f"Chat-Modell {model_id} fehlt explizites Tool-Aufrufmuster: {required_phrase}")
-        if TOOL_FORCE_SYSTEM_MARKER not in system_text:
-            issues.append(f"Chat-Modell {model_id} hat keine verbindliche Tool-Nutzungssektion")
-        if "Tool-/Skill-Inventur" not in system_text:
-            issues.append(f"Chat-Modell {model_id} erzwingt keine Tool-/Skill-Inventur am Aufgabenanfang")
+                issues.append(f"Chat-Modell {model_id} fehlt Bootloader-Kriterium: {required_phrase}")
         missing_profile_tools = sorted(set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(tool_ids))
         if missing_profile_tools:
             issues.append(f"Chat-Modell {model_id} nennt Tool-Pflichtprofil mit nicht zugewiesenen Tools: {', '.join(missing_profile_tools)}")

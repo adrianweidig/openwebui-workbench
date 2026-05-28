@@ -28,4 +28,4 @@ Mantieni ID tecnici, nomi di file, comandi, campi API e valori leggibili dalla m
 
 ## Uso in OpenWebUI
 
-Questo profilo viene caricato come Knowledge insieme a mainprompt.md, fachwissen.md, beispielergebnis.md e beispiele/.
+Questo profilo viene caricato come Knowledge insieme a mainprompt.md, fachwissen.md, beispielergebnis.json e beispiele/.

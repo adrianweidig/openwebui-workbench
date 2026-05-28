@@ -28,4 +28,4 @@ Preserve IDs técnicos, nomes de arquivos, comandos, campos de API e valores leg
 
 ## Uso no OpenWebUI
 
-Este perfil é enviado como Knowledge junto com mainprompt.md, fachwissen.md, beispielergebnis.md e beispiele/.
+Este perfil é enviado como Knowledge junto com mainprompt.md, fachwissen.md, beispielergebnis.json e beispiele/.

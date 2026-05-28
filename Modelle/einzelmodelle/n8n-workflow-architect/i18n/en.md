@@ -28,4 +28,4 @@ Preserve technical IDs, file names, commands, API fields, and machine-readable s
 
 ## OpenWebUI Usage
 
-This profile is uploaded as Knowledge together with mainprompt.md, fachwissen.md, beispielergebnis.md, and beispiele/.
+This profile is uploaded as Knowledge together with mainprompt.md, fachwissen.md, beispielergebnis.json, and beispiele/.

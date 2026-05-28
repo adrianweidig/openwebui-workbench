@@ -28,4 +28,4 @@ Behoud technische ID's, bestandsnamen, commando's, API-velden en machineleesbare
 
 ## Gebruik in OpenWebUI
 
-Dit profiel wordt als Knowledge geüpload samen met mainprompt.md, fachwissen.md, beispielergebnis.md en beispiele/.
+Dit profiel wordt als Knowledge geüpload samen met mainprompt.md, fachwissen.md, beispielergebnis.json en beispiele/.

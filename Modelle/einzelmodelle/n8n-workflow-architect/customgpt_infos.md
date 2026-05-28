@@ -180,18 +180,21 @@ Für produktionsnahe Automationsberatung ist zunächst eine private oder workspa
 Pflichtdateien:
 
 1. `systemprompt.md`
-2. `fachwissen.md`
+2. `mainprompt.md`
+3. `fachwissen.md`
+4. `beispielergebnis.json`
+5. `beispiele/n8n-workflow-goldstandard-briefing.md`
 
 Optional:
 
-3. interne n8n-Node-Konventionen
-4. Unternehmensrichtlinien für API-Nutzung und Credentials
-5. erlaubte und gesperrte Systeme
-6. interne Beispiel-Workflows ohne Secrets
-7. Namenskonventionen für Workflows und Nodes
-8. Security-Checklisten für Automationen
-9. eigene Docker-, Netzwerk- oder Reverse-Proxy-Hinweise
-10. erlaubte Credential-Typen und Umgebungsvariablen
+6. interne n8n-Node-Konventionen
+7. Unternehmensrichtlinien für API-Nutzung und Credentials
+8. erlaubte und gesperrte Systeme
+9. interne Beispiel-Workflows ohne Secrets
+10. Namenskonventionen für Workflows und Nodes
+11. Security-Checklisten für Automationen
+12. eigene Docker-, Netzwerk- oder Reverse-Proxy-Hinweise
+13. erlaubte Credential-Typen und Umgebungsvariablen
 
 `customgpt_infos.md` dient primär der Einrichtung und Pflege und muss nicht zwingend als Wissensdatei hochgeladen werden.
 
