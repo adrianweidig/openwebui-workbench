@@ -80,6 +80,7 @@
   "state.ready": "Bereit",
   "state.refreshed": "Status aktualisiert",
   "state.refreshing": "Aktualisiere Status",
+  "state.running": "Läuft im Hintergrund. Das Dashboard bleibt bedienbar.",
   "state.saved": "{path} gespeichert",
   "state.saving": "Speichere",
   "state.set": "gesetzt",

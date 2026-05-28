@@ -81,6 +81,8 @@ Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwend
 6. `Import prüfen` ausführen.
 7. Mit gesetztem `OPENWEBUI_ADMIN_TOKEN` `Zu OpenWebUI synchronisieren` ausführen.
 
+Der echte OpenWebUI-Sync läuft im Dashboard als Hintergrundjob. Die Oberfläche bleibt währenddessen bedienbar; ein zweiter Sync-Klick startet keinen parallelen Import, sondern zeigt den laufenden Job weiter an.
+
 Der Sync verwendet die vorhandenen Skripte:
 
 ```powershell
@@ -105,7 +107,9 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `WORKBENCH_AUTH_PASSWORD` | Passwort für die HTTP-Basic-Auth des Dashboards. Nicht committen. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternativer Pfad zu einer Passwortdatei im Container. |
 | `WORKBENCH_ALLOW_WRITE` | `true` erlaubt Markdown-Schreibzugriff. |
-| `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Import- und Verify-Aktionen. |
+| `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Dry-Run- und Verify-Aktionen. |
+| `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Prozess-Timeout für den Hintergrund-Sync nach OpenWebUI. Standard: 1800 Sekunden, damit ein seltener Clean-Import nicht vom Dashboard abgebrochen wird. |
+| `WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS` | HTTP-Timeout pro OpenWebUI-API-Request während des Imports. Standard: 600 Sekunden. |
 | `WORKBENCH_LOCALE` | Standard-Locale des Dashboards, aktuell `de` oder `en`. Unbekannte Werte fallen auf Deutsch zurück. |
 
 ## Internationalisierung

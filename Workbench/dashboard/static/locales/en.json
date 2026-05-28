@@ -80,6 +80,7 @@
   "state.ready": "Ready",
   "state.refreshed": "Status updated",
   "state.refreshing": "Refreshing status",
+  "state.running": "Running in the background. The dashboard remains usable.",
   "state.saved": "{path} saved",
   "state.saving": "Saving",
   "state.set": "set",

@@ -58,8 +58,10 @@ Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN`
 - Deutsch als Standardsprache nutzen und über die Sprachwahl oder `WORKBENCH_LOCALE=en` auf Englisch umschalten.
 - Dist-Artefakte neu erzeugen.
 - Import-Payload lokal prüfen.
-- Tools, Filter, Skills, Knowledge und Modelle zur konfigurierten OpenWebUI-Instanz synchronisieren.
+- Tools, Filter, Skills, Knowledge und Modelle zur konfigurierten OpenWebUI-Instanz als Hintergrundjob synchronisieren.
 - Zentrale Workspace-Verifikation starten.
+
+OpenWebUI-Syncs blockieren die Dashboard-Oberfläche nicht. Ein laufender Sync wird wiederverwendet, wenn derselbe Import erneut ausgelöst wird; parallele Importprozesse werden dadurch vermieden.
 
 ## HTTPS und lokale Zertifikate
 

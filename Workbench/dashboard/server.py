@@ -9,7 +9,9 @@ import re
 import ssl
 import subprocess
 import sys
+import threading
 import time
+import uuid
 from dataclasses import dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -177,6 +179,8 @@ class WorkbenchConfig:
     openwebui_base_url: str = os.environ.get("OPENWEBUI_BASE_URL", "http://openwebui:8080").rstrip("/")
     openwebui_public_url: str = os.environ.get("OPENWEBUI_PUBLIC_URL", "http://localhost:3000").rstrip("/")
     command_timeout: int = int(os.environ.get("WORKBENCH_COMMAND_TIMEOUT_SECONDS", "300"))
+    import_timeout: int = int(os.environ.get("WORKBENCH_IMPORT_TIMEOUT_SECONDS", "1800"))
+    import_http_timeout: int = int(os.environ.get("WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS", "600"))
     tls_verify: bool = tls_verify_from_env()
     ca_file: str = os.environ.get("OPENWEBUI_CA_FILE", "").strip()
     ca_path: str = os.environ.get("OPENWEBUI_CA_PATH", "").strip()
@@ -202,6 +206,8 @@ class WorkbenchState:
         self.tools_dist_root = self.root / "Tools" / "dist"
         self.config_file = self.root / "scripts" / "openwebui_workspace_config.yaml"
         self.config_example = self.root / "scripts" / "openwebui_workspace_config.example.yaml"
+        self.action_lock = threading.Lock()
+        self.action_jobs: dict[str, dict[str, Any]] = {}
 
     def summary(self) -> dict[str, Any]:
         models = self.list_models()
@@ -514,6 +520,7 @@ class WorkbenchState:
             token = self.config.admin_token
             if token:
                 command.extend(["--token", token])
+            command.extend(["--timeout", str(self.config.import_http_timeout)])
             command_env.update(
                 {
                     "OPENWEBUI_TLS_VERIFY": "true" if self.config.tls_verify else "false",
@@ -522,8 +529,11 @@ class WorkbenchState:
                 }
             )
             label = "Import to OpenWebUI"
+            timeout = self.config.import_timeout
         else:
             raise ValueError(t("unknown_action", self.config.locale, action=action))
+        if action != "import-openwebui":
+            timeout = self.config.command_timeout
 
         started = time.time()
         completed = subprocess.run(
@@ -534,7 +544,7 @@ class WorkbenchState:
             errors="replace",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            timeout=self.config.command_timeout,
+            timeout=timeout,
             env={**os.environ, **command_env},
         )
         output = redact(completed.stdout or "", [self.config.admin_token, self.config.auth_password])
@@ -549,6 +559,60 @@ class WorkbenchState:
             "output": output[-20000:],
             "error": "" if completed.returncode == 0 else t("action_failed", self.config.locale, returncode=completed.returncode),
         }
+
+    def start_action_job(self, action: str) -> dict[str, Any]:
+        with self.action_lock:
+            for job in self.action_jobs.values():
+                if job.get("action") == action and job.get("running"):
+                    return dict(job)
+            job_id = uuid.uuid4().hex
+            job = {
+                "job_id": job_id,
+                "action": action,
+                "label": action,
+                "running": True,
+                "ok": None,
+                "returncode": None,
+                "duration_seconds": 0,
+                "output": "",
+                "error": "",
+                "started_at": time.time(),
+            }
+            self.action_jobs[job_id] = job
+
+        thread = threading.Thread(target=self._run_action_job, args=(job_id, action), daemon=True)
+        thread.start()
+        return dict(job)
+
+    def _run_action_job(self, job_id: str, action: str) -> None:
+        try:
+            result = self.run_action(action)
+        except Exception as exc:  # pragma: no cover - defensive background boundary
+            result = {
+                "action": action,
+                "label": action,
+                "returncode": None,
+                "duration_seconds": 0,
+                "ok": False,
+                "output": "",
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+        with self.action_lock:
+            job = self.action_jobs[job_id]
+            job.update(result)
+            job["job_id"] = job_id
+            job["running"] = False
+            job["finished_at"] = time.time()
+
+    def action_job(self, job_id: str) -> dict[str, Any]:
+        with self.action_lock:
+            job = self.action_jobs.get(job_id)
+            if not job:
+                raise FileNotFoundError(t("route_not_found", self.config.locale))
+            current = dict(job)
+        if current.get("running"):
+            current["duration_seconds"] = round(time.time() - float(current.get("started_at") or time.time()), 1)
+        return current
 
 
 STATE = WorkbenchState(WorkbenchConfig())
@@ -585,6 +649,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 kind = unquote(parts[3])
                 resource_id = unquote(parts[4])
                 self.send_json(STATE.read_resource(kind, resource_id))
+            elif parsed.path.startswith("/api/action-jobs/"):
+                job_id = unquote(parsed.path.removeprefix("/api/action-jobs/"))
+                self.send_json(STATE.action_job(job_id))
             else:
                 self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
         except Exception as exc:
@@ -617,6 +684,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         try:
             if parsed.path.startswith("/api/actions/"):
                 action = unquote(parsed.path.removeprefix("/api/actions/"))
+                if action == "import-openwebui":
+                    self.send_json(STATE.start_action_job(action), HTTPStatus.ACCEPTED)
+                    return
                 result = STATE.run_action(action)
                 status = HTTPStatus.OK if result["ok"] else HTTPStatus.BAD_GATEWAY
                 self.send_json(result, status)

@@ -97,7 +97,9 @@ function setText(id, value) {
 }
 
 function formatActionResult(result) {
-  return `$ ${result.command.join(" ")}\n\n${t("log.exitCode")}: ${result.returncode}\n${t("log.duration")}: ${formatNumber(result.duration_seconds, 1)}s\n\n${result.output}`;
+  const command = Array.isArray(result.command) ? `$ ${result.command.join(" ")}` : result.label || result.action || "";
+  const returncode = result.returncode === null || typeof result.returncode === "undefined" ? "-" : result.returncode;
+  return `${command}\n\n${t("log.exitCode")}: ${returncode}\n${t("log.duration")}: ${formatNumber(result.duration_seconds, 1)}s\n\n${result.output || ""}`;
 }
 
 function escapeHtml(value) {
@@ -551,6 +553,10 @@ async function runAction(action) {
   log.textContent = t("log.starting", { action });
   try {
     const result = await api(`/api/actions/${encodeURIComponent(action)}`, { method: "POST", body: "{}" });
+    if (result.running && result.job_id) {
+      await pollActionJob(result.job_id);
+      return;
+    }
     log.textContent = formatActionResult(result);
     await refreshStatus();
     await refreshModels(false);
@@ -561,6 +567,23 @@ async function runAction(action) {
     } else {
       log.textContent += `\n\n${t("state.error")}: ${error.message}`;
     }
+  }
+}
+
+async function pollActionJob(jobId) {
+  const log = el("action-log");
+  for (;;) {
+    const result = await api(`/api/action-jobs/${encodeURIComponent(jobId)}`);
+    if (result.running) {
+      log.textContent = `${formatActionResult(result)}\n\n${t("state.running")}`;
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      continue;
+    }
+    log.textContent = formatActionResult(result);
+    await refreshStatus();
+    await refreshModels(false);
+    await refreshResources(false);
+    return;
   }
 }
 

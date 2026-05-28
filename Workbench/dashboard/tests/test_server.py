@@ -191,7 +191,15 @@ class WorkbenchStateTests(unittest.TestCase):
             "openwebui:\n  base_url: http://127.0.0.1:3000\n  admin_token: YOUR_OPEN_WEBUI_API_KEY\n",
             encoding="utf-8",
         )
-        state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://openwebui:8080", locale="de"))
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://openwebui:8080",
+                import_timeout=1800,
+                import_http_timeout=600,
+                locale="de",
+            )
+        )
         completed = SimpleNamespace(returncode=2, stdout="import failed\n")
 
         with (
@@ -202,10 +210,45 @@ class WorkbenchStateTests(unittest.TestCase):
 
         command = run.call_args.kwargs["args"] if "args" in run.call_args.kwargs else run.call_args.args[0]
         self.assertIn("--config", command)
+        self.assertIn("--timeout", command)
+        self.assertIn("600", command)
         self.assertNotIn("--base-url", command)
+        self.assertEqual(run.call_args.kwargs["timeout"], 1800)
         self.assertFalse(result["ok"])
         self.assertEqual(result["output"], "import failed\n")
         self.assertEqual(result["error"], "Aktion fehlgeschlagen (Exit-Code 2). Details stehen in der Ausgabe.")
+
+    def test_import_action_can_run_as_background_job_without_duplicate_start(self) -> None:
+        state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://openwebui:8080", locale="de"))
+        release = threading.Event()
+
+        def fake_run_action(action: str) -> dict[str, object]:
+            release.wait(timeout=2)
+            return {
+                "action": action,
+                "label": "Import to OpenWebUI",
+                "returncode": 0,
+                "duration_seconds": 1.0,
+                "ok": True,
+                "output": "done\n",
+                "error": "",
+            }
+
+        with patch.object(state, "run_action", side_effect=fake_run_action):
+            first = state.start_action_job("import-openwebui")
+            second = state.start_action_job("import-openwebui")
+            self.assertTrue(first["running"])
+            self.assertEqual(first["job_id"], second["job_id"])
+            release.set()
+            for _ in range(20):
+                current = state.action_job(first["job_id"])
+                if not current["running"]:
+                    break
+                threading.Event().wait(0.05)
+
+        self.assertFalse(current["running"])
+        self.assertTrue(current["ok"])
+        self.assertEqual(current["output"], "done\n")
 
     def test_basic_auth_protects_dashboard_routes(self) -> None:
         state = WorkbenchState(

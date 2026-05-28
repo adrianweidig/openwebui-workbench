@@ -50,6 +50,8 @@ Then open:
 5. Run `Check import`.
 6. With `OPENWEBUI_ADMIN_TOKEN` set, run `Sync to OpenWebUI`.
 
+The real OpenWebUI sync runs as a background job. The dashboard remains usable while it runs; triggering the same sync again shows the active job instead of starting a parallel import.
+
 The sync actions use the existing scripts:
 
 ```powershell
@@ -77,7 +79,9 @@ The dashboard defaults to German. It can switch to English through the language 
 | `WORKBENCH_AUTH_PASSWORD` | Password for dashboard HTTP Basic Auth. Do not commit it. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternative path to a password file in the container. |
 | `WORKBENCH_ALLOW_WRITE` | `true` allows Markdown write access. |
-| `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout for generator, import, and verification actions. |
+| `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout for generator, dry-run, and verification actions. |
+| `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Process timeout for the background OpenWebUI sync. Default: 1800 seconds. |
+| `WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS` | HTTP timeout per OpenWebUI API request during import. Default: 600 seconds. |
 | `WORKBENCH_LOCALE` | Dashboard default locale, currently `de` or `en`. |
 
 ## Security
