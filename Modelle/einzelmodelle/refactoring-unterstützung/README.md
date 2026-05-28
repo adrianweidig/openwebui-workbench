@@ -22,6 +22,8 @@ Erzeugt aus `15_refactoring-unterstützung.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.md`: Goldstandard für verhaltenswahrende Refactoring-Pläne
+- `beispiele/refactoring-goldstandard-briefing.md`: Few-Shot-Beispiele für Invarianten, Charakterisierungstests, Rollback und Scope-Grenzen
 
 ## Hinweis
 

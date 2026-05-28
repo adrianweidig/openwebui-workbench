@@ -5,7 +5,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBjb2RlIGljb248L3RpdGxlPgogIDxkZXNjIGlkPSJkZXNjIj5TaW1wbGUgY29kZSBicmFja2V0cyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cGF0aCBkPSJNMjA2IDE4NGwtNzQgNzIgNzQgNzJNMzA2IDE4NGw3NCA3Mi03NCA3Mk0yNzggMTY2bC00NCAxODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
-      "description": "Offline-Aufgabenmodell für Codeanalyse. Nutzer möchten bestehenden Code verstehen, Abhängigkeiten erkennen, Risiken finden oder Architektur und Datenflüsse erklären lassen. Passend, wenn vorhandener Code gelesen, erklärt, strukturiert oder bewertet werden soll.",
+      "description": "Analysiert Codebasen, Datenflüsse, Abhängigkeiten und Hotspots mit klarer Trennung von belegten Fakten, Hypothesen, Risiken und lokalen Prüfpfaden.",
       "capabilities": {
         "file_context": true,
         "vision": true,

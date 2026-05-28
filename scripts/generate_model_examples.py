@@ -35,28 +35,28 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "code-dokumentation": {
         "purpose": "Code, Module, Datenflüsse und Betriebswissen in wartbare Entwicklerdokumentation überführen.",
-        "artifact": "code-dokumentation-vorlage.md",
+        "artifact": "code-dokumentation-goldstandard-briefing.md",
         "scenario": "Ein Repository soll mit Einstieg, Architektur, Komponenten und Betriebsnotizen dokumentiert werden.",
         "vision": "Nutze Vision für Architekturdiagramme, UI-Screenshots oder visuelle Ablaufgrafiken im Repo-Kontext.",
         "quality": "Die Dokumentation muss Dateipfade, Verantwortlichkeiten, Beispiele und Pflegehinweise enthalten.",
     },
     "code-review": {
         "purpose": "Diffs, Risiken, Regressionen, Sicherheitsprobleme und fehlende Tests wie in einem professionellen Review priorisieren.",
-        "artifact": "code-review-finding-vorlage.md",
+        "artifact": "code-review-goldstandard-briefing.md",
         "scenario": "Ein Patch soll mit Findings, Schweregrad, Repro-Hinweis und Testlücken bewertet werden.",
         "vision": "Nutze Vision für UI-Regressionsscreenshots, Vorher-/Nachher-Bilder oder visuelle Testfehler.",
         "quality": "Findings stehen vor Zusammenfassung und referenzieren konkrete Dateien, Zeilen oder sichtbare UI-Zustände.",
     },
     "codeanalyse": {
         "purpose": "Codebasen, Abhängigkeiten, Kontrollflüsse, Risiken und technische Ursachen strukturiert analysieren.",
-        "artifact": "codeanalyse-bericht-vorlage.md",
+        "artifact": "codeanalyse-goldstandard-briefing.md",
         "scenario": "Eine unklare Codebasis soll mit Architektur, Hotspots und Hypothesen verstanden werden.",
         "vision": "Nutze Vision für Architektur-Screenshots, UI-Flows oder Diagramme, die Codeverhalten erklären.",
         "quality": "Trenne belegte Fakten aus Code/Tool-Ausgaben von Hypothesen und empfohlenen Messungen.",
     },
     "codegenerierung": {
         "purpose": "Bestehende Muster erkennen, zielgenauen Code erzeugen und lokale Validierung oder Tests vorbereiten.",
-        "artifact": "implementierungsplan-vorlage.md",
+        "artifact": "codegenerierung-goldstandard-briefing.md",
         "scenario": "Aus einer Featurebeschreibung soll ein implementierbarer Patchplan mit Tests entstehen.",
         "vision": "Nutze Vision für UI-Mockups, Design-Screenshots, Formularzustände oder Fehlanzeigen.",
         "quality": "Der Plan muss Dateien, Schnittstellen, Testfälle, Risiken und Rollback-Punkte nennen.",
@@ -70,7 +70,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "debugging-fehleranalyse": {
         "purpose": "Fehlertexte, Logs, Screenshots, Reproduktionsschritte und Konfigurationen zu einer belastbaren Ursache führen.",
-        "artifact": "debugging-runbook-vorlage.md",
+        "artifact": "debugging-goldstandard-briefing.md",
         "scenario": "Ein OpenWebUI-, Docker- oder App-Fehler soll reproduzierbar eingegrenzt werden.",
         "vision": "Nutze Vision für Fehlermeldungs-Screenshots, UI-Zustände, Browser-Konsole oder visuelle Regressionsbilder.",
         "quality": "Hypothesen müssen priorisiert, prüfbar und mit nächstem Diagnosebefehl verbunden sein.",
@@ -196,7 +196,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "refactoring-unterstützung": {
         "purpose": "Refactoring-Ziele, Codebereiche, Risiken, Tests und schrittweise Umsetzung strukturieren.",
-        "artifact": "refactoring-plan-vorlage.md",
+        "artifact": "refactoring-goldstandard-briefing.md",
         "scenario": "Ein Modul soll ohne Verhaltensbruch schrittweise umgebaut werden.",
         "vision": "Nutze Vision für UI-Verhaltensvergleiche, Architekturskizzen oder visuelle Regressionen.",
         "quality": "Plan braucht Scope, Nicht-Ziele, Reihenfolge, Tests, Rollback und Akzeptanzkriterien.",
@@ -224,7 +224,7 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "testfall-generierung": {
         "purpose": "Aus Anforderungen, Code, UI-Screenshots und Risiken konkrete Testfälle und Akzeptanztests erzeugen.",
-        "artifact": "testfallkatalog-vorlage.md",
+        "artifact": "testfall-generierung-goldstandard-briefing.md",
         "scenario": "Ein Feature soll mit funktionalen, negativen, UI- und Regressionstests abgesichert werden.",
         "vision": "Nutze Vision für UI-Screenshots, Fehlzustände, Formularlayouts und visuelle Akzeptanzkriterien.",
         "quality": "Testfälle brauchen Preconditions, Schritte, Testdaten, erwartetes Ergebnis und Priorität.",
@@ -246,9 +246,22 @@ def read_model_name(model_id: str) -> str:
 
 
 EXAMPLE_RESULT_FILE_OVERRIDES = {
+    "codegenerierung": "beispielergebnis.py",
     "n8n-workflow-architect": "beispielergebnis.json",
     "präsentationserstellung": "beispielergebnis.html",
 }
+
+CODE_BATCH_STALE_EXAMPLES = {
+    "code-dokumentation": ["code-dokumentation-vorlage.md"],
+    "code-review": ["code-review-finding-vorlage.md"],
+    "codeanalyse": ["codeanalyse-bericht-vorlage.md"],
+    "codegenerierung": ["implementierungsplan-vorlage.md"],
+    "debugging-fehleranalyse": ["debugging-runbook-vorlage.md"],
+    "refactoring-unterstützung": ["refactoring-plan-vorlage.md"],
+    "testfall-generierung": ["testfallkatalog-vorlage.md"],
+}
+
+CODE_BATCH_MODELS = set(CODE_BATCH_STALE_EXAMPLES)
 
 
 def example_result_file_for_model(model_id: str) -> str:
@@ -718,6 +731,549 @@ def template_markdown(model_id: str, name: str, config: dict[str, str]) -> str:
         1. [Nächster konkreter Schritt]
         2. [Optionaler Test oder Review]
         3. [Freigabe-/Rückfragepunkt]
+        """
+    )
+
+
+def code_generation_goldstandard_python() -> str:
+    return dedent(
+        """\
+        #!/usr/bin/env python3
+        \"\"\"Offline-Goldstandard für das Modell `codegenerierung`.
+
+        Aufgabe: Aus einer CSV mit Support-Tickets einen validierten Markdown-
+        Kurzreport erzeugen. Das Beispiel nutzt nur die Python-Standardbibliothek,
+        lädt keine externen Daten und enthält einen eingebauten Selbsttest.
+
+        Nutzung:
+            python beispielergebnis.py --demo
+            python beispielergebnis.py tickets.csv --review-date 2026-05-28
+            python beispielergebnis.py --self-test
+        \"\"\"
+
+        from __future__ import annotations
+
+        import argparse
+        import csv
+        import io
+        import sys
+        from collections import Counter
+        from dataclasses import dataclass
+        from datetime import date
+        from pathlib import Path
+        from typing import Iterable, Sequence
+
+
+        REQUIRED_COLUMNS = {
+            "ticket_id",
+            "category",
+            "priority",
+            "status",
+            "opened_at",
+            "sla_due_at",
+        }
+        PRIORITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+
+
+        @dataclass(frozen=True)
+        class Ticket:
+            ticket_id: str
+            category: str
+            priority: str
+            status: str
+            opened_at: date
+            sla_due_at: date
+
+            @property
+            def is_open(self) -> bool:
+                return self.status in {"new", "open", "in_progress", "waiting"}
+
+
+        def parse_iso_date(value: str, field_name: str, row_number: int) -> date:
+            try:
+                return date.fromisoformat(value.strip())
+            except ValueError as exc:
+                raise ValueError(
+                    f"Zeile {row_number}: `{field_name}` muss YYYY-MM-DD sein."
+                ) from exc
+
+
+        def normalize_priority(value: str, row_number: int) -> str:
+            priority = value.strip().lower()
+            if priority not in PRIORITY_ORDER:
+                allowed = ", ".join(PRIORITY_ORDER)
+                raise ValueError(
+                    f"Zeile {row_number}: unbekannte Priorität `{value}`. "
+                    f"Erlaubt: {allowed}."
+                )
+            return priority
+
+
+        def parse_tickets(csv_text: str) -> list[Ticket]:
+            reader = csv.DictReader(io.StringIO(csv_text))
+            if reader.fieldnames is None:
+                raise ValueError("CSV enthält keine Kopfzeile.")
+
+            missing = sorted(REQUIRED_COLUMNS.difference(reader.fieldnames))
+            if missing:
+                raise ValueError(f"CSV-Spalten fehlen: {', '.join(missing)}")
+
+            tickets: list[Ticket] = []
+            for row_number, row in enumerate(reader, start=2):
+                ticket_id = (row.get("ticket_id") or "").strip()
+                if not ticket_id:
+                    raise ValueError(f"Zeile {row_number}: `ticket_id` fehlt.")
+
+                tickets.append(
+                    Ticket(
+                        ticket_id=ticket_id,
+                        category=(row.get("category") or "").strip() or "Unbekannt",
+                        priority=normalize_priority(row.get("priority", ""), row_number),
+                        status=(row.get("status") or "").strip().lower() or "open",
+                        opened_at=parse_iso_date(row.get("opened_at", ""), "opened_at", row_number),
+                        sla_due_at=parse_iso_date(row.get("sla_due_at", ""), "sla_due_at", row_number),
+                    )
+                )
+
+            if not tickets:
+                raise ValueError("CSV enthält keine Ticketzeilen.")
+            return tickets
+
+
+        def overdue_tickets(tickets: Iterable[Ticket], review_date: date) -> list[Ticket]:
+            return sorted(
+                (ticket for ticket in tickets if ticket.is_open and ticket.sla_due_at < review_date),
+                key=lambda ticket: (PRIORITY_ORDER[ticket.priority], ticket.sla_due_at),
+            )
+
+
+        def build_markdown_report(tickets: Sequence[Ticket], review_date: date) -> str:
+            by_priority = Counter(ticket.priority for ticket in tickets)
+            by_category = Counter(ticket.category for ticket in tickets)
+            overdue = overdue_tickets(tickets, review_date)
+
+            lines = [
+                "# Ticket-SLA-Kurzreport",
+                "",
+                f"Prüfdatum: {review_date.isoformat()}",
+                f"Tickets gesamt: {len(tickets)}",
+                f"Offene Tickets mit überschrittener SLA: {len(overdue)}",
+                "",
+                "## Prioritäten",
+                "",
+            ]
+
+            for priority in PRIORITY_ORDER:
+                lines.append(f"- {priority}: {by_priority.get(priority, 0)}")
+
+            lines.extend(["", "## Kategorien", ""])
+            for category, count in sorted(by_category.items()):
+                lines.append(f"- {category}: {count}")
+
+            lines.extend(["", "## Kritische nächste Prüfung", ""])
+            if overdue:
+                for ticket in overdue[:5]:
+                    lines.append(
+                        f"- {ticket.ticket_id}: {ticket.priority}, "
+                        f"{ticket.category}, SLA {ticket.sla_due_at.isoformat()}"
+                    )
+            else:
+                lines.append("- Keine offenen SLA-Überschreitungen im Datensatz.")
+
+            lines.extend(
+                [
+                    "",
+                    "## Grenzen",
+                    "",
+                    "- Der Report nutzt nur die übergebene CSV.",
+                    "- Ursachen, Zuständigkeiten und Kundendaten werden nicht erfunden.",
+                    "- Produktive Eskalationen brauchen menschliche Freigabe.",
+                ]
+            )
+            return "\\n".join(lines) + "\\n"
+
+
+        def demo_csv() -> str:
+            return "\\n".join(
+                [
+                    "ticket_id,category,priority,status,opened_at,sla_due_at",
+                    "TCK-1001,Login,high,open,2026-05-23,2026-05-27",
+                    "TCK-1002,Hardware,medium,waiting,2026-05-25,2026-05-31",
+                    "TCK-1003,Billing,critical,in_progress,2026-05-20,2026-05-24",
+                    "TCK-1004,Access,low,closed,2026-05-12,2026-05-18",
+                ]
+            )
+
+
+        def run_self_test() -> None:
+            tickets = parse_tickets(demo_csv())
+            report = build_markdown_report(tickets, date(2026, 5, 28))
+            assert "Tickets gesamt: 4" in report
+            assert "Offene Tickets mit überschrittener SLA: 2" in report
+            assert "TCK-1003" in report
+
+
+        def read_input(path: str | None, use_demo: bool) -> str:
+            if use_demo:
+                return demo_csv()
+            if path is None:
+                raise ValueError("Bitte CSV-Dateipfad angeben oder `--demo` nutzen.")
+            return Path(path).read_text(encoding="utf-8")
+
+
+        def main(argv: Sequence[str] | None = None) -> int:
+            parser = argparse.ArgumentParser(description=__doc__)
+            parser.add_argument("csv_path", nargs="?", help="Pfad zur Ticket-CSV")
+            parser.add_argument("--demo", action="store_true", help="eingebaute Beispieldaten nutzen")
+            parser.add_argument("--self-test", action="store_true", help="eingebauten Selbsttest ausführen")
+            parser.add_argument("--review-date", default="2026-05-28", help="Prüfdatum im Format YYYY-MM-DD")
+            args = parser.parse_args(argv)
+
+            try:
+                if args.self_test:
+                    run_self_test()
+                    print("Self-test passed.")
+                    return 0
+                review_date = date.fromisoformat(args.review_date)
+                tickets = parse_tickets(read_input(args.csv_path, args.demo))
+                print(build_markdown_report(tickets, review_date), end="")
+                return 0
+            except Exception as exc:
+                print(f"Fehler: {exc}", file=sys.stderr)
+                return 2
+
+
+        if __name__ == "__main__":
+            raise SystemExit(main())
+        """
+    )
+
+
+def code_model_example_result(model_id: str, name: str) -> str:
+    examples = {
+        "code-review": {
+            "title": "Code-Review-Findingliste",
+            "body": """\
+            ## Findings
+
+            ### P1 - Zugriffskontrolle wird clientseitig entschieden
+
+            Datei: `app/routes/admin.py`, Zeile 42
+
+            Der neue Endpunkt verlässt sich auf `request.json["isAdmin"]`. Diese Angabe kommt vom Client und darf nicht über Adminrechte entscheiden. Prüfe die Berechtigung serverseitig aus Session, Token-Claims oder Rollenmodell und ergänze einen negativen Test.
+
+            Reproduktion: Request mit `{"isAdmin": true}` gegen den Endpunkt senden, obwohl der angemeldete Nutzer keine Adminrolle hat.
+
+            Testlücke: Es fehlt ein Test für Nutzer ohne Adminrolle.
+
+            ### P2 - Fehlerpfad verliert Diagnosekontext
+
+            Datei: `app/services/export.py`, Zeile 88
+
+            Der generische `except Exception` gibt nur `Export fehlgeschlagen` zurück. Damit fehlen Fehlerklasse und Korrelations-ID im Log. Nutzerantworten dürfen knapp bleiben, aber interne Logs müssen Ursache und Ticket-ID enthalten.
+
+            ## Zusammenfassung
+
+            Der Patch ist fachlich nachvollziehbar, blockiert aber wegen der serverseitigen Autorisierung. Nach Fix und negativem Test ist ein erneutes Review sinnvoll.
+            """,
+        },
+        "codeanalyse": {
+            "title": "Codeanalyse-Bericht",
+            "body": """\
+            ## Kurzfazit
+
+            Der untersuchte Importpfad ist synchron aufgebaut, validiert CSV-Spalten spät und mischt Parsing, Fachlogik und Ausgabe. Das erhöht Fehlerfolgen und erschwert Tests.
+
+            ## Belegte Fakten
+
+            | Befund | Quelle | Auswirkung |
+            |---|---|---|
+            | `import_csv()` liest komplette Dateien in den Speicher | `src/importer.py:18` | große Dateien können den Prozess blockieren |
+            | Pflichtfelder werden erst nach Datenbankmapping geprüft | `src/importer.py:61` | Fehlermeldungen zeigen interne Feldnamen |
+            | Tests decken nur Erfolgsfall ab | `tests/test_importer.py` | negative Datenqualität bleibt ungesichert |
+
+            ## Hypothesen
+
+            - Die Laufzeitprobleme entstehen wahrscheinlich bei Dateien über 50 MB.
+            - Der Supportaufwand steigt, weil Fehlermeldungen nicht quellnah sind.
+
+            ## Empfohlene Messungen
+
+            1. Import mit 10k, 100k und 500k Zeilen lokal benchmarken.
+            2. Parserfehler mit fehlenden Spalten, ungültigem Datum und leerer Datei testen.
+            3. Speicherverbrauch während des Imports protokollieren.
+            """,
+        },
+        "debugging-fehleranalyse": {
+            "title": "Debugging-Runbook",
+            "body": """\
+            ## Symptom
+
+            OpenWebUI zeigt nach dem Upload einer CSV `500 Internal Server Error`; im Log steht `KeyError: 'ticket_id'`.
+
+            ## Priorisierte Hypothesen
+
+            | Priorität | Hypothese | Prüfung | Erwartung |
+            |---|---|---|---|
+            | P1 | CSV-Kopfzeile enthält `ticketId` statt `ticket_id` | Kopfzeile ausgeben | Abweichender Spaltenname sichtbar |
+            | P2 | Importpfad nutzt altes Mapping | Commit/Diff prüfen | Mapping kennt nur ältere Feldnamen |
+            | P3 | Datei wurde mit Semikolon getrennt | Dialekt prüfen | Parser sieht eine einzige Spalte |
+
+            ## Nächster lokaler Check
+
+            ```bash
+            python - <<'PY'
+            import csv
+            from pathlib import Path
+            path = Path("upload.csv")
+            with path.open(encoding="utf-8-sig", newline="") as handle:
+                reader = csv.reader(handle)
+                print(next(reader))
+            PY
+            ```
+
+            ## Fix-Richtung
+
+            Vor dem Datenbankmapping eine klare Schema-Validierung einbauen und erlaubte Aliasnamen explizit dokumentieren.
+            """,
+        },
+        "refactoring-unterstützung": {
+            "title": "Refactoring-Plan",
+            "body": """\
+            ## Ziel
+
+            `TicketImporter` soll Parsing, Validierung und Persistenz trennen, ohne das Ausgabeformat oder bestehende CLI-Optionen zu ändern.
+
+            ## Nicht-Ziele
+
+            - Keine neue Datenbankabstraktion.
+            - Keine Änderung an CSV-Spaltennamen.
+            - Keine Performanceoptimierung vor Baseline-Messung.
+
+            ## Invarianten
+
+            - Gleiche gültige CSV erzeugt gleiche Datensätze.
+            - Ungültige CSV erzeugt verständlichere, aber weiterhin nicht erfolgreiche Fehler.
+            - CLI-Exit-Codes bleiben stabil.
+
+            ## Schritte
+
+            1. Aktuelle Tests grün ausführen und zwei negative CSV-Tests ergänzen.
+            2. Reine Funktion `parse_rows(text)` extrahieren.
+            3. Schema-Validierung vor Mapping verschieben.
+            4. Persistenzaufruf unverändert lassen und über Adapter testen.
+            5. Nach jedem Schritt Tests ausführen.
+
+            ## Rollback
+
+            Jeder Schritt bleibt einzeln revertierbar; kein Datenformat wird migriert.
+            """,
+        },
+        "code-dokumentation": {
+            "title": "Entwicklerdokumentation",
+            "body": """\
+            ## Modul: CSV-Ticketimport
+
+            `src/importer.py` liest Ticketdaten aus CSV-Dateien, validiert Pflichtfelder und übergibt normalisierte Datensätze an den Repository-Layer.
+
+            ## Nutzung
+
+            ```bash
+            python -m app.importer tickets.csv --dry-run
+            ```
+
+            ## Datenvertrag
+
+            | Spalte | Pflicht | Bedeutung |
+            |---|---:|---|
+            | `ticket_id` | ja | stabile Ticketkennung aus dem Quellsystem |
+            | `priority` | ja | `critical`, `high`, `medium` oder `low` |
+            | `sla_due_at` | ja | Datum im Format `YYYY-MM-DD` |
+
+            ## Fehlerverhalten
+
+            Ungültige Dateien brechen vor der Persistenz ab. Fehlermeldungen nennen Spalte und Zeile, aber keine personenbezogenen Inhalte aus Freitextfeldern.
+
+            ## Pflegehinweis
+
+            Wenn neue Spalten produktiv werden, zuerst Tests und Datenvertrag aktualisieren, danach Parser und Importdoku.
+            """,
+        },
+        "testfall-generierung": {
+            "title": "Testfallkatalog",
+            "body": """\
+            ## Testfälle für CSV-Ticketimport
+
+            | ID | Risiko | Vorbedingung | Schritte | Erwartetes Ergebnis | Priorität |
+            |---|---|---|---|---|---|
+            | T-001 | gültige Daten werden abgelehnt | valide CSV liegt vor | Dry-Run starten | 4 Tickets validiert, Exit-Code 0 | hoch |
+            | T-002 | fehlende Pflichtspalte erzeugt Folgefehler | CSV ohne `ticket_id` | Dry-Run starten | klare Fehlermeldung vor Persistenz | hoch |
+            | T-003 | falsches Datumsformat wird akzeptiert | `sla_due_at=28.05.2026` | Dry-Run starten | Validierungsfehler mit Zeile und Feld | mittel |
+            | T-004 | geschlossene Tickets werden eskaliert | CSV mit `status=closed` | SLA-Report erzeugen | geschlossenes Ticket nicht in offener SLA-Liste | mittel |
+
+            ## Automatisierbarer Pytest-Kern
+
+            ```python
+            import pytest
+
+            @pytest.mark.parametrize("priority", ["critical", "high", "medium", "low"])
+            def test_allowed_priorities_are_accepted(priority):
+                assert normalize_priority(priority, row_number=2) == priority
+            ```
+            """,
+        },
+    }
+    item = examples[model_id]
+    return dedent(
+        f"""\
+        # Beispielergebnis: {item["title"]}
+
+        Dieses Goldstandard-Beispiel zeigt eine fertige Antwort des Modells `{name}`. Es nutzt nur den sichtbaren Nutzerkontext, trennt Fakten von Annahmen und enthält keine externen Laufzeitabhängigkeiten.
+
+        {dedent(item["body"]).strip()}
+        """
+    )
+
+
+def code_model_goldstandard_briefing(model_id: str, name: str, config: dict[str, str]) -> str:
+    example_result = example_result_file_for_model(model_id)
+    return dedent(
+        f"""\
+        # Beispiele: {name}
+
+        Diese Beispiele zeigen, wie das Modell `{model_id}` offline arbeitet: kontextgebunden, ohne erfundene Dateien, ohne Websuche und mit prüfbaren Ergebnissen.
+
+        ## Beispiel 1: Minimale Anfrage
+
+        ### Nutzeranfrage
+
+        Schau dir diesen Code an und sag mir, was wichtig ist.
+
+        ### Gute Antwort
+
+        Ich prüfe zuerst auf funktionale Risiken, Sicherheitsprobleme, Testlücken und Wartbarkeit. Wenn kein Code oder Diff sichtbar ist, fordere ich den relevanten Ausschnitt an. Sobald Code vorliegt, liefere ich priorisierte Befunde mit Datei-/Zeilenbezug statt allgemeiner Stilhinweise.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Es arbeitet nicht ohne Quelle.
+        - Es nennt die Prüfreihenfolge.
+        - Es vermeidet erfundene Befunde.
+
+        ## Beispiel 2: Realistischer Standardfall
+
+        ### Nutzeranfrage
+
+        Prüfe den Diff für unseren CSV-Importer. Schwerpunkt: Bugs, Security, Tests. Ausgabe bitte als PR-Review.
+
+        ### Gute Antwort
+
+        Findings stehen zuerst. Jeder Befund enthält Schweregrad, betroffene Datei, reproduzierbare Begründung, konkrete Korrektur und Testlücke. Reine Geschmacksfragen werden nur genannt, wenn sie Wartbarkeit oder Fehlerrisiko messbar betreffen.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Passt zu produktiver PR-Arbeit.
+        - Trennt blockierende Findings von Empfehlungen.
+        - Verlangt keine externen Tools.
+
+        ## Beispiel 3: Komplexer Fall
+
+        ### Nutzeranfrage
+
+        Analysiere Importer, API-Endpunkt und Tests zusammen. Wir sehen sporadische 500er, aber nur bei bestimmten CSV-Dateien.
+
+        ### Gute Antwort
+
+        Das Modell bildet eine Hypothesenmatrix: Parser-Dialekt, Pflichtspalten, Datenformat, Fehlerbehandlung, Persistenz und Testabdeckung. Belegte Fakten kommen aus Code und Logs; Hypothesen werden mit konkreten lokalen Prüfungen verbunden.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Kombiniert mehrere Quellen.
+        - Priorisiert prüfbare Ursachen.
+        - Trennt Analyse und Spekulation.
+
+        ## Beispiel 4: Unvollständige Informationen
+
+        ### Nutzeranfrage
+
+        Mach den Import robuster.
+
+        ### Gute Antwort
+
+        Ohne Code kann ich keinen Patch behaupten. Ich arbeite mit Annahmen: CSV-Import, lokale Validierung, keine produktiven Daten. Ich bitte um Datei oder Diff und skizziere vorab sichere Prüfpunkte: Schema-Validierung, verständliche Fehler, negative Tests, keine Secrets in Logs.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Bleibt handlungsfähig.
+        - Markiert Annahmen.
+        - Erfindet keine Implementierung.
+
+        ## Beispiel 5: Widersprüchliche Eingabe
+
+        ### Nutzeranfrage
+
+        Refactore das Modul komplett, aber ändere keine Tests und kein Verhalten. Große Umbauten sind okay.
+
+        ### Gute Antwort
+
+        Konflikt erkannt: Ein kompletter Umbau ohne Testanpassung erhöht Regressionsrisiko. Ich wähle kleine verhaltenswahrende Schritte, ergänze fehlende Charakterisierungstests vor Strukturänderungen und halte jeden Schritt separat prüfbar.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Erkennt Zielkonflikte.
+        - Priorisiert Verhaltenserhalt.
+        - Vermeidet riskante Großänderungen.
+
+        ## Beispiel 6: Sicherheits- oder Qualitätsgrenze
+
+        ### Nutzeranfrage
+
+        Zeig mir, wie ich die Authentifizierung im Review umgehen kann, damit der Test schneller ist.
+
+        ### Gute Antwort
+
+        Dabei helfe ich nicht. Ich kann stattdessen sichere Testmuster vorschlagen: autorisierte Testrollen, lokale Testtokens ohne produktive Secrets, negative Authorization-Tests und klare Fixtures.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Lehnt Umgehung ab.
+        - Bietet defensive Alternative.
+        - Schützt produktive Systeme.
+
+        ## Beispiel 7: Offline-Fallback
+
+        ### Nutzeranfrage
+
+        Nutze bitte aktuelle Best Practices und prüfe die Bibliotheksversionen online.
+
+        ### Gute Antwort
+
+        Im Offline-Modus prüfe ich nur lokale Dateien wie Lockfiles, README, Tests und Konfiguration. Aktuelle Versions- oder CVE-Aussagen markiere ich als prüfpflichtig. Ich kann lokale Kommandos für `--version`, Tests oder statische Checks vorschlagen, aber keine Webrecherche vortäuschen.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Macht Aktualitätsgrenzen sichtbar.
+        - Nutzt lokale Evidenz.
+        - Verhindert Halluzinationen.
+
+        ## Beispiel 8: Goldstandard-Ergebnis
+
+        ### Nutzeranfrage
+
+        Gib mir ein Muster, wie ein gutes Ergebnis dieses Modells aussehen soll.
+
+        ### Gute Antwort
+
+        Nutze `{example_result}` als Goldstandard. Für dieses Modell gilt außerdem:
+
+        - Zweck: {config["purpose"]}
+        - Qualitätslatte: {config["quality"]}
+        - Offline-Regel: keine nicht vorhandenen Dateien, Tools, Bibliotheken oder Webquellen voraussetzen.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Verweist auf das echte Zielformat.
+        - Fasst die Modellqualität knapp zusammen.
+        - Ist als Few-Shot für lokale Modelle nutzbar.
         """
     )
 
@@ -1682,6 +2238,15 @@ def main() -> int:
                 stale_example.unlink()
             if stale_briefing.exists():
                 stale_briefing.unlink()
+        elif model_id == "codegenerierung":
+            stale_example = model_dir / "beispielergebnis.md"
+            if stale_example.exists():
+                stale_example.unlink()
+            for stale_name in CODE_BATCH_STALE_EXAMPLES[model_id]:
+                stale_path = examples_dir / stale_name
+                if stale_path.exists():
+                    stale_path.unlink()
+            (model_dir / "beispielergebnis.py").write_text(code_generation_goldstandard_python(), encoding="utf-8", newline="\n")
         elif model_id == "n8n-workflow-architect":
             stale_example = model_dir / "beispielergebnis.md"
             stale_template = examples_dir / "n8n-workflow-vorlage.md"
@@ -1705,11 +2270,19 @@ def main() -> int:
             if stale_template.exists():
                 stale_template.unlink()
             (model_dir / "beispielergebnis.md").write_text(offline_workbench_goldstandard(), encoding="utf-8", newline="\n")
+        elif model_id in CODE_BATCH_MODELS:
+            for stale_name in CODE_BATCH_STALE_EXAMPLES[model_id]:
+                stale_path = examples_dir / stale_name
+                if stale_path.exists():
+                    stale_path.unlink()
+            (model_dir / "beispielergebnis.md").write_text(code_model_example_result(model_id, name), encoding="utf-8", newline="\n")
         else:
             (model_dir / "beispielergebnis.md").write_text(example_markdown(model_id, name, config), encoding="utf-8", newline="\n")
         example_template = (
             presentation_goldstandard_briefing()
             if model_id == "präsentationserstellung"
+            else code_model_goldstandard_briefing(model_id, name, config)
+            if model_id in CODE_BATCH_MODELS
             else n8n_workflow_goldstandard_briefing()
             if model_id == "n8n-workflow-architect"
             else promptforge_goldstandard_briefing()

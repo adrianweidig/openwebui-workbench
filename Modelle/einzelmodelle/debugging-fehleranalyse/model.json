@@ -5,7 +5,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyB0b29scyBpY29uPC90aXRsZT4KICA8ZGVzYyBpZD0iZGVzYyI+U2ltcGxlIHNldHRpbmdzIHRvb2wgb24gYSB3aGl0ZSBiYWNrZ3JvdW5kLjwvZGVzYz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZiIvPgogIDxyZWN0IHg9IjY0IiB5PSI2NCIgd2lkdGg9IjM4NCIgaGVpZ2h0PSIzODQiIHJ4PSI0OCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2Ii8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSI1OCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIyIi8+CiAgPHBhdGggZD0iTTI1NiAxMzh2NDJNMjU2IDMzMnY0Mk0xMzggMjU2aDQyTTMzMiAyNTZoNDJNMTcyIDE3MmwzMCAzME0zMTAgMzEwbDMwIDMwTTM0MCAxNzJsLTMwIDMwTTIwMiAzMTBsLTMwIDMwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K",
-      "description": "Offline-Aufgabenmodell für Debugging und Fehleranalyse. Nutzer möchten Fehler, Exceptions, Stacktraces, unerwartetes Verhalten oder kaputte Skripte systematisch analysieren. Passend, wenn ein konkreter Fehler behoben oder eine Ursache eingegrenzt werden soll.",
+      "description": "Erstellt reproduzierbare Diagnosepfade aus Fehlertexten, Logs, Stacktraces, Screenshots und Konfigurationen mit priorisierten Hypothesen und sicheren Checks.",
       "capabilities": {
         "file_context": true,
         "vision": true,

@@ -22,6 +22,8 @@ Erzeugt aus `14_code-dokumentation.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.md`: Goldstandard für wartbare Entwicklerdokumentation
+- `beispiele/code-dokumentation-goldstandard-briefing.md`: Few-Shot-Beispiele für README, Reference, Codebeispiele und Pflegehinweise
 
 ## Hinweis
 

@@ -1,49 +1,31 @@
-# Beispielergebnis und Arbeitsvorlage: Refactoring-Unterstützung
+        # Beispielergebnis: Refactoring-Plan
 
-## Zweck dieses Modells
+        Dieses Goldstandard-Beispiel zeigt eine fertige Antwort des Modells `Refactoring-Unterstützung`. Es nutzt nur den sichtbaren Nutzerkontext, trennt Fakten von Annahmen und enthält keine externen Laufzeitabhängigkeiten.
 
-Refactoring-Ziele, Codebereiche, Risiken, Tests und schrittweise Umsetzung strukturieren.
+        ## Ziel
 
-## Wiederverwendbarer Musterauftrag
+`TicketImporter` soll Parsing, Validierung und Persistenz trennen, ohne das Ausgabeformat oder bestehende CLI-Optionen zu ändern.
 
-> Ein Modul soll ohne Verhaltensbruch schrittweise umgebaut werden.
+## Nicht-Ziele
 
-## Erwartetes Ergebnisartefakt
+- Keine neue Datenbankabstraktion.
+- Keine Änderung an CSV-Spaltennamen.
+- Keine Performanceoptimierung vor Baseline-Messung.
 
-- Primäre Datei: `beispiele/refactoring-plan-vorlage.md`
-- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-- Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+## Invarianten
 
-## Vision- und Screenshot-Nutzung
+- Gleiche gültige CSV erzeugt gleiche Datensätze.
+- Ungültige CSV erzeugt verständlichere, aber weiterhin nicht erfolgreiche Fehler.
+- CLI-Exit-Codes bleiben stabil.
 
-Nutze Vision für UI-Verhaltensvergleiche, Architekturskizzen oder visuelle Regressionen.
+## Schritte
 
-## Tool-first-Ablauf
+1. Aktuelle Tests grün ausführen und zwei negative CSV-Tests ergänzen.
+2. Reine Funktion `parse_rows(text)` extrahieren.
+3. Schema-Validierung vor Mapping verschieben.
+4. Persistenzaufruf unverändert lassen und über Adapter testen.
+5. Nach jedem Schritt Tests ausführen.
 
-1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-4. Ergebnis in der Vorlage unter `beispiele/refactoring-plan-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
+## Rollback
 
-## Qualitätslatte
-
-Plan braucht Scope, Nicht-Ziele, Reihenfolge, Tests, Rollback und Akzeptanzkriterien.
-
-## Copy/Paste-Starterprompt
-
-```text
-Nutze das Modell Refactoring-Unterstützung. Verwende `beispielergebnis.md` und `beispiele/refactoring-plan-vorlage.md` als Vorlage.
-
-Ziel:
-[Was soll am Ende konkret vorliegen?]
-
-Eingaben:
-[Dateien, Text, Screenshots, Daten, Constraints]
-
-Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-Qualitätskriterien:
-[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
-```
+Jeder Schritt bleibt einzeln revertierbar; kein Datenformat wird migriert.

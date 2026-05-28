@@ -1,49 +1,26 @@
-# Beispielergebnis und Arbeitsvorlage: Codeanalyse
+        # Beispielergebnis: Codeanalyse-Bericht
 
-## Zweck dieses Modells
+        Dieses Goldstandard-Beispiel zeigt eine fertige Antwort des Modells `Codeanalyse`. Es nutzt nur den sichtbaren Nutzerkontext, trennt Fakten von Annahmen und enthält keine externen Laufzeitabhängigkeiten.
 
-Codebasen, Abhängigkeiten, Kontrollflüsse, Risiken und technische Ursachen strukturiert analysieren.
+        ## Kurzfazit
 
-## Wiederverwendbarer Musterauftrag
+Der untersuchte Importpfad ist synchron aufgebaut, validiert CSV-Spalten spät und mischt Parsing, Fachlogik und Ausgabe. Das erhöht Fehlerfolgen und erschwert Tests.
 
-> Eine unklare Codebasis soll mit Architektur, Hotspots und Hypothesen verstanden werden.
+## Belegte Fakten
 
-## Erwartetes Ergebnisartefakt
+| Befund | Quelle | Auswirkung |
+|---|---|---|
+| `import_csv()` liest komplette Dateien in den Speicher | `src/importer.py:18` | große Dateien können den Prozess blockieren |
+| Pflichtfelder werden erst nach Datenbankmapping geprüft | `src/importer.py:61` | Fehlermeldungen zeigen interne Feldnamen |
+| Tests decken nur Erfolgsfall ab | `tests/test_importer.py` | negative Datenqualität bleibt ungesichert |
 
-- Primäre Datei: `beispiele/codeanalyse-bericht-vorlage.md`
-- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-- Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+## Hypothesen
 
-## Vision- und Screenshot-Nutzung
+- Die Laufzeitprobleme entstehen wahrscheinlich bei Dateien über 50 MB.
+- Der Supportaufwand steigt, weil Fehlermeldungen nicht quellnah sind.
 
-Nutze Vision für Architektur-Screenshots, UI-Flows oder Diagramme, die Codeverhalten erklären.
+## Empfohlene Messungen
 
-## Tool-first-Ablauf
-
-1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-4. Ergebnis in der Vorlage unter `beispiele/codeanalyse-bericht-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
-
-## Qualitätslatte
-
-Trenne belegte Fakten aus Code/Tool-Ausgaben von Hypothesen und empfohlenen Messungen.
-
-## Copy/Paste-Starterprompt
-
-```text
-Nutze das Modell Codeanalyse. Verwende `beispielergebnis.md` und `beispiele/codeanalyse-bericht-vorlage.md` als Vorlage.
-
-Ziel:
-[Was soll am Ende konkret vorliegen?]
-
-Eingaben:
-[Dateien, Text, Screenshots, Daten, Constraints]
-
-Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-Qualitätskriterien:
-[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
-```
+1. Import mit 10k, 100k und 500k Zeilen lokal benchmarken.
+2. Parserfehler mit fehlenden Spalten, ungültigem Datum und leerer Datei testen.
+3. Speicherverbrauch während des Imports protokollieren.

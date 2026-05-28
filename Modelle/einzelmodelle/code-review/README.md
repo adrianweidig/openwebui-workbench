@@ -22,6 +22,8 @@ Erzeugt aus `11_code-review.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.md`: Goldstandard für priorisierte Review-Findings
+- `beispiele/code-review-goldstandard-briefing.md`: Few-Shot-Beispiele für Review, Testlücken, Offline-Grenzen und sichere Ablehnung
 
 ## Hinweis
 

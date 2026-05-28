@@ -18,6 +18,7 @@ CONFIG_EXAMPLE = ROOT / "scripts" / "openwebui_workspace_config.example.yaml"
 
 REQUIRED_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "codegenerierung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.py"],
     "n8n-workflow-architect": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
     "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
 }

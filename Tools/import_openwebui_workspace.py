@@ -44,6 +44,7 @@ SKILLS_DIR = OPENWEBUI_EXT / "skills"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md", "beispielergebnis.md")
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "codegenerierung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.py"),
     "n8n-workflow-architect": ("mainprompt.md", "fachwissen.md", "beispielergebnis.json"),
     "präsentationserstellung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.html"),
 }

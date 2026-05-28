@@ -9,12 +9,12 @@ Dieses Inventar priorisiert die Offline-Verbesserung der Custom-Modelle. Es ist 
 | `allgemein` | Routing, Assistenz- und Fallback-Modus | `model.json`, Prompts, `fachwissen.md`, Beispiele | nicht vertieft geprüft | `.md` | P2 | offen |
 | `anforderungsanalyse-lastenheft` | Anforderungen, Lastenheft, Pflichtenheft-Vorarbeit | `fachwissen.md`, Beispiele, `beispielergebnis.md` | Beispiel- und Schemaqualität prüfen | `.md` | P1 | offen |
 | `api-schnittstellenentwurf` | API-Design und Schnittstellenspezifikation | `fachwissen.md`, Beispiele, `model.json` | OpenAPI-/JSON-Artefakte prüfen | `.yaml`, `.json`, `.md` | P1 | offen |
-| `code-dokumentation` | Code erklären und dokumentieren | `fachwissen.md`, Beispiele | Codebeispiele und Dokumentationsstandards prüfen | `.md` | P1 | offen |
-| `code-review` | Defensives Code-Review | `fachwissen.md`, Beispiele | Review-Grenzen, Security und Testlücken prüfen | `.md` | P1 | offen |
-| `codeanalyse` | Statische und semantische Codeanalyse | `fachwissen.md`, Beispiele | Analyseformat und Belegführung prüfen | `.md`, `.json` | P1 | offen |
-| `codegenerierung` | Code erzeugen | `fachwissen.md`, Beispiele, Artefakte | Lauffähige Code-Goldstandards fehlen je Zielstack | `.py`, `.js`, `.html`, `.md` | P1 | offen |
+| `code-dokumentation` | Code erklären und dokumentieren | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Diátaxis-nahe Dokuarten, belegte Codebeispiele und Pflegehinweise ergänzt | `.md` | P1 | Batch 4 fertig |
+| `code-review` | Defensives Code-Review | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Findings-first-Review, Security-Grenzen und konkrete Testlücken ergänzt | `.md` | P1 | Batch 4 fertig |
+| `codeanalyse` | Statische und semantische Codeanalyse | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Fakten-/Hypothesentrennung, Hotspots und lokale Prüfpfade ergänzt | `.md`, `.json` | P1 | Batch 4 fertig |
+| `codegenerierung` | Code erzeugen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.py`, Beispiele, Scripts | Markdown-Goldstandard durch ausführbares Python-Offline-Artefakt ersetzt | `.py`, ergänzend `.md` | P1 | Batch 4 fertig |
 | `compliance-richtlinienprüfung` | Richtlinien- und Compliance-Prüfung | `fachwissen.md`, Beispiele | sensible Domäne, Nachweis- und Normenrisiko | `.md` | P1 | offen |
-| `debugging-fehleranalyse` | Fehleranalyse und Debugging | `fachwissen.md`, Beispiele | reproduzierbare Diagnosepfade ausbauen | `.md`, `.py`, `.txt` | P1 | offen |
+| `debugging-fehleranalyse` | Fehleranalyse und Debugging | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Hypothesenmatrix, sichere Checks und Runbook-Format ergänzt | `.md`, `.py`, `.txt` | P1 | Batch 4 fertig |
 | `dokumentenanalyse` | Dokumente analysieren | `fachwissen.md`, Beispiele | Zitations- und Faktentrennung prüfen | `.md`, `.json` | P1 | offen |
 | `dokumentengenerierung` | Dokumente erstellen | `fachwissen.md`, Beispiele | Goldstandard-Dokumente und Zielformate prüfen | `.md`, optional `.html` | P1 | offen |
 | `dokumentenvergleich` | Dokumente vergleichen | `fachwissen.md`, Beispiele | Vergleichsmatrix und Konfliktlogik prüfen | `.md`, `.csv` | P1 | offen |
@@ -32,9 +32,9 @@ Dieses Inventar priorisiert die Offline-Verbesserung der Custom-Modelle. Es ist 
 | `promptforge` | Promptvorlagen erzeugen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Goldstandard-Promptvorlage ohne Platzhalter und robuste Few-Shots ergänzt | `.md` | P0 | Batch 3 fertig |
 | `prozess-workflow-dokumentation` | Prozesse und Workflows dokumentieren | `fachwissen.md`, Beispiele | Diagramm- und Tabellenmuster prüfen | `.md`, optional `.svg` | P1 | offen |
 | `präsentationserstellung` | browserbasierte HTML-Keynotes | `fachwissen.md`, `mainprompt.md`, `systemprompt.md`, `beispielergebnis.html`, Beispiele, Scripts | Markdown-Goldstandard durch fertiges HTML-Artefakt ersetzen | `.html` | P0 | Batch 1 fertig |
-| `refactoring-unterstützung` | Code-Refactoring | `fachwissen.md`, Beispiele | sichere Änderungsvorschläge und Tests prüfen | `.md`, `.diff`, `.py` | P1 | offen |
+| `refactoring-unterstützung` | Code-Refactoring | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Verhaltenserhalt, Invarianten, Charakterisierungstests und Rollback ergänzt | `.md`, `.diff`, `.py` | P1 | Batch 4 fertig |
 | `report-dashboard-vorbereitung` | Reports und Dashboard-Vorbereitung | `fachwissen.md`, Beispiele | Dashboard-/Datenstruktur-Goldstandard prüfen | `.html`, `.csv`, `.md` | P1 | offen |
 | `support-ticket-vorbereitung` | Supportfälle strukturieren | `fachwissen.md`, Beispiele | Datenschutz und Eskalation prüfen | `.md`, `.json` | P1 | offen |
 | `tabellen-csv-datenanalyse` | Tabellen- und CSV-Analyse | `fachwissen.md`, Beispiele | CSV-/Notebook-/Analyseartefakte prüfen | `.csv`, `.py`, `.ipynb`, `.md` | P1 | offen |
-| `testfall-generierung` | Testfälle erzeugen | `fachwissen.md`, Beispiele | Testmatrix und ausführbare Beispiele prüfen | `.md`, `.csv`, `.py` | P1 | offen |
+| `testfall-generierung` | Testfälle erzeugen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Risikobasierte Testmatrix, negative Fälle und Offline-Fixtures ergänzt | `.md`, `.csv`, `.py` | P1 | Batch 4 fertig |
 | `übersetzung-lokalisierung` | Übersetzung und Lokalisierung | `fachwissen.md`, Beispiele, i18n | Terminologie- und Locale-Regeln prüfen | `.md`, `.json`, `.csv` | P1 | offen |
