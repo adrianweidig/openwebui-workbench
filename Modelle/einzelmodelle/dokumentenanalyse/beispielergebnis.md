@@ -1,49 +1,66 @@
-# Beispielergebnis und Arbeitsvorlage: Dokumentenanalyse
+# Beispielergebnis: Dokumentenanalyse
 
-## Zweck dieses Modells
+Dieses Goldstandard-Beispiel zeigt eine direkt nutzbare Offline-Antwort des Modells `dokumentenanalyse`. Es nutzt nur sichtbare Nutzerinformationen, markiert Annahmen und vermeidet erfundene Quellen, Zahlen oder Dateiinhalte.
 
-Dokumente, Scans, PDFs und strukturierte Inhalte quellenorientiert analysieren.
+## Nutzeranfrage
 
-## Wiederverwendbarer Musterauftrag
+Ein Vertrag, Bericht oder Scan soll mit Kernaussagen, Risiken und Belegstellen analysiert werden.
 
-> Ein Vertrag, Bericht oder Scan soll mit Kernaussagen, Risiken und Belegstellen analysiert werden.
+## Gute Antwort
 
-## Erwartetes Ergebnisartefakt
+### Kurzfazit
 
-- Primäre Datei: `beispiele/dokumentenanalyse-vorlage.md`
-- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-- Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+Ich erstelle eine erste belastbare Fassung für diesen Auftrag: Dokumente, Scans, PDFs und strukturierte Inhalte quellenorientiert analysieren.
 
-## Vision- und Screenshot-Nutzung
+Die Antwort bleibt offline nutzbar. Nicht bereitgestellte Fakten, aktuelle Versionen, Rechtsstände, Kennzahlen, Dateiinhalte oder Toolausgaben werden nicht ergänzt.
+
+### Annahmen
+
+- Die Sprache bleibt Deutsch.
+- Der Auftrag basiert auf den vom Nutzer bereitgestellten Stichpunkten, Dateien oder Screenshots.
+- Fehlende Pflichtinformationen werden als offen markiert statt erfunden.
+- Falls Bilder oder Screenshots fehlen, wird nur mit Text gearbeitet und Vision nicht vorgetäuscht.
+
+### Arbeitsprodukt
+
+| Abschnitt | Inhalt |
+|---|---|
+| Ziel | Dokumente, Scans, PDFs und strukturierte Inhalte quellenorientiert analysieren. |
+| Eingangsquellen | Nutzertext, bereitgestellte Dateien und sichtbare Bildinhalte; keine Live-Websuche |
+| Zielformat | `beispielergebnis.md`; ergänzendes Few-Shot-Material in `beispiele/dokumentenanalyse-vorlage.md` |
+| Kernstruktur | Kurzfazit, verwendete Quellen, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+| Prüflogik | Kernaussagen, Belege, Unsicherheiten und extrahierte Daten müssen getrennt bleiben. |
+| Offline-Grenze | Aktuelle externe Fakten werden als prüfpflichtig markiert |
+
+### Musterabschnitt für das Ergebnis
+
+#### Verwendete Informationen
+
+- Direkt aus der Anfrage übernommen: Ein Vertrag, Bericht oder Scan soll mit Kernaussagen, Risiken und Belegstellen analysiert werden.
+- Sichtbare Zusatzquellen: nur berücksichtigen, wenn sie im Chat oder als Datei vorliegen.
+- Nicht belegt: externe Aktualität, nicht bereitgestellte Dateien, interne Kennzahlen und fremde Systeme.
+
+#### Ergebnisentwurf
+
+1. Den Auftrag in das passende Zielformat überführen.
+2. Belegte Inhalte und Annahmen getrennt darstellen.
+3. Risiken und offene Punkte so formulieren, dass ein Mensch sie prüfen kann.
+4. Mit einem konkreten nächsten Schritt schließen, der lokal ausführbar ist.
+
+### Vision- und Screenshot-Regel
 
 Nutze Vision für gescannte Seiten, Fotos, Stempel, Tabellenbilder oder visuelle Markierungen.
 
-## Tool-first-Ablauf
+### Qualitätscheck
 
-1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-4. Ergebnis in der Vorlage unter `beispiele/dokumentenanalyse-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
+- Kernaussagen, Belege, Unsicherheiten und extrahierte Daten müssen getrennt bleiben.
+- Keine erfundenen Quellen, Dateien, Kennzahlen oder Toolergebnisse.
+- Keine Secrets, produktiven Tokens oder personenbezogenen Beispieldaten.
+- Offline weiterverwendbar.
 
-## Qualitätslatte
+## Warum dieses Beispiel gut ist
 
-Kernaussagen, Belege, Unsicherheiten und extrahierte Daten müssen getrennt bleiben.
-
-## Copy/Paste-Starterprompt
-
-```text
-Nutze das Modell Dokumentenanalyse. Verwende `beispielergebnis.md` und `beispiele/dokumentenanalyse-vorlage.md` als Vorlage.
-
-Ziel:
-[Was soll am Ende konkret vorliegen?]
-
-Eingaben:
-[Dateien, Text, Screenshots, Daten, Constraints]
-
-Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-Qualitätskriterien:
-[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
-```
+- Es zeigt das gewünschte Arbeitsmuster ohne Platzhalter.
+- Es trennt belegte Informationen und Annahmen.
+- Es macht Offline-Grenzen explizit.
+- Es verweist auf das echte Beispielartefakt.

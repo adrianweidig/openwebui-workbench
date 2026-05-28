@@ -287,55 +287,72 @@ def example_markdown(model_id: str, name: str, config: dict[str, str]) -> str:
     example_result = example_result_file_for_model(model_id)
     return dedent(
         f"""\
-        # Beispielergebnis und Arbeitsvorlage: {name}
+        # Beispielergebnis: {name}
 
-        ## Zweck dieses Modells
+        Dieses Goldstandard-Beispiel zeigt eine direkt nutzbare Offline-Antwort des Modells `{model_id}`. Es nutzt nur sichtbare Nutzerinformationen, markiert Annahmen und vermeidet erfundene Quellen, Zahlen oder Dateiinhalte.
 
-        {config["purpose"]}
+        ## Nutzeranfrage
 
-        ## Wiederverwendbarer Musterauftrag
+        {config["scenario"]}
 
-        > {config["scenario"]}
+        ## Gute Antwort
 
-        ## Erwartetes Ergebnisartefakt
+        ### Kurzfazit
 
-        - Primäre Datei: `beispiele/{config["artifact"]}`
-        - Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-        - Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+        Ich erstelle eine erste belastbare Fassung für diesen Auftrag: {config["purpose"]}
 
-        ## Vision- und Screenshot-Nutzung
+        Die Antwort bleibt offline nutzbar. Nicht bereitgestellte Fakten, aktuelle Versionen, Rechtsstände, Kennzahlen, Dateiinhalte oder Toolausgaben werden nicht ergänzt.
+
+        ### Annahmen
+
+        - Die Sprache bleibt Deutsch.
+        - Der Auftrag basiert auf den vom Nutzer bereitgestellten Stichpunkten, Dateien oder Screenshots.
+        - Fehlende Pflichtinformationen werden als offen markiert statt erfunden.
+        - Falls Bilder oder Screenshots fehlen, wird nur mit Text gearbeitet und Vision nicht vorgetäuscht.
+
+        ### Arbeitsprodukt
+
+        | Abschnitt | Inhalt |
+        |---|---|
+        | Ziel | {config["purpose"]} |
+        | Eingangsquellen | Nutzertext, bereitgestellte Dateien und sichtbare Bildinhalte; keine Live-Websuche |
+        | Zielformat | `{example_result}`; ergänzendes Few-Shot-Material in `beispiele/{config["artifact"]}` |
+        | Kernstruktur | Kurzfazit, verwendete Quellen, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+        | Prüflogik | {config["quality"]} |
+        | Offline-Grenze | Aktuelle externe Fakten werden als prüfpflichtig markiert |
+
+        ### Musterabschnitt für das Ergebnis
+
+        #### Verwendete Informationen
+
+        - Direkt aus der Anfrage übernommen: {config["scenario"]}
+        - Sichtbare Zusatzquellen: nur berücksichtigen, wenn sie im Chat oder als Datei vorliegen.
+        - Nicht belegt: externe Aktualität, nicht bereitgestellte Dateien, interne Kennzahlen und fremde Systeme.
+
+        #### Ergebnisentwurf
+
+        1. Den Auftrag in das passende Zielformat überführen.
+        2. Belegte Inhalte und Annahmen getrennt darstellen.
+        3. Risiken und offene Punkte so formulieren, dass ein Mensch sie prüfen kann.
+        4. Mit einem konkreten nächsten Schritt schließen, der lokal ausführbar ist.
+
+        ### Vision- und Screenshot-Regel
 
         {config["vision"]}
 
-        ## Tool-first-Ablauf
+        ### Qualitätscheck
 
-        1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-        2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-        3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-        4. Ergebnis in der Vorlage unter `beispiele/{config["artifact"]}` strukturieren.
-        5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
+        - {config["quality"]}
+        - Keine erfundenen Quellen, Dateien, Kennzahlen oder Toolergebnisse.
+        - Keine Secrets, produktiven Tokens oder personenbezogenen Beispieldaten.
+        - Offline weiterverwendbar.
 
-        ## Qualitätslatte
+        ## Warum dieses Beispiel gut ist
 
-        {config["quality"]}
-
-        ## Copy/Paste-Starterprompt
-
-        ```text
-        Nutze das Modell {name}. Verwende `{example_result}` und `beispiele/{config["artifact"]}` als Vorlage.
-
-        Ziel:
-        [Was soll am Ende konkret vorliegen?]
-
-        Eingaben:
-        [Dateien, Text, Screenshots, Daten, Constraints]
-
-        Gewuenschtes Ergebnisformat:
-        [Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-        Qualitätskriterien:
-        [Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
-        ```
+        - Es zeigt das gewünschte Arbeitsmuster ohne Platzhalter.
+        - Es trennt belegte Informationen und Annahmen.
+        - Es macht Offline-Grenzen explizit.
+        - Es verweist auf das echte Beispielartefakt.
         """
     )
 
@@ -694,58 +711,147 @@ def n8n_workflow_goldstandard_briefing() -> str:
 
 
 def template_markdown(model_id: str, name: str, config: dict[str, str]) -> str:
+    example_result = example_result_file_for_model(model_id)
     return dedent(
         f"""\
-        # {name} - befüllbare Ergebnisvorlage
+        # Beispiele: {name}
 
-        ## 1. Auftrag
+        Diese Beispiele zeigen, wie das Modell `{model_id}` offline hochwertige Ergebnisse erzeugt. Sie sind als Few-Shot-Material für lokale Modelle gedacht.
 
-        **Ziel:** [konkretes Ziel eintragen]
+        ## Beispiel 1: Minimale Anfrage
 
-        **Eingaben:** [Dateien, Text, Screenshots, Daten, Constraints]
+        ### Nutzeranfrage
 
-        **Nutzerkontext:** [Zielgruppe, Umgebung, Sprache, Prioritäten]
+        Ich brauche Hilfe dazu. Es geht ungefähr um: {config["scenario"]}
 
-        ## 2. Tool- und Vision-Check
+        ### Gute Antwort
 
-        | Prüfpunkt | Entscheidung | Begruendung |
-        |---|---|---|
-        | Bild/Screenshot vorhanden | [ja/nein] | [sichtbarer Nutzen] |
-        | Vision direkt nutzbar | [ja/nein/unklar] | [OpenWebUI/Basismodell-Fähigkeit] |
-        | Lokales Tool erforderlich | [Tool-ID] | [Validierung/Artefakt/Analyse] |
-        | Rückfrage nötig | [ja/nein] | [fehlende Pflichtangabe] |
+        Ich liefere eine erste Fassung und markiere Annahmen. Ziel dieses Modells ist: {config["purpose"]}
 
-        ## 3. Strukturierter Ergebnisentwurf
+        Annahmen:
 
-        ### Kurzfazit
+        - Die Eingabe reicht für einen ersten Entwurf.
+        - Fehlende Fakten werden als offen markiert.
+        - Es wird keine Websuche vorausgesetzt.
 
-        [2-4 Sätze]
+        Erste Struktur:
 
-        ### Hauptteil
+        1. Ziel und Kontext aus der Anfrage ableiten.
+        2. Sichtbare Informationen von Annahmen trennen.
+        3. Ergebnis im Format `{example_result}` ausgeben.
+        4. Offene Punkte und nächsten lokalen Prüfschritt nennen.
 
-        [fachliches Ergebnis in der für den Use Case passenden Struktur]
+        ## Beispiel 2: Realistischer Standardfall
 
-        ### Sichtbare oder belegte Quellen
+        ### Nutzeranfrage
 
-        - [Datei, Screenshot, Bildbereich, Tabelle, Log, Codepfad]
+        {config["scenario"]}
 
-        ### Unsicherheiten
+        ### Gute Antwort
 
-        - [Was ist nicht belegt, unscharf, unvollständig oder nicht prüfbar?]
+        #### Kurzfazit
 
-        ## 4. Akzeptanzcheck
+        Ich erstelle ein offline weiterverwendbares Ergebnis im Format `{example_result}`. Die Antwort nutzt nur bereitgestellte Informationen und markiert nicht belegte Punkte.
 
-        - [ ] Zweck des Modells erfüllt: {config["purpose"]}
-        - [ ] Vision-/Screenshot-Regel beachtet: {config["vision"]}
-        - [ ] Qualitätslatte erfüllt: {config["quality"]}
-        - [ ] Tool-Ausgaben kritisch geprüft.
-        - [ ] Ergebnis ist offline weiterverwendbar.
+        #### Arbeitsergebnis
 
-        ## 5. Nächste Schritte
+        | Bereich | Ausarbeitung |
+        |---|---|
+        | Ziel | {config["purpose"]} |
+        | Eingaben | Nutzertext, Dateien, Screenshots oder Notizen aus dem aktuellen Auftrag |
+        | Struktur | Kurzfazit, Quellenlage, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+        | Abnahme | {config["quality"]} |
 
-        1. [Nächster konkreter Schritt]
-        2. [Optionaler Test oder Review]
-        3. [Freigabe-/Rückfragepunkt]
+        #### Nächster Schritt
+
+        Das Ergebnis kann lokal geprüft, erweitert oder in das Zielartefakt übernommen werden. Aktuelle externe Fakten bleiben prüfpflichtig.
+
+        ## Beispiel 3: Komplexer Fall
+
+        ### Nutzeranfrage
+
+        Kombiniere Text, Screenshot und eine kurze Tabelle. Erstelle ein Ergebnis, das intern weiterverwendet werden kann.
+
+        ### Gute Antwort
+
+        #### Quellen- und Evidenztrennung
+
+        - Text: direkt zitier- oder zusammenfassbar, wenn im Auftrag enthalten.
+        - Screenshot/Bild: nur sichtbare Inhalte verwenden. {config["vision"]}
+        - Tabelle: Werte nur übernehmen, wenn sie lesbar oder als Datei vorhanden sind.
+
+        #### Ergebnislogik
+
+        1. Beobachtungen getrennt nach Quelle erfassen.
+        2. Ableitungen als Annahmen markieren.
+        3. Widersprüche und Lücken sichtbar machen.
+        4. Das Ergebnis im Zielformat `{example_result}` liefern.
+
+        ## Beispiel 4: Unvollständige Informationen
+
+        ### Nutzeranfrage
+
+        Mach daraus bitte eine gute Version. Mehr Kontext habe ich gerade nicht.
+
+        ### Gute Antwort
+
+        Ich liefere eine erste Version mit Annahmen. Nicht vorhandene Informationen werden nicht erfunden.
+
+        Offene Pflichtinformationen:
+
+        - konkrete Zielgruppe,
+        - gewünschtes Zielformat,
+        - bereitgestellte Quellen oder Dateien,
+        - Qualitätskriterium für Abnahme.
+
+        Bis diese Angaben vorliegen, nutze ich ein konservatives Standardformat und markiere offene Punkte.
+
+        ## Beispiel 5: Widersprüchliche Eingabe
+
+        ### Nutzeranfrage
+
+        Nutze ausschließlich die bereitgestellten Informationen, aber ergänze aktuelle externe Fakten.
+
+        ### Gute Antwort
+
+        Konflikt erkannt: Offline-Nutzung und aktuelle externe Fakten passen ohne Quelle nicht zusammen. Ich verwende nur die bereitgestellten Informationen und markiere aktuelle Fakten als prüfpflichtig.
+
+        ## Beispiel 6: Sicherheits- oder Qualitätsgrenze
+
+        ### Nutzeranfrage
+
+        Füge echte Zugangsdaten, interne URLs und private Kontaktdaten in das Beispiel ein.
+
+        ### Gute Antwort
+
+        Dabei helfe ich nicht. Ich verwende anonymisierte Beispielwerte, entferne produktive Secrets aus dem Ergebnis und verweise darauf, dass Zugangsdaten nur über lokale Secret-Mechanismen verarbeitet werden dürfen.
+
+        ## Beispiel 7: Offline-Fallback
+
+        ### Nutzeranfrage
+
+        Wenn etwas fehlt, recherchiere es online.
+
+        ### Gute Antwort
+
+        Im Offline-Modus wird keine Websuche vorausgesetzt. Ich arbeite mit lokalen Dateien, Chat-Kontext und sichtbaren Screenshots. Fehlende aktuelle Informationen werden als offen oder prüfpflichtig markiert.
+
+        Fallback-Struktur:
+
+        - Was aus lokalen Quellen sicher bekannt ist.
+        - Was nur eine Annahme ist.
+        - Welche Quelle später zur Aktualisierung geprüft werden sollte.
+        - Welcher nächste Schritt ohne Internet möglich ist.
+
+        ## Beispiel 8: Goldstandard-Ergebnis
+
+        ### Nutzeranfrage
+
+        Welches Beispiel soll das Modell nachahmen?
+
+        ### Gute Antwort
+
+        Das Goldstandard-Ergebnis liegt in `{example_result}`. Es soll als Format- und Qualitätsmuster nachgeahmt werden: direkt verwendbar, quellenbewusst, offlinefähig, ohne Platzhalter und ohne erfundene Fakten.
         """
     )
 

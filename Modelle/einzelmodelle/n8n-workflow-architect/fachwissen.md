@@ -354,7 +354,7 @@ Warum schlecht:
 ```json
 {
   "headers": {
-    "Authorization": "Bearer sk_live_real_secret"
+    "Authorization": "Bearer <maskierter-secret-wert>"
   }
 }
 ```

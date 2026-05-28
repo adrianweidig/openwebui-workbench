@@ -1,49 +1,66 @@
-# Beispielergebnis und Arbeitsvorlage: Übersetzung und Lokalisierung
+# Beispielergebnis: Übersetzung und Lokalisierung
 
-## Zweck dieses Modells
+Dieses Goldstandard-Beispiel zeigt eine direkt nutzbare Offline-Antwort des Modells `übersetzung-lokalisierung`. Es nutzt nur sichtbare Nutzerinformationen, markiert Annahmen und vermeidet erfundene Quellen, Zahlen oder Dateiinhalte.
 
-Texte, UI-Kopien, Dokumente und Lokalisierungsfragen zielgruppen- und kontextgerecht übertragen.
+## Nutzeranfrage
 
-## Wiederverwendbarer Musterauftrag
+UI-Texte und Screenshots sollen für eine Zielregion lokalisiert werden.
 
-> UI-Texte und Screenshots sollen für eine Zielregion lokalisiert werden.
+## Gute Antwort
 
-## Erwartetes Ergebnisartefakt
+### Kurzfazit
 
-- Primäre Datei: `beispiele/lokalisierungsauftrag-vorlage.md`
-- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-- Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+Ich erstelle eine erste belastbare Fassung für diesen Auftrag: Texte, UI-Kopien, Dokumente und Lokalisierungsfragen zielgruppen- und kontextgerecht übertragen.
 
-## Vision- und Screenshot-Nutzung
+Die Antwort bleibt offline nutzbar. Nicht bereitgestellte Fakten, aktuelle Versionen, Rechtsstände, Kennzahlen, Dateiinhalte oder Toolausgaben werden nicht ergänzt.
+
+### Annahmen
+
+- Die Sprache bleibt Deutsch.
+- Der Auftrag basiert auf den vom Nutzer bereitgestellten Stichpunkten, Dateien oder Screenshots.
+- Fehlende Pflichtinformationen werden als offen markiert statt erfunden.
+- Falls Bilder oder Screenshots fehlen, wird nur mit Text gearbeitet und Vision nicht vorgetäuscht.
+
+### Arbeitsprodukt
+
+| Abschnitt | Inhalt |
+|---|---|
+| Ziel | Texte, UI-Kopien, Dokumente und Lokalisierungsfragen zielgruppen- und kontextgerecht übertragen. |
+| Eingangsquellen | Nutzertext, bereitgestellte Dateien und sichtbare Bildinhalte; keine Live-Websuche |
+| Zielformat | `beispielergebnis.md`; ergänzendes Few-Shot-Material in `beispiele/lokalisierungsauftrag-vorlage.md` |
+| Kernstruktur | Kurzfazit, verwendete Quellen, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+| Prüflogik | Ergebnis braucht Zielvariante, Tonalität, Platzhalter, Längenrisiken und QA-Hinweise. |
+| Offline-Grenze | Aktuelle externe Fakten werden als prüfpflichtig markiert |
+
+### Musterabschnitt für das Ergebnis
+
+#### Verwendete Informationen
+
+- Direkt aus der Anfrage übernommen: UI-Texte und Screenshots sollen für eine Zielregion lokalisiert werden.
+- Sichtbare Zusatzquellen: nur berücksichtigen, wenn sie im Chat oder als Datei vorliegen.
+- Nicht belegt: externe Aktualität, nicht bereitgestellte Dateien, interne Kennzahlen und fremde Systeme.
+
+#### Ergebnisentwurf
+
+1. Den Auftrag in das passende Zielformat überführen.
+2. Belegte Inhalte und Annahmen getrennt darstellen.
+3. Risiken und offene Punkte so formulieren, dass ein Mensch sie prüfen kann.
+4. Mit einem konkreten nächsten Schritt schließen, der lokal ausführbar ist.
+
+### Vision- und Screenshot-Regel
 
 Nutze Vision für UI-Screenshots, Kontext, abgeschnittene Texte oder Layoutprobleme nach Übersetzung.
 
-## Tool-first-Ablauf
+### Qualitätscheck
 
-1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-4. Ergebnis in der Vorlage unter `beispiele/lokalisierungsauftrag-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
+- Ergebnis braucht Zielvariante, Tonalität, Platzhalter, Längenrisiken und QA-Hinweise.
+- Keine erfundenen Quellen, Dateien, Kennzahlen oder Toolergebnisse.
+- Keine Secrets, produktiven Tokens oder personenbezogenen Beispieldaten.
+- Offline weiterverwendbar.
 
-## Qualitätslatte
+## Warum dieses Beispiel gut ist
 
-Ergebnis braucht Zielvariante, Tonalität, Platzhalter, Längenrisiken und QA-Hinweise.
-
-## Copy/Paste-Starterprompt
-
-```text
-Nutze das Modell Übersetzung und Lokalisierung. Verwende `beispielergebnis.md` und `beispiele/lokalisierungsauftrag-vorlage.md` als Vorlage.
-
-Ziel:
-[Was soll am Ende konkret vorliegen?]
-
-Eingaben:
-[Dateien, Text, Screenshots, Daten, Constraints]
-
-Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-Qualitätskriterien:
-[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
-```
+- Es zeigt das gewünschte Arbeitsmuster ohne Platzhalter.
+- Es trennt belegte Informationen und Annahmen.
+- Es macht Offline-Grenzen explizit.
+- Es verweist auf das echte Beispielartefakt.
