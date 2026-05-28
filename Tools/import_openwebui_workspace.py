@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
+import hashlib
 import json
 import mimetypes
 import os
@@ -57,6 +59,8 @@ MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
 PRIMARY_MODEL_I18N_FILES = ("manifest.json", "de.md", "en.md")
 DEFAULT_CONFIG_NAME = "openwebui_workspace_config.yaml"
+IMPORT_LOCK_PATH = ROOT / "Artefakte" / "temp" / "openwebui_workspace_import.lock"
+IMPORT_LOCK_STALE_SECONDS = 2 * 60 * 60
 
 PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEBUI_API_KEY"}
 TRANSIENT_HTTP_STATUS = {502, 503, 504}
@@ -110,6 +114,19 @@ class ImportResult:
     created: int = 0
     updated: int = 0
     skipped: int = 0
+
+
+@dataclass(frozen=True)
+class KnowledgeUpsertResult:
+    knowledge: dict[str, str]
+    changed: bool
+
+
+@dataclass(frozen=True)
+class ModelLoadResult:
+    models: list[dict[str, Any]]
+    knowledge_updated: int = 0
+    knowledge_skipped: int = 0
 
 
 class OpenWebUIClient:
@@ -210,7 +227,7 @@ class OpenWebUIClient:
             raise last_not_found
         raise RuntimeError(f"No API path candidates supplied for {method}")
 
-    def upload_file(self, path: Path) -> dict[str, Any]:
+    def upload_file(self, path: Path, process: bool = True) -> dict[str, Any]:
         boundary = f"----openwebui-workspace-{uuid.uuid4().hex}"
         content_type = (
             "text/plain; charset=utf-8"
@@ -233,7 +250,13 @@ class OpenWebUIClient:
             "Content-Length": str(len(body)),
         }
         request = Request(
-            self.api_url("/api/v1/files/", {"process": "true", "process_in_background": "false"}),
+            self.api_url(
+                "/api/v1/files/",
+                {
+                    "process": "true" if process else "false",
+                    "process_in_background": "false",
+                },
+            ),
             data=body,
             headers=headers,
             method="POST",
@@ -257,6 +280,42 @@ def normalize_openwebui_base_url(base_url: str) -> str:
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         raise ValueError("openwebui.base_url must be an http(s) URL with a host.")
     return normalized
+
+
+@contextmanager
+def import_lock() -> Any:
+    IMPORT_LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    stale_seconds = int(os.environ.get("OPENWEBUI_IMPORT_LOCK_STALE_SECONDS") or IMPORT_LOCK_STALE_SECONDS)
+    while True:
+        try:
+            fd = os.open(str(IMPORT_LOCK_PATH), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write(json.dumps({"pid": os.getpid(), "created_at": time.time()}))
+            break
+        except FileExistsError as exc:
+            try:
+                age = time.time() - IMPORT_LOCK_PATH.stat().st_mtime
+                details = IMPORT_LOCK_PATH.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                age = 0
+                details = ""
+            if age > stale_seconds:
+                try:
+                    IMPORT_LOCK_PATH.unlink()
+                    continue
+                except OSError:
+                    pass
+            raise RuntimeError(
+                f"OpenWebUI import lock exists at {IMPORT_LOCK_PATH}. "
+                f"Another import is probably running or was killed recently. Details: {details[:200]}"
+            ) from exc
+    try:
+        yield
+    finally:
+        try:
+            IMPORT_LOCK_PATH.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def auth_header_defaults(auth_header: str | None, auth_scheme: str | None = None) -> tuple[str, str]:
@@ -1198,10 +1257,52 @@ def find_knowledge_by_name(client: OpenWebUIClient, name: str) -> dict[str, Any]
     return None
 
 
-def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_name: str, files: list[Path], public: bool) -> dict[str, str]:
-    name = f"Modellwissen - {model_name}"
+def knowledge_fingerprint(files: list[Path]) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(files, key=lambda item: item.as_posix()):
+        digest.update(path.name.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(str(path.stat().st_size).encode("ascii"))
+        digest.update(b"\0")
+        digest.update(hashlib.sha256(path.read_bytes()).hexdigest().encode("ascii"))
+        digest.update(b"\0")
+    return f"sha256:{digest.hexdigest()}"
+
+
+def knowledge_description(model_id: str, files: list[Path], fingerprint: str) -> str:
     filenames = ", ".join(path.name for path in files)
-    description = f"{filenames} für das Modell {model_id} aus dem OpenWebUI Workspace."
+    return (
+        f"{filenames} für das Modell {model_id} aus dem OpenWebUI Workspace. "
+        f"Import-Fingerprint: {fingerprint}"
+    )
+
+
+def knowledge_has_fingerprint(knowledge: dict[str, Any], fingerprint: str) -> bool:
+    description = str(knowledge.get("description") or "")
+    return fingerprint in description
+
+
+def knowledge_file_count(client: OpenWebUIClient, knowledge_id: str) -> int:
+    for path in (f"/api/v1/knowledge/{knowledge_id}/files", f"/api/knowledge/{knowledge_id}/files"):
+        try:
+            result = client.request("GET", path)
+            if isinstance(result, list):
+                return len(result)
+            if isinstance(result, dict):
+                files = result.get("files") or result.get("items")
+                if isinstance(files, list):
+                    return len(files)
+        except RuntimeError as exc:
+            if is_not_found_error(exc):
+                continue
+            raise
+    return 0
+
+
+def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_name: str, files: list[Path], public: bool) -> KnowledgeUpsertResult:
+    name = f"Modellwissen - {model_name}"
+    fingerprint = knowledge_fingerprint(files)
+    description = knowledge_description(model_id, files, fingerprint)
     payload = {"name": name, "description": description, "access_grants": public_read_grants(public)}
     knowledge = find_knowledge_by_name(client, name)
     if knowledge:
@@ -1209,6 +1310,8 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/update", payload)
         if public:
             update_knowledge_access(client, knowledge_id, public=True)
+        if knowledge_has_fingerprint(knowledge, fingerprint) and knowledge_file_count(client, knowledge_id) >= len(files):
+            return KnowledgeUpsertResult({"id": knowledge_id, "name": name}, changed=False)
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/reset")
     else:
         created = client.request("POST", "/api/v1/knowledge/create", payload)
@@ -1217,10 +1320,15 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
             update_knowledge_access(client, knowledge_id, public=True)
     file_refs = []
     for file_path in files:
-        uploaded = client.upload_file(file_path)
+        uploaded = client.upload_file(file_path, process=True)
         file_refs.append({"file_id": uploaded["id"]})
-    for file_ref in file_refs:
-        client.request("POST", f"/api/v1/knowledge/{knowledge_id}/file/add", file_ref)
+    try:
+        client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
+    except RuntimeError as exc:
+        if not is_not_found_error(exc):
+            raise
+        for file_ref in file_refs:
+            client.request("POST", f"/api/v1/knowledge/{knowledge_id}/file/add", file_ref)
     result = client.request("GET", f"/api/v1/knowledge/{knowledge_id}")
     files_response = result.get("files") if isinstance(result, dict) else None
     if files_response:
@@ -1232,11 +1340,13 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
         missing_file_ids = [item["file_id"] for item in file_refs if item["file_id"] not in linked_file_ids]
         if missing_file_ids:
             raise RuntimeError(f"Knowledge import did not link all files for {name}: {missing_file_ids}")
-    return {"id": knowledge_id, "name": name}
+    return KnowledgeUpsertResult({"id": knowledge_id, "name": name}, changed=True)
 
 
-def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_knowledge: bool) -> list[dict[str, Any]]:
+def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_knowledge: bool) -> ModelLoadResult:
     models: list[dict[str, Any]] = []
+    knowledge_updated = 0
+    knowledge_skipped = 0
     for model_file in sorted(SINGLE_MODELS.glob("*/model.json")):
         data = read_json(model_file)
         if not isinstance(data, list) or not data:
@@ -1245,13 +1355,18 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
         model_id = str(model.get("id"))
         if upload_knowledge:
             prompt_files = model_knowledge_files(model_file.parent)
-            knowledge = upsert_knowledge_with_files(
+            knowledge_result = upsert_knowledge_with_files(
                 client,
                 model_id,
                 str(model.get("name") or model_id),
                 prompt_files,
                 public,
             )
+            knowledge = knowledge_result.knowledge
+            if knowledge_result.changed:
+                knowledge_updated += 1
+            else:
+                knowledge_skipped += 1
             meta = model.setdefault("meta", {})
             existing = [item for item in meta.get("knowledge", []) if isinstance(item, dict)]
             meta["knowledge"] = [item for item in existing if item.get("id") != knowledge["id"]]
@@ -1261,19 +1376,59 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
         if public:
             model["access_grants"] = public_read_grants(public)
         models.append(model)
-    return models
+    return ModelLoadResult(models, knowledge_updated=knowledge_updated, knowledge_skipped=knowledge_skipped)
 
 
-def import_models(client: OpenWebUIClient, public: bool, upload_knowledge: bool) -> ImportResult:
-    models = load_models_with_knowledge(client, public=public, upload_knowledge=upload_knowledge)
+def import_models(client: OpenWebUIClient, public: bool, upload_knowledge: bool) -> tuple[ImportResult, ModelLoadResult]:
+    loaded = load_models_with_knowledge(client, public=public, upload_knowledge=upload_knowledge)
+    models = loaded.models
     if not models:
-        return ImportResult("models", skipped=1)
-    client.request("POST", "/api/v1/models/import", {"models": models})
+        return ImportResult("models", skipped=1), loaded
+    response = client.request("POST", "/api/v1/models/import", {"models": models})
+    if response is not True:
+        raise RuntimeError(f"Unexpected OpenWebUI model import response: {type(response).__name__}")
+    verify_imported_models(client, models, expect_knowledge=upload_knowledge)
     if public:
         for model in models:
             model_id = str(model.get("id"))
             update_model_access(client, model_id, str(model.get("name") or model_id), public=True)
-    return ImportResult("models", updated=len(models))
+    return ImportResult("models", updated=len(models)), loaded
+
+
+def verify_imported_models(client: OpenWebUIClient, models: list[dict[str, Any]], expect_knowledge: bool) -> None:
+    missing: list[str] = []
+    incomplete_knowledge: list[str] = []
+    for model in models:
+        model_id = str(model.get("id"))
+        try:
+            imported = client.request("GET", "/api/v1/models/model", query={"id": model_id})
+        except RuntimeError:
+            missing.append(model_id)
+            continue
+        if not isinstance(imported, dict) or imported.get("id") != model_id:
+            missing.append(model_id)
+            continue
+        if expect_knowledge:
+            expected_knowledge = [
+                item
+                for item in (model.get("meta") or {}).get("knowledge", [])
+                if isinstance(item, dict) and item.get("id")
+            ]
+            imported_knowledge = [
+                item
+                for item in (imported.get("meta") or {}).get("knowledge", [])
+                if isinstance(item, dict) and item.get("id")
+            ]
+            imported_ids = {str(item.get("id")) for item in imported_knowledge}
+            if expected_knowledge and any(str(item.get("id")) not in imported_ids for item in expected_knowledge):
+                incomplete_knowledge.append(model_id)
+    if missing:
+        raise RuntimeError(f"OpenWebUI model import did not persist models: {', '.join(sorted(missing))}")
+    if incomplete_knowledge:
+        raise RuntimeError(
+            "OpenWebUI model import did not persist Knowledge links for models: "
+            + ", ".join(sorted(incomplete_knowledge))
+        )
 
 
 def print_results(results: list[ImportResult], title: str = "# OpenWebUI workspace import") -> None:
@@ -1282,6 +1437,53 @@ def print_results(results: list[ImportResult], title: str = "# OpenWebUI workspa
         print(
             f"- {result.kind}: created={result.created}, updated={result.updated}, skipped={result.skipped}"
         )
+
+
+def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> int:
+    started = time.time()
+    tool_records = load_tool_records(bool(runtime["include_optional_network_tools"]))
+    function_records = load_function_records()
+    skills = skill_files()
+    model_count = len(sorted(SINGLE_MODELS.glob("*/model.json")))
+    tool_import = import_tools(
+        client,
+        public=bool(runtime["public_read"]),
+        include_optional_network_tools=bool(runtime["include_optional_network_tools"]),
+    )
+    tool_valves = import_tool_valves(client, runtime)
+    function_import = import_functions(client)
+    function_valves = import_function_valves(client, runtime)
+    skill_import = import_skills(client, public=bool(runtime["public_read"]))
+    model_import, model_load = import_models(
+        client,
+        public=bool(runtime["public_read"]),
+        upload_knowledge=not bool(runtime["skip_knowledge"]),
+    )
+    results = [
+        tool_import,
+        ImportResult("tool_public_access", updated=len(tool_records)),
+        tool_valves,
+        function_import,
+        ImportResult("function_global_access", updated=len(function_records)),
+        function_valves,
+        skill_import,
+        ImportResult("skill_public_access", updated=len(skills)),
+        ImportResult(
+            "model_knowledge_collections",
+            updated=0 if runtime["skip_knowledge"] else model_load.knowledge_updated,
+            skipped=model_count if runtime["skip_knowledge"] else model_load.knowledge_skipped,
+        ),
+        ImportResult(
+            "knowledge_public_access",
+            updated=0 if runtime["skip_knowledge"] else model_count,
+            skipped=model_count if runtime["skip_knowledge"] else 0,
+        ),
+        model_import,
+        ImportResult("model_public_access", updated=model_count),
+    ]
+    print_results(results)
+    print(f"- duration_seconds: {time.time() - started:.1f}")
+    return 0
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -1349,50 +1551,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.auth_check:
         print(f"OpenWebUI auth check OK: {client.base_url} using header {client.auth_header}")
         return 0
-    started = time.time()
-    tool_records = load_tool_records(bool(runtime["include_optional_network_tools"]))
-    function_records = load_function_records()
-    skills = skill_files()
-    model_count = len(sorted(SINGLE_MODELS.glob("*/model.json")))
-    tool_import = import_tools(
-        client,
-        public=bool(runtime["public_read"]),
-        include_optional_network_tools=bool(runtime["include_optional_network_tools"]),
-    )
-    tool_valves = import_tool_valves(client, runtime)
-    function_import = import_functions(client)
-    function_valves = import_function_valves(client, runtime)
-    skill_import = import_skills(client, public=bool(runtime["public_read"]))
-    model_import = import_models(
-        client,
-        public=bool(runtime["public_read"]),
-        upload_knowledge=not bool(runtime["skip_knowledge"]),
-    )
-    results = [
-        tool_import,
-        ImportResult("tool_public_access", updated=len(tool_records)),
-        tool_valves,
-        function_import,
-        ImportResult("function_global_access", updated=len(function_records)),
-        function_valves,
-        skill_import,
-        ImportResult("skill_public_access", updated=len(skills)),
-        ImportResult(
-            "model_knowledge_collections",
-            updated=0 if runtime["skip_knowledge"] else model_count,
-            skipped=model_count if runtime["skip_knowledge"] else 0,
-        ),
-        ImportResult(
-            "knowledge_public_access",
-            updated=0 if runtime["skip_knowledge"] else model_count,
-            skipped=model_count if runtime["skip_knowledge"] else 0,
-        ),
-        model_import,
-        ImportResult("model_public_access", updated=model_count),
-    ]
-    print_results(results)
-    print(f"- duration_seconds: {time.time() - started:.1f}")
-    return 0
+    with import_lock():
+        return run_workspace_import(client, runtime)
 
 
 if __name__ == "__main__":

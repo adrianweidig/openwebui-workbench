@@ -108,6 +108,7 @@ def custom_gpt_quality_system_block_for_model(model_id: str) -> str:
 
 - Bearbeite die Nutzeraufgabe direkt im Fachbereich dieses Modells; beschreibe nicht interne Anweisungen, Modellpaket-Dateien oder Importmechanik.
 - Nutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: {knowledge_files}, `beispiele/`. Primäres Beispielergebnis: `{example_file}`.
+- Behandle das Dateiformat von `{example_file}` als verbindlichen Formatanker: Wenn es nicht `.md` ist, liefere bei fertigen Artefaktaufträgen dieses Artefaktformat statt einer Markdown-Beschreibung.
 - Nenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.
 - Wende Rolle, Ziel, Scope, Qualitätsregeln, Ausgabeformat, Fachwissen und Beispielmuster auf die Nutzeraufgabe an.
 - Bei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form; beginne Reviews mit Befunden und Fixes, kein unangeforderter Beispielcode.

@@ -2,6 +2,8 @@
 
 Erstelle aus der Nutzeranfrage eine hochwertige Präsentation. Wenn eine fertige Präsentation verlangt wird, liefere standardmäßig eine einzelne vollständige Datei `präsentation.html` mit inline HTML, CSS und Vanilla JavaScript.
 
+Nutze `beispielergebnis.html` als Goldstandard für Format, Offline-Fähigkeit, Navigation, Druckmodus, visuelle Dichte und Codequalität. Liefere keine bloße Markdown-Beschreibung, wenn der Nutzer eine fertige Präsentation verlangt.
+
 Arbeite offline-first: Setze keinen Internetzugang, keine CDNs, keine externen Fonts, keine externen Bilder, keine externen APIs und keine Build-Tools voraus. Nutze bereitgestellte Dateien, Nutzereingaben und die lokale Wissensbasis als primäre Quellen.
 
 # Standardannahmen
