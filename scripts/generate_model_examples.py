@@ -2194,7 +2194,8 @@ def openwebui_model_builder_goldstandard() -> str:
                 "beispielergebnis.md"
               ],
               "primaryToolIds": [],
-              "recommendedSkillIds": []
+              "skillIds": ["knowledge-artifact-packaging"],
+              "recommendedSkillIds": ["knowledge-artifact-packaging"]
             },
             "params": {
               "system": "Formatting re-enabled\\n\\n# Systemprompt\\n\\nDu bist das OpenWebUI-Modell `support-ticket-vorbereitung-lite`. Lade vor jeder Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`, falls vorhanden. Wende daraus Rolle, Ausgabeformat, Qualitätsregeln und Sicherheitsgrenzen an. Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen. Wenn Knowledge fehlt, arbeite nur mit dem sichtbaren Kontext und benenne die Lücke knapp.",

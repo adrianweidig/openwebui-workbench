@@ -46,14 +46,17 @@ class ImportOpenWebUIWorkspaceTests(unittest.TestCase):
             {
                 "/api/v1/models/model?id=demo": {
                     "id": "demo",
-                    "meta": {"knowledge": [{"id": "knowledge-1", "name": "Modellwissen - Demo"}]},
+                    "meta": {
+                        "knowledge": [{"id": "knowledge-1", "name": "Modellwissen - Demo"}],
+                        "skillIds": ["code-review-deep"],
+                    },
                 }
             }
         )
 
         module.verify_imported_models(
             client,
-            [{"id": "demo", "meta": {"knowledge": [{"id": "knowledge-1", "name": "Modellwissen - Demo"}]}}],
+            [{"id": "demo", "meta": {"knowledge": [{"id": "knowledge-1", "name": "Modellwissen - Demo"}], "skillIds": ["code-review-deep"]}}],
             expect_knowledge=True,
         )
 
@@ -75,6 +78,17 @@ class ImportOpenWebUIWorkspaceTests(unittest.TestCase):
                 client,
                 [{"id": "demo", "meta": {"knowledge": [{"id": "knowledge-1"}]}}],
                 expect_knowledge=True,
+            )
+
+    def test_verify_imported_models_rejects_missing_skill_link(self) -> None:
+        module = load_import_module()
+        client = FakeClient({"/api/v1/models/model?id=demo": {"id": "demo", "meta": {"skillIds": []}}})
+
+        with self.assertRaisesRegex(RuntimeError, "Skill links"):
+            module.verify_imported_models(
+                client,
+                [{"id": "demo", "meta": {"skillIds": ["code-review-deep"]}}],
+                expect_knowledge=False,
             )
 
     def test_import_models_rejects_unexpected_import_response(self) -> None:

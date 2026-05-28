@@ -1122,6 +1122,7 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
     meta["filterIds"] = merge_unique(filter_ids, meta.get("filterIds"))
     meta["defaultFilterIds"] = merge_unique(filter_ids, meta.get("defaultFilterIds"))
     meta["primaryToolIds"] = list(profile["tools"])
+    meta["skillIds"] = list(profile["skills"])
     meta["recommendedSkillIds"] = list(profile["skills"])
     meta["requiredKnowledgeFiles"] = list(required_model_knowledge_files(model_id))
     meta["defaultLocale"] = "de"
@@ -1304,6 +1305,7 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 else False,
                 "assigned_tool_ids": model.get("meta", {}).get("toolIds", []) if isinstance(model.get("meta"), dict) else [],
                 "meta_primary_tool_ids": model.get("meta", {}).get("primaryToolIds", []) if isinstance(model.get("meta"), dict) else [],
+                "meta_skill_ids": model.get("meta", {}).get("skillIds", []) if isinstance(model.get("meta"), dict) else [],
                 "meta_recommended_skill_ids": model.get("meta", {}).get("recommendedSkillIds", []) if isinstance(model.get("meta"), dict) else [],
             }
             for model in models
@@ -1453,7 +1455,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
         "tool_force_policy": {
-            "behavior": "Every chat model keeps primaryToolIds and recommendedSkillIds in metadata. Detailed tool routing stays in mainprompt.md and fachwissen.md instead of expanding the OpenWebUI system prompt.",
+            "behavior": "Every chat model keeps primaryToolIds, skillIds and recommendedSkillIds in metadata. OpenWebUI uses meta.skillIds for real model-attached Skills; recommendedSkillIds stays as an audit-friendly mirror.",
             "model_profiles": TOOL_FORCE_PROFILES,
         },
         "tool_call_playbook_policy": {
@@ -1489,6 +1491,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.capabilities.builtin_tools",
             "meta.capabilities.vision",
             "meta.primaryToolIds",
+            "meta.skillIds",
             "meta.recommendedSkillIds",
             "meta.requiredKnowledgeFiles",
             "meta.defaultLocale",
@@ -1505,6 +1508,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.profile_image_url",
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
+        "skill_note": "OpenWebUI binds model-attached Skills through meta.skillIds. Skills are imported and published before models, then each chat model receives the profile-specific skillIds list so OpenWebUI can inject the lightweight Skill manifest and expose the view_skill builtin for lazy loading.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
         "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, the model-specific example result file, files under beispiele/ and the primary product-i18n files manifest.json, de.md and en.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
@@ -1592,6 +1596,9 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         meta_skills = meta.get("recommendedSkillIds", [])
         if not isinstance(meta_skills, list) or profile_skills - set(meta_skills):
             issues.append(f"Chat-Modell {model_id} hat meta.recommendedSkillIds nicht passend zum Skill-Profil")
+        bound_skills = meta.get("skillIds", [])
+        if not isinstance(bound_skills, list) or profile_skills - set(bound_skills):
+            issues.append(f"Chat-Modell {model_id} hat meta.skillIds nicht passend zum Skill-Profil")
         required_knowledge = meta.get("requiredKnowledgeFiles", [])
         if required_knowledge != required_model_knowledge_files(model_id):
             issues.append(f"Chat-Modell {model_id} hat meta.requiredKnowledgeFiles nicht vollständig")

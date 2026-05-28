@@ -1398,6 +1398,7 @@ def import_models(client: OpenWebUIClient, public: bool, upload_knowledge: bool)
 def verify_imported_models(client: OpenWebUIClient, models: list[dict[str, Any]], expect_knowledge: bool) -> None:
     missing: list[str] = []
     incomplete_knowledge: list[str] = []
+    incomplete_skills: list[str] = []
     for model in models:
         model_id = str(model.get("id"))
         try:
@@ -1422,12 +1423,29 @@ def verify_imported_models(client: OpenWebUIClient, models: list[dict[str, Any]]
             imported_ids = {str(item.get("id")) for item in imported_knowledge}
             if expected_knowledge and any(str(item.get("id")) not in imported_ids for item in expected_knowledge):
                 incomplete_knowledge.append(model_id)
+        expected_skill_ids = [
+            str(item)
+            for item in (model.get("meta") or {}).get("skillIds", [])
+            if item
+        ]
+        imported_skill_ids = [
+            str(item)
+            for item in (imported.get("meta") or {}).get("skillIds", [])
+            if item
+        ]
+        if expected_skill_ids and any(item not in imported_skill_ids for item in expected_skill_ids):
+            incomplete_skills.append(model_id)
     if missing:
         raise RuntimeError(f"OpenWebUI model import did not persist models: {', '.join(sorted(missing))}")
     if incomplete_knowledge:
         raise RuntimeError(
             "OpenWebUI model import did not persist Knowledge links for models: "
             + ", ".join(sorted(incomplete_knowledge))
+        )
+    if incomplete_skills:
+        raise RuntimeError(
+            "OpenWebUI model import did not persist Skill links for models: "
+            + ", ".join(sorted(incomplete_skills))
         )
 
 

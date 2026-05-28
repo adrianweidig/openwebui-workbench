@@ -75,7 +75,7 @@ Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
 docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
 ```
 
-Der Edge-Proxy benötigt zusätzlich einen Host `workbench.top.secret`, eine Nginx-Route nach `http://workbench:8088` und einen lokalen Windows-Hosts-Eintrag `127.0.0.1 workbench.top.secret`. Die passende Nginx-Server-Block-Vorlage liegt in [`top-secret-nginx.workbench.conf`](top-secret-nginx.workbench.conf).
+Der Edge-Proxy benötigt zusätzlich einen Host `workbench.top.secret`, eine Nginx-Route nach `http://workbench:8088` und einen lokalen Windows-Hosts-Eintrag `127.0.0.1 workbench.top.secret`. Die passende Nginx-Server-Block-Vorlage liegt in [`top-secret-nginx.workbench.conf`](top-secret-nginx.workbench.conf). Wenn der lokale Edge HTTPS nicht auf Host-Port 443 veröffentlicht, die URL mit veröffentlichtem Port öffnen, zum Beispiel `https://workbench.top.secret:25443`.
 
 Der Windows-Hosts-Eintrag kann mit Administratorrechten idempotent gesetzt werden:
 

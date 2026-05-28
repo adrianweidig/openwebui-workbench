@@ -41,6 +41,8 @@ Then open:
 - OpenWebUI: `http://localhost:3000`
 - Workbench: `http://localhost:8088`
 
+If the local `top.secret` edge proxy is used, the Workbench can also be exposed as `https://workbench.top.secret`. When the edge is published on a non-default host port, include that port in the URL, for example `https://workbench.top.secret:25443`.
+
 ## Workflow
 
 1. Select a model in the dashboard.

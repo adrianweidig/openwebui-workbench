@@ -224,6 +224,13 @@
         "visuals_toolkit_v4",
         "web_search_and_crawl"
       ],
+      "meta_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "offline-use-case-router",
         "redundant-fallback-tooling",
@@ -373,6 +380,11 @@
         "parallel_task_planner",
         "llm_council"
       ],
+      "meta_skill_ids": [
+        "prompt-to-tool-workflow",
+        "model-tool-skill-overlays",
+        "offline-artifact-production"
+      ],
       "meta_recommended_skill_ids": [
         "prompt-to-tool-workflow",
         "model-tool-skill-overlays",
@@ -513,6 +525,11 @@
         "openapi_schema_inspector",
         "json_csv_text_validator",
         "offline_artifact_workbench"
+      ],
+      "meta_skill_ids": [
+        "api-integration-debugging",
+        "safe-mcp-openapi-import",
+        "secure-tool-usage"
       ],
       "meta_recommended_skill_ids": [
         "api-integration-debugging",
@@ -657,6 +674,11 @@
         "offline_artifact_workbench",
         "visuals_toolkit_v4"
       ],
+      "meta_skill_ids": [
+        "repository-maintenance",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "repository-maintenance",
         "offline-artifact-production",
@@ -799,6 +821,11 @@
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "llm_council"
+      ],
+      "meta_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
       ],
       "meta_recommended_skill_ids": [
         "code-review-deep",
@@ -943,6 +970,11 @@
         "json_csv_text_validator",
         "llm_council"
       ],
+      "meta_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "code-review-deep",
         "repository-maintenance",
@@ -1086,6 +1118,11 @@
         "json_csv_text_validator",
         "sub_agent"
       ],
+      "meta_skill_ids": [
+        "repository-maintenance",
+        "secure-tool-usage",
+        "openwebui-tool-authoring"
+      ],
       "meta_recommended_skill_ids": [
         "repository-maintenance",
         "secure-tool-usage",
@@ -1228,6 +1265,11 @@
         "repo_tree_analyzer",
         "offline_artifact_workbench",
         "llm_council"
+      ],
+      "meta_skill_ids": [
+        "research-grounding",
+        "secure-tool-usage",
+        "redundant-fallback-tooling"
       ],
       "meta_recommended_skill_ids": [
         "research-grounding",
@@ -1376,6 +1418,11 @@
         "json_csv_text_validator",
         "parallel_tools"
       ],
+      "meta_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "docker-openwebui-troubleshooting",
         "repository-maintenance",
@@ -1516,6 +1563,11 @@
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
+      ],
+      "meta_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
       ],
       "meta_recommended_skill_ids": [
         "research-grounding",
@@ -1660,6 +1712,11 @@
         "visuals_toolkit_v4",
         "json_csv_text_validator"
       ],
+      "meta_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "offline-artifact-production",
         "visual-toolkit-v3-offline",
@@ -1800,6 +1857,11 @@
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
+      ],
+      "meta_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "offline-artifact-production"
       ],
       "meta_recommended_skill_ids": [
         "data-cleaning-analysis",
@@ -1942,6 +2004,11 @@
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
       ],
+      "meta_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "research-grounding",
         "offline-artifact-production",
@@ -2080,6 +2147,11 @@
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
+      ],
+      "meta_skill_ids": [
+        "secure-tool-usage",
+        "offline-artifact-production",
+        "research-grounding"
       ],
       "meta_recommended_skill_ids": [
         "secure-tool-usage",
@@ -2221,6 +2293,11 @@
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
+      ],
+      "meta_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
       ],
       "meta_recommended_skill_ids": [
         "data-cleaning-analysis",
@@ -2397,6 +2474,13 @@
         "parallel_task_planner",
         "llm_council"
       ],
+      "meta_skill_ids": [
+        "research-grounding",
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "research-grounding",
         "offline-use-case-router",
@@ -2542,6 +2626,11 @@
         "json_csv_text_validator",
         "repo_tree_analyzer"
       ],
+      "meta_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-use-case-router"
+      ],
       "meta_recommended_skill_ids": [
         "docker-openwebui-troubleshooting",
         "secure-tool-usage",
@@ -2685,6 +2774,11 @@
         "docker_compose_triage",
         "offline_artifact_workbench"
       ],
+      "meta_skill_ids": [
+        "data-cleaning-analysis",
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "data-cleaning-analysis",
         "docker-openwebui-troubleshooting",
@@ -2825,6 +2919,11 @@
         "json_csv_text_validator",
         "offline_artifact_workbench",
         "air_gapped_jupyter_python"
+      ],
+      "meta_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "data-cleaning-analysis"
       ],
       "meta_recommended_skill_ids": [
         "research-grounding",
@@ -2997,6 +3096,13 @@
         "tool_skill_overlay_planner",
         "llm_council"
       ],
+      "meta_skill_ids": [
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production",
+        "data-cleaning-analysis",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
       "meta_recommended_skill_ids": [
         "visual-toolkit-v3-offline",
         "offline-artifact-production",
@@ -3146,6 +3252,12 @@
         "offline_artifact_workbench",
         "air_gapped_jupyter_python",
         "tool_skill_overlay_planner"
+      ],
+      "meta_skill_ids": [
+        "safe-mcp-openapi-import",
+        "api-integration-debugging",
+        "secure-tool-usage",
+        "offline-use-case-router"
       ],
       "meta_recommended_skill_ids": [
         "safe-mcp-openapi-import",
@@ -3317,6 +3429,13 @@
         "llm_council",
         "comfyui_workflow_inspector"
       ],
+      "meta_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "visual-toolkit-v3-offline"
+      ],
       "meta_recommended_skill_ids": [
         "offline-use-case-router",
         "redundant-fallback-tooling",
@@ -3412,7 +3531,7 @@
           "path": "Modelle/einzelmodelle/openwebui-model-builder/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4805
+          "bytes": 4887
         },
         "beispiele/openwebui-modellpaket-goldstandard.md": {
           "path": "Modelle/einzelmodelle/openwebui-model-builder/beispiele/openwebui-modellpaket-goldstandard.md",
@@ -3469,6 +3588,13 @@
         "offline_artifact_workbench",
         "repo_tree_analyzer",
         "openapi_schema_inspector"
+      ],
+      "meta_skill_ids": [
+        "openwebui-tool-authoring",
+        "prompt-to-tool-workflow",
+        "model-tool-skill-overlays",
+        "secure-tool-usage",
+        "native-tool-calling-rollout"
       ],
       "meta_recommended_skill_ids": [
         "openwebui-tool-authoring",
@@ -3620,6 +3746,12 @@
         "llm_council",
         "markdown_skill_builder"
       ],
+      "meta_skill_ids": [
+        "prompt-to-tool-workflow",
+        "secure-tool-usage",
+        "model-tool-skill-overlays",
+        "native-tool-calling-rollout"
+      ],
       "meta_recommended_skill_ids": [
         "prompt-to-tool-workflow",
         "secure-tool-usage",
@@ -3770,6 +3902,12 @@
         "inline_visuals_toolkit_v3",
         "visuals_toolkit_v4",
         "tool_skill_overlay_planner"
+      ],
+      "meta_skill_ids": [
+        "parallel-tools-subagents",
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "model-tool-skill-overlays"
       ],
       "meta_recommended_skill_ids": [
         "parallel-tools-subagents",
@@ -3925,6 +4063,11 @@
         "air_gapped_jupyter_python",
         "json_csv_text_validator"
       ],
+      "meta_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "offline-creative-media-workflows"
+      ],
       "meta_recommended_skill_ids": [
         "offline-artifact-production",
         "visual-toolkit-v3-offline",
@@ -4065,6 +4208,11 @@
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
         "json_csv_text_validator"
+      ],
+      "meta_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage"
       ],
       "meta_recommended_skill_ids": [
         "repository-maintenance",
@@ -4211,6 +4359,11 @@
         "visuals_toolkit_v4",
         "offline_artifact_workbench"
       ],
+      "meta_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
       "meta_recommended_skill_ids": [
         "data-cleaning-analysis",
         "visual-toolkit-v3-offline",
@@ -4351,6 +4504,11 @@
         "json_csv_text_validator",
         "docker_compose_triage",
         "offline_artifact_workbench"
+      ],
+      "meta_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-artifact-production"
       ],
       "meta_recommended_skill_ids": [
         "docker-openwebui-troubleshooting",
@@ -4495,6 +4653,11 @@
         "offline_artifact_workbench",
         "inline_visuals_toolkit_v3"
       ],
+      "meta_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
       "meta_recommended_skill_ids": [
         "data-cleaning-analysis",
         "visual-toolkit-v3-offline",
@@ -4638,6 +4801,11 @@
         "air_gapped_jupyter_python",
         "parallel_tools"
       ],
+      "meta_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "data-cleaning-analysis"
+      ],
       "meta_recommended_skill_ids": [
         "code-review-deep",
         "repository-maintenance",
@@ -4776,6 +4944,11 @@
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
+      ],
+      "meta_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
       ],
       "meta_recommended_skill_ids": [
         "research-grounding",

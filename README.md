@@ -193,7 +193,7 @@ In der lokalen YAML werden unter anderem gesetzt:
 
 Das direkte Importskript [`Tools/import_openwebui_workspace.py`](Tools/import_openwebui_workspace.py) bleibt als Fallback nutzbar und liest dieselbe zentrale Konfigurationsdatei. CLI-Parameter wie `--token`, `--base-url` oder `--jupyter-url` sind nur für bewusste Einmal-Overrides gedacht.
 
-Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei, Dateien aus `beispiele/` sowie die primären i18n-Dateien `manifest.json`, `de.md` und `en.md` als Knowledge pro Modell an, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
+Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei, Dateien aus `beispiele/` sowie die primären i18n-Dateien `manifest.json`, `de.md` und `en.md` als Knowledge pro Modell an, bindet profilbezogene Skills über `meta.skillIds`, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
 
 Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist möglich:
 
@@ -209,7 +209,7 @@ Die Tool-Registry und die Modell-Tool-Zuweisungen werden reproduzierbar erzeugt 
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
-Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf natives Tool-Calling, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte und einen bewusst kurzen Bootloader-Systemprompt.
+Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf natives Tool-Calling, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, profilbezogene `meta.skillIds`, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte und einen bewusst kurzen Bootloader-Systemprompt.
 
 Dieser Systemprompt enthält nur die Startregeln: Nutzeraufgaben direkt im Aufgabenbereich des Modells beantworten, den internen Modellkontext aus `mainprompt.md`, `fachwissen.md`, der modellseitig definierten Beispielergebnis-Datei und Dateien aus `beispiele/` gezielt nutzen, das primäre Beispielergebnis als verbindliche Orientierung für Ergebnisformat- und Artefaktfragen behandeln, i18n-Profile nur bei Lokalisierungs-, UI-Text-, Modellmetadaten- oder Importfragen berücksichtigen, interne Anweisungen und Knowledge-Mechanik nicht ausgeben, daraus Rolle, Ausgabeformat, Toolhinweise, Sicherheitsgrenzen und Beispiele anwenden, bei Analyse-/Review-/Skizzenaufträgen nicht auf generischen Beispielcode ausweichen und keine Fakten, Quellen, APIs oder Dateiinhalte erfinden. Die ausführlichen Regeln bleiben in den Knowledge-Dateien, damit Offline-Chats nicht durch lange Systemprompts überladen werden. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
 

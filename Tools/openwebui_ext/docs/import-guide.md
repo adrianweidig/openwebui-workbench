@@ -31,9 +31,9 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ## Aktivierung in Modellen
 
 - Tools nur Modellen zuordnen, deren Aufgabe den Tool-Zweck benötigt.
-- Skills können modellgebunden werden, wenn sie regelmäßig gebraucht werden.
+- Skills werden beim API-Import profilbezogen an Modelle gebunden. Entscheidend ist `meta.skillIds`; `recommendedSkillIds` ist nur eine zusätzliche Prüfinformation.
 - Für Tools Native Function Calling bevorzugen und Status-/Citation-Events nutzen.
-- Der Standard-Workflow ist der API-Import mit zentraler YAML, weil dabei Tool-Valves, Function-/Filter-Valves, Skills, modellbezogene Knowledge inklusive `mainprompt.md`, `fachwissen.md`, modellseitig definierter Beispielergebnis-Datei und `beispiele/` sowie Modellprofile in der richtigen Reihenfolge gesetzt werden. Der manuelle Offline-Fallback ist: zuerst `Tools/dist/openwebui-tools-offline-import.json` importieren, danach `Tools/dist/openwebui-functions-import.json` und Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden.
+- Der Standard-Workflow ist der API-Import mit zentraler YAML, weil dabei Tool-Valves, Function-/Filter-Valves, Skills, modellbezogene Knowledge inklusive `mainprompt.md`, `fachwissen.md`, modellseitig definierter Beispielergebnis-Datei und `beispiele/` sowie Modellprofile in der richtigen Reihenfolge gesetzt werden. Der manuelle Offline-Fallback ist: zuerst `Tools/dist/openwebui-tools-offline-import.json` importieren, danach `Tools/dist/openwebui-functions-import.json` und alle Skills importieren, anschließend `Modelle/dist/openwebui-models-import.json` als Sammelimport laden, damit die in `meta.skillIds` referenzierten Skills bereits existieren.
 - Öffentliche Netzwerktools wie `safe_http_fetcher.py` und `github_repo_inspector.py` sowie optionale Rich-UI-/Crawl-Tools wie `openui_generative_ui.py` und `web_search_and_crawl.py` sind nicht Teil des Offline-Standardimports und werden keinem Modellprofil standardmäßig zugewiesen.
 
 ## Rechtevergabe
@@ -50,5 +50,5 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 - Wenn OpenWebUI selbst beim echten Import ein Tool ablehnt, liegt der Fehler im Zielcontainer. Dann den Tool-Namen aus der OpenWebUI-Fehlermeldung nehmen und dort prüfen, ob die Zielinstanz die benötigten Runtime-Pakete aus `openwebui-offline-addons` beziehungsweise dem OpenWebUI-Backend-Pythonpfad laden kann.
 - Reimports dürfen bei unveränderten Modell-Knowledge-Dateien nicht erneut alle Dateien einbetten. Der Importer schreibt einen `Import-Fingerprint` in die Knowledge-Beschreibung, überspringt unveränderte Sammlungen und meldet sie als `model_knowledge_collections: skipped`. Wenn ein Reimport trotzdem sehr lange läuft, zuerst hängende alte Importprozesse und die Lockdatei `Artefakte/temp/openwebui_workspace_import.lock` prüfen, danach OpenWebUI-Logs auf erneute Datei-Uploads oder Embedding-Läufe kontrollieren.
 - Tool wird nicht aufgerufen: Modell-Tool-Zuordnung und Function-Calling-Einstellung prüfen.
-- Skill nicht sichtbar: Skill aktivieren und Zugriffsrechte prüfen.
+- Skill nicht sichtbar: prüfen, ob der Skill importiert und aktiviert ist, ob Public-/Nutzerzugriff gesetzt wurde und ob das Modell `meta.skillIds` statt nur `recommendedSkillIds` enthält.
 - Unerwartete Toolfehler: `scripts/openwebui_workspace_config.yaml`, importierte Tool-/Function-Valves, Netzwerkzugriff und Größenlimits prüfen.

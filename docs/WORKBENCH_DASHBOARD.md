@@ -45,7 +45,7 @@ Die OpenWebUI-Image-Referenz folgt der offiziellen Docker-Dokumentation und nutz
 
 ## Lokale `top.secret`-Adresse
 
-Wenn auf der Maschine bereits der lokale `top.secret`-Edge-Proxy läuft, kann die Workbench ohne Port über `https://workbench.top.secret` erreichbar gemacht werden:
+Wenn auf der Maschine bereits der lokale `top.secret`-Edge-Proxy läuft, kann die Workbench über `https://workbench.top.secret` erreichbar gemacht werden. Falls der lokale Edge nicht auf Host-Port 443 veröffentlicht ist, muss der veröffentlichte HTTPS-Port in der URL ergänzt werden, zum Beispiel `https://workbench.top.secret:25443`.
 
 ```powershell
 docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
