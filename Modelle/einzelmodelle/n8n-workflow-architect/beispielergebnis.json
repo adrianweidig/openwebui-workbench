@@ -1,0 +1,120 @@
+{
+  "name": "Offline Intake Review - sichere API-Freigabe",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        0
+      ],
+      "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1001",
+      "name": "When clicking 'Test workflow'"
+    },
+    {
+      "parameters": {
+        "jsCode": "const requests = [\n  {\n    requestId: 'REQ-2026-001',\n    requesterEmail: 'teamlead@example.invalid',\n    targetSystem: 'internal-ticketing',\n    action: 'prepare-ticket-update',\n    dataSensitivity: 'internal',\n    approvedForAutomation: false,\n    summary: 'Routingregel für Kategorie Hardware prüfen',\n    payload: {\n      ticketId: 'TCK-1001',\n      category: 'Hardware',\n      priority: 'medium'\n    }\n  }\n];\n\nreturn requests.map((request) => ({ json: request }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -520,
+        0
+      ],
+      "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1002",
+      "name": "Beispieldaten laden"
+    },
+    {
+      "parameters": {
+        "jsCode": "const requiredFields = [\n  'requestId',\n  'requesterEmail',\n  'targetSystem',\n  'action',\n  'dataSensitivity',\n  'payload'\n];\nconst sensitiveClasses = new Set(['personal', 'confidential', 'secret']);\n\nreturn $input.all().map((item) => {\n  const source = item.json;\n  const missing = requiredFields.filter((field) => source[field] === undefined || source[field] === null || source[field] === '');\n  const action = String(source.action || '').toLowerCase();\n  const dataSensitivity = String(source.dataSensitivity || '').toLowerCase();\n  const riskyAction = /delete|close|send|create-user|payment|admin/.test(action);\n  const needsHumanReview = riskyAction || source.approvedForAutomation !== true || sensitiveClasses.has(dataSensitivity);\n\n  return {\n    json: {\n      ...source,\n      validation: {\n        valid: missing.length === 0,\n        missing,\n        riskyAction,\n        needsHumanReview\n      }\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -260,
+        0
+      ],
+      "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1003",
+      "name": "Eingabe validieren"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map((item) => {\n  const data = item.json;\n  let status = 'ready_for_dry_run';\n  let nextStep = 'Interne API in Testumgebung mit Credential-Platzhalter zuordnen.';\n\n  if (!data.validation.valid) {\n    status = 'blocked_missing_fields';\n    nextStep = `Fehlende Pflichtfelder ergänzen: ${data.validation.missing.join(', ')}`;\n  } else if (data.validation.needsHumanReview) {\n    status = 'needs_human_review';\n    nextStep = 'Menschliche Freigabe einholen; Workflow führt noch keine produktive Aktion aus.';\n  }\n\n  return {\n    json: {\n      requestId: data.requestId,\n      status,\n      nextStep,\n      safePayload: {\n        targetSystem: data.targetSystem,\n        action: data.action,\n        summary: data.summary,\n        ticketId: data.payload.ticketId || null,\n        category: data.payload.category || null,\n        priority: data.payload.priority || null\n      },\n      validation: data.validation\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1004",
+      "name": "Freigabeentscheidung vorbereiten"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map((item) => ({\n  json: {\n    auditId: `audit-${item.json.requestId}`,\n    generatedAt: new Date().toISOString(),\n    workflowMode: 'dry-run',\n    status: item.json.status,\n    nextStep: item.json.nextStep,\n    safePayload: item.json.safePayload,\n    safety: {\n      noSecretsInWorkflow: true,\n      productiveActionExecuted: false,\n      humanReviewRequired: item.json.validation.needsHumanReview\n    }\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1005",
+      "name": "Audit-Record erzeugen"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "Beispieldaten laden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Beispieldaten laden": {
+      "main": [
+        [
+          {
+            "node": "Eingabe validieren",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eingabe validieren": {
+      "main": [
+        [
+          {
+            "node": "Freigabeentscheidung vorbereiten",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Freigabeentscheidung vorbereiten": {
+      "main": [
+        [
+          {
+            "node": "Audit-Record erzeugen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}

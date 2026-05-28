@@ -108,6 +108,16 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(after["content"], "<!doctype html>\n")
         self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispielergebnis.html").is_file())
 
+    def test_reads_and_writes_allowed_json_example(self) -> None:
+        after = self.state.write_model_file("demo-model", "beispielergebnis.json", "{\"ok\": true}\n")
+        self.assertEqual(after["content"], "{\"ok\": true}\n")
+        self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispielergebnis.json").is_file())
+
+    def test_reads_and_writes_allowed_json_file_under_examples(self) -> None:
+        after = self.state.write_model_file("demo-model", "beispiele/demo.json", "{\"ok\": true}\n")
+        self.assertEqual(after["content"], "{\"ok\": true}\n")
+        self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispiele" / "demo.json").is_file())
+
     def test_reads_and_writes_allowed_product_i18n_markdown(self) -> None:
         after = self.state.write_model_file("demo-model", "i18n/de.md", "# Aktualisiertes Profil\n")
         self.assertEqual(after["content"], "# Aktualisiertes Profil\n")

@@ -21,8 +21,8 @@ Die bearbeitbare Quelle bleibt das Repository:
 - `Modelle/einzelmodelle/<modell>/systemprompt.md`
 - `Modelle/einzelmodelle/<modell>/mainprompt.md`
 - `Modelle/einzelmodelle/<modell>/fachwissen.md`
-- `Modelle/einzelmodelle/<modell>/beispielergebnis.md`
-- `Modelle/einzelmodelle/<modell>/beispiele/*.md`
+- modellseitig definierte Beispielergebnis-Dateien wie `beispielergebnis.md`, `beispielergebnis.html` oder `beispielergebnis.json`
+- freigegebene Beispiele unter `Modelle/einzelmodelle/<modell>/beispiele/`
 - `Tools/openwebui_ext/tools/*.py`
 - `Tools/openwebui_ext/skills/*.md`
 - `Tools/dist/`

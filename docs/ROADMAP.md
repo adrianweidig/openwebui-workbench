@@ -9,22 +9,22 @@ Diese Roadmap ist nicht als Release-Zusage zu verstehen. Sie beschreibt eine vor
 - Offline-Default ohne öffentliche Netzwerkabhängigkeiten bewahren.
 - `Modelle/dist/` und `Tools/dist/` als kanonische Handover-Bereiche pflegen.
 
-## Geplant: Internetwissen-Modell
+## Internetwissen-Modell
 
-Das Repository soll um ein Modellpaket `internetwissen` erweitert werden. Das Modell soll allgemeine Recherchefragen, Anleitungen, Erklärungen, Quellenkritik und Wissensstrukturierung offline unterstützen.
+Das Modellpaket `internetwissen` ist integriert. Es unterstützt allgemeine Recherchefragen, Anleitungen, Erklärungen, Quellenkritik und Wissensstrukturierung offline.
 
 ### Phase 1: Initiales Internetwissenmodell
 
 Ziel der ersten Phase ist ein sofort nutzbares Modell ohne große externe Datenbestände.
 
-Geplant:
+Umgesetzt:
 
-- Modellpaket `Modelle/einzelmodelle/internetwissen/` anlegen.
-- Problemfall-Briefing `Problemfälle/27_internetwissen.md` ergänzen.
-- `model.json`, `systemprompt.md`, `mainprompt.md`, `fachwissen.md` und `beispielergebnis.md` erstellen.
+- Modellpaket `Modelle/einzelmodelle/internetwissen/`.
+- Problemfall-Briefing `Problemfälle/27_internetwissen.md`.
+- `model.json`, `systemprompt.md`, `mainprompt.md`, `fachwissen.md` und `beispielergebnis.md`.
 - Kompakte, selbst geschriebene Wissensbasis in `fachwissen.md` pflegen.
-- Beispiele für Recherchefragen, Anleitungen, Quellenkritik und Aktualitätsgrenzen ergänzen.
-- Produkt-i18n-Dateien für die unterstützten Locales ergänzen.
+- Beispiele für Recherchefragen, Anleitungen, Quellenkritik und Aktualitätsgrenzen.
+- Produkt-i18n-Dateien für die unterstützten Locales.
 - Websuche im Modellprofil deaktiviert lassen.
 - Keine externen GB-/TB-Daten in das Repository aufnehmen.
 - Generator- und Verify-Prüfung für das neue Modell erfolgreich halten.

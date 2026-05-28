@@ -18,16 +18,15 @@ CONFIG_EXAMPLE = ROOT / "scripts" / "openwebui_workspace_config.example.yaml"
 
 REQUIRED_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "n8n-workflow-architect": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
     "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
 }
-TOOL_FORCE_MARKER = "## Verbindliche Tool- und Skill-Nutzung"
-VISION_MARKER = "## Vision- und UI-Bildanalyse"
 def required_knowledge_files(model_id: str) -> list[str]:
     return MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES.get(model_id, REQUIRED_KNOWLEDGE_FILES)
 
 
 def knowledge_phrases(model_id: str) -> list[str]:
-    return [*required_knowledge_files(model_id), "beispiele/", "laden und analysieren"]
+    return [*required_knowledge_files(model_id), "beispiele/", "i18n/", "laden und analysieren"]
 
 
 def read_json(path: Path):
@@ -67,10 +66,12 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 params = model.get("params", {})
                 system = params.get("system", "")
 
-                self.assertIn(TOOL_FORCE_MARKER, system)
-                self.assertIn(VISION_MARKER, system)
-                self.assertIn("Tool-/Skill-Inventur", system)
-                self.assertLess(len(system), 3500)
+                self.assertIn("kurzer Bootloader", system)
+                self.assertIn("Erfinde keine Fakten", system)
+                self.assertIn("Toolhinweise", system)
+                self.assertNotIn("## Verbindliche Tool- und Skill-Nutzung", system)
+                self.assertNotIn("## Vision- und UI-Bildanalyse", system)
+                self.assertLess(len(system), 1400)
                 for phrase in knowledge_phrases(model_id):
                     self.assertIn(phrase, system)
                 self.assertEqual(meta.get("requiredKnowledgeFiles"), required_knowledge_files(model_id))
@@ -126,11 +127,9 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
 
         for model in summary.get("models", []):
             with self.subTest(model=model.get("id")):
-                self.assertTrue(model.get("has_tool_force_profile"))
-                self.assertTrue(model.get("has_vision_profile"))
+                self.assertTrue(model.get("has_short_bootloader_systemprompt"))
                 self.assertTrue(model.get("vision_enabled"))
-                self.assertTrue(model.get("has_openwebui_builtin_and_addon_policy"))
-                self.assertLess(model.get("system_prompt_chars", 999999), 3500)
+                self.assertLess(model.get("system_prompt_chars", 999999), 1400)
                 self.assertEqual(model.get("required_knowledge_files"), required_knowledge_files(str(model.get("id"))))
                 for info in model.get("knowledge_files", {}).values():
                     self.assertTrue(info.get("exists"))

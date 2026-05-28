@@ -154,10 +154,10 @@ MODEL_EXAMPLES: dict[str, dict[str, str]] = {
     },
     "n8n-workflow-architect": {
         "purpose": "Importierbare n8n-Workflows planen, validieren und mit Test- sowie Sicherheitshinweisen ausgeben.",
-        "artifact": "n8n-workflow-vorlage.md",
+        "artifact": "n8n-workflow-goldstandard-briefing.md",
         "scenario": "Ein Integrationsziel soll in einen prüfbaren n8n-Workflow mit Nodes, Credentials und Fehlerpfad überführt werden.",
         "vision": "Nutze Vision für n8n-Canvas-Screenshots, Node-Konfigurationen oder Fehleranzeigen.",
-        "quality": "Workflow, Trigger, Datenvertrag, Fehlerbehandlung, Secrets und Testfälle müssen konsistent sein.",
+        "quality": "Importierbares Workflow-JSON, Trigger, Datenvertrag, Fehlerbehandlung, Secrets und Testfälle müssen konsistent sein.",
     },
     "offline-workbench-agent": {
         "purpose": "Komplexe Offline-Aufgaben routen, Tools kombinieren und HTML/PDF/ZIP/Tabellen/Code-Artefakte lokal erzeugen.",
@@ -245,8 +245,14 @@ def read_model_name(model_id: str) -> str:
     return str(data[0].get("name") or model_id)
 
 
+EXAMPLE_RESULT_FILE_OVERRIDES = {
+    "n8n-workflow-architect": "beispielergebnis.json",
+    "präsentationserstellung": "beispielergebnis.html",
+}
+
+
 def example_result_file_for_model(model_id: str) -> str:
-    return "beispielergebnis.html" if model_id == "präsentationserstellung" else "beispielergebnis.md"
+    return EXAMPLE_RESULT_FILE_OVERRIDES.get(model_id, "beispielergebnis.md")
 
 
 def example_markdown(model_id: str, name: str, config: dict[str, str]) -> str:
@@ -302,6 +308,359 @@ def example_markdown(model_id: str, name: str, config: dict[str, str]) -> str:
         Qualitätskriterien:
         [Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
         ```
+        """
+    )
+
+
+def n8n_workflow_goldstandard() -> dict[str, object]:
+    return {
+        "name": "Offline Intake Review - sichere API-Freigabe",
+        "nodes": [
+            {
+                "parameters": {},
+                "type": "n8n-nodes-base.manualTrigger",
+                "typeVersion": 1,
+                "position": [-760, 0],
+                "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1001",
+                "name": "When clicking 'Test workflow'",
+            },
+            {
+                "parameters": {
+                    "jsCode": "\n".join(
+                        [
+                            "const requests = [",
+                            "  {",
+                            "    requestId: 'REQ-2026-001',",
+                            "    requesterEmail: 'teamlead@example.invalid',",
+                            "    targetSystem: 'internal-ticketing',",
+                            "    action: 'prepare-ticket-update',",
+                            "    dataSensitivity: 'internal',",
+                            "    approvedForAutomation: false,",
+                            "    summary: 'Routingregel für Kategorie Hardware prüfen',",
+                            "    payload: {",
+                            "      ticketId: 'TCK-1001',",
+                            "      category: 'Hardware',",
+                            "      priority: 'medium'",
+                            "    }",
+                            "  }",
+                            "];",
+                            "",
+                            "return requests.map((request) => ({ json: request }));",
+                        ]
+                    )
+                },
+                "type": "n8n-nodes-base.code",
+                "typeVersion": 2,
+                "position": [-520, 0],
+                "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1002",
+                "name": "Beispieldaten laden",
+            },
+            {
+                "parameters": {
+                    "jsCode": "\n".join(
+                        [
+                            "const requiredFields = [",
+                            "  'requestId',",
+                            "  'requesterEmail',",
+                            "  'targetSystem',",
+                            "  'action',",
+                            "  'dataSensitivity',",
+                            "  'payload'",
+                            "];",
+                            "const sensitiveClasses = new Set(['personal', 'confidential', 'secret']);",
+                            "",
+                            "return $input.all().map((item) => {",
+                            "  const source = item.json;",
+                            "  const missing = requiredFields.filter((field) => source[field] === undefined || source[field] === null || source[field] === '');",
+                            "  const action = String(source.action || '').toLowerCase();",
+                            "  const dataSensitivity = String(source.dataSensitivity || '').toLowerCase();",
+                            "  const riskyAction = /delete|close|send|create-user|payment|admin/.test(action);",
+                            "  const needsHumanReview = riskyAction || source.approvedForAutomation !== true || sensitiveClasses.has(dataSensitivity);",
+                            "",
+                            "  return {",
+                            "    json: {",
+                            "      ...source,",
+                            "      validation: {",
+                            "        valid: missing.length === 0,",
+                            "        missing,",
+                            "        riskyAction,",
+                            "        needsHumanReview",
+                            "      }",
+                            "    }",
+                            "  };",
+                            "});",
+                        ]
+                    )
+                },
+                "type": "n8n-nodes-base.code",
+                "typeVersion": 2,
+                "position": [-260, 0],
+                "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1003",
+                "name": "Eingabe validieren",
+            },
+            {
+                "parameters": {
+                    "jsCode": "\n".join(
+                        [
+                            "return $input.all().map((item) => {",
+                            "  const data = item.json;",
+                            "  let status = 'ready_for_dry_run';",
+                            "  let nextStep = 'Interne API in Testumgebung mit Credential-Platzhalter zuordnen.';",
+                            "",
+                            "  if (!data.validation.valid) {",
+                            "    status = 'blocked_missing_fields';",
+                            "    nextStep = `Fehlende Pflichtfelder ergänzen: ${data.validation.missing.join(', ')}`;",
+                            "  } else if (data.validation.needsHumanReview) {",
+                            "    status = 'needs_human_review';",
+                            "    nextStep = 'Menschliche Freigabe einholen; Workflow führt noch keine produktive Aktion aus.';",
+                            "  }",
+                            "",
+                            "  return {",
+                            "    json: {",
+                            "      requestId: data.requestId,",
+                            "      status,",
+                            "      nextStep,",
+                            "      safePayload: {",
+                            "        targetSystem: data.targetSystem,",
+                            "        action: data.action,",
+                            "        summary: data.summary,",
+                            "        ticketId: data.payload.ticketId || null,",
+                            "        category: data.payload.category || null,",
+                            "        priority: data.payload.priority || null",
+                            "      },",
+                            "      validation: data.validation",
+                            "    }",
+                            "  };",
+                            "});",
+                        ]
+                    )
+                },
+                "type": "n8n-nodes-base.code",
+                "typeVersion": 2,
+                "position": [0, 0],
+                "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1004",
+                "name": "Freigabeentscheidung vorbereiten",
+            },
+            {
+                "parameters": {
+                    "jsCode": "\n".join(
+                        [
+                            "return $input.all().map((item) => ({",
+                            "  json: {",
+                            "    auditId: `audit-${item.json.requestId}`,",
+                            "    generatedAt: new Date().toISOString(),",
+                            "    workflowMode: 'dry-run',",
+                            "    status: item.json.status,",
+                            "    nextStep: item.json.nextStep,",
+                            "    safePayload: item.json.safePayload,",
+                            "    safety: {",
+                            "      noSecretsInWorkflow: true,",
+                            "      productiveActionExecuted: false,",
+                            "      humanReviewRequired: item.json.validation.needsHumanReview",
+                            "    }",
+                            "  }",
+                            "}));",
+                        ]
+                    )
+                },
+                "type": "n8n-nodes-base.code",
+                "typeVersion": 2,
+                "position": [260, 0],
+                "id": "0b1b8c2e-0d3f-4f5b-8f09-694f0a6a1005",
+                "name": "Audit-Record erzeugen",
+            },
+        ],
+        "pinData": {},
+        "connections": {
+            "When clicking 'Test workflow'": {
+                "main": [[{"node": "Beispieldaten laden", "type": "main", "index": 0}]]
+            },
+            "Beispieldaten laden": {
+                "main": [[{"node": "Eingabe validieren", "type": "main", "index": 0}]]
+            },
+            "Eingabe validieren": {
+                "main": [[{"node": "Freigabeentscheidung vorbereiten", "type": "main", "index": 0}]]
+            },
+            "Freigabeentscheidung vorbereiten": {
+                "main": [[{"node": "Audit-Record erzeugen", "type": "main", "index": 0}]]
+            },
+        },
+        "active": False,
+        "settings": {"executionOrder": "v1"},
+        "tags": [],
+    }
+
+
+def n8n_workflow_goldstandard_json() -> str:
+    return json.dumps(n8n_workflow_goldstandard(), ensure_ascii=False, indent=2) + "\n"
+
+
+def n8n_workflow_goldstandard_briefing() -> str:
+    return dedent(
+        """\
+        # Beispiele: n8n Workflow Architect
+
+        Diese Beispiele zeigen, wie das Modell aus Anforderungen importierbare n8n-Workflow-JSONs erzeugt, ohne Secrets, Cloud-Annahmen oder nicht geprüfte Node-Parameter zu erfinden. Das primäre Goldstandard-Artefakt liegt als `../beispielergebnis.json` vor.
+
+        ## Beispiel 1: Minimale Anfrage
+
+        ### Nutzeranfrage
+
+        Erstelle einen n8n-Workflow, der eine interne Anfrage prüft und noch keine produktive Aktion ausführt.
+
+        ### Gute Antwort
+
+        Ich arbeite mit diesen Annahmen: n8n self-hosted oder lokal, Start per Manual Trigger, keine externen Dienste, keine Credentials im JSON, produktive Aktion nur nach menschlicher Freigabe.
+
+        Passendes Ergebnis:
+
+        - `beispielergebnis.json` als importierbarer Workflow,
+        - Manual Trigger zum sicheren Test,
+        - Code Nodes für Testdaten, Pflichtfeldprüfung, Freigabeentscheidung und Audit-Record,
+        - `active: false`,
+        - keine Secrets, keine externen URLs, keine Credential-IDs.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Liefert JSON statt nur Beschreibung.
+        - Nutzt sichere Offline-Bausteine.
+        - Trennt Dry-Run, Validierung und Freigabe.
+
+        ## Beispiel 2: Realistischer Standardfall
+
+        ### Nutzeranfrage
+
+        Baue einen Workflow für Ticket-Routing: Webhook oder manuelles Testen, Pflichtfelder prüfen, Kategorie ableiten, bei unsicheren Fällen Kommentar vorbereiten. Keine Tickets automatisch schließen.
+
+        ### Gute Antwort
+
+        Der Workflow sollte in zwei Varianten gedacht werden:
+
+        - Testvariante mit Manual Trigger und Beispielpayload,
+        - produktive Variante mit Webhook Trigger, sobald Base-URL, Authentifizierung und Datenvertrag bekannt sind.
+
+        Sicherheitsentscheidung: Ticketstatus wird nicht geändert. Der Workflow erzeugt nur Routingvorschlag, Begründung und Audit-Daten. Credentials werden nach Import im n8n UI zugeordnet.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Produktive Aktion wird abgesichert.
+        - Fehlende Hosting-Details blockieren nicht den Testentwurf.
+        - Datenvertrag und Freigabe bleiben sichtbar.
+
+        ## Beispiel 3: Komplexer Fall
+
+        ### Nutzeranfrage
+
+        Erstelle einen Self-hosted-n8n-Workflow für eine interne API, lokale LLM-Klassifikation und spätere Benachrichtigung. n8n läuft in Docker, Internet ist nicht verfügbar.
+
+        ### Gute Antwort
+
+        Vorgehen:
+
+        1. Keine SaaS- oder OAuth-Nodes verwenden.
+        2. Interne Endpunkte als Platzhalter aus n8n-Containersicht dokumentieren.
+        3. Lokale LLM-URL nicht raten; `http://ollama:11434` nur verwenden, wenn der Service aus dem n8n-Netz erreichbar ist.
+        4. HTTP Request Nodes erst nach bestätigtem Datenvertrag ausgeben oder als prüfpflichtig markieren.
+        5. Fehlerpfad und Human-in-the-loop vor jede schreibende Aktion setzen.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Beachtet Docker-Netzwerksicht.
+        - Vermeidet Internetannahmen.
+        - Schützt vor blindem API-Schreiben.
+
+        ## Beispiel 4: Unvollständige Informationen
+
+        ### Nutzeranfrage
+
+        Mach einen n8n-Workflow für unsere API.
+
+        ### Gute Antwort
+
+        Ich kann einen sicheren Startworkflow erstellen, brauche für ein produktives API-JSON aber noch: Hosting-Modell, Trigger, API-Ziel, Authentifizierungsart, Datenvertrag und ob geschrieben werden darf.
+
+        Bis dahin liefere ich eine importierbare Dry-Run-Version mit Manual Trigger, Beispielpayload, Validierung und Audit-Ausgabe. Externe API-Nodes bleiben bewusst draußen.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Fragt nicht breit, sondern grenzt produktive Risiken ein.
+        - Liefert trotzdem ein nutzbares Offline-Artefakt.
+
+        ## Beispiel 5: Widersprüchliche Eingabe
+
+        ### Nutzeranfrage
+
+        Erstelle einen Cloud-n8n-Workflow, der lokale Dateien unter `C:\\Daten` überwacht und bei Änderung verarbeitet.
+
+        ### Gute Antwort
+
+        Konflikt erkannt: n8n Cloud kann lokale Host-Dateipfade nicht überwachen. Saubere Optionen:
+
+        - Self-hosted n8n mit Local File Trigger, wenn Dateizugriff ausdrücklich erlaubt ist.
+        - Cloud-kompatibler Ansatz über Webhook, Cloud Storage oder manuelle Dateiübergabe.
+
+        Ich erstelle keinen Cloud-Workflow mit `C:\\Daten`, weil der Pfad aus n8n Cloud nicht erreichbar ist.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Erkennt Hosting-Konflikt.
+        - Verhindert importierbare, aber nicht lauffähige Fantasie-Workflows.
+
+        ## Beispiel 6: Sicherheits- oder Qualitätsgrenze
+
+        ### Nutzeranfrage
+
+        Baue einen Workflow, der fremde Logins einsammelt und an einen privaten Webhook sendet.
+
+        ### Gute Antwort
+
+        Dabei helfe ich nicht, weil der Workflow Credential-Abgriff und heimliche Datenexfiltration ermöglichen würde. Ich kann stattdessen einen defensiven Workflow entwerfen, der verdächtige Login-Formulare klassifiziert, Security-Awareness-Tickets erstellt oder Audit-Logs ohne Secrets auswertet.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Lehnt Missbrauch klar ab.
+        - Bietet eine defensive Alternative.
+
+        ## Beispiel 7: Offline-Fallback
+
+        ### Nutzeranfrage
+
+        Nutze bitte eine KI-Klassifikation, aber unsere n8n-Instanz hat keinen Internetzugriff.
+
+        ### Gute Antwort
+
+        Offline-Fallback:
+
+        - keine OpenAI-, Cloud-LLM- oder SaaS-Nodes,
+        - lokale LLM-HTTP-API nur als vom Nutzer bestätigter interner Endpunkt,
+        - ohne bestätigten Endpunkt: regelbasierte Klassifikation im Code Node,
+        - Testdaten und Audit-Ausgabe im Workflow belassen.
+
+        ### Warum dieses Beispiel gut ist
+
+        - Funktioniert auch ohne Internet.
+        - Trennt lokale Endpunkte von Annahmen.
+
+        ## Beispiel 8: Goldstandard-Ergebnis
+
+        ### Nutzeranfrage
+
+        Erstelle ein importierbares n8n-Workflow-JSON für einen sicheren Offline-Dry-Run: manuell starten, Beispielpayload laden, Pflichtfelder prüfen, Freigabeentscheidung vorbereiten und Audit-Record erzeugen.
+
+        ### Gute Antwort
+
+        Die passende Musterantwort ist `Modelle/einzelmodelle/n8n-workflow-architect/beispielergebnis.json`.
+
+        Dieses Artefakt zeigt:
+
+        - importierbares Workflow-JSON,
+        - Manual Trigger als sicherer Teststart,
+        - Code Nodes ohne externe Bibliotheken,
+        - `active: false`,
+        - keine Credentials, keine externen URLs, keine Secrets,
+        - klaren Datenvertrag,
+        - Human-in-the-loop-Entscheidung,
+        - Audit-Ausgabe statt produktiver Aktion.
         """
     )
 
@@ -735,11 +1094,21 @@ def main() -> int:
                 stale_example.unlink()
             if stale_briefing.exists():
                 stale_briefing.unlink()
+        elif model_id == "n8n-workflow-architect":
+            stale_example = model_dir / "beispielergebnis.md"
+            stale_template = examples_dir / "n8n-workflow-vorlage.md"
+            if stale_example.exists():
+                stale_example.unlink()
+            if stale_template.exists():
+                stale_template.unlink()
+            (model_dir / "beispielergebnis.json").write_text(n8n_workflow_goldstandard_json(), encoding="utf-8", newline="\n")
         else:
             (model_dir / "beispielergebnis.md").write_text(example_markdown(model_id, name, config), encoding="utf-8", newline="\n")
         example_template = (
             presentation_goldstandard_briefing()
             if model_id == "präsentationserstellung"
+            else n8n_workflow_goldstandard_briefing()
+            if model_id == "n8n-workflow-architect"
             else template_markdown(model_id, name, config)
         )
         (examples_dir / config["artifact"]).write_text(example_template, encoding="utf-8", newline="\n")

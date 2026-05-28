@@ -46,7 +46,7 @@ The initial scope is intentionally small: the model does not ship large external
 ### Initial scope
 
 - new model package `Modelle/einzelmodelle/internetwissen/`
-- repository-internal KnowledgeBase via `mainprompt.md`, `fachwissen.md`, and `beispielergebnis.md`
+- repository-internal KnowledgeBase via `mainprompt.md`, `fachwissen.md`, and the model-specific example result file such as `beispielergebnis.md`, `beispielergebnis.html`, or `beispielergebnis.json`
 - no live web search in the offline default
 - focus on general explanations, instructions, research methodology, and source criticism
 - explicit handling of freshness limits

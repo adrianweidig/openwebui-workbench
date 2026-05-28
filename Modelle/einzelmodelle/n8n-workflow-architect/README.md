@@ -12,4 +12,8 @@ Quelle: `https://github.com/adrianweidig/custom-gpts/tree/main/N8N-Generator`
 
 ## Import
 
-`model.json` ist ein OpenWebUI-kompatibles JSON-Array mit genau einem Modellobjekt. `mainprompt.md` und `fachwissen.md` werden beim API-Import als Knowledge für dieses Modell hinterlegt.
+`model.json` ist ein OpenWebUI-kompatibles JSON-Array mit genau einem Modellobjekt. `mainprompt.md`, `fachwissen.md`, `beispielergebnis.json`, `beispiele/` und `i18n/` werden beim API-Import als Knowledge für dieses Modell hinterlegt.
+
+## Beispielergebnis
+
+Das primäre Goldstandard-Beispiel ist `beispielergebnis.json`. Dieses Modell soll importierbare n8n-Workflow-JSONs erzeugen; deshalb darf eine Markdown-Datei das eigentliche Zielartefakt nicht ersetzen. Ergänzende Markdown-Dateien unter `beispiele/` erklären die Musterfälle und Sicherheitsgrenzen.

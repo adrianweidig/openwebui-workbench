@@ -37,9 +37,33 @@ MODEL_TEXT_FILES = {
     "fachwissen.md",
     "beispielergebnis.md",
     "beispielergebnis.html",
+    "beispielergebnis.json",
+    "beispielergebnis.yaml",
+    "beispielergebnis.yml",
+    "beispielergebnis.py",
+    "beispielergebnis.js",
+    "beispielergebnis.css",
+    "beispielergebnis.csv",
+    "beispielergebnis.sql",
+    "beispielergebnis.svg",
+    "beispielergebnis.txt",
     "customgpt_infos.md",
 }
 MAX_BODY_BYTES = int(os.environ.get("WORKBENCH_MAX_BODY_BYTES", "1048576"))
+MODEL_EXAMPLE_SUFFIXES = {
+    ".md",
+    ".html",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".py",
+    ".js",
+    ".css",
+    ".csv",
+    ".sql",
+    ".svg",
+    ".txt",
+}
 
 
 def configure_utf8_stdio() -> None:
@@ -320,7 +344,7 @@ class WorkbenchState:
         examples = directory / "beispiele"
         if examples.exists():
             for path in sorted(
-                item for item in examples.glob("*") if item.is_file() and item.suffix.lower() in {".md", ".html"}
+                item for item in examples.glob("*") if item.is_file() and item.suffix.lower() in MODEL_EXAMPLE_SUFFIXES
             ):
                 files.append(
                     {
@@ -358,7 +382,7 @@ class WorkbenchState:
         if clean in MODEL_TEXT_FILES:
             safe_name = require_safe_path_segment(clean, t("invalid_model_filename", self.config.locale))
             return directory / safe_name
-        if clean.startswith("beispiele/") and Path(clean).suffix.lower() in {".md", ".html"}:
+        if clean.startswith("beispiele/") and Path(clean).suffix.lower() in MODEL_EXAMPLE_SUFFIXES:
             example_name = clean.removeprefix("beispiele/")
             safe_example_name = require_safe_path_segment(example_name, t("invalid_example_filename", self.config.locale))
             return directory / "beispiele" / safe_example_name

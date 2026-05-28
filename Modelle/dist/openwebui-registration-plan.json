@@ -50,12 +50,16 @@
   "vision_policy": {
     "enabled_for_chat_models": true,
     "specialist_model_id": "mistral-vision-workbench",
-    "system_marker": "## Vision- und UI-Bildanalyse",
-    "behavior": "Use Mistral-Medium vision when OpenWebUI forwards image inputs. Apply it to screenshots, UI tests, scans, charts, presentations and visual artifact QA; fall back to OCR, files or user descriptions when image input is unavailable."
+    "behavior": "Vision remains enabled in model metadata. Detailed image, screenshot and artifact-QA rules live in Knowledge so the OpenWebUI system prompt can stay a short bootloader."
   },
   "model_example_policy": {
     "default_required_knowledge_file": "beispielergebnis.md",
     "model_required_knowledge_file_overrides": {
+      "n8n-workflow-architect": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.json"
+      ],
       "präsentationserstellung": [
         "mainprompt.md",
         "fachwissen.md",
@@ -235,6 +239,11 @@
     "beispielergebnis.md"
   ],
   "model_knowledge_file_overrides": {
+    "n8n-workflow-architect": [
+      "mainprompt.md",
+      "fachwissen.md",
+      "beispielergebnis.json"
+    ],
     "präsentationserstellung": [
       "mainprompt.md",
       "fachwissen.md",
@@ -2250,61 +2259,61 @@
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4834
+        "bytes": 3300
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 25196
+        "bytes": 14742
       },
-      "beispielergebnis.md": {
-        "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispielergebnis.md",
+      "beispielergebnis.json": {
+        "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispielergebnis.json",
         "exists": true,
         "non_empty": true,
-        "bytes": 1827
+        "bytes": 5221
       },
-      "beispiele/n8n-workflow-vorlage.md": {
-        "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispiele/n8n-workflow-vorlage.md",
+      "beispiele/n8n-workflow-goldstandard-briefing.md": {
+        "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispiele/n8n-workflow-goldstandard-briefing.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1565
+        "bytes": 5905
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/de.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1174
+        "bytes": 1176
       },
       "i18n/en.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/en.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1061
+        "bytes": 1063
       },
       "i18n/es.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/es.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1186
+        "bytes": 1188
       },
       "i18n/fr.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/fr.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1225
+        "bytes": 1227
       },
       "i18n/it.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/it.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1116
+        "bytes": 1118
       },
       "i18n/ja.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/ja.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1344
+        "bytes": 1346
       },
       "i18n/manifest.json": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/manifest.json",
@@ -2316,31 +2325,31 @@
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/nl.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1084
+        "bytes": 1086
       },
       "i18n/pl.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/pl.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1110
+        "bytes": 1112
       },
       "i18n/pt-BR.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/pt-BR.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1164
+        "bytes": 1166
       },
       "i18n/tr.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/tr.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1124
+        "bytes": 1126
       },
       "i18n/zh-Hans.md": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/i18n/zh-Hans.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1006
+        "bytes": 1008
       }
     },
     "offline-workbench-agent": {
@@ -2752,7 +2761,7 @@
         "path": "Modelle/einzelmodelle/präsentationserstellung/beispielergebnis.html",
         "exists": true,
         "non_empty": true,
-        "bytes": 29911
+        "bytes": 30751
       },
       "beispiele/praesentation-goldstandard-briefing.md": {
         "path": "Modelle/einzelmodelle/präsentationserstellung/beispiele/praesentation-goldstandard-briefing.md",
@@ -3433,8 +3442,7 @@
   "generic_icon_manifest": "Modelle/dist/artifacts/icons/openwebui-generic-icons.json",
   "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
   "tool_force_policy": {
-    "system_marker": "## Verbindliche Tool- und Skill-Nutzung",
-    "behavior": "Every chat model starts non-trivial work with a compact tool/skill inventory and uses the smallest suitable available tool set early when files, structured data, code, artifacts, APIs, Docker/OpenWebUI diagnostics, visuals or parallel work are involved.",
+    "behavior": "Every chat model keeps primaryToolIds and recommendedSkillIds in metadata. Detailed tool routing stays in mainprompt.md and fachwissen.md instead of expanding the OpenWebUI system prompt.",
     "model_profiles": {
       "allgemein": {
         "tools": [
@@ -3948,25 +3956,24 @@
     }
   },
   "tool_call_playbook_policy": {
-    "system_marker": "## Explizite Tool-Aufrufmuster",
     "target_model_runtime": "local Mistral Medium 128B",
-    "behavior": "Every chat model receives a short system-level reminder to prefer OpenWebUI builtins, model primary tools, parallelization/subagents and visual/artifact tooling when the use case requires them. Detailed call syntax stays in Knowledge and skills.",
+    "behavior": "Tool-call guidance is model-specific Knowledge. The system prompt only tells the model to load Knowledge and apply the relevant tool hints.",
     "required_prompt_phrases": [
-      "OpenWebUI-Builtins",
-      "primären Modelltools",
-      "Parallelisierung oder Subagenten",
-      "geeignetes Tool geprüft"
+      "Toolhinweise",
+      "Knowledge-Dateien",
+      "beispiele/",
+      "i18n/"
     ]
   },
   "custom_gpt_quality_policy": {
     "formatting_marker": "Formatting re-enabled",
-    "system_marker": "## CustomGPT-Qualitätsprofil",
-    "behavior": "Every chat model has a short bootstrap system prompt that requires loading and analyzing mainprompt.md, fachwissen.md, the model-specific example result file, beispiele/ and i18n/ before applying role, scope, output format, quality rules, examples and language behavior to the task."
+    "system_prompt_max_chars": 1400,
+    "behavior": "Every chat model uses a short bootloader system prompt. It references mainprompt.md, fachwissen.md, the model-specific example result file, beispiele/ and i18n/ without embedding the detailed model playbook into every chat context."
   },
   "model_params_policy": {
     "max_tokens": "omitted",
     "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
-    "reasoning_profile": "high_prompted_in_system",
+    "reasoning_profile": "knowledge_driven_not_runtime_param",
     "reasoning_effort_runtime_param": "omitted_for_mistral_medium_128b_compatibility",
     "supported_runtime_params": [
       "function_calling",
@@ -4040,12 +4047,8 @@
     "params.temperature",
     "params.top_p",
     "params.stop",
-    "params.system markdown formatting marker",
-    "params.system high-reasoning section",
-    "params.system custom-gpt quality section",
-    "params.system vision and UI image analysis section",
-    "params.system explicit tool-call playbook section",
-    "params.system tool-force section",
+    "params.system short bootloader",
+    "params.system model-specific Knowledge references",
     "meta.profile_image_url"
   ],
   "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",

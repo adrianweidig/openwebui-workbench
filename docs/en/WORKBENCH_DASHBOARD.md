@@ -21,8 +21,8 @@ The editable source remains the repository:
 - `Modelle/einzelmodelle/<modell>/systemprompt.md`
 - `Modelle/einzelmodelle/<modell>/mainprompt.md`
 - `Modelle/einzelmodelle/<modell>/fachwissen.md`
-- `Modelle/einzelmodelle/<modell>/beispielergebnis.md`
-- `Modelle/einzelmodelle/<modell>/beispiele/*.md`
+- model-defined example result files such as `beispielergebnis.md`, `beispielergebnis.html`, or `beispielergebnis.json`
+- approved examples under `Modelle/einzelmodelle/<modell>/beispiele/`
 - `Tools/openwebui_ext/tools/*.py`
 - `Tools/openwebui_ext/skills/*.md`
 - `Tools/dist/`

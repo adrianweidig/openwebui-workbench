@@ -28,4 +28,4 @@ Conserva identificadores técnicos, nombres de archivo, comandos, campos de API 
 
 ## Uso en OpenWebUI
 
-Este perfil se carga como Knowledge junto con mainprompt.md, fachwissen.md, beispielergebnis.md y beispiele/.
+Este perfil se carga como Knowledge junto con mainprompt.md, fachwissen.md, beispielergebnis.json y beispiele/.

@@ -28,4 +28,4 @@ Bewahre technische IDs, Dateinamen, Befehle, API-Felder und maschinenlesbare Sta
 
 ## Nutzung in OpenWebUI
 
-Dieses Profil wird zusammen mit mainprompt.md, fachwissen.md, beispielergebnis.md und beispiele/ als Knowledge hochgeladen.
+Dieses Profil wird zusammen mit mainprompt.md, fachwissen.md, beispielergebnis.json und beispiele/ als Knowledge hochgeladen.

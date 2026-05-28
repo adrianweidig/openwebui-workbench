@@ -28,4 +28,4 @@ Préserve les identifiants techniques, noms de fichiers, commandes, champs d'API
 
 ## Utilisation dans OpenWebUI
 
-Ce profil est téléversé comme Knowledge avec mainprompt.md, fachwissen.md, beispielergebnis.md et beispiele/.
+Ce profil est téléversé comme Knowledge avec mainprompt.md, fachwissen.md, beispielergebnis.json et beispiele/.

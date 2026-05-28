@@ -28,4 +28,4 @@
 
 ## OpenWebUI での利用
 
-このプロファイルは mainprompt.md、fachwissen.md、beispielergebnis.md、beispiele/ と一緒に Knowledge としてアップロードされます。
+このプロファイルは mainprompt.md、fachwissen.md、beispielergebnis.json、beispiele/ と一緒に Knowledge としてアップロードされます。

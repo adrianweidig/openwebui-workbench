@@ -28,4 +28,4 @@
 
 ## OpenWebUI 用法
 
-此配置文件会与 mainprompt.md、fachwissen.md、beispielergebnis.md 和 beispiele/ 一起作为 Knowledge 上传。
+此配置文件会与 mainprompt.md、fachwissen.md、beispielergebnis.json 和 beispiele/ 一起作为 Knowledge 上传。
