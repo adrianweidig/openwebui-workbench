@@ -56,6 +56,7 @@ PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission"
 OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
+    "codegenerierung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.py"],
     "n8n-workflow-architect": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
     "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
 }

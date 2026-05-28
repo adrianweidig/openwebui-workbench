@@ -22,6 +22,8 @@ Erzeugt aus `13_testfall-generierung.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.md`: Goldstandard für risikobasierte Testfallkataloge
+- `beispiele/testfall-generierung-goldstandard-briefing.md`: Few-Shot-Beispiele für negative Tests, Grenzfälle, Offline-Fixtures und sichere Testdaten
 
 ## Hinweis
 

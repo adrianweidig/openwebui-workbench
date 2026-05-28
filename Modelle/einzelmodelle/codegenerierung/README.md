@@ -22,6 +22,8 @@ Erzeugt aus `09_codegenerierung.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.py`: ausführbares Offline-Goldstandardartefakt mit Standardbibliothek, Eingabevalidierung, Markdown-Ausgabe und Selbsttest
+- `beispiele/codegenerierung-goldstandard-briefing.md`: Few-Shot-Beispiele für minimale, komplexe, widersprüchliche und sicherheitskritische Aufträge
 
 ## Hinweis
 

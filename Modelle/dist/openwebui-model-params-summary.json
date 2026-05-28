@@ -752,25 +752,25 @@
           "path": "Modelle/einzelmodelle/code-dokumentation/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5126
+          "bytes": 1007
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/code-dokumentation/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4845
+          "bytes": 5398
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/code-dokumentation/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1833
+          "bytes": 1069
         },
-        "beispiele/code-dokumentation-vorlage.md": {
-          "path": "Modelle/einzelmodelle/code-dokumentation/beispiele/code-dokumentation-vorlage.md",
+        "beispiele/code-dokumentation-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/code-dokumentation/beispiele/code-dokumentation-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1574
+          "bytes": 4734
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/code-dokumentation/i18n/de.md",
@@ -949,25 +949,25 @@
           "path": "Modelle/einzelmodelle/code-review/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5102
+          "bytes": 2233
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/code-review/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4806
+          "bytes": 8474
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/code-review/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1838
+          "bytes": 1326
         },
-        "beispiele/code-review-finding-vorlage.md": {
-          "path": "Modelle/einzelmodelle/code-review/beispiele/code-review-finding-vorlage.md",
+        "beispiele/code-review-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/code-review/beispiele/code-review-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1594
+          "bytes": 4754
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/code-review/i18n/de.md",
@@ -1146,25 +1146,25 @@
           "path": "Modelle/einzelmodelle/codeanalyse/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5161
+          "bytes": 1325
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/codeanalyse/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4892
+          "bytes": 6830
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/codeanalyse/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1803
+          "bytes": 1271
         },
-        "beispiele/codeanalyse-bericht-vorlage.md": {
-          "path": "Modelle/einzelmodelle/codeanalyse/beispiele/codeanalyse-bericht-vorlage.md",
+        "beispiele/codeanalyse-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/codeanalyse/beispiele/codeanalyse-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1560
+          "bytes": 4717
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/codeanalyse/i18n/de.md",
@@ -1336,32 +1336,32 @@
       "required_knowledge_files": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "beispielergebnis.py"
       ],
       "knowledge_files": {
         "mainprompt.md": {
           "path": "Modelle/einzelmodelle/codegenerierung/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5139
+          "bytes": 1577
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/codegenerierung/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4849
+          "bytes": 6227
         },
-        "beispielergebnis.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/beispielergebnis.md",
+        "beispielergebnis.py": {
+          "path": "Modelle/einzelmodelle/codegenerierung/beispielergebnis.py",
           "exists": true,
           "non_empty": true,
-          "bytes": 1802
+          "bytes": 6771
         },
-        "beispiele/implementierungsplan-vorlage.md": {
-          "path": "Modelle/einzelmodelle/codegenerierung/beispiele/implementierungsplan-vorlage.md",
+        "beispiele/codegenerierung-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/codegenerierung/beispiele/codegenerierung-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1552
+          "bytes": 4723
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/codegenerierung/i18n/de.md",
@@ -1739,25 +1739,25 @@
           "path": "Modelle/einzelmodelle/debugging-fehleranalyse/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5091
+          "bytes": 1293
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/debugging-fehleranalyse/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4826
+          "bytes": 5948
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/debugging-fehleranalyse/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1845
+          "bytes": 1187
         },
-        "beispiele/debugging-runbook-vorlage.md": {
-          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/beispiele/debugging-runbook-vorlage.md",
+        "beispiele/debugging-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/debugging-fehleranalyse/beispiele/debugging-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1600
+          "bytes": 4757
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/debugging-fehleranalyse/i18n/de.md",
@@ -5404,25 +5404,25 @@
           "path": "Modelle/einzelmodelle/refactoring-unterstützung/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5128
+          "bytes": 982
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/refactoring-unterstützung/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4871
+          "bytes": 5645
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/refactoring-unterstützung/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1781
+          "bytes": 1135
         },
-        "beispiele/refactoring-plan-vorlage.md": {
-          "path": "Modelle/einzelmodelle/refactoring-unterstützung/beispiele/refactoring-plan-vorlage.md",
+        "beispiele/refactoring-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/refactoring-unterstützung/beispiele/refactoring-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1554
+          "bytes": 4733
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/refactoring-unterstützung/i18n/de.md",
@@ -6191,25 +6191,25 @@
           "path": "Modelle/einzelmodelle/testfall-generierung/mainprompt.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 5046
+          "bytes": 1167
         },
         "fachwissen.md": {
           "path": "Modelle/einzelmodelle/testfall-generierung/fachwissen.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 4792
+          "bytes": 5763
         },
         "beispielergebnis.md": {
           "path": "Modelle/einzelmodelle/testfall-generierung/beispielergebnis.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1816
+          "bytes": 1242
         },
-        "beispiele/testfallkatalog-vorlage.md": {
-          "path": "Modelle/einzelmodelle/testfall-generierung/beispiele/testfallkatalog-vorlage.md",
+        "beispiele/testfall-generierung-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/testfall-generierung/beispiele/testfall-generierung-goldstandard-briefing.md",
           "exists": true,
           "non_empty": true,
-          "bytes": 1573
+          "bytes": 4738
         },
         "i18n/de.md": {
           "path": "Modelle/einzelmodelle/testfall-generierung/i18n/de.md",

@@ -5,7 +5,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBkb2N1bWVudCBpY29uPC90aXRsZT4KICA8ZGVzYyBpZD0iZGVzYyI+U2ltcGxlIGJsYWNrIGRvY3VtZW50IG91dGxpbmUgb24gYSB3aGl0ZSBiYWNrZ3JvdW5kLjwvZGVzYz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZiIvPgogIDxyZWN0IHg9IjY0IiB5PSI2NCIgd2lkdGg9IjM4NCIgaGVpZ2h0PSIzODQiIHJ4PSI0OCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2Ii8+CiAgPHBhdGggZD0iTTE3OCAxMjhoMTE4bDY0IDY0djE5MkgxNzhaIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjAiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNMjk2IDEyOHY2NGg2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTIxOCAyNDZoMTA0TTIxOCAyOTJoMTA0TTIxOCAzMzhoNjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo=",
-      "description": "Offline-Aufgabenmodell für Code-Dokumentation. Nutzer möchten vorhandenen oder neuen Code verständlich dokumentieren: README, API-Doku, Funktionskommentare, Architekturhinweise. Passend, wenn Codewissen für Nutzer, Entwickler oder Betrieb verständlich dokumentiert werden soll.",
+      "description": "Erstellt wahre, wartbare Entwicklerdokumentation für Code, APIs, CLI, Datenflüsse und Betrieb mit belegten Beispielen und klaren Pflegehinweisen.",
       "capabilities": {
         "file_context": true,
         "vision": true,

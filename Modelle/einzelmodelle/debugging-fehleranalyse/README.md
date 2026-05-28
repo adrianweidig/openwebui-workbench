@@ -22,6 +22,8 @@ Erzeugt aus `12_debugging-fehleranalyse.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.md`: Goldstandard für reproduzierbare Debugging-Runbooks
+- `beispiele/debugging-goldstandard-briefing.md`: Few-Shot-Beispiele für Hypothesenmatrix, sichere Checks und Offline-Fallbacks
 
 ## Hinweis
 

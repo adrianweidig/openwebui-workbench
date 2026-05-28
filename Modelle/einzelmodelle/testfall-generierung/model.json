@@ -5,7 +5,7 @@
     "base_model_id": "coder",
     "meta": {
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBjaGVja2xpc3QgaWNvbjwvdGl0bGU+CiAgPGRlc2MgaWQ9ImRlc2MiPlNpbXBsZSBjaGVja2xpc3Qgb24gYSB3aGl0ZSBiYWNrZ3JvdW5kLjwvZGVzYz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZiIvPgogIDxyZWN0IHg9IjY0IiB5PSI2NCIgd2lkdGg9IjM4NCIgaGVpZ2h0PSIzODQiIHJ4PSI0OCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2Ii8+CiAgPHBhdGggZD0iTTE1NiAxNzJsMjQgMjQgNDgtNTZNMTU2IDI1NmwyNCAyNCA0OC01Nk0xNTYgMzQwbDI0IDI0IDQ4LTU2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0yNzAgMTc2aDkwTTI3MCAyNjBoOTBNMjcwIDM0NGg5MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==",
-      "description": "Offline-Aufgabenmodell für Testfall-Generierung. Nutzer möchten aus Anforderungen oder Code sinnvolle Unit-, Integrations-, Regression- oder Akzeptanztests ableiten. Passend, wenn Testspezifikation, Testdaten oder Testcode benötigt werden.",
+      "description": "Leitet risikobasierte Testfälle, Akzeptanztests und automatisierbare Testskizzen mit Vorbedingungen, Testdaten, Erwartung und Priorität ab.",
       "capabilities": {
         "file_context": true,
         "vision": true,

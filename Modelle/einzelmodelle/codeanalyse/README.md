@@ -22,6 +22,8 @@ Erzeugt aus `10_codeanalyse.md`.
 - `systemprompt.md`: kompakter Systemprompt
 - `mainprompt.md`: operative Arbeitslogik
 - `fachwissen.md`: domänenspezifische Regeln
+- `beispielergebnis.md`: Goldstandard für belegte Analyseberichte
+- `beispiele/codeanalyse-goldstandard-briefing.md`: Few-Shot-Beispiele für Fakten, Hypothesen, Hotspots und lokale Prüfpfade
 
 ## Hinweis
 

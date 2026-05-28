@@ -1,49 +1,25 @@
-# Beispielergebnis und Arbeitsvorlage: Code-Review
+        # Beispielergebnis: Code-Review-Findingliste
 
-## Zweck dieses Modells
+        Dieses Goldstandard-Beispiel zeigt eine fertige Antwort des Modells `Code-Review`. Es nutzt nur den sichtbaren Nutzerkontext, trennt Fakten von Annahmen und enthält keine externen Laufzeitabhängigkeiten.
 
-Diffs, Risiken, Regressionen, Sicherheitsprobleme und fehlende Tests wie in einem professionellen Review priorisieren.
+        ## Findings
 
-## Wiederverwendbarer Musterauftrag
+### P1 - Zugriffskontrolle wird clientseitig entschieden
 
-> Ein Patch soll mit Findings, Schweregrad, Repro-Hinweis und Testlücken bewertet werden.
+Datei: `app/routes/admin.py`, Zeile 42
 
-## Erwartetes Ergebnisartefakt
+Der neue Endpunkt verlässt sich auf `request.json["isAdmin"]`. Diese Angabe kommt vom Client und darf nicht über Adminrechte entscheiden. Prüfe die Berechtigung serverseitig aus Session, Token-Claims oder Rollenmodell und ergänze einen negativen Test.
 
-- Primäre Datei: `beispiele/code-review-finding-vorlage.md`
-- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-- Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+Reproduktion: Request mit `{"isAdmin": true}` gegen den Endpunkt senden, obwohl der angemeldete Nutzer keine Adminrolle hat.
 
-## Vision- und Screenshot-Nutzung
+Testlücke: Es fehlt ein Test für Nutzer ohne Adminrolle.
 
-Nutze Vision für UI-Regressionsscreenshots, Vorher-/Nachher-Bilder oder visuelle Testfehler.
+### P2 - Fehlerpfad verliert Diagnosekontext
 
-## Tool-first-Ablauf
+Datei: `app/services/export.py`, Zeile 88
 
-1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-4. Ergebnis in der Vorlage unter `beispiele/code-review-finding-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
+Der generische `except Exception` gibt nur `Export fehlgeschlagen` zurück. Damit fehlen Fehlerklasse und Korrelations-ID im Log. Nutzerantworten dürfen knapp bleiben, aber interne Logs müssen Ursache und Ticket-ID enthalten.
 
-## Qualitätslatte
+## Zusammenfassung
 
-Findings stehen vor Zusammenfassung und referenzieren konkrete Dateien, Zeilen oder sichtbare UI-Zustände.
-
-## Copy/Paste-Starterprompt
-
-```text
-Nutze das Modell Code-Review. Verwende `beispielergebnis.md` und `beispiele/code-review-finding-vorlage.md` als Vorlage.
-
-Ziel:
-[Was soll am Ende konkret vorliegen?]
-
-Eingaben:
-[Dateien, Text, Screenshots, Daten, Constraints]
-
-Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-Qualitätskriterien:
-[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
-```
+Der Patch ist fachlich nachvollziehbar, blockiert aber wegen der serverseitigen Autorisierung. Nach Fix und negativem Test ist ein erneutes Review sinnvoll.
