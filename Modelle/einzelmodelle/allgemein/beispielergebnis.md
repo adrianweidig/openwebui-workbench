@@ -1,49 +1,66 @@
-# Beispielergebnis und Arbeitsvorlage: Allgemein
+# Beispielergebnis: Allgemein
 
-## Zweck dieses Modells
+Dieses Goldstandard-Beispiel zeigt eine direkt nutzbare Offline-Antwort des Modells `allgemein`. Es nutzt nur sichtbare Nutzerinformationen, markiert Annahmen und vermeidet erfundene Quellen, Zahlen oder Dateiinhalte.
 
-Freie oder gemischte Nutzerprobleme einordnen, passende Spezialmodelle empfehlen und mit dem kleinsten ausreichenden Tool-Satz direkt bearbeiten.
+## Nutzeranfrage
 
-## Wiederverwendbarer Musterauftrag
+Ein Nutzer beschreibt ein unscharfes Problem mit Dateien, Screenshots und Zielartefakt, weiß aber nicht, welches Modell passt.
 
-> Ein Nutzer beschreibt ein unscharfes Problem mit Dateien, Screenshots und Zielartefakt, weiß aber nicht, welches Modell passt.
+## Gute Antwort
 
-## Erwartetes Ergebnisartefakt
+### Kurzfazit
 
-- Primäre Datei: `beispiele/allgemein-arbeitsauftrag-vorlage.md`
-- Format: befüllbare Markdown-Vorlage oder direkt nutzbares Offline-Artefakt.
-- Ziel: Das Modell soll nicht bei null anfangen, sondern diese Struktur aktiv als Ausgangspunkt verwenden.
+Ich erstelle eine erste belastbare Fassung für diesen Auftrag: Freie oder gemischte Nutzerprobleme einordnen, passende Spezialmodelle empfehlen und mit dem kleinsten ausreichenden Tool-Satz direkt bearbeiten.
 
-## Vision- und Screenshot-Nutzung
+Die Antwort bleibt offline nutzbar. Nicht bereitgestellte Fakten, aktuelle Versionen, Rechtsstände, Kennzahlen, Dateiinhalte oder Toolausgaben werden nicht ergänzt.
+
+### Annahmen
+
+- Die Sprache bleibt Deutsch.
+- Der Auftrag basiert auf den vom Nutzer bereitgestellten Stichpunkten, Dateien oder Screenshots.
+- Fehlende Pflichtinformationen werden als offen markiert statt erfunden.
+- Falls Bilder oder Screenshots fehlen, wird nur mit Text gearbeitet und Vision nicht vorgetäuscht.
+
+### Arbeitsprodukt
+
+| Abschnitt | Inhalt |
+|---|---|
+| Ziel | Freie oder gemischte Nutzerprobleme einordnen, passende Spezialmodelle empfehlen und mit dem kleinsten ausreichenden Tool-Satz direkt bearbeiten. |
+| Eingangsquellen | Nutzertext, bereitgestellte Dateien und sichtbare Bildinhalte; keine Live-Websuche |
+| Zielformat | `beispielergebnis.md`; ergänzendes Few-Shot-Material in `beispiele/allgemein-arbeitsauftrag-vorlage.md` |
+| Kernstruktur | Kurzfazit, verwendete Quellen, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+| Prüflogik | Das Ergebnis muss Routing, Annahmen, Tool-Auswahl, konkrete Bearbeitung und nächste Schritte trennen. |
+| Offline-Grenze | Aktuelle externe Fakten werden als prüfpflichtig markiert |
+
+### Musterabschnitt für das Ergebnis
+
+#### Verwendete Informationen
+
+- Direkt aus der Anfrage übernommen: Ein Nutzer beschreibt ein unscharfes Problem mit Dateien, Screenshots und Zielartefakt, weiß aber nicht, welches Modell passt.
+- Sichtbare Zusatzquellen: nur berücksichtigen, wenn sie im Chat oder als Datei vorliegen.
+- Nicht belegt: externe Aktualität, nicht bereitgestellte Dateien, interne Kennzahlen und fremde Systeme.
+
+#### Ergebnisentwurf
+
+1. Den Auftrag in das passende Zielformat überführen.
+2. Belegte Inhalte und Annahmen getrennt darstellen.
+3. Risiken und offene Punkte so formulieren, dass ein Mensch sie prüfen kann.
+4. Mit einem konkreten nächsten Schritt schließen, der lokal ausführbar ist.
+
+### Vision- und Screenshot-Regel
 
 Nutze Vision für Screenshots, Whiteboards, Fehlermeldungen, UI-Zustände oder fotografierte Notizen; wenn kein Bildzugriff besteht, fordere OCR oder eine Beschreibung an.
 
-## Tool-first-Ablauf
+### Qualitätscheck
 
-1. Tool-/Skill-Inventur anhand der Nutzeraufgabe, Dateien, Screenshots und Zielartefakte.
-2. Relevante Quellen und sichtbare Bildinhalte trennen: beobachtet, abgeleitet, unklar.
-3. Passende Offline-Tools frueh nutzen, insbesondere Jupyter, Validatoren, Artefakt- und Visual-Tools, wenn sie die Aufgabe absichern.
-4. Ergebnis in der Vorlage unter `beispiele/allgemein-arbeitsauftrag-vorlage.md` strukturieren.
-5. Vor finaler Antwort gegen die Qualitäts- und Akzeptanzkriterien prüfen.
+- Das Ergebnis muss Routing, Annahmen, Tool-Auswahl, konkrete Bearbeitung und nächste Schritte trennen.
+- Keine erfundenen Quellen, Dateien, Kennzahlen oder Toolergebnisse.
+- Keine Secrets, produktiven Tokens oder personenbezogenen Beispieldaten.
+- Offline weiterverwendbar.
 
-## Qualitätslatte
+## Warum dieses Beispiel gut ist
 
-Das Ergebnis muss Routing, Annahmen, Tool-Auswahl, konkrete Bearbeitung und nächste Schritte trennen.
-
-## Copy/Paste-Starterprompt
-
-```text
-Nutze das Modell Allgemein. Verwende `beispielergebnis.md` und `beispiele/allgemein-arbeitsauftrag-vorlage.md` als Vorlage.
-
-Ziel:
-[Was soll am Ende konkret vorliegen?]
-
-Eingaben:
-[Dateien, Text, Screenshots, Daten, Constraints]
-
-Gewuenschtes Ergebnisformat:
-[Markdown, HTML, JSON, Tabelle, Ticket, Bericht, Präsentation, Codeplan]
-
-Qualitätskriterien:
-[Was muss geprüft, validiert, visuell bewertet oder offline nutzbar sein?]
-```
+- Es zeigt das gewünschte Arbeitsmuster ohne Platzhalter.
+- Es trennt belegte Informationen und Annahmen.
+- Es macht Offline-Grenzen explizit.
+- Es verweist auf das echte Beispielartefakt.

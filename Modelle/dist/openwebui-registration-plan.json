@@ -329,25 +329,25 @@
         "path": "Modelle/einzelmodelle/allgemein/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2051
+        "bytes": 1494
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/allgemein/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2192
+        "bytes": 5589
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/allgemein/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1988
+        "bytes": 3323
       },
       "beispiele/allgemein-arbeitsauftrag-vorlage.md": {
         "path": "Modelle/einzelmodelle/allgemein/beispiele/allgemein-arbeitsauftrag-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1692
+        "bytes": 5052
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/allgemein/i18n/de.md",
@@ -427,25 +427,25 @@
         "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5175
+        "bytes": 1545
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4932
+        "bytes": 5467
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1853
+        "bytes": 3146
       },
       "beispiele/lastenheft-vorlage.md": {
         "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/beispiele/lastenheft-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1609
+        "bytes": 4892
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/anforderungsanalyse-lastenheft/i18n/de.md",
@@ -1015,25 +1015,25 @@
         "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5196
+        "bytes": 1462
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4934
+        "bytes": 5317
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1834
+        "bytes": 3037
       },
       "beispiele/compliance-pruefbericht-vorlage.md": {
         "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/beispiele/compliance-pruefbericht-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1563
+        "bytes": 4779
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/compliance-richtlinienprüfung/i18n/de.md",
@@ -1211,25 +1211,25 @@
         "path": "Modelle/einzelmodelle/dokumentenanalyse/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5727
+        "bytes": 1479
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/dokumentenanalyse/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5395
+        "bytes": 5335
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/dokumentenanalyse/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1792
+        "bytes": 3027
       },
       "beispiele/dokumentenanalyse-vorlage.md": {
         "path": "Modelle/einzelmodelle/dokumentenanalyse/beispiele/dokumentenanalyse-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1539
+        "bytes": 4781
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/dokumentenanalyse/i18n/de.md",
@@ -1309,25 +1309,25 @@
         "path": "Modelle/einzelmodelle/dokumentengenerierung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5348
+        "bytes": 1489
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/dokumentengenerierung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5024
+        "bytes": 5355
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/dokumentengenerierung/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1824
+        "bytes": 3067
       },
       "beispiele/dokument-generator-vorlage.md": {
         "path": "Modelle/einzelmodelle/dokumentengenerierung/beispiele/dokument-generator-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1560
+        "bytes": 4818
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/dokumentengenerierung/i18n/de.md",
@@ -1407,25 +1407,25 @@
         "path": "Modelle/einzelmodelle/dokumentenvergleich/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5338
+        "bytes": 1458
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/dokumentenvergleich/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5033
+        "bytes": 5321
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/dokumentenvergleich/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1843
+        "bytes": 3074
       },
       "beispiele/dokumentenvergleich-matrix-vorlage.md": {
         "path": "Modelle/einzelmodelle/dokumentenvergleich/beispiele/dokumentenvergleich-matrix-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1553
+        "bytes": 4815
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/dokumentenvergleich/i18n/de.md",
@@ -1505,25 +1505,25 @@
         "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5277
+        "bytes": 1495
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4996
+        "bytes": 5363
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1832
+        "bytes": 3095
       },
       "beispiele/executive-summary-vorlage.md": {
         "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/beispiele/executive-summary-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1567
+        "bytes": 4839
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/dokumentenzusammenfassung/i18n/de.md",
@@ -1603,25 +1603,25 @@
         "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5215
+        "bytes": 1493
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4941
+        "bytes": 5357
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1821
+        "bytes": 3046
       },
       "beispiele/email-antwort-vorlage.md": {
         "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/beispiele/email-antwort-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1585
+        "bytes": 4817
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/de.md",
@@ -1799,19 +1799,19 @@
         "path": "Modelle/einzelmodelle/internetwissen/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2602
+        "bytes": 1499
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/internetwissen/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 11681
+        "bytes": 10830
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/internetwissen/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2009
+        "bytes": 3369
       },
       "beispiele/allgemeine_recherchefrage.md": {
         "path": "Modelle/einzelmodelle/internetwissen/beispiele/allgemeine_recherchefrage.md",
@@ -1829,7 +1829,7 @@
         "path": "Modelle/einzelmodelle/internetwissen/beispiele/internetwissen-rechercheplan-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1690
+        "bytes": 5061
       },
       "beispiele/quellenkritik.md": {
         "path": "Modelle/einzelmodelle/internetwissen/beispiele/quellenkritik.md",
@@ -1921,25 +1921,25 @@
         "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5047
+        "bytes": 1475
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4828
+        "bytes": 5289
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1786
+        "bytes": 3013
       },
       "beispiele/helpdesk-diagnose-vorlage.md": {
         "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/beispiele/helpdesk-diagnose-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1560
+        "bytes": 4759
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/it-helpdesk-diagnose/i18n/de.md",
@@ -2117,25 +2117,25 @@
         "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5112
+        "bytes": 1468
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4903
+        "bytes": 5274
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1806
+        "bytes": 3042
       },
       "beispiele/meeting-auswertung-vorlage.md": {
         "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/beispiele/meeting-auswertung-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1542
+        "bytes": 4810
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/meeting-protokoll-auswertung/i18n/de.md",
@@ -2215,19 +2215,19 @@
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2351
+        "bytes": 1489
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 2423
+        "bytes": 5412
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1881
+        "bytes": 3172
       },
       "beispiele/vision-ui-qa-demo.html": {
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-demo.html",
@@ -2239,7 +2239,7 @@
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/beispiele/vision-ui-qa-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1642
+        "bytes": 4906
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/mistral-vision-workbench/i18n/de.md",
@@ -2325,7 +2325,7 @@
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 14742
+        "bytes": 14747
       },
       "beispielergebnis.json": {
         "path": "Modelle/einzelmodelle/n8n-workflow-architect/beispielergebnis.json",
@@ -2711,25 +2711,25 @@
         "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5237
+        "bytes": 1484
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4935
+        "bytes": 5326
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1859
+        "bytes": 3103
       },
       "beispiele/prozessdokumentation-vorlage.md": {
         "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/beispiele/prozessdokumentation-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1575
+        "bytes": 4849
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/prozess-workflow-dokumentation/i18n/de.md",
@@ -3109,25 +3109,25 @@
         "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5195
+        "bytes": 1470
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4966
+        "bytes": 5292
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1809
+        "bytes": 3061
       },
       "beispiele/support-ticket-vorlage.md": {
         "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/beispiele/support-ticket-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1575
+        "bytes": 4802
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/support-ticket-vorbereitung/i18n/de.md",
@@ -3403,25 +3403,25 @@
         "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/mainprompt.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 5091
+        "bytes": 1504
       },
       "fachwissen.md": {
         "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/fachwissen.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 4857
+        "bytes": 5332
       },
       "beispielergebnis.md": {
         "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/beispielergebnis.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1834
+        "bytes": 3053
       },
       "beispiele/lokalisierungsauftrag-vorlage.md": {
         "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/beispiele/lokalisierungsauftrag-vorlage.md",
         "exists": true,
         "non_empty": true,
-        "bytes": 1581
+        "bytes": 4800
       },
       "i18n/de.md": {
         "path": "Modelle/einzelmodelle/übersetzung-lokalisierung/i18n/de.md",
