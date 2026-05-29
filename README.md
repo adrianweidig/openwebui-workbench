@@ -38,6 +38,26 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 - Nicht-mutierende Prüfskripte, die Python-Syntax, OpenWebUI-Erweiterungen, Generatorzustand, Import-Payloads, JSON-Dateien und Unit-Tests validieren.
 - Deployment-Vorlagen für einen offline nutzbaren OpenWebUI-Betrieb mit optionalem Jupyter-Server und lokalem Addon-Stack.
 
+## So sieht die Workbench aus
+
+Die Workbench ist die lokale Verwaltungsoberfläche für dieses Repository. Sie zeigt die Modellpakete links, die zugehörigen Knowledge- und Beispielartefakte rechts und erlaubt das Bearbeiten, Hinzufügen und Entfernen der freigegebenen Dateien.
+
+![Workbench Dashboard mit Modellpaketen und gruppierten Modelldateien](docs/assets/screenshots/workbench-dashboard-models.jpg)
+
+Tools und Skills werden in einem eigenen Bereich gepflegt. Von dort lassen sich die lokalen `.py`-Tools und `.md`-Skills prüfen, bearbeiten, ergänzen oder entfernen, bevor die Dist-Artefakte neu erzeugt und nach OpenWebUI synchronisiert werden.
+
+![Workbench Dashboard mit Tools und Skills](docs/assets/screenshots/workbench-dashboard-tools-skills.jpg)
+
+Der anschließende Zielort in OpenWebUI ist der Workspace der laufenden OpenWebUI-Instanz:
+
+- `Workspace > Models`: importierte Modellprofile aus `Modelle/dist/openwebui-models-import.json` oder einzelne `Modelle/einzelmodelle/<modell-id>/model.json`.
+- `Workspace > Knowledge`: pro Modell angehängte Knowledge-Dateien wie `mainprompt.md`, `fachwissen.md`, `beispielergebnis.*`, Dateien aus `beispiele/` und primäre i18n-Profile.
+- `Workspace > Tools`: importierte Tools aus `Tools/dist/openwebui-tools-offline-import.json` oder `Tools/dist/openwebui-tools-import.json`.
+- `Workspace > Functions`: importierte Filter aus `Tools/dist/openwebui-functions-import.json`.
+- `Workspace > Skills`: importierte Skills aus `Tools/dist/openwebui-tools-skills-offline.zip` oder den einzelnen Skill-Markdown-Dateien.
+
+OpenWebUI-Screenshots sind bewusst nicht versioniert, wenn sie lokale Nutzerkonten, Tokens oder private Instanzdaten zeigen würden. Die Workbench-Screenshots oben sind aus einer lokalen Testinstanz aufgenommen und enthalten keine Secrets.
+
 ## Geplant: Internetwissen-Modell
 
 Das Repository wird um ein Modellpaket `internetwissen` ergänzt. Ziel ist ein offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung.
@@ -115,7 +135,7 @@ Für eine lokale OpenWebUI-Instanz plus Workbench-Dashboard:
 
 ```powershell
 Copy-Item Deployment/workbench.env.example .env
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
 Danach:
@@ -130,7 +150,7 @@ Wenn OpenWebUI bereits läuft, kann nur der Workbench-Container gestartet werden
 
 ```powershell
 $env:OPENWEBUI_BASE_URL="http://host.docker.internal:3000"
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build workbench
 ```
 
 ### 2. Repository prüfen

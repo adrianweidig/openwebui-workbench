@@ -30,12 +30,32 @@ This repository bundles domain briefings, human-readable model packages, OpenWeb
 
 ## What This Repository Provides
 
-- 31 curated chat model profiles for recurring workflows such as code analysis, document generation, presentations, n8n workflow design, prompting, data analysis, and offline workbench usage.
+- 32 curated chat model profiles for recurring workflows such as code analysis, document generation, presentations, n8n workflow design, prompting, data analysis, and offline workbench usage.
 - Directly importable OpenWebUI JSON artifacts for models, tools, and functions/filters.
 - Offline-default tooling for Jupyter, artifact generation, JSON/CSV/text validation, visuals, subagent planning, Markdown normalization, and context compression.
 - A reproducible generator for tool/filter registries, model profiles, embedded icons, ZIP handover bundles, and import plans.
 - Non-mutating validation scripts that check Python syntax, OpenWebUI extensions, generator state, import payloads, JSON files, and unit tests.
 - Deployment templates for offline OpenWebUI operation with an optional Jupyter server and local addon stack.
+
+## What The Workbench Looks Like
+
+The Workbench is the local management UI for this repository. It shows model packages on the left, the related knowledge and example artifacts on the right, and allows editing, adding, and removing the approved files.
+
+![Workbench dashboard with model packages and grouped model files](docs/assets/screenshots/workbench-dashboard-models.jpg)
+
+Tools and skills are managed in their own area. From there, local `.py` tools and `.md` skills can be reviewed, edited, added, or removed before dist artifacts are regenerated and synchronized to OpenWebUI.
+
+![Workbench dashboard with tools and skills](docs/assets/screenshots/workbench-dashboard-tools-skills.jpg)
+
+The target location in OpenWebUI is the workspace of the running OpenWebUI instance:
+
+- `Workspace > Models`: imported model profiles from `Modelle/dist/openwebui-models-import.json` or individual `Modelle/einzelmodelle/<model-id>/model.json` files.
+- `Workspace > Knowledge`: per-model knowledge files such as `mainprompt.md`, `fachwissen.md`, `beispielergebnis.*`, files from `beispiele/`, and primary i18n profiles.
+- `Workspace > Tools`: imported tools from `Tools/dist/openwebui-tools-offline-import.json` or `Tools/dist/openwebui-tools-import.json`.
+- `Workspace > Functions`: imported filters from `Tools/dist/openwebui-functions-import.json`.
+- `Workspace > Skills`: imported skills from `Tools/dist/openwebui-tools-skills-offline.zip` or individual skill Markdown files.
+
+OpenWebUI screenshots are intentionally not versioned when they would expose local user accounts, tokens, or private instance data. The Workbench screenshots above were captured from a local test instance and contain no secrets.
 
 ## Planned: Internet Knowledge model
 
@@ -75,7 +95,7 @@ German is the default language for the repository, dashboard UI, primary README,
 - [`docs/en/`](docs/en/) contains the English documentation entry and i18n guidance.
 - Community files such as [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), [`SUPPORT.md`](SUPPORT.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`CHANGELOG.md`](CHANGELOG.md) have English `.en.md` variants.
 - The Workbench dashboard uses `WORKBENCH_LOCALE`, browser/system language, and a manual language selector. Unknown or missing locale information falls back to German.
-- The product components of all 31 model packages are also maintained under `Modelle/einzelmodelle/<model-id>/i18n/`. The directly integrated product locales are `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja`, and `zh-Hans`.
+- The product components of all 32 model packages are also maintained under `Modelle/einzelmodelle/<model-id>/i18n/`. The directly integrated product locales are `de`, `en`, `es`, `fr`, `pt-BR`, `it`, `nl`, `pl`, `tr`, `ja`, and `zh-Hans`.
 - [`Modelle/i18n/product-locales.json`](Modelle/i18n/product-locales.json) is the central product locale manifest. [`scripts/generate_model_i18n_profiles.py`](scripts/generate_model_i18n_profiles.py) keeps `model.json`, product profiles, and the manifest in sync.
 
 All text resources stay UTF-8. Umlauts, accents, emojis, and non-Latin characters are preserved instead of being transliterated when they are visible prose.
@@ -103,7 +123,7 @@ Start a local OpenWebUI instance plus the Workbench dashboard:
 
 ```powershell
 Copy-Item Deployment/workbench.env.example .env
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
 Then open:
@@ -118,7 +138,7 @@ If OpenWebUI is already running, start only the Workbench container:
 
 ```powershell
 $env:OPENWEBUI_BASE_URL="http://host.docker.internal:3000"
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build workbench
 ```
 
 ## Validation
