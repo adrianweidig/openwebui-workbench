@@ -41,13 +41,13 @@ This repository bundles domain briefings, human-readable model packages, OpenWeb
 
 The Workbench is the local management UI for this repository. It shows model packages on the left, the related knowledge and example artifacts on the right, and allows editing, adding, and removing the approved files.
 
-![Workbench dashboard with model packages and grouped model files](docs/assets/screenshots/workbench-dashboard-models.jpg)
+![Workbench dashboard with model packages and grouped model files](docs/assets/screenshots/workbench-dashboard-models-en.png)
 
 Tools and skills are managed in their own area. From there, local `.py` tools and `.md` skills can be reviewed, edited, added, or removed before dist artifacts are regenerated and synchronized to OpenWebUI.
 
-![Workbench dashboard with tools and skills](docs/assets/screenshots/workbench-dashboard-tools-skills.jpg)
+![Workbench dashboard with tools and skills](docs/assets/screenshots/workbench-dashboard-tools-skills-en.png)
 
-The integrated `internetwissen` model is visible in the model list and shows its grouped knowledge files, example artifacts, and i18n profiles in the editor area.
+The integrated **Internet Knowledge** model uses the technical model ID `internetwissen`. It is visible in the model list and shows its grouped knowledge files, example artifacts, and i18n profiles in the editor area.
 
 ![Workbench dashboard with the Internet Knowledge model in English](docs/assets/screenshots/workbench-dashboard-internetwissen-en.png)
 
@@ -59,11 +59,11 @@ The target location in OpenWebUI is the workspace of the running OpenWebUI insta
 - `Workspace > Functions`: imported filters from `Tools/dist/openwebui-functions-import.json`.
 - `Workspace > Skills`: imported skills from `Tools/dist/openwebui-tools-skills-offline.zip` or individual skill Markdown files.
 
-OpenWebUI screenshots are intentionally not versioned when they would expose local user accounts, tokens, or private instance data. The Workbench screenshots above were captured from a local test instance and contain no secrets. The German README contains the same `internetwissen` view with German Workbench localization.
+OpenWebUI screenshots are intentionally not versioned when they would expose local user accounts, tokens, or private instance data. The Workbench screenshots above were captured from a local test instance and contain no secrets. The German README contains the same Internet Knowledge (`internetwissen`) view with German Workbench localization.
 
 ## Internet Knowledge Model
 
-`internetwissen` is integrated as an offline research and explanation model. It supports general knowledge questions, how-to guidance, source criticism, research methodology, and knowledge structuring without pretending to run live web search.
+**Internet Knowledge** is the English display name for the technical model ID `internetwissen`. It is integrated as an offline research and explanation model. It supports general knowledge questions, how-to guidance, source criticism, research methodology, and knowledge structuring without pretending to run live web search.
 
 The initial scope is intentionally compact: the model does not ship large external web corpora. It uses a self-written KnowledgeBase stored directly in the repository, so it remains immediately importable, air-gap friendly, and usable without additional GB/TB-scale data.
 

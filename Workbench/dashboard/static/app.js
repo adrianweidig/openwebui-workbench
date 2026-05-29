@@ -16,6 +16,7 @@ const state = {
 const el = (id) => document.getElementById(id);
 const DEFAULT_LOCALE = "de";
 const SUPPORTED_LOCALES = ["de", "en"];
+const SUPPORTED_PANELS = new Set(["models", "resources", "sync", "artifacts"]);
 const queryParams = new URLSearchParams(window.location.search);
 
 function normalizeLocale(value) {
@@ -767,16 +768,7 @@ async function refreshModels(keepSelection = true) {
 
 function wireEvents() {
   document.querySelectorAll(".nav-item").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".nav-item").forEach((item) => {
-        item.classList.remove("active");
-        item.removeAttribute("aria-current");
-      });
-      document.querySelectorAll(".panel").forEach((panel) => panel.classList.remove("active"));
-      button.classList.add("active");
-      button.setAttribute("aria-current", "page");
-      el(`panel-${button.dataset.panel}`).classList.add("active");
-    });
+    button.addEventListener("click", () => activatePanel(button.dataset.panel));
   });
   el("model-search").addEventListener("input", renderModels);
   el("resource-search").addEventListener("input", renderResources);
@@ -820,12 +812,29 @@ function wireEvents() {
   });
 }
 
+function activatePanel(panelName) {
+  const target = SUPPORTED_PANELS.has(panelName) ? panelName : "models";
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    const active = item.dataset.panel === target;
+    item.classList.toggle("active", active);
+    if (active) {
+      item.setAttribute("aria-current", "page");
+    } else {
+      item.removeAttribute("aria-current");
+    }
+  });
+  document.querySelectorAll(".panel").forEach((panel) => panel.classList.remove("active"));
+  el(`panel-${target}`).classList.add("active");
+}
+
 async function init() {
+  const requestedPanel = queryParams.get("panel") || "models";
   await setLocale(detectInitialLocale(), false);
   applyTheme(localStorage.getItem("workbench-theme") || "dark");
   applyView("model", state.modelView);
   applyView("resource", state.resourceView);
   wireEvents();
+  activatePanel(requestedPanel);
   await Promise.all([refreshStatus(), refreshModels(false), refreshResources(false)]);
   if (state.models.length > 0) {
     const requestedModel = queryParams.get("model");
@@ -835,6 +844,17 @@ async function init() {
       renderModels();
     }
     await selectModel(initialModel.id);
+    const requestedFile = queryParams.get("file");
+    if (requestedFile && initialModel.files.some((file) => file.name === requestedFile)) {
+      await loadFile(requestedFile);
+    }
+  }
+  if (requestedPanel === "resources" && state.resources.length > 0) {
+    const requestedResource = queryParams.get("resource");
+    const initialResource =
+      state.resources.find((resource) => `${resource.kind}:${resource.id}` === requestedResource || resource.id === requestedResource) ||
+      state.resources[0];
+    await selectResource(initialResource.kind, initialResource.id);
   }
 }
 
