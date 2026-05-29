@@ -32,3 +32,9 @@ Artefakte/output/*
 !Artefakte/output/.gitkeep
 Artefakte/temp/*
 !Artefakte/temp/.gitkeep
+
+# Große Air-Gap-Image-Archive nur bewusst per LFS oder Release Assets versionieren.
+Deployment/images/*.tar
+Deployment/images/*.tar.gz
+Deployment/images/*.tar.zst
+Deployment/images/*.zst

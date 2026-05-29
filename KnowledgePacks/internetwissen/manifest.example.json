@@ -1,0 +1,26 @@
+{
+  "schema": "openwebui-workbench-knowledgepack/v1",
+  "id": "internetwissen-compact-core",
+  "title": "Internetwissen Compact Core",
+  "version": "2026.05.29",
+  "target_models": [
+    "internetwissen"
+  ],
+  "offline_runtime": true,
+  "max_total_bytes": 10737418240,
+  "license": "repo-authored",
+  "snapshot_date": "2026-05-29",
+  "default_included": false,
+  "artifacts": [
+    {
+      "path": "packs/example.md",
+      "media_type": "text/markdown",
+      "language": "de",
+      "size_bytes": 0,
+      "sha256": "",
+      "source_type": "repo-authored",
+      "source_url": null,
+      "update_method": "manual"
+    }
+  ]
+}

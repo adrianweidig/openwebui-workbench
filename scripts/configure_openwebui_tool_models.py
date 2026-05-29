@@ -53,7 +53,13 @@ SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "stop", "f
 OMITTED_RUNTIME_PARAMS = ["max_tokens"]
 OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
 PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
-OFFLINE_EXCLUDED_TOOL_IDS = {"github_repo_inspector", "safe_http_fetcher"}
+OFFLINE_EXCLUDED_TOOL_IDS = {
+    "github_repo_inspector",
+    "mediawiki_legacy_crawler",
+    "openui_generative_ui",
+    "safe_http_fetcher",
+    "web_search_and_crawl",
+}
 REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
 MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
     "api-schnittstellenentwurf": ["mainprompt.md", "fachwissen.md", "beispielergebnis.yaml"],
@@ -238,8 +244,8 @@ TOOL_FORCE_PROFILES = {
         "focus": "Extraktionsschema, JSON/CSV-Ausgabe und Datenqualität vor der finalen Antwort validieren.",
     },
     "internetwissen": {
-        "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "repo_tree_analyzer", "parallel_task_planner", "llm_council"],
-        "skills": ["research-grounding", "offline-use-case-router", "redundant-fallback-tooling", "parallel-tools-subagents", "secure-tool-usage"],
+        "tools": ["ask_user", "json_csv_text_validator", "repo_tree_analyzer", "parallel_task_planner", "offline_artifact_workbench", "inline_visuals_toolkit_v3"],
+        "skills": ["research-grounding", "offline-use-case-router", "redundant-fallback-tooling", "secure-tool-usage"],
         "focus": "Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen, Recherchepläne und Wissensstrukturierung ohne behauptete Live-Webprüfung absichern.",
     },
     "it-helpdesk-diagnose": {
@@ -1093,6 +1099,8 @@ def icon_data_uri_for_model(model_id: str) -> str:
 def tool_ids_for_model(model_id: str, offline_tool_ids: List[str], all_tool_ids: List[str]) -> List[str]:
     if model_id == "allgemein":
         return list(all_tool_ids)
+    if model_id == "internetwissen":
+        return list(TOOL_FORCE_PROFILES[model_id]["tools"])
     return list(offline_tool_ids)
 
 

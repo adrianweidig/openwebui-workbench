@@ -48,6 +48,8 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
     steps = [
         CommandStep("Python syntax compile", [python, "-m", "compileall", "-q", "scripts", "Tools", "Workbench"]),
         CommandStep("German umlaut and UTF-8 check", [python, "scripts/check_german_umlauts.py"]),
+        CommandStep("Offline data budget check", [python, "scripts/check_offline_data_budget.py"]),
+        CommandStep("KnowledgePack validation", [python, "scripts/validate_knowledgepacks.py"]),
         CommandStep("OpenWebUI extension validation", [python, "scripts/validate_openwebui_extensions.py"]),
         CommandStep("Tool/model generator check", [python, "scripts/configure_openwebui_tool_models.py", "--check"]),
         CommandStep(

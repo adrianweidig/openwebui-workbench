@@ -41,7 +41,7 @@ Nicht Bestandteil von Phase 1:
 
 ### Phase 2: Kleine optionale Knowledge-Erweiterungen
 
-Nach dem initialen Modell können kleine, repo-taugliche Knowledge-Erweiterungen geprüft werden.
+Nach dem initialen Modell können kleine, repo-taugliche Knowledge-Erweiterungen geprüft werden. Diese bleiben entweder direkt in Modell-Knowledge-Dateien oder werden als KnowledgePack mit Manifest, Lizenzangabe, Snapshot-Datum, Größe und SHA256 dokumentiert.
 
 Mögliche Ergänzungen:
 
@@ -55,10 +55,11 @@ Grenze:
 
 - keine großen externen Datensätze im Git-Repository
 - keine unklare Übernahme fremder Webinhalte
+- Gesamtgrenze für KnowledgePacks und optionale Offline-Image-Artefakte: maximal 10 GiB gemäß `docs/OFFLINE_DATA_POLICY.md`
 
 ### Phase 3: Optionale lokale KnowledgePacks
 
-Für größere Installationen kann ein KnowledgePack-Konzept vorbereitet werden. Das Repository soll dabei nur Manifeste, Skripte und Dokumentation enthalten. Die eigentlichen Daten liegen lokal beim Nutzer und bleiben unversioniert.
+Für größere Installationen ist ein KnowledgePack-Konzept vorbereitet. Das Repository enthält Manifeste, Schema, Skripte und Dokumentation. Echte Daten werden nur versioniert, wenn Lizenz, Snapshot, Hashes, LFS-/Release-Strategie und 10-GiB-Budget geklärt sind.
 
 Mögliche KnowledgePacks:
 
@@ -71,7 +72,8 @@ Mögliche KnowledgePacks:
 Geplante Artefakte:
 
 - `KnowledgePacks/internetwissen/README.md`
-- Manifestformat für lokale Wissenspakete
+- `KnowledgePacks/index.json`
+- Manifestformat und JSON-Schema für lokale Wissenspakete
 - Beispielkonfiguration für lokale Pfade
 - Lizenz- und Snapshot-Report
 - Import-Dry-Run ohne produktive Tokens
@@ -93,7 +95,7 @@ Denkbare spätere Themen:
 
 Grundsatz:
 
-Große Webkorpora werden nicht in dieses Repository eingecheckt. Das Repository darf dafür nur reproduzierbare Manifeste, Importskripte, Sicherheitsregeln, Lizenzhinweise und Deployment-Beispiele enthalten.
+Große Webkorpora werden nicht unkontrolliert in dieses Repository eingecheckt. Sie brauchen eine Maintainer-Entscheidung für Git LFS oder Release Assets, bleiben im 10-GiB-Gesamtbudget und dürfen keine Runtime-Websuche einführen.
 
 ## Naheliegende Verbesserungen
 
@@ -107,7 +109,7 @@ Große Webkorpora werden nicht in dieses Repository eingecheckt. Das Repository 
 
 - GitHub Topics, Repository Description und Social Preview setzen.
 - Private Vulnerability Reporting oder einen privaten Sicherheitskontakt aktivieren.
-- Release- und Tagging-Strategie festlegen, falls Artefaktstände versioniert werden sollen.
+- Release- und Tagging-Strategie für weitere versionierte Handover-Stände fortschreiben.
 - Entscheiden, ob GitHub Pages oder ein separates Docs-Hosting genutzt werden soll.
 - Entscheiden, ob `internetwissen` langfristig ein einzelnes Modell bleibt oder in zusätzliche Profile wie `internetwissen-kurator` oder `internetwissen-max` aufgeteilt wird.
 

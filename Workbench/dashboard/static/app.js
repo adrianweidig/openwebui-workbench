@@ -16,6 +16,7 @@ const state = {
 const el = (id) => document.getElementById(id);
 const DEFAULT_LOCALE = "de";
 const SUPPORTED_LOCALES = ["de", "en"];
+const queryParams = new URLSearchParams(window.location.search);
 
 function normalizeLocale(value) {
   const language = String(value || "").trim().replace("_", "-").toLowerCase().split("-")[0];
@@ -23,6 +24,8 @@ function normalizeLocale(value) {
 }
 
 function detectInitialLocale() {
+  const queryLocale = queryParams.get("locale");
+  if (queryLocale) return normalizeLocale(queryLocale);
   const explicit = localStorage.getItem("workbench-locale");
   if (explicit) return normalizeLocale(explicit);
   const browserLocale = (navigator.languages && navigator.languages[0]) || navigator.language || "";
@@ -268,7 +271,7 @@ function renderStatus() {
   const artifacts = status.artifacts || [];
   const existingArtifacts = artifacts.filter((item) => item.exists).length;
   const artifactBytes = artifacts.reduce((total, item) => total + (item.bytes || 0), 0);
-  setText("repo-root", status.root);
+  setText("repo-root", displayRepoPath(status.root));
   setText("count-models", formatNumber(status.counts.models));
   setText("count-tools", formatNumber(status.counts.tools));
   setText("count-skills", formatNumber(status.counts.skills));
@@ -452,6 +455,15 @@ function renderEmpty(container, message) {
   empty.className = "empty-state";
   empty.textContent = message;
   container.append(empty);
+}
+
+function displayRepoPath(value) {
+  const normalized = String(value || "").replace(/\\/g, "/");
+  const parts = normalized.split("/").filter(Boolean);
+  if (parts.length >= 2) {
+    return `.../${parts.slice(-2).join("/")}`;
+  }
+  return normalized || "-";
 }
 
 function modelFileGroup(name) {
@@ -816,7 +828,13 @@ async function init() {
   wireEvents();
   await Promise.all([refreshStatus(), refreshModels(false), refreshResources(false)]);
   if (state.models.length > 0) {
-    await selectModel(state.models[0].id);
+    const requestedModel = queryParams.get("model");
+    const initialModel = state.models.find((model) => model.id === requestedModel) || state.models[0];
+    if (requestedModel && initialModel.id === requestedModel) {
+      el("model-search").value = requestedModel;
+      renderModels();
+    }
+    await selectModel(initialModel.id);
   }
 }
 

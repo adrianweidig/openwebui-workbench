@@ -11,7 +11,6 @@
     "json_csv_text_validator",
     "llm_council",
     "markdown_skill_builder",
-    "mediawiki_legacy_crawler",
     "offline_artifact_workbench",
     "openapi_schema_inspector",
     "parallel_task_planner",
@@ -24,6 +23,7 @@
   ],
   "optional_network_tools_not_in_offline_default": [
     "github_repo_inspector",
+    "mediawiki_legacy_crawler",
     "openui_generative_ui",
     "safe_http_fetcher",
     "web_search_and_crawl"
@@ -75,12 +75,6 @@
       "id": "markdown_skill_builder",
       "name": "Markdown Skill Builder",
       "source_file": "Tools/openwebui_ext/tools/markdown_skill_builder.py",
-      "config_example": null
-    },
-    {
-      "id": "mediawiki_legacy_crawler",
-      "name": "MediaWiki Legacy Crawler",
-      "source_file": "Tools/openwebui_ext/tools/mediawiki_legacy_crawler.py",
       "config_example": null
     },
     {

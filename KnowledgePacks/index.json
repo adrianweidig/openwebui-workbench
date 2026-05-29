@@ -1,0 +1,16 @@
+{
+  "schema": "openwebui-workbench-knowledgepack-index/v1",
+  "max_total_bytes": 10737418240,
+  "families": [
+    {
+      "id": "internetwissen",
+      "title": "Internetwissen KnowledgePacks",
+      "path": "internetwissen/",
+      "target_models": [
+        "internetwissen"
+      ],
+      "status": "prepared",
+      "default_included": false
+    }
+  ]
+}

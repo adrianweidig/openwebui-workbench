@@ -1,6 +1,6 @@
 # Custom-Model-Qualitätsinventar
 
-Stand: 2026-05-28
+Stand: 2026-05-29
 
 Dieses Inventar priorisiert die Offline-Verbesserung der Custom-Modelle. Es ist bewusst knapp gehalten und dient als Arbeitsliste für weitere Batches.
 
@@ -21,7 +21,7 @@ Dieses Inventar priorisiert die Offline-Verbesserung der Custom-Modelle. Es ist 
 | `dokumentenzusammenfassung` | Dokumente zusammenfassen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Summary-Regeln, Auslassungsrisiko und Faktentrennung ergänzt | `.md` | P1 | Batch 6 fertig |
 | `email-kommunikationsassistenz` | E-Mails formulieren und prüfen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | sendefertige Kommunikation, Tonalität und Social-Engineering-Grenzen ergänzt | `.md`, `.txt` | P1 | Batch 6 fertig |
 | `informationsextraktion` | Strukturierte Extraktion | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.json`, Beispiele | valides JSON mit Belegen, Normalisierung und Unsicherheiten ergänzt | `.json`, `.csv`, `.md` | P1 | Batch 5 fertig |
-| `internetwissen` | Offline-Recherche, Quellenkritik, Aktualitätsgrenzen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Offline-Wissensgrenzen, Aktualitätsrisiken und Recherchepfad ergänzt | `.md` | P1 | Batch 6 fertig |
+| `internetwissen` | Offline-Recherche, Quellenkritik, Aktualitätsgrenzen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele, KnowledgePack-Policy | Offline-Toolprofil, KnowledgePack-Grenzen, Quellenkritik und Aktualitätsrisiken gehärtet | `.md` | P1 | Batch 7 fertig |
 | `it-helpdesk-diagnose` | IT-Support-Diagnose | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Triage, Sofortmaßnahmen, Diagnosepfad und Eskalationskriterien ergänzt | `.md` | P1 | Batch 6 fertig |
 | `json-csv-log-analyse` | Strukturierte Daten- und Loganalyse | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.json`, Beispiele | Parsingstatus, Datenqualitätsfindings und lokale Checks ergänzt | `.json`, `.csv`, `.md` | P1 | Batch 5 fertig |
 | `meeting-protokoll-auswertung` | Protokolle, Aufgaben, Entscheidungen | `fachwissen.md`, `mainprompt.md`, `beispielergebnis.md`, Beispiele | Beschlüsse, Aufgaben, Risiken und offene Punkte geschärft | `.md`, `.csv` | P1 | Batch 6 fertig |

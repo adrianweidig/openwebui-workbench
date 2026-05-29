@@ -48,6 +48,10 @@ Tools und Skills werden in einem eigenen Bereich gepflegt. Von dort lassen sich 
 
 ![Workbench Dashboard mit Tools und Skills](docs/assets/screenshots/workbench-dashboard-tools-skills.jpg)
 
+Das integrierte Modell `internetwissen` ist über die Modellliste sichtbar und zeigt seine Knowledge-Dateien, Beispielartefakte und i18n-Profile gruppiert im Editorbereich.
+
+![Workbench Dashboard mit Internetwissen-Modell auf Deutsch](docs/assets/screenshots/workbench-dashboard-internetwissen-de.png)
+
 Der anschließende Zielort in OpenWebUI ist der Workspace der laufenden OpenWebUI-Instanz:
 
 - `Workspace > Models`: importierte Modellprofile aus `Modelle/dist/openwebui-models-import.json` oder einzelne `Modelle/einzelmodelle/<modell-id>/model.json`.
@@ -56,35 +60,34 @@ Der anschließende Zielort in OpenWebUI ist der Workspace der laufenden OpenWebU
 - `Workspace > Functions`: importierte Filter aus `Tools/dist/openwebui-functions-import.json`.
 - `Workspace > Skills`: importierte Skills aus `Tools/dist/openwebui-tools-skills-offline.zip` oder den einzelnen Skill-Markdown-Dateien.
 
-OpenWebUI-Screenshots sind bewusst nicht versioniert, wenn sie lokale Nutzerkonten, Tokens oder private Instanzdaten zeigen würden. Die Workbench-Screenshots oben sind aus einer lokalen Testinstanz aufgenommen und enthalten keine Secrets.
+OpenWebUI-Screenshots sind bewusst nicht versioniert, wenn sie lokale Nutzerkonten, Tokens oder private Instanzdaten zeigen würden. Die Workbench-Screenshots oben sind aus einer lokalen Testinstanz aufgenommen und enthalten keine Secrets. Die englische README enthält dieselbe `internetwissen`-Ansicht mit englischer Workbench-Lokalisierung.
 
-## Geplant: Internetwissen-Modell
+## Internetwissen-Modell
 
-Das Repository wird um ein Modellpaket `internetwissen` ergänzt. Ziel ist ein offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung.
+`internetwissen` ist als integriertes Offline-Recherche- und Erklärmodell enthalten. Es unterstützt allgemeine Wissensfragen, Anleitungen, Quellenkritik, Recherchemethodik und Wissensstrukturierung, ohne eine Live-Websuche vorzutäuschen.
 
-Der initiale Ausbau ist bewusst klein gehalten: Das Modell bringt keine großen externen Webkorpora mit, sondern nutzt eine kompakte, selbst geschriebene KnowledgeBase direkt im Repository. Dadurch bleibt das Modell sofort importierbar, air-gap-tauglich und ohne zusätzliche GB-/TB-Daten nutzbar.
+Der initiale Umfang ist bewusst kompakt: Das Modell bringt keine großen externen Webkorpora mit, sondern nutzt eine selbst geschriebene KnowledgeBase direkt im Repository. Dadurch bleibt es sofort importierbar, air-gap-tauglich und ohne zusätzliche GB-/TB-Daten nutzbar.
 
-### Initialer Umfang
+### Speicherort und Import
 
-- neues Modellpaket `Modelle/einzelmodelle/internetwissen/`
-- repo-interne KnowledgeBase über `mainprompt.md`, `fachwissen.md` und modellseitige Beispielergebnis-Dateien
+- Modellpaket: [`Modelle/einzelmodelle/internetwissen/`](Modelle/einzelmodelle/internetwissen/)
+- Primäre Knowledge-Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/`
+- Import-Artefakt: [`Modelle/dist/openwebui-models-import.json`](Modelle/dist/openwebui-models-import.json)
+- Websuche im Modellprofil: deaktiviert
+
+### Offline-Grenzen
+
 - keine Live-Websuche im Offline-Default
-- Fokus auf allgemeine Erklärungen, Anleitungen, Recherchemethodik und Quellenkritik
-- klare Kennzeichnung von Aktualitätsgrenzen
-- Beispielantworten für allgemeine Recherchefragen, Anleitungen ohne Live-Web, Quellenkritik und stark zeitabhängige Themen
-
-### Nicht im Initialumfang
-
 - keine FineWeb-/Common-Crawl-Daten
 - keine Wikipedia-/Kiwix-Dumps
 - kein externer Vektorindex
 - keine automatische Webarchiv-Pipeline
-- keine großen Datenartefakte im Git-Repository
 - keine versteckte Online-Abhängigkeit
+- aktuelle Fakten, Versionen, Rechtsstände, Preise, CVEs oder Unternehmensdaten nur mit bereitgestellter Quelle oder lokalem KnowledgePack bestätigen
 
-### Spätere Ausbaurichtung
+### Optionale KnowledgePacks
 
-Langfristig kann das Modell über optionale KnowledgePacks erweitert werden. Diese sollen nicht als große Datenbestände in diesem Repository liegen, sondern über Manifeste, Importskripte und lokale Artefaktpfade angebunden werden. Denkbare spätere Ausbaustufen sind kuratierte Offline-Dokumentationspakete, optionale Wikipedia-/Kiwix- oder Wikimedia-Dump-Integration, lokale KnowledgePacks für technische Dokumentationen, FineWeb-/FineWeb-Edu-/Common-Crawl-basierte Webkorpora, externe lokale Retrieval-Indizes und Import- sowie Lizenzreports für große Offline-Wissensquellen.
+Spätere Erweiterungen laufen über [`KnowledgePacks/`](KnowledgePacks/) und die [`Offline-Datenpolicy`](docs/OFFLINE_DATA_POLICY.md). KnowledgePacks sind optional, manifestbasiert, lokal validierbar und zusammen mit optionalen Offline-Image-Artefakten auf maximal 10 GiB begrenzt. Externe URLs in Manifesten sind Provenienz-Metadaten, keine Runtime-Abhängigkeit.
 
 ## Internationalisierung
 

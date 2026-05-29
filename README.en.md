@@ -47,6 +47,10 @@ Tools and skills are managed in their own area. From there, local `.py` tools an
 
 ![Workbench dashboard with tools and skills](docs/assets/screenshots/workbench-dashboard-tools-skills.jpg)
 
+The integrated `internetwissen` model is visible in the model list and shows its grouped knowledge files, example artifacts, and i18n profiles in the editor area.
+
+![Workbench dashboard with the Internet Knowledge model in English](docs/assets/screenshots/workbench-dashboard-internetwissen-en.png)
+
 The target location in OpenWebUI is the workspace of the running OpenWebUI instance:
 
 - `Workspace > Models`: imported model profiles from `Modelle/dist/openwebui-models-import.json` or individual `Modelle/einzelmodelle/<model-id>/model.json` files.
@@ -55,35 +59,34 @@ The target location in OpenWebUI is the workspace of the running OpenWebUI insta
 - `Workspace > Functions`: imported filters from `Tools/dist/openwebui-functions-import.json`.
 - `Workspace > Skills`: imported skills from `Tools/dist/openwebui-tools-skills-offline.zip` or individual skill Markdown files.
 
-OpenWebUI screenshots are intentionally not versioned when they would expose local user accounts, tokens, or private instance data. The Workbench screenshots above were captured from a local test instance and contain no secrets.
+OpenWebUI screenshots are intentionally not versioned when they would expose local user accounts, tokens, or private instance data. The Workbench screenshots above were captured from a local test instance and contain no secrets. The German README contains the same `internetwissen` view with German Workbench localization.
 
-## Planned: Internet Knowledge model
+## Internet Knowledge Model
 
-The repository is being extended with an `internetwissen` model package. The goal is an offline-capable research and explanation model for general knowledge, how-to guidance, source criticism, and knowledge structuring.
+`internetwissen` is integrated as an offline research and explanation model. It supports general knowledge questions, how-to guidance, source criticism, research methodology, and knowledge structuring without pretending to run live web search.
 
-The initial scope is intentionally small: the model does not ship large external web corpora. It uses a compact, self-written KnowledgeBase stored directly in the repository. This keeps the model immediately importable, air-gap friendly, and usable without additional GB/TB-scale data.
+The initial scope is intentionally compact: the model does not ship large external web corpora. It uses a self-written KnowledgeBase stored directly in the repository, so it remains immediately importable, air-gap friendly, and usable without additional GB/TB-scale data.
 
-### Initial scope
+### Location and Import
 
-- new model package `Modelle/einzelmodelle/internetwissen/`
-- repository-internal KnowledgeBase via `mainprompt.md`, `fachwissen.md`, and the model-specific example result file such as `beispielergebnis.md`, `beispielergebnis.html`, or `beispielergebnis.json`
+- Model package: [`Modelle/einzelmodelle/internetwissen/`](Modelle/einzelmodelle/internetwissen/)
+- Primary knowledge files: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, and `beispiele/`
+- Import artifact: [`Modelle/dist/openwebui-models-import.json`](Modelle/dist/openwebui-models-import.json)
+- Web search in the model profile: disabled
+
+### Offline Boundaries
+
 - no live web search in the offline default
-- focus on general explanations, instructions, research methodology, and source criticism
-- explicit handling of freshness limits
-- example answers for general research questions, offline instructions, source criticism, and time-sensitive topics
-
-### Not in initial scope
-
 - no FineWeb or Common Crawl data
 - no Wikipedia/Kiwix dumps
 - no external vector index
 - no automated web archive pipeline
-- no large data artifacts in the Git repository
 - no hidden online dependency
+- current facts, versions, laws, prices, CVEs, or company data are only confirmed when provided as a source or local KnowledgePack
 
-### Later expansion direction
+### Optional KnowledgePacks
 
-Longer term, the model can be extended through optional KnowledgePacks. These should not be committed as large datasets. The repository should only provide manifests, import scripts, local artifact paths, safety rules, and documentation. Possible later stages include curated offline documentation packs, optional Wikimedia/Kiwix integrations, local technical documentation packs, FineWeb/FineWeb-Edu/Common-Crawl based corpora, external local retrieval indexes, and import/license reports for large offline knowledge sources.
+Future expansion uses [`KnowledgePacks/`](KnowledgePacks/) and the [`offline data policy`](docs/OFFLINE_DATA_POLICY.md). KnowledgePacks are optional, manifest-based, locally validated, and capped at a combined 10 GiB together with optional offline image artifacts. External URLs in manifests are provenance metadata, not runtime dependencies.
 
 ## Internationalization
 

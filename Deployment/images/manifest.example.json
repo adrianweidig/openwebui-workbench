@@ -1,0 +1,25 @@
+{
+  "schema": "openwebui-workbench-offline-images/v1",
+  "snapshot_date": "2026-05-29",
+  "max_total_bytes": 10737418240,
+  "images": [
+    {
+      "name": "ghcr.io/open-webui/open-webui",
+      "tag": "<pin>",
+      "archive": "openwebui-<pin>.tar.zst",
+      "size_bytes": 0,
+      "sha256": "",
+      "source": "registry-export",
+      "default_included": false
+    },
+    {
+      "name": "ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard",
+      "tag": "<pin>",
+      "archive": "workbench-dashboard-<pin>.tar.zst",
+      "size_bytes": 0,
+      "sha256": "",
+      "source": "registry-export",
+      "default_included": false
+    }
+  ]
+}
