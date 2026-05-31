@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -368,11 +369,14 @@ def check_docker(docker_path: str | None, require_docker: bool) -> CheckResult:
     if docker_path:
         return CheckResult("ok", "Docker CLI", f"Found at {docker_path}.")
     level = "fail" if require_docker else "warn"
+    wsl_hint = ""
+    if os.name == "nt" and shutil.which("wsl.exe"):
+        wsl_hint = " wsl.exe is available; if Docker is installed in WSL, run this setup doctor from the WSL checkout or mount."
     return CheckResult(
         level,
         "Docker CLI",
-        "docker was not found in PATH.",
-        "Install Docker or run from an environment where docker compose is available.",
+        f"docker was not found in PATH.{wsl_hint}",
+        "Install Docker, expose the Docker CLI on PATH, or run from an environment where docker compose is available.",
     )
 
 

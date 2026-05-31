@@ -3,6 +3,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts import check_workbench_setup
 
@@ -72,6 +73,17 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertEqual(levels["Local .env"], "ok")
             self.assertEqual(levels["Docker CLI"], "fail")
             self.assertEqual(check_workbench_setup.summarize(results), "failed")
+
+    def test_missing_windows_docker_mentions_wsl_when_available(self) -> None:
+        with (
+            patch.object(check_workbench_setup.os, "name", "nt"),
+            patch.object(check_workbench_setup.shutil, "which", return_value="C:\\Windows\\System32\\wsl.exe"),
+        ):
+            result = check_workbench_setup.check_docker(None, require_docker=False)
+
+        self.assertEqual(result.level, "warn")
+        self.assertIn("wsl.exe is available", result.detail)
+        self.assertIn("WSL", result.detail)
 
     def test_default_ports_are_valid_when_port_values_are_missing(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

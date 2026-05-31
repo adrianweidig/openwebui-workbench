@@ -33,6 +33,7 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    ```
 
    In GitHub Actions läuft derselbe Compose-Config-Pfad als separater CI-Job. Es werden nur Compose-Dateien gerendert, keine Container gestartet.
+   Auf Windows-Hosts ohne Docker in der PATH, aber mit verfügbarer WSL, weisen Setup-Doctor und Verify-Runner auf den WSL-Pfad hin. Die Compose-Prüfungen sollen dann aus der WSL-Umgebung laufen, die Docker bereitstellt.
 
 4. Wenn Tool-, Filter-, Skill- oder Modellartefakte bewusst geändert wurden, Dist-Artefakte neu erzeugen und danach erneut prüfen:
 

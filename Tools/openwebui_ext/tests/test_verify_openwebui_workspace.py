@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -51,6 +52,21 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
         enterprise_step = next(step for step in steps if "enterprise CA" in step.label)
         self.assertEqual(enterprise_step.env["WORKBENCH_AUTH_PASSWORD"], "verify-only-placeholder")
         self.assertEqual(enterprise_step.env["WORKBENCH_ENTERPRISE_CA_HOST_FILE"], "/tmp/workbench-verify-ca.pem")
+
+    def test_skipped_windows_docker_step_mentions_wsl_when_available(self) -> None:
+        module = load_verify_module()
+        step = module.CommandStep("Docker compose config", ["docker", "compose", "config"])
+
+        def fake_which(name: str) -> str | None:
+            if name == "wsl.exe":
+                return "C:\\Windows\\System32\\wsl.exe"
+            return None
+
+        with patch.object(module.os, "name", "nt"), patch.object(module.shutil, "which", side_effect=fake_which):
+            result = module.run_command_step(step)
+
+        self.assertEqual(result.status, "Übersprungen")
+        self.assertIn("wsl.exe ist verfügbar", result.detail)
 
     def test_json_validation_ignores_git_directory(self) -> None:
         module = load_verify_module()

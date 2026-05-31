@@ -20,6 +20,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 
 `scripts/init_workbench_env.py` erzeugt eine ignorierte lokale `.env` aus `Deployment/workbench.env.example` und füllt `WEBUI_SECRET_KEY` sowie `WORKBENCH_AUTH_PASSWORD` mit zufälligen lokalen Werten. Bestehende `.env`-Dateien werden ohne `--force` nicht überschrieben, und Secret-Werte werden nicht auf der Konsole ausgegeben. `WORKBENCH_AUTH_USERNAME` fällt sonst auf `workbench` zurück. Die Compose-Datei startet das Dashboard nicht ohne Passwort, damit die Workbench immer über HTTP Basic Auth erreichbar ist.
 `scripts/check_workbench_setup.py` ist der nicht-mutierende Setup-Doctor für Administratoren: Er prüft Python-Version, Env-Vorlage, lokale `.env`, Host-Portwerte, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, dateibasierte Runtime-Pfade, Compose-Datei und Docker-Verfügbarkeit, ohne Dienste zu starten oder Secret-Werte auszugeben. Fehlendes Docker ist standardmäßig eine Warnung; mit `--require-docker` wird es für Installationsabnahmen als Fehler gewertet.
+Wenn Docker unter Windows nicht in der PATH liegt, aber `wsl.exe` verfügbar ist, meldet der Setup-Doctor diesen WSL-Pfad ausdrücklich. Führe `--require-docker`, `--run-compose-config` und die echten Compose-Starts dann in der WSL-Umgebung mit Docker aus.
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 
 ## Admin-Smoke-Check

@@ -124,7 +124,10 @@ def validate_json_files(root: Path) -> StepResult:
 
 def run_command_step(step: CommandStep) -> StepResult:
     if step.command[0] == "docker" and shutil.which("docker") is None:
-        return StepResult(step.label, "Übersprungen", "docker ist in dieser Umgebung nicht verfügbar")
+        detail = "docker ist in dieser Umgebung nicht verfügbar"
+        if os.name == "nt" and shutil.which("wsl.exe"):
+            detail += "; wsl.exe ist verfügbar, Docker-Compose-Prüfungen können aus einer WSL-Umgebung mit Docker erneut ausgeführt werden"
+        return StepResult(step.label, "Übersprungen", detail)
 
     print(f"\n## {step.label}", flush=True)
     print(" ".join(step.command), flush=True)
