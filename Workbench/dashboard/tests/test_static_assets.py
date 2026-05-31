@@ -40,6 +40,11 @@ def collect_index() -> DashboardHtmlCollector:
     return collector
 
 
+def javascript_literal_i18n_keys() -> set[str]:
+    app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+    return set(re.findall(r"(?<![\w$])t\(\s*[\"']([^\"'`]+)[\"']", app_js))
+
+
 class DashboardStaticAssetsTests(unittest.TestCase):
     def test_index_static_asset_references_exist(self) -> None:
         collector = collect_index()
@@ -55,6 +60,15 @@ class DashboardStaticAssetsTests(unittest.TestCase):
             with self.subTest(locale=locale):
                 messages = json.loads((STATIC_ROOT / "locales" / f"{locale}.json").read_text(encoding="utf-8"))
                 missing = sorted(collector.i18n_keys - set(messages))
+                self.assertEqual(missing, [])
+
+    def test_locale_files_cover_javascript_literal_i18n_keys(self) -> None:
+        keys = javascript_literal_i18n_keys()
+
+        for locale in ("de", "en"):
+            with self.subTest(locale=locale):
+                messages = json.loads((STATIC_ROOT / "locales" / f"{locale}.json").read_text(encoding="utf-8"))
+                missing = sorted(keys - set(messages))
                 self.assertEqual(missing, [])
 
     def test_navigation_panels_match_javascript_allowlist(self) -> None:

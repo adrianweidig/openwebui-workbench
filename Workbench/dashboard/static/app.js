@@ -8,7 +8,8 @@ const state = {
   selectedModel: null,
   selectedFile: "systemprompt.md",
   selectedResource: null,
-  dirty: false,
+  modelDirty: false,
+  resourceDirty: false,
   modelView: "split",
   resourceView: "split",
 };
@@ -103,6 +104,23 @@ async function api(path, options = {}) {
 
 function setText(id, value) {
   el(id).textContent = value;
+}
+
+function hasUnsavedChanges(scope = "any") {
+  if (scope === "model") return state.modelDirty;
+  if (scope === "resource") return state.resourceDirty;
+  return state.modelDirty || state.resourceDirty;
+}
+
+function unsavedPromptKey(scope) {
+  if (scope === "model") return "prompt.discardUnsavedModel";
+  if (scope === "resource") return "prompt.discardUnsavedResource";
+  return "prompt.discardUnsavedAll";
+}
+
+function confirmDiscardUnsaved(scope = "any") {
+  if (!hasUnsavedChanges(scope)) return true;
+  return window.confirm(t(unsavedPromptKey(scope)));
 }
 
 function formatActionResult(result) {
@@ -563,6 +581,7 @@ function selectedModelFileExists() {
 function resetModelEditor() {
   state.selectedModel = null;
   state.selectedFile = "systemprompt.md";
+  state.modelDirty = false;
   setText("model-title", t("models.none"));
   setText("model-description", t("models.pick"));
   el("markdown-editor").value = "";
@@ -576,6 +595,7 @@ function resetModelEditor() {
 
 function resetResourceEditor() {
   state.selectedResource = null;
+  state.resourceDirty = false;
   setText("resource-title", t("resources.none"));
   setText("resource-description", t("resources.pick"));
   el("resource-editor").value = "";
@@ -622,6 +642,8 @@ function renderFileTabs() {
 }
 
 async function selectResource(kind, resourceId) {
+  if (state.selectedResource?.kind === kind && state.selectedResource?.id === resourceId) return;
+  if (!confirmDiscardUnsaved("resource")) return;
   const resource = state.resources.find((item) => item.kind === kind && item.id === resourceId);
   state.selectedResource = resource;
   setText("resource-title", resource.name);
@@ -631,6 +653,7 @@ async function selectResource(kind, resourceId) {
   const payload = await api(`/api/resources/${encodeURIComponent(kind)}/${encodeURIComponent(resourceId)}/file`);
   el("resource-editor").disabled = false;
   el("resource-editor").value = payload.content;
+  state.resourceDirty = false;
   updateResourcePreview();
   el("save-resource").disabled = false;
   el("delete-resource").disabled = false;
@@ -638,6 +661,8 @@ async function selectResource(kind, resourceId) {
 }
 
 async function selectModel(modelId) {
+  if (state.selectedModel?.id === modelId) return;
+  if (!confirmDiscardUnsaved("model")) return;
   const model = state.models.find((item) => item.id === modelId);
   state.selectedModel = model;
   state.selectedFile = model.files.find((file) => file.name === "systemprompt.md")?.name || model.files[0]?.name || "systemprompt.md";
@@ -650,6 +675,8 @@ async function selectModel(modelId) {
 
 async function loadFile(name) {
   if (!state.selectedModel) return;
+  if (state.selectedFile === name && !state.modelDirty && !el("markdown-editor").disabled) return;
+  if (state.selectedFile !== name && !confirmDiscardUnsaved("model")) return;
   state.selectedFile = name;
   renderFileTabs();
   setText("editor-state", t("state.loadingFile"));
@@ -659,12 +686,13 @@ async function loadFile(name) {
   updateModelPreview();
   el("save-file").disabled = false;
   el("delete-model-file").disabled = !payload.exists;
-  state.dirty = false;
+  state.modelDirty = false;
   setText("editor-state", payload.exists ? t("state.loaded", { path: payload.path }) : t("state.newFile", { path: payload.path }));
 }
 
 async function addModelFile() {
   if (!state.selectedModel) return;
+  if (!confirmDiscardUnsaved("model")) return;
   const name = window.prompt(t("prompt.modelFileName"), "beispiele/neues-beispiel.md");
   if (!name) return;
   if (state.selectedModel.files.some((file) => file.name === name && file.exists)) {
@@ -713,6 +741,7 @@ function resourceTemplate(kind, id) {
 }
 
 async function addResource() {
+  if (!confirmDiscardUnsaved("resource")) return;
   const rawKind = window.prompt(t("prompt.resourceKind"), "skill");
   if (!rawKind) return;
   const kind = rawKind.trim().toLowerCase();
@@ -743,6 +772,7 @@ async function deleteResource() {
   try {
     await api(`/api/resources/${encodeURIComponent(kind)}/${encodeURIComponent(id)}/file`, { method: "DELETE" });
     state.selectedResource = null;
+    state.resourceDirty = false;
     el("resource-editor").value = "";
     el("resource-editor").disabled = true;
     el("resource-preview").innerHTML = "";
@@ -769,6 +799,7 @@ async function saveResource() {
         body: JSON.stringify({ content: el("resource-editor").value }),
       },
     );
+    state.resourceDirty = false;
     setText("resource-state", t("state.saved", { path: payload.path }));
     await refreshResources(false);
   } catch (error) {
@@ -787,7 +818,7 @@ async function saveFile() {
       method: "PUT",
       body: JSON.stringify({ name: state.selectedFile, content: el("markdown-editor").value }),
     });
-    state.dirty = false;
+    state.modelDirty = false;
     setText("editor-state", t("state.saved", { path: payload.path }));
     await refreshModels(false);
   } catch (error) {
@@ -874,11 +905,12 @@ function wireEvents() {
   el("model-search").addEventListener("input", renderModels);
   el("resource-search").addEventListener("input", renderResources);
   el("markdown-editor").addEventListener("input", () => {
-    state.dirty = true;
+    state.modelDirty = true;
     updateModelPreview();
     setText("editor-state", t("state.unsaved"));
   });
   el("resource-editor").addEventListener("input", () => {
+    state.resourceDirty = true;
     updateResourcePreview();
     setText("resource-state", t("state.unsaved"));
   });
@@ -893,6 +925,7 @@ function wireEvents() {
     applyTheme(document.body.classList.contains("light-theme") ? "light" : "dark");
   });
   el("refresh-dashboard").addEventListener("click", async () => {
+    if (!confirmDiscardUnsaved()) return;
     setText("editor-state", t("state.refreshing"));
     await refreshStatus();
     await refreshModels(true);
@@ -910,6 +943,11 @@ function wireEvents() {
   });
   el("clear-log").addEventListener("click", () => {
     el("action-log").textContent = t("log.empty");
+  });
+  window.addEventListener("beforeunload", (event) => {
+    if (!hasUnsavedChanges()) return;
+    event.preventDefault();
+    event.returnValue = "";
   });
 }
 
