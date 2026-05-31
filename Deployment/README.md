@@ -19,7 +19,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 ```
 
 `scripts/init_workbench_env.py` erzeugt eine ignorierte lokale `.env` aus `Deployment/workbench.env.example` und füllt `WEBUI_SECRET_KEY` sowie `WORKBENCH_AUTH_PASSWORD` mit zufälligen lokalen Werten. Bestehende `.env`-Dateien werden ohne `--force` nicht überschrieben, und Secret-Werte werden nicht auf der Konsole ausgegeben. `WORKBENCH_AUTH_USERNAME` fällt sonst auf `workbench` zurück. Die Compose-Datei startet das Dashboard nicht ohne Passwort, damit die Workbench immer über HTTP Basic Auth erreichbar ist.
-`scripts/check_workbench_setup.py` ist der nicht-mutierende Setup-Doctor für Administratoren: Er prüft Python-Version, Env-Vorlage, lokale `.env`, Host-Portwerte, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, Compose-Datei und Docker-Verfügbarkeit, ohne Dienste zu starten oder Secret-Werte auszugeben. Fehlendes Docker ist standardmäßig eine Warnung; mit `--require-docker` wird es für Installationsabnahmen als Fehler gewertet.
+`scripts/check_workbench_setup.py` ist der nicht-mutierende Setup-Doctor für Administratoren: Er prüft Python-Version, Env-Vorlage, lokale `.env`, Host-Portwerte, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, dateibasierte Runtime-Pfade, Compose-Datei und Docker-Verfügbarkeit, ohne Dienste zu starten oder Secret-Werte auszugeben. Fehlendes Docker ist standardmäßig eine Warnung; mit `--require-docker` wird es für Installationsabnahmen als Fehler gewertet.
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 
 ## Admin-Smoke-Check
@@ -69,6 +69,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Dep
 ```
 
 Der Workbench-Container installiert `ca-certificates` im Image und führt beim Start immer `update-ca-certificates` aus. Wenn `WORKBENCH_CA_BUNDLE` gesetzt ist, wird die gemountete PEM-Datei vorab geprüft: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte führen zu einem klaren Startfehler. Secrets, Tokens und Private Keys gehören nicht in diese CA-Datei.
+Der Setup-Doctor prüft `WORKBENCH_ENTERPRISE_CA_HOST_FILE` schon vor dem Compose-Start als Hostdatei: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte werden als Installationsfehler gemeldet.
 
 Bei einem bereits vorhandenen OpenWebUI über HTTPS setzt du zusätzlich:
 

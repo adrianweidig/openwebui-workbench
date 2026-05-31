@@ -146,7 +146,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 ```
 
 Der Init-Befehl erzeugt eine ignorierte lokale `.env` mit zufälligem `WEBUI_SECRET_KEY` und `WORKBENCH_AUTH_PASSWORD`, überschreibt keine vorhandene `.env` ohne `--force` und gibt Secret-Werte nicht aus.
-Der Setup-Doctor prüft vor dem Start Python, Env-Vorlage, lokale `.env`, Host-Ports, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, Compose-Datei und Docker-Erreichbarkeit, ohne Container zu starten oder Secret-Werte auszugeben. Für Administrator-Abnahmen kann Docker mit `python scripts/check_workbench_setup.py --require-docker` als Pflicht behandelt werden.
+Der Setup-Doctor prüft vor dem Start Python, Env-Vorlage, lokale `.env`, Host-Ports, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, dateibasierte Runtime-Pfade, Compose-Datei und Docker-Erreichbarkeit, ohne Container zu starten oder Secret-Werte auszugeben. Für Administrator-Abnahmen kann Docker mit `python scripts/check_workbench_setup.py --require-docker` als Pflicht behandelt werden.
 
 Danach:
 

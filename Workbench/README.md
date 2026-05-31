@@ -13,7 +13,7 @@ python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
 Danach ist das Dashboard unter `http://127.0.0.1:8088` erreichbar.
 Ohne expliziten `--host` bindet der Direktstart ebenfalls nur an `127.0.0.1`.
 Wenn ein anderer Host wie `0.0.0.0` oder eine LAN-Adresse gesetzt wird, startet der Server nur mit gesetztem `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE`.
-Ungültige Runtime-Werte wie `WORKBENCH_PORT=abc`, `WORKBENCH_MAX_BODY_BYTES=abc`, `WORKBENCH_COMMAND_TIMEOUT_SECONDS=abc`, `OPENWEBUI_TLS_VERIFY=maybe`, `OPENWEBUI_BASE_URL=localhost:3000` oder ein nicht lesbarer `WORKBENCH_AUTH_PASSWORD_FILE` werden beim Direktstart als kurze Startup-Fehler ausgegeben; vorab prüft `python scripts/check_workbench_setup.py` dieselben Werte ohne Serverstart.
+Ungültige Runtime-Werte wie `WORKBENCH_PORT=abc`, `WORKBENCH_MAX_BODY_BYTES=abc`, `WORKBENCH_COMMAND_TIMEOUT_SECONDS=abc`, `OPENWEBUI_TLS_VERIFY=maybe`, `OPENWEBUI_BASE_URL=localhost:3000` oder ein nicht lesbarer `WORKBENCH_AUTH_PASSWORD_FILE` werden beim Direktstart als kurze Startup-Fehler ausgegeben; vorab prüft `python scripts/check_workbench_setup.py` zentrale `.env`-Werte und dateibasierte Pfade ohne Serverstart.
 Wenn Host oder Port nicht gebunden werden können, etwa weil `8088` bereits belegt ist, endet der Direktstart ebenfalls mit einer kurzen Startup-Meldung statt einem Python-Traceback.
 
 Optional schützt der Server alle Routen per HTTP Basic Auth:

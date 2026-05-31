@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 import sys
@@ -33,8 +34,15 @@ INTEGER_DEFAULTS = {
     "WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS": 600,
     "WORKBENCH_MAX_BODY_BYTES": 1048576,
 }
+OPTIONAL_FILE_KEYS = {
+    "WORKBENCH_AUTH_PASSWORD_FILE": "file",
+    "OPENWEBUI_ADMIN_TOKEN_FILE": "file",
+    "OPENWEBUI_CA_FILE": "file",
+    "OPENWEBUI_CA_PATH": "directory",
+}
 TRUE_VALUES = {"1", "true", "yes", "on"}
 FALSE_VALUES = {"0", "false", "no", "off"}
+PRIVATE_KEY_RE = re.compile(r"BEGIN .*PRIVATE KEY")
 
 
 @dataclass(frozen=True)
@@ -272,6 +280,79 @@ def check_numeric_values(env_path: Path) -> CheckResult:
     return CheckResult("ok", "Numeric config", ", ".join(normalized_values) + ".")
 
 
+def _env_path(raw: str, env_path: Path) -> Path:
+    path = Path(raw)
+    if path.is_absolute() or raw.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:[\\/]", raw):
+        return path
+    return env_path.parent / path
+
+
+def _validate_pem_certificate_file(path: Path, key: str) -> tuple[str | None, str | None]:
+    if not path.is_file():
+        return f"{key} points to a missing file.", "Check the host path before running docker compose."
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return f"{key} must be a readable PEM text file.", "Use a PEM-encoded certificate bundle."
+    except OSError as exc:
+        return f"{key} could not be read: {exc}.", "Check file permissions."
+    if PRIVATE_KEY_RE.search(text):
+        return f"{key} must contain certificates only, not private keys.", "Use a public root CA certificate bundle."
+    if "BEGIN CERTIFICATE" not in text:
+        return f"{key} does not look like a PEM certificate bundle.", "Use a PEM file with at least one certificate."
+    return None, None
+
+
+def check_file_references(env_path: Path) -> CheckResult:
+    try:
+        values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        return CheckResult("fail", "File references", str(exc), "Check file permissions.")
+
+    failures: list[str] = []
+    warnings: list[str] = []
+    actions: list[str] = []
+
+    enterprise_ca = values.get("WORKBENCH_ENTERPRISE_CA_HOST_FILE", "").strip()
+    if enterprise_ca:
+        ca_path = _env_path(enterprise_ca, env_path)
+        error, action = _validate_pem_certificate_file(ca_path, "WORKBENCH_ENTERPRISE_CA_HOST_FILE")
+        if error:
+            failures.append(error)
+            if action:
+                actions.append(action)
+
+    for key, kind in OPTIONAL_FILE_KEYS.items():
+        raw = values.get(key, "").strip()
+        if not raw:
+            continue
+        path = _env_path(raw, env_path)
+        if kind == "directory":
+            exists = path.is_dir()
+            expected = "directory"
+        else:
+            exists = path.is_file()
+            expected = "file"
+        if not exists:
+            warnings.append(f"{key} is set but was not found as a local {expected}.")
+
+    if failures:
+        return CheckResult(
+            "fail",
+            "File references",
+            " ".join(failures),
+            " ".join(dict.fromkeys(actions)) or "Fix the referenced host files before startup.",
+        )
+    if warnings:
+        return CheckResult(
+            "warn",
+            "File references",
+            " ".join(warnings),
+            "If these are container-only secret or CA paths, verify the matching mount before startup.",
+        )
+    return CheckResult("ok", "File references", "No invalid local file references found.")
+
+
 def check_compose_file(compose_path: Path) -> CheckResult:
     if not compose_path.exists():
         return CheckResult(
@@ -349,6 +430,7 @@ def evaluate_setup(
         results.append(check_openwebui_urls(env_path))
         results.append(check_boolean_values(env_path))
         results.append(check_numeric_values(env_path))
+        results.append(check_file_references(env_path))
     if run_compose:
         if docker_executable:
             results.append(run_compose_config(docker_executable, compose_path, env_path))

@@ -61,7 +61,7 @@ JSON-Artefakte werden durch `scripts/verify_openwebui_workspace.py` mitgeprüft.
 
 Die Unit-Tests unter `Tools.openwebui_ext.tests` enthalten zusätzlich leichte Workflow-Hygiene-Prüfungen für sicher benannte Release-Artefakte. Die Dashboard-Tests prüfen neben API- und Schreibpfaden auch die Browser-Security-Header der lokalen Workbench-Oberfläche und kurze Startup-Fehler für ungültige numerische, boolesche, URL-basierte oder dateibasierte Dashboard-Env-Werte sowie für belegte Dashboard-Ports.
 
-Der Setup-Doctor ist nicht-mutierend und prüft zusätzlich, ob `OPENWEBUI_PORT` und `WORKBENCH_PORT` gültige, unterschiedliche Host-Ports ergeben, ob `OPENWEBUI_BASE_URL` sowie `OPENWEBUI_PUBLIC_URL` vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten sind, ob boolesche Flags wie `OPENWEBUI_TLS_VERIFY` explizite Wahr/Falsch-Werte enthalten und ob Timeout-/Größenwerte positive Ganzzahlen sind. Fehlende Werte nutzen die Compose-Defaults.
+Der Setup-Doctor ist nicht-mutierend und prüft zusätzlich, ob `OPENWEBUI_PORT` und `WORKBENCH_PORT` gültige, unterschiedliche Host-Ports ergeben, ob `OPENWEBUI_BASE_URL` sowie `OPENWEBUI_PUBLIC_URL` vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten sind, ob boolesche Flags wie `OPENWEBUI_TLS_VERIFY` explizite Wahr/Falsch-Werte enthalten, ob Timeout-/Größenwerte positive Ganzzahlen sind und ob dateibasierte Runtime-Pfade plausibel sind. `WORKBENCH_ENTERPRISE_CA_HOST_FILE` wird als lokale Hostdatei und PEM-Zertifikat geprüft; Container-only Secret- oder CA-Pfade werden als Warnung markiert, wenn sie hostseitig nicht sichtbar sind. Fehlende Werte nutzen die Compose-Defaults.
 
 ## Security-Hygiene prüfen
 

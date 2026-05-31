@@ -269,6 +269,93 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("WORKBENCH_COMMAND_TIMEOUT_SECONDS=120", rendered)
             self.assertIn("WORKBENCH_MAX_BODY_BYTES=2048", rendered)
 
+    def test_missing_enterprise_ca_host_file_fails_before_compose_start(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            missing_ca = Path(temp_dir) / "missing-ca.pem"
+            env_file.write_text(
+                f"WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nWORKBENCH_ENTERPRISE_CA_HOST_FILE={missing_ca}\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "fail")
+            self.assertIn("WORKBENCH_ENTERPRISE_CA_HOST_FILE", rendered)
+
+    def test_enterprise_ca_host_file_rejects_private_keys(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            ca_file = Path(temp_dir) / "root-ca.pem"
+            ca_file.write_text("-----BEGIN PRIVATE KEY-----\nnot-a-key\n-----END PRIVATE KEY-----\n", encoding="utf-8")
+            env_file.write_text(
+                f"WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nWORKBENCH_ENTERPRISE_CA_HOST_FILE={ca_file}\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "fail")
+            self.assertIn("certificates only", rendered)
+
+    def test_enterprise_ca_host_file_accepts_pem_certificate(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            ca_file = Path(temp_dir) / "root-ca.pem"
+            ca_file.write_text("-----BEGIN CERTIFICATE-----\nnot-a-real-cert\n-----END CERTIFICATE-----\n", encoding="utf-8")
+            env_file.write_text(
+                f"WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nWORKBENCH_ENTERPRISE_CA_HOST_FILE={ca_file}\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "ok")
+
+    def test_missing_container_only_file_references_are_warnings(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            sentinel = "DO_NOT_PRINT_VALUE"
+            env_file.write_text(
+                f"WEBUI_SECRET_KEY={sentinel}\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "WORKBENCH_AUTH_PASSWORD_FILE=/run/secrets/workbench-password\n"
+                "OPENWEBUI_ADMIN_TOKEN_FILE=/run/secrets/openwebui-token\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "warn")
+            self.assertIn("container-only secret or CA paths", rendered)
+            self.assertNotIn(sentinel, rendered)
+
 
 if __name__ == "__main__":
     unittest.main()
