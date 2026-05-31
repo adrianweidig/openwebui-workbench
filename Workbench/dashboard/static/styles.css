@@ -1371,6 +1371,18 @@ textarea,
   transform: translateY(-1px);
 }
 
+.action-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.action-card:disabled:hover {
+  border-color: rgba(148, 163, 184, 0.28);
+  background: var(--surface);
+  box-shadow: none;
+  transform: none;
+}
+
 .action-card strong {
   margin-top: 4px;
 }

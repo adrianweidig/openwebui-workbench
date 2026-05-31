@@ -135,6 +135,8 @@
   "sync.check.body": "Check syntax, generator state, import dry-run, JSON, and unit tests.",
   "sync.check.step": "QA",
   "sync.check.title": "Verify workspace",
+  "sync.disabled.readOnly": "Disabled in read-only mode",
+  "sync.disabled.targetMissing": "Local config or admin token is missing",
   "sync.dryRun.body": "Validate the OpenWebUI payload locally without changing the target instance.",
   "sync.dryRun.step": "2 · Safe Check",
   "sync.dryRun.title": "Check import",

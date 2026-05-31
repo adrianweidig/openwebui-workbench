@@ -18,6 +18,7 @@ const el = (id) => document.getElementById(id);
 const DEFAULT_LOCALE = "de";
 const SUPPORTED_LOCALES = ["de", "en"];
 const SUPPORTED_PANELS = new Set(["models", "resources", "actions", "assets"]);
+const WRITE_ACTIONS = new Set(["generate", "import-dry-run", "import-openwebui"]);
 const queryParams = new URLSearchParams(window.location.search);
 
 function normalizeLocale(value) {
@@ -321,6 +322,7 @@ function renderStatus() {
   setSignalState("signal-write", status.write_enabled ? "ok" : "warn");
   setSignalState("signal-artifacts", existingArtifacts === artifacts.length ? "ok" : "warn");
   renderSetupChecks(status, existingArtifacts, artifacts.length);
+  renderActionReadiness();
 
   const artifactList = el("artifact-list");
   artifactList.replaceChildren();
@@ -401,6 +403,26 @@ function renderSetupChecks(status, existingArtifacts, artifactTotal) {
     text.append(title, detail);
     row.append(marker, text);
     container.append(row);
+  });
+}
+
+function actionDisabledReason(action) {
+  const status = state.status;
+  if (!status) return "";
+  if (WRITE_ACTIONS.has(action) && !status.write_enabled) return t("sync.disabled.readOnly");
+  if (action === "import-openwebui" && !status.openwebui.admin_token_configured && !status.config.local_config_exists) {
+    return t("sync.disabled.targetMissing");
+  }
+  return "";
+}
+
+function renderActionReadiness() {
+  document.querySelectorAll("[data-action]").forEach((button) => {
+    const reason = actionDisabledReason(button.dataset.action);
+    button.disabled = Boolean(reason);
+    button.classList.toggle("disabled", Boolean(reason));
+    button.setAttribute("aria-disabled", String(Boolean(reason)));
+    button.title = reason;
   });
 }
 
@@ -939,7 +961,10 @@ function wireEvents() {
   el("delete-resource").addEventListener("click", deleteResource);
   el("save-resource").addEventListener("click", saveResource);
   document.querySelectorAll("[data-action]").forEach((button) => {
-    button.addEventListener("click", () => runAction(button.dataset.action));
+    button.addEventListener("click", () => {
+      if (button.disabled) return;
+      runAction(button.dataset.action);
+    });
   });
   el("clear-log").addEventListener("click", () => {
     el("action-log").textContent = t("log.empty");

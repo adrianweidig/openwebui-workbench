@@ -135,6 +135,8 @@
   "sync.check.body": "Syntax, Generator, Import-Dry-Run, JSON und Unit-Tests prüfen.",
   "sync.check.step": "QA",
   "sync.check.title": "Workspace verifizieren",
+  "sync.disabled.readOnly": "Im Read-only-Modus deaktiviert",
+  "sync.disabled.targetMissing": "Lokale Config oder Admin-Token fehlt",
   "sync.dryRun.body": "OpenWebUI-Payload lokal validieren, ohne die Zielinstanz zu verändern.",
   "sync.dryRun.step": "2 · Safe Check",
   "sync.dryRun.title": "Import prüfen",

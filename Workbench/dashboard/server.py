@@ -124,6 +124,7 @@ MODEL_EXAMPLE_SUFFIXES = {
     ".svg",
     ".txt",
 }
+WRITE_ACTIONS = {"generate", "import-dry-run", "import-openwebui"}
 
 
 def configure_utf8_stdio() -> None:
@@ -629,12 +630,19 @@ class WorkbenchState:
         path.unlink()
         return {"kind": kind, "id": resource_id, "path": rel(path), "deleted": True}
 
+    def ensure_action_allowed(self, action: str) -> None:
+        if action in WRITE_ACTIONS and not self.config.allow_write:
+            raise PermissionError(t("write_disabled", self.config.locale))
+
     def run_action(self, action: str) -> dict[str, Any]:
+        self.ensure_action_allowed(action)
         command_env: dict[str, str] = {
             "PYTHONUTF8": "1",
             "PYTHONIOENCODING": "utf-8",
         }
         if action == "check":
+            # Keep repository verification independent from the dashboard runtime mode.
+            command_env["WORKBENCH_ALLOW_WRITE"] = "true"
             command = [sys.executable, "scripts/verify_openwebui_workspace.py"]
             label = "Verify workspace"
         elif action == "generate":
@@ -842,6 +850,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             if parsed.path.startswith("/api/actions/"):
                 action = unquote(parsed.path.removeprefix("/api/actions/"))
                 if action == "import-openwebui":
+                    STATE.ensure_action_allowed(action)
                     self.send_json(STATE.start_action_job(action), HTTPStatus.ACCEPTED)
                     return
                 result = STATE.run_action(action)

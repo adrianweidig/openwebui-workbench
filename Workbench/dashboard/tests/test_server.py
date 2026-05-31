@@ -151,6 +151,26 @@ class WorkbenchStateTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             state.write_model_file("demo-model", "systemprompt.md", "Nope\n")
 
+    def test_read_only_state_blocks_write_actions(self) -> None:
+        state = WorkbenchState(WorkbenchConfig(root=self.root, allow_write=False, locale="de"))
+
+        for action in ("generate", "import-dry-run", "import-openwebui"):
+            with self.subTest(action=action), self.assertRaisesRegex(PermissionError, "Schreibzugriff"):
+                state.run_action(action)
+
+    def test_read_only_state_allows_check_action(self) -> None:
+        state = WorkbenchState(WorkbenchConfig(root=self.root, allow_write=False, locale="de"))
+        completed = SimpleNamespace(returncode=0, stdout="ok\n")
+
+        with patch("Workbench.dashboard.server.subprocess.run", return_value=completed) as run:
+            result = state.run_action("check")
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["action"], "check")
+        self.assertEqual(result["output"], "ok\n")
+        self.assertEqual(run.call_args.kwargs["cwd"], self.root)
+        self.assertEqual(run.call_args.kwargs["env"]["WORKBENCH_ALLOW_WRITE"], "true")
+
     def test_reads_and_writes_tool_resource(self) -> None:
         before = self.state.read_resource("tool", "demo_tool")
         self.assertEqual(before["content"], "# demo\n")
@@ -538,6 +558,30 @@ class WorkbenchStateTests(unittest.TestCase):
 
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(response)["action"], "check")
+
+    def test_read_only_action_route_rejects_background_write_action(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                allow_write=False,
+                openwebui_base_url="http://127.0.0.1:9",
+                locale="de",
+            )
+        )
+        base_url = self.start_server(state)
+
+        with patch.object(state, "start_action_job") as start_job:
+            status, response = self.request(
+                base_url,
+                path="/api/actions/import-openwebui",
+                method="POST",
+                body="{}",
+                headers={"X-Workbench-Request": "same-origin"},
+            )
+
+        self.assertEqual(status, 403)
+        self.assertIn("Schreibzugriff", json.loads(response)["error"])
+        start_job.assert_not_called()
 
     def test_basic_auth_uses_accept_language_when_available(self) -> None:
         state = WorkbenchState(
