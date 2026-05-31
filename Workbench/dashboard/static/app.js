@@ -8,6 +8,8 @@ const state = {
   selectedModel: null,
   selectedFile: "systemprompt.md",
   selectedResource: null,
+  activePanel: "models",
+  urlSyncReady: false,
   modelDirty: false,
   resourceDirty: false,
   modelView: "split",
@@ -16,6 +18,8 @@ const state = {
 
 const el = (id) => document.getElementById(id);
 const DEFAULT_LOCALE = "de";
+const DEFAULT_PANEL = "models";
+const DEFAULT_MODEL_FILE = "systemprompt.md";
 const SUPPORTED_LOCALES = ["de", "en"];
 const SUPPORTED_PANELS = new Set(["models", "resources", "actions", "assets"]);
 const WRITE_ACTIONS = new Set(["generate", "import-dry-run", "import-openwebui"]);
@@ -76,6 +80,7 @@ async function setLocale(locale, persist = true) {
   if (state.status) renderStatus();
   renderModels();
   renderResources();
+  if (persist) syncUrlState();
 }
 
 async function api(path, options = {}) {
@@ -105,6 +110,40 @@ async function api(path, options = {}) {
 
 function setText(id, value) {
   el(id).textContent = value;
+}
+
+function syncUrlState() {
+  if (!state.urlSyncReady || !window.history?.replaceState) return;
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+  const activePanel = SUPPORTED_PANELS.has(state.activePanel) ? state.activePanel : DEFAULT_PANEL;
+
+  if (activePanel === DEFAULT_PANEL) params.delete("panel");
+  else params.set("panel", activePanel);
+
+  if (state.locale === DEFAULT_LOCALE) params.delete("locale");
+  else params.set("locale", state.locale);
+
+  if (activePanel === "models" && state.selectedModel) {
+    params.set("model", state.selectedModel.id);
+    if (state.selectedFile && state.selectedFile !== DEFAULT_MODEL_FILE) params.set("file", state.selectedFile);
+    else params.delete("file");
+  } else {
+    params.delete("model");
+    params.delete("file");
+  }
+
+  if (activePanel === "resources" && state.selectedResource) {
+    params.set("resource", `${state.selectedResource.kind}:${state.selectedResource.id}`);
+  } else {
+    params.delete("resource");
+  }
+
+  const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+  const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (nextUrl !== currentUrl) {
+    window.history.replaceState(null, "", nextUrl);
+  }
 }
 
 function hasUnsavedChanges(scope = "any") {
@@ -602,7 +641,7 @@ function selectedModelFileExists() {
 
 function resetModelEditor() {
   state.selectedModel = null;
-  state.selectedFile = "systemprompt.md";
+  state.selectedFile = DEFAULT_MODEL_FILE;
   state.modelDirty = false;
   setText("model-title", t("models.none"));
   setText("model-description", t("models.pick"));
@@ -613,6 +652,7 @@ function resetModelEditor() {
   el("delete-model-file").disabled = true;
   setText("editor-state", t("state.ready"));
   renderFileTabs();
+  syncUrlState();
 }
 
 function resetResourceEditor() {
@@ -626,6 +666,7 @@ function resetResourceEditor() {
   el("save-resource").disabled = true;
   el("delete-resource").disabled = true;
   setText("resource-state", t("state.ready"));
+  syncUrlState();
 }
 
 function renderFileTabs() {
@@ -680,6 +721,7 @@ async function selectResource(kind, resourceId) {
   el("save-resource").disabled = false;
   el("delete-resource").disabled = false;
   setText("resource-state", t("state.loaded", { path: payload.path }));
+  syncUrlState();
 }
 
 async function selectModel(modelId) {
@@ -687,7 +729,7 @@ async function selectModel(modelId) {
   if (!confirmDiscardUnsaved("model")) return;
   const model = state.models.find((item) => item.id === modelId);
   state.selectedModel = model;
-  state.selectedFile = model.files.find((file) => file.name === "systemprompt.md")?.name || model.files[0]?.name || "systemprompt.md";
+  state.selectedFile = model.files.find((file) => file.name === DEFAULT_MODEL_FILE)?.name || model.files[0]?.name || DEFAULT_MODEL_FILE;
   setText("model-title", modelDisplayName(model));
   setText("model-description", modelDisplayDescription(model));
   renderModels();
@@ -710,6 +752,7 @@ async function loadFile(name) {
   el("delete-model-file").disabled = !payload.exists;
   state.modelDirty = false;
   setText("editor-state", payload.exists ? t("state.loaded", { path: payload.path }) : t("state.newFile", { path: payload.path }));
+  syncUrlState();
 }
 
 async function addModelFile() {
@@ -746,7 +789,7 @@ async function deleteModelFile() {
     await refreshModels(true);
     const nextFile = state.selectedModel?.files.find((file) => file.exists && file.name !== deleted)?.name
       || state.selectedModel?.files[0]?.name
-      || "systemprompt.md";
+      || DEFAULT_MODEL_FILE;
     await loadFile(nextFile);
   } catch (error) {
     setText("editor-state", error.message);
@@ -977,7 +1020,8 @@ function wireEvents() {
 }
 
 function activatePanel(panelName) {
-  const target = SUPPORTED_PANELS.has(panelName) ? panelName : "models";
+  const target = SUPPORTED_PANELS.has(panelName) ? panelName : DEFAULT_PANEL;
+  state.activePanel = target;
   document.querySelectorAll(".nav-item").forEach((item) => {
     const active = item.dataset.panel === target;
     item.classList.toggle("active", active);
@@ -989,6 +1033,7 @@ function activatePanel(panelName) {
   });
   document.querySelectorAll(".panel").forEach((panel) => panel.classList.remove("active"));
   el(`panel-${target}`).classList.add("active");
+  syncUrlState();
 }
 
 async function init() {
@@ -1020,6 +1065,8 @@ async function init() {
       state.resources[0];
     await selectResource(initialResource.kind, initialResource.id);
   }
+  state.urlSyncReady = true;
+  syncUrlState();
 }
 
 init().catch((error) => {

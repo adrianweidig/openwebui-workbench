@@ -82,6 +82,15 @@ class DashboardStaticAssetsTests(unittest.TestCase):
         for panel in collector.panels:
             self.assertIn(f"panel-{panel}", collector.ids)
 
+    def test_deep_link_query_params_are_read_and_written(self) -> None:
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn("window.history.replaceState", app_js)
+        for parameter in ("panel", "model", "file", "resource", "locale"):
+            with self.subTest(parameter=parameter):
+                self.assertIn(f'queryParams.get("{parameter}")', app_js)
+                self.assertRegex(app_js, rf"params\.(?:set|delete)\(\"{parameter}\"")
+
 
 if __name__ == "__main__":
     unittest.main()
