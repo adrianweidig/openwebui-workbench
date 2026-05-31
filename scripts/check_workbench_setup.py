@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -63,11 +64,24 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--compose-file", type=Path, default=DEFAULT_COMPOSE_FILE, help="compose file to validate")
     parser.add_argument("--require-docker", action="store_true", help="treat a missing Docker CLI as a failure")
     parser.add_argument(
+        "--docker-command",
+        type=command_prefix,
+        default=["docker"],
+        help='docker command prefix for compose checks, for example: "wsl.exe -d Debian -- docker"',
+    )
+    parser.add_argument(
         "--run-compose-config",
         action="store_true",
         help="run 'docker compose config' when Docker and the env file are available",
     )
     return parser.parse_args(argv)
+
+
+def command_prefix(value: str) -> list[str]:
+    parts = shlex.split(value)
+    if not parts:
+        raise argparse.ArgumentTypeError("docker command must not be empty")
+    return parts
 
 
 def _display_path(path: Path) -> str:
@@ -365,9 +379,28 @@ def check_compose_file(compose_path: Path) -> CheckResult:
     return CheckResult("ok", "Compose file", f"{_display_path(compose_path)} exists.")
 
 
-def check_docker(docker_path: str | None, require_docker: bool) -> CheckResult:
-    if docker_path:
-        return CheckResult("ok", "Docker CLI", f"Found at {docker_path}.")
+def _shell_join(command: Sequence[str]) -> str:
+    return " ".join(shlex.quote(part) for part in command)
+
+
+def resolve_docker_command(
+    docker_command: Sequence[str] | None,
+    *,
+    docker_path: str | None = None,
+    lookup_docker: bool = True,
+) -> list[str] | None:
+    if docker_path is not None:
+        return [docker_path] if docker_path else None
+    command = list(docker_command or ["docker"])
+    if command == ["docker"]:
+        found = shutil.which("docker") if lookup_docker else None
+        return [found] if found else None
+    return command
+
+
+def check_docker(docker_command: Sequence[str] | None, require_docker: bool) -> CheckResult:
+    if docker_command:
+        return CheckResult("ok", "Docker CLI", f"Using command: {_shell_join(docker_command)}.")
     level = "fail" if require_docker else "warn"
     wsl_hint = ""
     if os.name == "nt" and shutil.which("wsl.exe"):
@@ -380,7 +413,16 @@ def check_docker(docker_path: str | None, require_docker: bool) -> CheckResult:
     )
 
 
-def run_compose_config(docker_path: str, compose_path: Path, env_path: Path) -> CheckResult:
+def _path_argument(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+    except OSError:
+        return str(path)
+
+
+def run_compose_config(docker_command: Sequence[str], compose_path: Path, env_path: Path) -> CheckResult:
     if not env_path.exists():
         return CheckResult(
             "warn",
@@ -389,12 +431,12 @@ def run_compose_config(docker_path: str, compose_path: Path, env_path: Path) -> 
             "Run: python scripts/init_workbench_env.py",
         )
     command = [
-        docker_path,
+        *docker_command,
         "compose",
         "--env-file",
-        str(env_path),
+        _path_argument(env_path),
         "-f",
-        str(compose_path),
+        _path_argument(compose_path),
         "config",
     ]
     try:
@@ -419,15 +461,20 @@ def evaluate_setup(
     require_docker: bool = False,
     run_compose: bool = False,
     docker_path: str | None = None,
+    docker_command: Sequence[str] | None = None,
     lookup_docker: bool = True,
 ) -> list[CheckResult]:
-    docker_executable = docker_path if docker_path is not None else (shutil.which("docker") if lookup_docker else None)
+    resolved_docker_command = resolve_docker_command(
+        docker_command,
+        docker_path=docker_path,
+        lookup_docker=lookup_docker,
+    )
     results = [
         check_python_version(),
         check_template(template_path),
         check_env_file(env_path),
         check_compose_file(compose_path),
-        check_docker(docker_executable, require_docker),
+        check_docker(resolved_docker_command, require_docker),
     ]
     if env_path.exists():
         results.append(check_env_ports(env_path))
@@ -436,8 +483,8 @@ def evaluate_setup(
         results.append(check_numeric_values(env_path))
         results.append(check_file_references(env_path))
     if run_compose:
-        if docker_executable:
-            results.append(run_compose_config(docker_executable, compose_path, env_path))
+        if resolved_docker_command:
+            results.append(run_compose_config(resolved_docker_command, compose_path, env_path))
         else:
             results.append(
                 CheckResult(
@@ -477,6 +524,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.compose_file,
         require_docker=args.require_docker,
         run_compose=args.run_compose_config,
+        docker_command=args.docker_command,
     )
     print(render_results(results))
     return 1 if any(result.level == "fail" for result in results) else 0

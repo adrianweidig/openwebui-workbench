@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -19,6 +20,7 @@ class CommandStep:
     label: str
     command: list[str]
     env: dict[str, str] | None = None
+    requires_docker: bool = False
 
 
 @dataclass(frozen=True)
@@ -40,7 +42,20 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="skip unittest discovery for faster diagnosis runs",
     )
+    parser.add_argument(
+        "--docker-command",
+        type=command_prefix,
+        default=["docker"],
+        help='docker command prefix for compose checks, for example: "wsl.exe -d Debian -- docker"',
+    )
     return parser.parse_args(argv)
+
+
+def command_prefix(value: str) -> list[str]:
+    parts = shlex.split(value)
+    if not parts:
+        raise argparse.ArgumentTypeError("docker command must not be empty")
+    return parts
 
 
 def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
@@ -63,18 +78,32 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
         steps.append(CommandStep("Unit tests", [python, "-m", "unittest", "discover", "Tools.openwebui_ext.tests"]))
         steps.append(CommandStep("Workbench dashboard tests", [python, "-m", "unittest", "discover", "Workbench.dashboard.tests"]))
     if args.include_docker_compose:
+        docker = list(args.docker_command)
         compose_auth_env = {
             "WEBUI_SECRET_KEY": "verify-only-placeholder",
             "WORKBENCH_AUTH_PASSWORD": "verify-only-placeholder",
             "WORKBENCH_ENTERPRISE_CA_HOST_FILE": "/tmp/workbench-verify-ca.pem",
         }
-        steps.append(CommandStep("Docker compose example config", ["docker", "compose", "-f", "Deployment/docker-compose.openwebui-offline.example.yml", "config"]))
-        steps.append(CommandStep("Docker compose workbench config", ["docker", "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"], env=compose_auth_env))
+        steps.append(
+            CommandStep(
+                "Docker compose example config",
+                [*docker, "compose", "-f", "Deployment/docker-compose.openwebui-offline.example.yml", "config"],
+                requires_docker=True,
+            )
+        )
+        steps.append(
+            CommandStep(
+                "Docker compose workbench config",
+                [*docker, "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"],
+                env=compose_auth_env,
+                requires_docker=True,
+            )
+        )
         steps.append(
             CommandStep(
                 "Docker compose enterprise CA workbench config",
                 [
-                    "docker",
+                    *docker,
                     "compose",
                     "-f",
                     "Deployment/docker-compose.workbench.yml",
@@ -83,13 +112,14 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
                     "config",
                 ],
                 env=compose_auth_env,
+                requires_docker=True,
             )
         )
         steps.append(
             CommandStep(
                 "Docker compose top.secret workbench config",
                 [
-                    "docker",
+                    *docker,
                     "compose",
                     "-f",
                     "Deployment/docker-compose.workbench.yml",
@@ -98,6 +128,7 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
                     "config",
                 ],
                 env=compose_auth_env,
+                requires_docker=True,
             )
         )
     return steps
@@ -123,8 +154,10 @@ def validate_json_files(root: Path) -> StepResult:
 
 
 def run_command_step(step: CommandStep) -> StepResult:
-    if step.command[0] == "docker" and shutil.which("docker") is None:
-        detail = "docker ist in dieser Umgebung nicht verfügbar"
+    if step.requires_docker and shutil.which(step.command[0]) is None:
+        detail = f"{step.command[0]} ist in dieser Umgebung nicht verfügbar"
+        if step.command[0] == "docker":
+            detail = "docker ist in dieser Umgebung nicht verfügbar"
         if os.name == "nt" and shutil.which("wsl.exe"):
             detail += "; wsl.exe ist verfügbar, Docker-Compose-Prüfungen können aus einer WSL-Umgebung mit Docker erneut ausgeführt werden"
         return StepResult(step.label, "Übersprungen", detail)

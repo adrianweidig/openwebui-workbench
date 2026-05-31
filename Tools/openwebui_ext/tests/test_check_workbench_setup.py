@@ -3,6 +3,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from scripts import check_workbench_setup
@@ -84,6 +85,47 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
         self.assertEqual(result.level, "warn")
         self.assertIn("wsl.exe is available", result.detail)
         self.assertIn("WSL", result.detail)
+
+    def test_custom_docker_command_is_reported_without_path_lookup(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                docker_command=["wsl.exe", "-d", "Debian", "--", "docker"],
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Docker CLI"], "ok")
+            self.assertIn("wsl.exe -d Debian -- docker", rendered)
+
+    def test_compose_config_uses_custom_docker_command_and_relative_paths(self) -> None:
+        with tempfile.TemporaryDirectory(dir=check_workbench_setup.ROOT) as temp_dir:
+            root = Path(temp_dir)
+            env_file = root / ".env"
+            compose_file = root / "docker-compose.yml"
+            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
+            compose_file.write_text("services: {}\n", encoding="utf-8")
+
+            with patch.object(check_workbench_setup.subprocess, "run") as run:
+                run.return_value = SimpleNamespace(returncode=0)
+                result = check_workbench_setup.run_compose_config(
+                    ["wsl.exe", "-d", "Debian", "--", "docker"],
+                    compose_file,
+                    env_file,
+                )
+
+            command = run.call_args.args[0]
+            self.assertEqual(result.level, "ok")
+            self.assertEqual(command[:5], ["wsl.exe", "-d", "Debian", "--", "docker"])
+            self.assertIn("--env-file", command)
+            self.assertIn("-f", command)
+            self.assertFalse(any(str(check_workbench_setup.ROOT) in part for part in command))
 
     def test_default_ports_are_valid_when_port_values_are_missing(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

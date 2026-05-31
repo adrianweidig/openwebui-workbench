@@ -52,10 +52,20 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
         enterprise_step = next(step for step in steps if "enterprise CA" in step.label)
         self.assertEqual(enterprise_step.env["WORKBENCH_AUTH_PASSWORD"], "verify-only-placeholder")
         self.assertEqual(enterprise_step.env["WORKBENCH_ENTERPRISE_CA_HOST_FILE"], "/tmp/workbench-verify-ca.pem")
+        self.assertTrue(enterprise_step.requires_docker)
+
+    def test_docker_compose_steps_accept_custom_docker_command(self) -> None:
+        module = load_verify_module()
+        args = module.parse_args(["--include-docker-compose", "--docker-command", "wsl.exe -d Debian -- docker"])
+        steps = module.build_command_steps(args)
+        compose_step = next(step for step in steps if step.label == "Docker compose workbench config")
+
+        self.assertEqual(compose_step.command[:5], ["wsl.exe", "-d", "Debian", "--", "docker"])
+        self.assertIn("compose", compose_step.command)
 
     def test_skipped_windows_docker_step_mentions_wsl_when_available(self) -> None:
         module = load_verify_module()
-        step = module.CommandStep("Docker compose config", ["docker", "compose", "config"])
+        step = module.CommandStep("Docker compose config", ["docker", "compose", "config"], requires_docker=True)
 
         def fake_which(name: str) -> str | None:
             if name == "wsl.exe":

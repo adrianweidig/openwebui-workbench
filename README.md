@@ -148,6 +148,12 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 Der Init-Befehl erzeugt eine ignorierte lokale `.env` mit zufälligem `WEBUI_SECRET_KEY` und `WORKBENCH_AUTH_PASSWORD`, überschreibt keine vorhandene `.env` ohne `--force` und gibt Secret-Werte nicht aus.
 Der Setup-Doctor prüft vor dem Start Python, Env-Vorlage, lokale `.env`, Host-Ports, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, dateibasierte Runtime-Pfade, Compose-Datei und Docker-Erreichbarkeit, ohne Container zu starten oder Secret-Werte auszugeben. Für Administrator-Abnahmen kann Docker mit `python scripts/check_workbench_setup.py --require-docker` als Pflicht behandelt werden.
 Wenn Docker unter Windows nicht in der PATH verfügbar ist, aber `wsl.exe` vorhanden ist, weist der Setup-Doctor auf den WSL-Pfad hin. Führe die Docker-/Compose-Prüfungen dann aus der WSL-Umgebung aus, in der Docker installiert ist.
+Für Windows-Starts gegen eine WSL-Docker-Installation können die nicht-mutierenden Compose-Prüfungen den Docker-Befehl explizit setzen:
+
+```powershell
+python scripts/check_workbench_setup.py --docker-command "wsl.exe -d Debian -- docker" --require-docker --run-compose-config
+python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-command "wsl.exe -d Debian -- docker"
+```
 
 Danach:
 
