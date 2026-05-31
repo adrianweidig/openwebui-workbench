@@ -25,6 +25,8 @@ Dieses Repository bündelt fachliche Problemfall-Briefings, menschenlesbare Mode
 | Lokale Qualität prüfen | [`TESTING.md`](TESTING.md) |
 | Deployment-Mounts verstehen | [`Deployment/README.md`](Deployment/README.md) |
 | Architektur überblicken | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| Snapshot-Artefakte verstehen | [`docs/RELEASE_PROCESS.md`](docs/RELEASE_PROCESS.md) |
+| Sprachpaarpflege prüfen | [`docs/LANGUAGE_PAIRS.md`](docs/LANGUAGE_PAIRS.md) |
 | Beiträge vorbereiten | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 | Englischsprachige README öffnen | [`README.en.md`](README.en.md) |
 | Mehrsprachigkeit verstehen | [`docs/de/I18N.md`](docs/de/I18N.md) und [`docs/en/I18N.md`](docs/en/I18N.md) |
@@ -137,9 +139,14 @@ UTF-8 bleibt für alle menschenlesbaren Dateien und JSON-Artefakte verbindlich. 
 Für eine lokale OpenWebUI-Instanz plus Workbench-Dashboard:
 
 ```powershell
-Copy-Item Deployment/workbench.env.example .env
+python scripts/init_workbench_env.py
+python scripts/init_workbench_env.py --check
+python scripts/check_workbench_setup.py
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
+
+Der Init-Befehl erzeugt eine ignorierte lokale `.env` mit zufälligem `WEBUI_SECRET_KEY` und `WORKBENCH_AUTH_PASSWORD`, überschreibt keine vorhandene `.env` ohne `--force` und gibt Secret-Werte nicht aus.
+Der Setup-Doctor prüft vor dem Start Python, Env-Vorlage, lokale `.env`, Host-Ports, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, Compose-Datei und Docker-Erreichbarkeit, ohne Container zu starten oder Secret-Werte auszugeben. Für Administrator-Abnahmen kann Docker mit `python scripts/check_workbench_setup.py --require-docker` als Pflicht behandelt werden.
 
 Danach:
 
@@ -161,6 +168,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 Für eine schnelle, nicht-mutierende Gesamtprüfung:
 
 ```powershell
+python scripts/check_workbench_setup.py
 python scripts/verify_openwebui_workspace.py
 ```
 
@@ -171,6 +179,8 @@ Wenn Docker lokal verfügbar ist, kann zusätzlich die Compose-Beispielkonfigura
 ```powershell
 python scripts/verify_openwebui_workspace.py --include-docker-compose
 ```
+
+Nach einem Compose-Start zeigen `docker compose --env-file .env -f Deployment/docker-compose.workbench.yml ps` und die Healthchecks der Services, ob OpenWebUI und Workbench betriebsbereit sind. Details zum Smoke-Check stehen in [`Deployment/README.md`](Deployment/README.md).
 
 ### 3. Modelle per OpenWebUI-GUI importieren
 

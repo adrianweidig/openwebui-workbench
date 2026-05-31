@@ -16,7 +16,7 @@ const state = {
 const el = (id) => document.getElementById(id);
 const DEFAULT_LOCALE = "de";
 const SUPPORTED_LOCALES = ["de", "en"];
-const SUPPORTED_PANELS = new Set(["models", "resources", "sync", "artifacts"]);
+const SUPPORTED_PANELS = new Set(["models", "resources", "actions", "assets"]);
 const queryParams = new URLSearchParams(window.location.search);
 
 function normalizeLocale(value) {
@@ -77,9 +77,14 @@ async function setLocale(locale, persist = true) {
 }
 
 async function api(path, options = {}) {
+  const method = String(options.method || "GET").toUpperCase();
+  const { headers: optionHeaders = {}, ...requestOptions } = options;
+  const mutationHeaders = ["POST", "PUT", "DELETE", "PATCH"].includes(method)
+    ? { "X-Workbench-Request": "same-origin" }
+    : {};
   const response = await fetch(path, {
-    headers: { "Content-Type": "application/json", "X-Workbench-Locale": state.locale, ...(options.headers || {}) },
-    ...options,
+    ...requestOptions,
+    headers: { "Content-Type": "application/json", "X-Workbench-Locale": state.locale, ...mutationHeaders, ...optionHeaders },
   });
   let payload = {};
   try {
@@ -297,6 +302,7 @@ function renderStatus() {
   setSignalState("signal-auth", status.dashboard?.auth_enabled ? "ok" : "warn");
   setSignalState("signal-write", status.write_enabled ? "ok" : "warn");
   setSignalState("signal-artifacts", existingArtifacts === artifacts.length ? "ok" : "warn");
+  renderSetupChecks(status, existingArtifacts, artifacts.length);
 
   const artifactList = el("artifact-list");
   artifactList.replaceChildren();
@@ -314,6 +320,69 @@ function renderStatus() {
     text.append(title, meta);
     row.append(text, stateChip);
     artifactList.append(row);
+  });
+}
+
+function setupChecks(status, existingArtifacts, artifactTotal) {
+  const syncReady = Boolean(status.openwebui.admin_token_configured || status.config.local_config_exists);
+  return [
+    {
+      level: status.dashboard?.auth_enabled ? "ok" : "warn",
+      title: status.dashboard?.auth_enabled ? t("setup.authReady") : t("setup.authMissing"),
+      detail: status.dashboard?.auth_enabled ? t("signals.allRoutesProtected") : t("signals.authEnvMissing"),
+    },
+    {
+      level: status.openwebui.reachable.ok ? "ok" : "danger",
+      title: status.openwebui.reachable.ok ? t("setup.openwebuiReady") : t("setup.openwebuiMissing"),
+      detail: status.openwebui.base_url,
+    },
+    {
+      level: syncReady ? "ok" : "warn",
+      title: syncReady ? t("setup.syncReady") : t("setup.syncMissing"),
+      detail: syncReady ? t("setup.syncReadyDetail") : t("setup.syncMissingDetail"),
+    },
+    {
+      level: existingArtifacts === artifactTotal ? "ok" : "warn",
+      title: existingArtifacts === artifactTotal ? t("setup.artifactsReady") : t("setup.artifactsMissing"),
+      detail: t("artifacts.existing", { existing: existingArtifacts, total: artifactTotal }),
+    },
+    {
+      level: status.write_enabled ? "ok" : "warn",
+      title: status.write_enabled ? t("setup.writeReady") : t("setup.writeDisabled"),
+      detail: status.write_enabled ? t("signals.writeEnabled") : t("signals.readOnly"),
+    },
+  ];
+}
+
+function renderSetupChecks(status, existingArtifacts, artifactTotal) {
+  const checks = setupChecks(status, existingArtifacts, artifactTotal);
+  const blockers = checks.filter((item) => item.level === "danger").length;
+  const warnings = checks.filter((item) => item.level === "warn").length;
+  setText(
+    "setup-summary",
+    blockers
+      ? t("setup.summaryBlockers", { count: blockers })
+      : warnings
+        ? t("setup.summaryWarnings", { count: warnings })
+        : t("setup.summaryReady"),
+  );
+
+  const container = el("setup-checks");
+  container.replaceChildren();
+  checks.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = `setup-check ${item.level}`;
+    const marker = document.createElement("span");
+    marker.className = "setup-marker";
+    marker.setAttribute("aria-hidden", "true");
+    const text = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = item.title;
+    const detail = document.createElement("span");
+    detail.textContent = item.detail;
+    text.append(title, detail);
+    row.append(marker, text);
+    container.append(row);
   });
 }
 
@@ -489,6 +558,32 @@ function modelFileTemplate(name) {
 
 function selectedModelFileExists() {
   return Boolean(state.selectedModel?.files.find((file) => file.name === state.selectedFile && file.exists));
+}
+
+function resetModelEditor() {
+  state.selectedModel = null;
+  state.selectedFile = "systemprompt.md";
+  setText("model-title", t("models.none"));
+  setText("model-description", t("models.pick"));
+  el("markdown-editor").value = "";
+  el("markdown-editor").disabled = true;
+  el("markdown-preview").innerHTML = renderMarkdown("");
+  el("save-file").disabled = true;
+  el("delete-model-file").disabled = true;
+  setText("editor-state", t("state.ready"));
+  renderFileTabs();
+}
+
+function resetResourceEditor() {
+  state.selectedResource = null;
+  setText("resource-title", t("resources.none"));
+  setText("resource-description", t("resources.pick"));
+  el("resource-editor").value = "";
+  el("resource-editor").disabled = true;
+  el("resource-preview").innerHTML = renderMarkdown("");
+  el("save-resource").disabled = true;
+  el("delete-resource").disabled = true;
+  setText("resource-state", t("state.ready"));
 }
 
 function renderFileTabs() {
@@ -753,6 +848,9 @@ async function refreshResources(keepSelection = true) {
   if (keepSelection && previous) {
     state.selectedResource = state.resources.find((resource) => `${resource.kind}:${resource.id}` === previous) || null;
   }
+  if (!state.selectedResource || !state.resources.some((resource) => resource.kind === state.selectedResource.kind && resource.id === state.selectedResource.id)) {
+    resetResourceEditor();
+  }
   renderResources();
 }
 
@@ -762,6 +860,9 @@ async function refreshModels(keepSelection = true) {
   state.models = payload.models;
   if (keepSelection && previous) {
     state.selectedModel = state.models.find((model) => model.id === previous) || null;
+  }
+  if (!state.selectedModel || !state.models.some((model) => model.id === state.selectedModel.id)) {
+    resetModelEditor();
   }
   renderModels();
 }

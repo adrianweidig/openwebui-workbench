@@ -47,9 +47,22 @@ flowchart LR
 5. The generator writes registries, import files, summaries, and ZIPs to `Modelle/dist/` and `Tools/dist/`.
 6. `Tools/import_openwebui_workspace.py` can import these artifacts into a target OpenWebUI instance with a local YAML configuration.
 
+## Large File Boundaries
+
+Some files stay large because OpenWebUI expects importable single files or compact handover artifacts. New logic should still land at clear boundaries:
+
+| File | Role | Change rule |
+|---|---|---|
+| `scripts/configure_openwebui_tool_models.py` | Orchestrates tool, filter, model, and dist generation | Move reusable validation or manifest logic into small helper modules under `scripts/` |
+| `scripts/dist_zip_manifest.py` | Compares expected dist ZIP sources with ZIP contents | Keep ZIP and drift checks here instead of duplicating them in the generator |
+| `Tools/openwebui_ext/tools/sub_agent.py` | Importable OpenWebUI tool with direct runtime integration | Keep the public tool class stable; extract only low-risk internal helpers |
+| `Tools/openwebui_ext/tools/web_search_and_crawl.py` | Optional network profile for search and crawling | Keep network boundaries and optional dependencies local; do not make it an air-gap default |
+
+During refactors the import surface matters more than file size: `Tools`/`Filter` classes, model JSON formats, registry schemas, and dist file names must not break as a side effect.
+
 ## Validation
 
-The central verification runner is `scripts/verify_openwebui_workspace.py`. It runs Python syntax compilation, extension validation, generator checks, an import dry-run, JSON validation, and unit tests.
+The central verification runner is `scripts/verify_openwebui_workspace.py`. It runs Python syntax compilation, documentation language pair checks, secret hygiene checks, extension validation, generator checks, an import dry-run, JSON validation, and unit tests.
 
 ## Security Boundaries
 

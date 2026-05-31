@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import base64
 import hmac
+import ipaddress
 import json
 import os
 import re
@@ -51,7 +52,64 @@ MODEL_TEXT_FILES = {
     "beispielergebnis.txt",
     "customgpt_infos.md",
 }
-MAX_BODY_BYTES = int(os.environ.get("WORKBENCH_MAX_BODY_BYTES", "1048576"))
+CONFIGURATION_ERRORS: list[str] = []
+TRUE_VALUES = {"1", "true", "yes", "on"}
+FALSE_VALUES = {"0", "false", "no", "off"}
+
+
+def record_configuration_error(message: str) -> None:
+    if message not in CONFIGURATION_ERRORS:
+        CONFIGURATION_ERRORS.append(message)
+
+
+def configuration_errors() -> list[str]:
+    return list(CONFIGURATION_ERRORS)
+
+
+def env_int(name: str, default: int, *, minimum: int = 1, maximum: int | None = None) -> int:
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        return default
+    try:
+        value = int(raw, 10)
+    except ValueError:
+        safe = raw.replace("\r", "\\r").replace("\n", "\\n")
+        record_configuration_error(f"{name} must be a whole number; got {safe!r}.")
+        return default
+    if value < minimum or (maximum is not None and value > maximum):
+        if maximum is None:
+            expected = f"at least {minimum}"
+        else:
+            expected = f"between {minimum} and {maximum}"
+        record_configuration_error(f"{name} must be a whole number {expected}; got {value}.")
+        return default
+    return value
+
+
+def env_url(name: str, default: str) -> str:
+    raw = os.environ.get(name, "").strip() or default
+    parsed = urlparse(raw)
+    if parsed.scheme not in {"http", "https"}:
+        record_configuration_error(f"{name} must use http or https; got {parsed.scheme or 'no scheme'!r}.")
+        return default
+    if not parsed.netloc:
+        record_configuration_error(f"{name} must include a host.")
+        return default
+    if parsed.username or parsed.password:
+        record_configuration_error(f"{name} must not include embedded credentials.")
+        return default
+    return raw.rstrip("/")
+
+
+MAX_BODY_BYTES = env_int("WORKBENCH_MAX_BODY_BYTES", 1048576)
+MUTATION_GUARD_HEADER = "X-Workbench-Request"
+MUTATION_GUARD_VALUE = "same-origin"
+SECURITY_HEADERS = {
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+}
 MODEL_EXAMPLE_SUFFIXES = {
     ".md",
     ".html",
@@ -78,10 +136,17 @@ configure_utf8_stdio()
 
 
 def env_bool(name: str, default: bool = False) -> bool:
-    raw = os.environ.get(name)
-    if raw is None:
+    raw = os.environ.get(name, "").strip()
+    if not raw:
         return default
-    return raw.strip().lower() in {"1", "true", "yes", "on"}
+    normalized = raw.lower()
+    if normalized in TRUE_VALUES:
+        return True
+    if normalized in FALSE_VALUES:
+        return False
+    safe = raw.replace("\r", "\\r").replace("\n", "\\n")
+    record_configuration_error(f"{name} must be true or false; got {safe!r}.")
+    return default
 
 
 def rel(path: Path, root: Path = REPO_ROOT) -> str:
@@ -155,6 +220,44 @@ def read_secret_from_env(name: str, file_name: str) -> str:
         return ""
 
 
+def validate_secret_file_env(file_name: str) -> None:
+    file_path = os.environ.get(file_name, "").strip()
+    if not file_path:
+        return
+    path = Path(file_path)
+    try:
+        if not path.is_file():
+            record_configuration_error(f"{file_name} must point to a readable file.")
+            return
+        with path.open("r", encoding="utf-8"):
+            pass
+    except OSError:
+        record_configuration_error(f"{file_name} must point to a readable file.")
+
+
+def validate_startup_configuration() -> None:
+    validate_secret_file_env("WORKBENCH_AUTH_PASSWORD_FILE")
+    validate_secret_file_env("OPENWEBUI_ADMIN_TOKEN_FILE")
+
+
+def is_loopback_bind(host: str) -> bool:
+    clean = host.strip().strip("[]").lower()
+    if clean == "localhost":
+        return True
+    if not clean:
+        return False
+    try:
+        return ipaddress.ip_address(clean).is_loopback
+    except ValueError:
+        return False
+
+
+def bind_auth_error(host: str, config: "WorkbenchConfig") -> str:
+    if is_loopback_bind(host) or config.auth_enabled:
+        return ""
+    return t("auth_required_for_non_loopback", config.locale)
+
+
 def tls_verify_from_env() -> bool:
     return env_bool("OPENWEBUI_TLS_VERIFY", True)
 
@@ -176,11 +279,11 @@ class WorkbenchConfig:
     allow_write: bool = env_bool("WORKBENCH_ALLOW_WRITE", True)
     auth_username: str = os.environ.get("WORKBENCH_AUTH_USERNAME", "").strip()
     auth_password: str = read_secret_from_env("WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE")
-    openwebui_base_url: str = os.environ.get("OPENWEBUI_BASE_URL", "http://openwebui:8080").rstrip("/")
-    openwebui_public_url: str = os.environ.get("OPENWEBUI_PUBLIC_URL", "http://localhost:3000").rstrip("/")
-    command_timeout: int = int(os.environ.get("WORKBENCH_COMMAND_TIMEOUT_SECONDS", "300"))
-    import_timeout: int = int(os.environ.get("WORKBENCH_IMPORT_TIMEOUT_SECONDS", "1800"))
-    import_http_timeout: int = int(os.environ.get("WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS", "600"))
+    openwebui_base_url: str = env_url("OPENWEBUI_BASE_URL", "http://openwebui:8080")
+    openwebui_public_url: str = env_url("OPENWEBUI_PUBLIC_URL", "http://localhost:3000")
+    command_timeout: int = env_int("WORKBENCH_COMMAND_TIMEOUT_SECONDS", 300)
+    import_timeout: int = env_int("WORKBENCH_IMPORT_TIMEOUT_SECONDS", 1800)
+    import_http_timeout: int = env_int("WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS", 600)
     tls_verify: bool = tls_verify_from_env()
     ca_file: str = os.environ.get("OPENWEBUI_CA_FILE", "").strip()
     ca_path: str = os.environ.get("OPENWEBUI_CA_PATH", "").strip()
@@ -550,6 +653,9 @@ class WorkbenchState:
             ]
             label = "Import dry-run"
         elif action == "import-openwebui":
+            token = self.config.admin_token
+            if not token and not self.config_file.exists():
+                raise PermissionError(t("token_missing", self.config.locale))
             command = [
                 sys.executable,
                 "scripts/configure_openwebui_tool_models.py",
@@ -562,7 +668,6 @@ class WorkbenchState:
                 command.extend(["--config", str(self.config_file)])
             if os.environ.get("OPENWEBUI_BASE_URL"):
                 command.extend(["--base-url", self.config.openwebui_base_url])
-            token = self.config.admin_token
             if token:
                 command.extend(["--token", token])
             command.extend(["--timeout", str(self.config.import_http_timeout)])
@@ -667,9 +772,12 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
     server_version = "OpenWebUIWorkbench/1.0"
 
     def do_GET(self) -> None:  # noqa: N802
+        parsed = urlparse(self.path)
+        if parsed.path == "/healthz":
+            self.send_json({"ok": True, "service": "openwebui-workbench"})
+            return
         if not self.require_auth():
             return
-        parsed = urlparse(self.path)
         try:
             if parsed.path == "/":
                 self.send_static(STATIC_ROOT / "index.html", "text/html; charset=utf-8")
@@ -705,6 +813,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
     def do_PUT(self) -> None:  # noqa: N802
         if not self.require_auth():
             return
+        if not self.require_mutation_guard():
+            return
         parsed = urlparse(self.path)
         try:
             if parsed.path.startswith("/api/models/") and parsed.path.endswith("/file"):
@@ -724,6 +834,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         if not self.require_auth():
+            return
+        if not self.require_mutation_guard():
             return
         parsed = urlparse(self.path)
         try:
@@ -752,6 +864,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
 
     def do_DELETE(self) -> None:  # noqa: N802
         if not self.require_auth():
+            return
+        if not self.require_mutation_guard():
             return
         parsed = urlparse(self.path)
         try:
@@ -788,6 +902,12 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         self.send_auth_required()
         return False
 
+    def require_mutation_guard(self) -> bool:
+        if self.headers.get(MUTATION_GUARD_HEADER, "") == MUTATION_GUARD_VALUE:
+            return True
+        self.send_error_json(HTTPStatus.FORBIDDEN, self.message("csrf_required"))
+        return False
+
     def send_auth_required(self) -> None:
         body = json.dumps({"ok": False, "error": self.message("auth_required")}, ensure_ascii=False).encode("utf-8")
         self.send_response(HTTPStatus.UNAUTHORIZED)
@@ -795,6 +915,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        self.send_security_headers()
         self.end_headers()
         self.wfile.write(body)
 
@@ -807,6 +928,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        self.send_security_headers()
         self.end_headers()
         self.wfile.write(body)
 
@@ -816,8 +938,13 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        self.send_security_headers()
         self.end_headers()
         self.wfile.write(body)
+
+    def send_security_headers(self) -> None:
+        for name, value in SECURITY_HEADERS.items():
+            self.send_header(name, value)
 
     def send_error_json(self, status: HTTPStatus, message: str) -> None:
         self.send_json({"ok": False, "error": message}, status)
@@ -870,14 +997,33 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the OpenWebUI Workbench dashboard.")
-    parser.add_argument("--host", default=os.environ.get("WORKBENCH_HOST", "0.0.0.0"))
-    parser.add_argument("--port", type=int, default=int(os.environ.get("WORKBENCH_PORT", "8088")))
+    parser.add_argument("--host", default=os.environ.get("WORKBENCH_HOST", "127.0.0.1"))
+    parser.add_argument("--port", type=int, default=env_int("WORKBENCH_PORT", 8088, maximum=65535))
     return parser.parse_args(argv)
+
+
+def print_startup_errors(errors: list[str]) -> None:
+    print("# OpenWebUI Workbench dashboard startup failed", file=sys.stderr)
+    for error in errors:
+        print(f"- {error}", file=sys.stderr)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    server = ThreadingHTTPServer((args.host, args.port), WorkbenchHandler)
+    validate_startup_configuration()
+    config_errors = configuration_errors()
+    if config_errors:
+        print_startup_errors(config_errors)
+        return 1
+    auth_error = bind_auth_error(args.host, STATE.config)
+    if auth_error:
+        print_startup_errors([auth_error])
+        return 1
+    try:
+        server = ThreadingHTTPServer((args.host, args.port), WorkbenchHandler)
+    except OSError as exc:
+        print_startup_errors([f"Could not bind dashboard to {args.host}:{args.port}: {exc}"])
+        return 1
     print(t("dashboard_listening", STATE.config.locale, host=args.host, port=args.port), flush=True)
     try:
         server.serve_forever()

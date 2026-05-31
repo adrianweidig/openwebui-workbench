@@ -68,3 +68,21 @@ Diese Matrix ordnet typische OpenWebUI-Use-Cases auf lokale Tools, Skills und Fa
 - `safe_http_fetcher.py` und `github_repo_inspector.py` nur in separaten, bewusst nicht-air-gapped Profilen importieren; sie sind kein Offline-Default und keinem Modell zugewiesen.
 - `openui_generative_ui.py` nur aktivieren, wenn das OpenUI-Browser-Bundle lokal unter `/static/openui/dist` bereitsteht.
 - `web_search_and_crawl.py` nur aktivieren, wenn SearXNG/Crawl4AI lokal oder intern erreichbar sind und `ALLOW_PUBLIC_NETWORK` ausgeschaltet bleibt.
+
+## Laufzeit-Abhängigkeitsmatrix
+
+Das Repository definiert bewusst kein zentrales `requirements.txt` für alle Tools. Die meisten Dateien werden als OpenWebUI-Tool direkt importiert; zusätzliche Pakete müssen daher in der Zielinstanz oder im gemounteten Addon-Stack vorhanden sein.
+
+| Gruppe | Dateien | Laufzeitannahmen | Offline-Default |
+| --- | --- | --- | --- |
+| Basis- und Planungswerkzeuge | `ask_user.py`, `json_csv_text_validator.py`, `parallel_task_planner.py`, `subagent_orchestrator.py`, `tool_skill_overlay_planner.py`, `markdown_skill_builder.py`, `repo_tree_analyzer.py` | Python-Stdlib plus die von OpenWebUI bereitgestellte Tool-Laufzeit; `pydantic` für Valves und Modelle | Ja |
+| Lokale Struktur- und Integrationsprüfer | `openapi_schema_inspector.py`, `docker_compose_triage.py`, `comfyui_workflow_inspector.py` | Python-Stdlib plus OpenWebUI-Tool-Laufzeit; keine externen Dienste erforderlich | Ja |
+| Offline-Visuals | `inline_visuals_toolkit_v3.py`, `visuals_toolkit_v4.py` | Python-Stdlib plus `pydantic`; `visuals_toolkit_v4.py` nutzt OpenWebUI-/FastAPI-Typen, fällt aber auf textnahe Ausgaben zurück | Ja, mit Text-/SVG-Fallback |
+| Artefakterzeugung | `offline_artifact_workbench.py` | Python-Stdlib plus `pydantic`; optional lokales Playwright/Chromium, WeasyPrint oder `wkhtmltopdf` für Rendering | Ja, Renderer optional |
+| Direkte OpenWebUI-Orchestrierung | `parallel_tools.py`, `sub_agent.py` | OpenWebUI-Backendmodule wie `open_webui`, `fastapi` und `starlette`; nicht als eigenständiges CLI-Tool gedacht | Ja, nur in OpenWebUI |
+| Lokaler Modellrat | `llm_council.py` | `requests` und erreichbare lokale OpenWebUI-API; keine öffentliche Provider-API als Default | Ja, wenn lokale API erreichbar ist |
+| Rich-UI-Erzeugung | `openui_generative_ui.py` | `starlette`, `pydantic` und lokal bereitgestelltes OpenUI-Browser-Bundle unter `/static/openui/dist` | Nein |
+| Bewusste Netzwerkprofile | `safe_http_fetcher.py`, `github_repo_inspector.py`, `mediawiki_legacy_crawler.py` | Netzwerkzugriff auf interne oder ausdrücklich erlaubte Ziele; `pydantic`; keine Air-Gap-Default-Zuweisung | Nein |
+| Suche und Crawling | `web_search_and_crawl.py` | `aiohttp`, `loguru`, `orjson`, `requests`, `tiktoken`, OpenWebUI-/FastAPI-Module und lokale/self-hosted SearXNG-/Crawl4AI-Endpunkte | Nein |
+
+Neue Tool-Zuweisungen sollen diese Matrix aktualisieren, bevor sie in Modellprofile, Import-Registries oder Dist-Artefakte übernommen werden.

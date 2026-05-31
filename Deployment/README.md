@@ -12,11 +12,44 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 Start der neuen Workbench-Umgebung:
 
 ```powershell
-Copy-Item Deployment/workbench.env.example .env
+python scripts/init_workbench_env.py
+python scripts/init_workbench_env.py --check
+python scripts/check_workbench_setup.py
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
-Setze in der lokalen `.env` mindestens `WORKBENCH_AUTH_PASSWORD`; `WORKBENCH_AUTH_USERNAME` fällt sonst auf `workbench` zurück. Die Compose-Datei startet das Dashboard nicht ohne Passwort, damit die Workbench immer über HTTP Basic Auth erreichbar ist.
+`scripts/init_workbench_env.py` erzeugt eine ignorierte lokale `.env` aus `Deployment/workbench.env.example` und füllt `WEBUI_SECRET_KEY` sowie `WORKBENCH_AUTH_PASSWORD` mit zufälligen lokalen Werten. Bestehende `.env`-Dateien werden ohne `--force` nicht überschrieben, und Secret-Werte werden nicht auf der Konsole ausgegeben. `WORKBENCH_AUTH_USERNAME` fällt sonst auf `workbench` zurück. Die Compose-Datei startet das Dashboard nicht ohne Passwort, damit die Workbench immer über HTTP Basic Auth erreichbar ist.
+`scripts/check_workbench_setup.py` ist der nicht-mutierende Setup-Doctor für Administratoren: Er prüft Python-Version, Env-Vorlage, lokale `.env`, Host-Portwerte, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, Compose-Datei und Docker-Verfügbarkeit, ohne Dienste zu starten oder Secret-Werte auszugeben. Fehlendes Docker ist standardmäßig eine Warnung; mit `--require-docker` wird es für Installationsabnahmen als Fehler gewertet.
+Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
+
+## Admin-Smoke-Check
+
+Nach dem Start:
+
+```powershell
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml ps
+```
+
+Erwartung:
+
+- `openwebui` läuft und wird nach der Startphase als healthy angezeigt.
+- `workbench` läuft und wird nach der Startphase als healthy angezeigt.
+- OpenWebUI ist lokal unter `http://localhost:3000` erreichbar.
+- Die Workbench ist lokal unter `http://localhost:8088` erreichbar und fragt nach HTTP-Basic-Auth.
+
+Wenn ein Dienst nicht healthy wird:
+
+```powershell
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml logs --tail=100 openwebui
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml logs --tail=100 workbench
+```
+
+Führe zusätzlich die nicht-mutierende Repository-Prüfung aus:
+
+```powershell
+python scripts/check_workbench_setup.py --require-docker
+python scripts/verify_openwebui_workspace.py --include-docker-compose
+```
 
 ## Unternehmensnetz mit eigener Root-CA
 
@@ -68,6 +101,7 @@ Ausgabe:
 - `Deployment/generated/workbench.env`
 
 `Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss.
+Die generierte Workbench-Service-Definition verlangt `WORKBENCH_AUTH_PASSWORD`; wenn der Wert im Assistenten leer bleibt, muss er vor dem Stack-Start in Portainer gesetzt werden.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
 

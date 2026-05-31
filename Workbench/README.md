@@ -11,6 +11,10 @@ python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
 ```
 
 Danach ist das Dashboard unter `http://127.0.0.1:8088` erreichbar.
+Ohne expliziten `--host` bindet der Direktstart ebenfalls nur an `127.0.0.1`.
+Wenn ein anderer Host wie `0.0.0.0` oder eine LAN-Adresse gesetzt wird, startet der Server nur mit gesetztem `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE`.
+Ungültige Runtime-Werte wie `WORKBENCH_PORT=abc`, `WORKBENCH_MAX_BODY_BYTES=abc`, `WORKBENCH_COMMAND_TIMEOUT_SECONDS=abc`, `OPENWEBUI_TLS_VERIFY=maybe`, `OPENWEBUI_BASE_URL=localhost:3000` oder ein nicht lesbarer `WORKBENCH_AUTH_PASSWORD_FILE` werden beim Direktstart als kurze Startup-Fehler ausgegeben; vorab prüft `python scripts/check_workbench_setup.py` dieselben Werte ohne Serverstart.
+Wenn Host oder Port nicht gebunden werden können, etwa weil `8088` bereits belegt ist, endet der Direktstart ebenfalls mit einer kurzen Startup-Meldung statt einem Python-Traceback.
 
 Optional schützt der Server alle Routen per HTTP Basic Auth:
 
@@ -23,7 +27,9 @@ python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
 ## Start mit Docker Compose
 
 ```powershell
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build
+python scripts/init_workbench_env.py
+python scripts/init_workbench_env.py --check
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
 Standardports:
@@ -35,7 +41,7 @@ Wenn OpenWebUI bereits außerhalb dieses Compose-Projekts läuft:
 
 ```powershell
 $env:OPENWEBUI_BASE_URL="http://host.docker.internal:3000"
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build workbench
 ```
 
 Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` erwartet. Der Token wird nicht in Antworten ausgegeben und gehört nicht ins Repository.
@@ -81,4 +87,4 @@ $env:OPENWEBUI_TLS_VERIFY="false"
 
 ## Sicherheitsgrenzen
 
-Das Dashboard ist für lokale Nutzung gedacht. Die Compose-Datei bindet es bewusst nur an `127.0.0.1`. Bei gesetztem `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` nutzt es HTTP Basic Auth; ohne diese Variablen darf es nicht öffentlich exponiert werden.
+Das Dashboard ist für lokale Nutzung gedacht. Die Compose-Datei bindet es bewusst nur an `127.0.0.1`. Bei gesetztem `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` nutzt es HTTP Basic Auth. Der Direktstart blockiert Nicht-Loopback-Bindings ohne diese Auth-Konfiguration.

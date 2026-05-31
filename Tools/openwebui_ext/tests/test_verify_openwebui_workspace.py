@@ -28,6 +28,8 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
         combined = "\n".join(commands)
 
         self.assertIn("compileall", combined)
+        self.assertIn("check_doc_language_pairs.py", combined)
+        self.assertIn("check_security_hygiene.py", combined)
         self.assertIn("validate_openwebui_extensions.py", combined)
         self.assertIn("configure_openwebui_tool_models.py", combined)
         self.assertIn("--check", combined)
@@ -41,9 +43,14 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
     def test_docker_compose_step_is_opt_in(self) -> None:
         module = load_verify_module()
         args = module.parse_args(["--include-docker-compose"])
-        commands = [" ".join(step.command) for step in module.build_command_steps(args)]
+        steps = module.build_command_steps(args)
+        commands = [" ".join(step.command) for step in steps]
 
         self.assertTrue(any("docker compose" in command for command in commands))
+        self.assertTrue(any("docker-compose.enterprise-ca.yml" in command for command in commands))
+        enterprise_step = next(step for step in steps if "enterprise CA" in step.label)
+        self.assertEqual(enterprise_step.env["WORKBENCH_AUTH_PASSWORD"], "verify-only-placeholder")
+        self.assertEqual(enterprise_step.env["WORKBENCH_ENTERPRISE_CA_HOST_FILE"], "/tmp/workbench-verify-ca.pem")
 
     def test_json_validation_ignores_git_directory(self) -> None:
         module = load_verify_module()

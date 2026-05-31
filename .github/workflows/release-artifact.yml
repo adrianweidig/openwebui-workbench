@@ -1,0 +1,82 @@
+name: Release Artifact
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package repository snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Build archive and release notes
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          project="openwebui-workbench"
+          branch="${GITHUB_REF_NAME}"
+          safe_branch="$(printf '%s' "${branch}" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/^-+|-+$//g')"
+          if [ -z "${safe_branch}" ]; then
+            safe_branch="ref"
+          fi
+          short_sha="${GITHUB_SHA::7}"
+          root_dir="${project}-${safe_branch}-${short_sha}"
+          archive_name="${root_dir}.zip"
+
+          mkdir -p release-artifacts
+          git archive --format=zip --prefix="${root_dir}/" --output="release-artifacts/${archive_name}" "${GITHUB_SHA}"
+          echo "artifact_name=${root_dir}" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "# OpenWebUI Workbench Snapshot"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| Repository | ${GITHUB_REPOSITORY} |"
+            echo "| Branch | ${branch} |"
+            echo "| Branch slug | ${safe_branch} |"
+            echo "| Commit SHA | ${GITHUB_SHA} |"
+            echo "| Short SHA | ${short_sha} |"
+            echo "| Event | ${GITHUB_EVENT_NAME} |"
+            echo "| Actor | ${GITHUB_ACTOR} |"
+            echo "| UTC time | $(date -u '+%Y-%m-%dT%H:%M:%SZ') |"
+            echo "| Archive | ${archive_name} |"
+            echo
+            echo "## Changes"
+            echo
+            if git describe --tags --abbrev=0 >/tmp/previous-tag 2>/dev/null; then
+              previous_tag="$(cat /tmp/previous-tag)"
+              echo "Changes since ${previous_tag}:"
+              echo
+              git log --oneline --decorate "${previous_tag}..${GITHUB_SHA}" | sed 's/^/- /'
+            else
+              echo "No previous tag was found. Recent commits:"
+              echo
+              git log --oneline --decorate -n 20 "${GITHUB_SHA}" | sed 's/^/- /'
+            fi
+            echo
+            echo "## Docker Image"
+            echo
+            echo "The Workbench dashboard image is built by the dedicated Docker workflow when its path filters match. Check that workflow before documenting GHCR image availability."
+          } > release-artifacts/RELEASE_NOTES.md
+
+          sha256sum "release-artifacts/${archive_name}" "release-artifacts/RELEASE_NOTES.md" > release-artifacts/SHA256SUMS.txt
+
+      - name: Upload snapshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.artifact_name }}
+          path: release-artifacts/
+          if-no-files-found: error

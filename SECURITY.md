@@ -24,6 +24,21 @@ Wenn GitHub Private Vulnerability Reporting für dieses Repository aktiviert ist
 - Lokale Konfigurationen wie `scripts/openwebui_workspace_config.yaml` bleiben ignoriert.
 - Beispielwerte müssen offensichtliche Platzhalter bleiben.
 - Logs und Screenshots vor dem Teilen auf Tokens, Hostnamen und interne Pfade prüfen.
+- Das lokale Workbench-Dashboard setzt Browser-Security-Header und bleibt trotzdem nur für lokale oder zusätzlich abgesicherte Umgebungen vorgesehen.
+
+## Lokale Security-Prüfung
+
+Der zentrale Verify-Runner führt eine nicht-leakende Secret-Hygiene-Prüfung aus:
+
+```powershell
+python scripts/check_security_hygiene.py
+```
+
+Der Check meldet nur Pfad, Zeile und Befundart. Verdächtige Werte werden nicht ausgegeben. Ein optionaler Bandit-Lauf kann lokal ergänzt werden, ohne eine neue Pflichtabhängigkeit einzuführen:
+
+```powershell
+python scripts/check_security_hygiene.py --include-bandit
+```
 
 ## Erwarteter Ablauf
 

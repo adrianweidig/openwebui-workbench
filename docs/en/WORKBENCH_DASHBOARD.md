@@ -31,10 +31,12 @@ The editable source remains the repository:
 ## Compose Start
 
 ```powershell
-Copy-Item Deployment/workbench.env.example .env
-notepad .env
+python scripts/init_workbench_env.py
+python scripts/init_workbench_env.py --check
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
+
+The init command creates an ignored local `.env` from `Deployment/workbench.env.example`, sets random values for `WEBUI_SECRET_KEY` and `WORKBENCH_AUTH_PASSWORD`, and does not print those values to the console. Existing `.env` files are not overwritten without `--force`.
 
 The local `.env` must set `WORKBENCH_AUTH_PASSWORD`. Without this password Docker Compose fails before starting the dashboard; with a password set, all dashboard routes are protected with HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` is optional and defaults to `workbench`.
 
@@ -90,14 +92,18 @@ The dashboard defaults to German. It can switch to English through the language 
 
 ## Security
 
-The dashboard is intended for local use. In Compose it is bound to `127.0.0.1`. When `WORKBENCH_AUTH_USERNAME` and a password are set, all routes are protected with HTTP Basic Auth. API tokens are read only from environment variables or token files and are redacted in action output.
+The dashboard is intended for local use. In Compose it is bound to `127.0.0.1`. When `WORKBENCH_AUTH_USERNAME` and a password are set, all routes are protected with HTTP Basic Auth. Direct non-loopback binds such as `0.0.0.0` are blocked unless that auth configuration is present. API tokens are read only from environment variables or token files and are redacted in action output.
+
+Mutating API routes (`POST`, `PUT`, `DELETE`) also require the `X-Workbench-Request: same-origin` header. The dashboard UI sends it automatically; direct API clients must set it explicitly.
+
+Dashboard responses set restrictive browser security headers such as `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, and `Referrer-Policy`.
 
 ## Validation
 
 ```powershell
 python scripts/verify_openwebui_workspace.py
 python -m unittest discover Workbench.dashboard.tests
-docker compose -f Deployment/docker-compose.workbench.yml config
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml config
 ```
 
 The Docker check is optional and requires a local Docker installation.

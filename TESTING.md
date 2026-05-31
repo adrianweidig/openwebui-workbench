@@ -21,14 +21,18 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
 2. Zentrale schnelle Prüfung ausführen:
 
    ```powershell
+   python scripts/check_workbench_setup.py
    python scripts/verify_openwebui_workspace.py
    ```
 
-3. Wenn Docker lokal verfügbar ist, Compose-Beispiele inklusive optionalem `top.secret`-Override zusätzlich prüfen:
+3. Wenn Docker lokal verfügbar ist, Compose-Beispiele inklusive optionalem Enterprise-CA- und `top.secret`-Override zusätzlich prüfen:
 
    ```powershell
+   python scripts/check_workbench_setup.py --require-docker --run-compose-config
    python scripts/verify_openwebui_workspace.py --include-docker-compose
    ```
+
+   In GitHub Actions läuft derselbe Compose-Config-Pfad als separater CI-Job. Es werden nur Compose-Dateien gerendert, keine Container gestartet.
 
 4. Wenn Tool-, Filter-, Skill- oder Modellartefakte bewusst geändert wurden, Dist-Artefakte neu erzeugen und danach erneut prüfen:
 
@@ -42,6 +46,9 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
 
 ```powershell
 python -m compileall -q scripts Tools Workbench
+python scripts/check_workbench_setup.py
+python scripts/check_doc_language_pairs.py
+python scripts/check_security_hygiene.py
 python scripts/generate_model_i18n_profiles.py
 python scripts/validate_openwebui_extensions.py
 python scripts/configure_openwebui_tool_models.py --check
@@ -51,6 +58,25 @@ python -m unittest discover Workbench.dashboard.tests
 ```
 
 JSON-Artefakte werden durch `scripts/verify_openwebui_workspace.py` mitgeprüft. Der Generator-Check muss ohne neue Änderungen enden (`Änderungen erkannt: False`), sonst sind Dist-Artefakte nicht synchron.
+
+Die Unit-Tests unter `Tools.openwebui_ext.tests` enthalten zusätzlich leichte Workflow-Hygiene-Prüfungen für sicher benannte Release-Artefakte. Die Dashboard-Tests prüfen neben API- und Schreibpfaden auch die Browser-Security-Header der lokalen Workbench-Oberfläche und kurze Startup-Fehler für ungültige numerische, boolesche, URL-basierte oder dateibasierte Dashboard-Env-Werte sowie für belegte Dashboard-Ports.
+
+Der Setup-Doctor ist nicht-mutierend und prüft zusätzlich, ob `OPENWEBUI_PORT` und `WORKBENCH_PORT` gültige, unterschiedliche Host-Ports ergeben, ob `OPENWEBUI_BASE_URL` sowie `OPENWEBUI_PUBLIC_URL` vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten sind, ob boolesche Flags wie `OPENWEBUI_TLS_VERIFY` explizite Wahr/Falsch-Werte enthalten und ob Timeout-/Größenwerte positive Ganzzahlen sind. Fehlende Werte nutzen die Compose-Defaults.
+
+## Security-Hygiene prüfen
+
+Der Standard-Verify-Lauf enthält `scripts/check_security_hygiene.py`. Der Check betrachtet versionierte und nicht ignorierte Textdateien, meldet nur Pfad, Zeile und Befundart und gibt verdächtige Werte absichtlich nicht aus.
+
+```powershell
+python scripts/check_security_hygiene.py
+python scripts/check_security_hygiene.py --include-bandit
+```
+
+`--include-bandit` ist optional und läuft nur, wenn Bandit lokal installiert ist. Es wird keine neue Pflichtabhängigkeit eingeführt.
+
+## Dokumentations-Sprachpaare prüfen
+
+Kanonische deutsch/englische Dokumentationspaare sind in [`docs/LANGUAGE_PAIRS.md`](docs/LANGUAGE_PAIRS.md) beschrieben und werden durch `scripts/check_doc_language_pairs.py` geprüft. Der Check stellt sicher, dass erwartete Paare vorhanden sind und sichtbare Sprachlinks besitzen.
 
 ## Internationalisierung prüfen
 

@@ -39,6 +39,8 @@ Optionale, nicht im Offline-Standard aktivierte Drittanbieter-Tools:
 - `openwebui_ext/tools/web_search_and_crawl.py`: lokale/self-hosted SearXNG-/Crawl4AI-Suche mit Public-Network-Guard.
 - `openwebui_ext/tools/safe_http_fetcher.py` und `openwebui_ext/tools/github_repo_inspector.py`: bewusste Netzwerkprofile, nicht Air-Gap-Default.
 
+Die Laufzeit-Abhängigkeiten der importierbaren Tools sind in `openwebui_ext/docs/offline-capability-map.md` dokumentiert. Dort ist festgehalten, welche Dateien nur die OpenWebUI-Tool-Laufzeit benötigen, welche optional lokale Renderer verwenden und welche bewusst nicht zum Air-Gap-Default gehören.
+
 ## API-Import
 
 Der bevorzugte Weg ist der Generator mit anschließendem API-Import. Er schreibt zuerst die Registries, Modellprofile, ZIPs und Prüfübersichten und ruft danach den Importer auf:

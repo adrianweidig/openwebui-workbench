@@ -31,10 +31,12 @@ Die bearbeitbare Quelle bleibt das Repository:
 ## Compose-Start
 
 ```powershell
-Copy-Item Deployment/workbench.env.example .env
-notepad .env
+python scripts/init_workbench_env.py
+python scripts/init_workbench_env.py --check
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
+
+Der Init-Befehl erzeugt eine lokale, ignorierte `.env` aus `Deployment/workbench.env.example`, setzt zufällige Werte für `WEBUI_SECRET_KEY` und `WORKBENCH_AUTH_PASSWORD` und gibt diese Werte nicht auf der Konsole aus. Bestehende `.env`-Dateien werden ohne `--force` nicht überschrieben.
 
 Die lokale `.env` muss `WORKBENCH_AUTH_PASSWORD` setzen. Ohne dieses Passwort bricht Docker Compose vor dem Start ab; mit gesetztem Passwort schützt das Dashboard alle Routen per HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` ist optional und nutzt standardmäßig `workbench`.
 
@@ -44,13 +46,22 @@ Danach:
 - Workbench: `http://localhost:8088`
 
 Die OpenWebUI-Image-Referenz folgt der offiziellen Docker-Dokumentation und nutzt `ghcr.io/open-webui/open-webui:main` als Default.
+Die Compose-Datei definiert Healthchecks für OpenWebUI und Workbench. Der Workbench-Healthcheck ruft `http://127.0.0.1:8088/healthz` im Container auf; dieser Endpunkt gibt nur einen minimalen Status zurück und benötigt keine Authentifizierung.
+
+Kurzer Smoke-Check nach dem Start:
+
+```powershell
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml ps
+```
+
+Beide Services sollten nach ihrer Startphase als healthy erscheinen. Falls nicht, zuerst die Service-Logs und danach `python scripts/verify_openwebui_workspace.py --include-docker-compose` prüfen.
 
 ## Lokale `top.secret`-Adresse
 
 Wenn auf der Maschine bereits der lokale `top.secret`-Edge-Proxy läuft, kann die Workbench über `https://workbench.top.secret` erreichbar gemacht werden. Falls der lokale Edge nicht auf Host-Port 443 veröffentlicht ist, muss der veröffentlichte HTTPS-Port in der URL ergänzt werden, zum Beispiel `https://workbench.top.secret:25443`.
 
 ```powershell
-docker compose -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.top-secret.yml up -d --build workbench
 ```
 
 Voraussetzungen außerhalb dieses Repositorys:
@@ -68,7 +79,7 @@ Wenn OpenWebUI schon als anderer Container oder Hostprozess läuft:
 ```powershell
 $env:OPENWEBUI_BASE_URL="http://host.docker.internal:3000"
 $env:OPENWEBUI_PUBLIC_URL="http://localhost:3000"
-docker compose -f Deployment/docker-compose.workbench.yml up -d --build workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build workbench
 ```
 
 Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwendet werden. Die Compose-Datei enthält zusätzlich `host-gateway`, damit `host.docker.internal` in aktuellen Docker-Installationen funktioniert.
@@ -124,11 +135,13 @@ UI-Texte liegen unter `Workbench/dashboard/static/locales/`. Server- und API-Mel
 
 - Das Dashboard ist in der Compose-Datei nur an `127.0.0.1` gebunden.
 - Wenn `WORKBENCH_AUTH_USERNAME` und ein Passwort gesetzt sind, schützt das Dashboard alle Routen per HTTP Basic Auth.
-- Ohne beide Auth-Variablen bleibt der lokale Entwicklerstart ungeschützt und sollte nicht ins Netzwerk exponiert werden.
+- Ohne beide Auth-Variablen bleibt nur der Loopback-Entwicklerstart möglich; Nicht-Loopback-Bindings wie `0.0.0.0` werden beim Direktstart blockiert.
 - Dark Mode ist der Standard; die Theme-Auswahl bleibt lokal im Browser gespeichert.
 - API-Token werden nur über Umgebung oder Token-Datei gelesen und in Aktionsausgaben redigiert.
 - Für HTTPS zu OpenWebUI wird Zertifikatsprüfung standardmäßig beibehalten. Eine deaktivierte Prüfung ist nur für lokale, vertrauenswürdige Testendpunkte vorgesehen.
 - Es werden keine frei eingegebenen Shell-Befehle ausgeführt; Dashboard-Aktionen sind fest verdrahtete Repository-Kommandos.
+- Schreibende API-Routen (`POST`, `PUT`, `DELETE`) verlangen zusätzlich den Header `X-Workbench-Request: same-origin`; die Dashboard-UI setzt ihn automatisch.
+- Dashboard-Antworten setzen restriktive Browser-Security-Header wie `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options` und `Referrer-Policy`.
 - Markdown-Schreibzugriff ist auf freigegebene Dateien innerhalb eines Modellpakets begrenzt.
 - Tool- und Skill-Schreibzugriff ist auf existierende Dateien unter `Tools/openwebui_ext/tools/*.py` und `Tools/openwebui_ext/skills/*.md` begrenzt.
 
@@ -137,7 +150,7 @@ UI-Texte liegen unter `Workbench/dashboard/static/locales/`. Server- und API-Mel
 ```powershell
 python scripts/verify_openwebui_workspace.py
 python -m unittest discover Workbench.dashboard.tests
-docker compose -f Deployment/docker-compose.workbench.yml config
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml config
 ```
 
 Die Docker-Prüfung ist optional und erfordert eine lokale Docker-Installation.

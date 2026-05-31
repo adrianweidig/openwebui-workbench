@@ -1127,6 +1127,103 @@ textarea:focus-visible {
   background: linear-gradient(180deg, var(--rose-quiet), var(--surface));
 }
 
+.setup-panel {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 15px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.setup-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.setup-heading h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.setup-heading p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.setup-checks {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.setup-check {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 9px;
+  min-height: 70px;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-3);
+}
+
+.setup-marker {
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+.setup-check strong,
+.setup-check span {
+  display: block;
+  min-width: 0;
+}
+
+.setup-check strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.setup-check span:last-child {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.setup-check.ok {
+  border-color: rgba(52, 211, 153, 0.32);
+}
+
+.setup-check.ok .setup-marker {
+  background: var(--ok);
+}
+
+.setup-check.warn {
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.setup-check.warn .setup-marker {
+  background: var(--warn);
+}
+
+.setup-check.danger {
+  border-color: rgba(251, 113, 133, 0.35);
+}
+
+.setup-check.danger .setup-marker {
+  background: var(--danger);
+}
+
 .split {
   min-height: calc(100vh - 272px);
 }
@@ -1315,6 +1412,10 @@ textarea,
   .signal-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .setup-checks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 980px) {
@@ -1355,6 +1456,7 @@ textarea,
   }
 
   .signal-strip,
+  .setup-checks,
   .summary-grid {
     grid-template-columns: 1fr;
   }

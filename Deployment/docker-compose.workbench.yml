@@ -23,6 +23,12 @@ services:
       DO_NOT_TRACK: ${DO_NOT_TRACK:-true}
       SCARF_NO_ANALYTICS: ${SCARF_NO_ANALYTICS:-true}
       ANONYMIZED_TELEMETRY: ${ANONYMIZED_TELEMETRY:-false}
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5).read()\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     volumes:
       - openwebui-data:/app/backend/data
       - ../Modelle/dist:/app/backend/data/openwebui-import:ro
@@ -68,6 +74,12 @@ services:
       OPENWEBUI_CA_PATH: ${OPENWEBUI_CA_PATH:-}
       OPENWEBUI_ADMIN_TOKEN: ${OPENWEBUI_ADMIN_TOKEN:-}
       OPENWEBUI_ADMIN_TOKEN_FILE: ${OPENWEBUI_ADMIN_TOKEN_FILE:-}
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8088/healthz', timeout=5).read()\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
     volumes:
       - ..:/workspace
     extra_hosts:

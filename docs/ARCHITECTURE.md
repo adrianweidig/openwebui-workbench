@@ -44,11 +44,25 @@ flowchart LR
 5. Der Generator schreibt Registries, Importdateien, Zusammenfassungen und ZIPs in `Modelle/dist/` und `Tools/dist/`.
 6. `Tools/import_openwebui_workspace.py` kann diese Artefakte mit einer lokalen YAML-Konfiguration in eine OpenWebUI-Zielinstanz importieren.
 
+## Wartungsgrenzen großer Dateien
+
+Einige Dateien bleiben groß, weil OpenWebUI importierbare Einzeldateien oder kompakte Handover-Artefakte erwartet. Neue Logik soll trotzdem an klaren Grenzen landen:
+
+| Datei | Rolle | Änderungsregel |
+|---|---|---|
+| `scripts/configure_openwebui_tool_models.py` | Orchestriert Tool-, Filter-, Modell- und Dist-Generierung | Neue wiederverwendbare Prüf- oder Manifestlogik in kleine Hilfsmodule unter `scripts/` auslagern |
+| `scripts/dist_zip_manifest.py` | Vergleicht erwartete Dist-ZIP-Quellen mit ZIP-Inhalten | ZIP-/Drift-Prüfung hier halten, nicht im Generator duplizieren |
+| `Tools/openwebui_ext/tools/sub_agent.py` | Importierbares OpenWebUI-Tool mit direkter Runtime-Anbindung | Öffentliche Tool-Klasse stabil halten; nur interne, risikoarme Helfer extrahieren |
+| `Tools/openwebui_ext/tools/web_search_and_crawl.py` | Optionales Netzwerkprofil für Suche und Crawling | Netzwerkgrenzen und optionale Abhängigkeiten lokal halten; kein Air-Gap-Default |
+
+Bei Refactors zählt die Importoberfläche stärker als Dateigröße: `Tools`-/`Filter`-Klassen, Modell-JSON-Formate, Registry-Schemas und Dist-Dateinamen dürfen nicht nebenbei brechen.
+
 ## Validierung
 
 Der zentrale Verify-Runner ist `scripts/verify_openwebui_workspace.py`. Er führt aus:
 
 - Python-Syntax-Compile für `scripts` und `Tools`
+- Dokumentations-Sprachpaar- und Security-Hygiene-Checks
 - strukturelle Validierung von OpenWebUI-Tools, Filtern und Skills
 - Generator-Check ohne Schreiboperation
 - API-Import-Dry-Run mit Beispielkonfiguration

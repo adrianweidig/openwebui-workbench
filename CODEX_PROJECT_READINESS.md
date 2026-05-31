@@ -1,8 +1,18 @@
 # Codex Project Readiness
 
+## Aktueller Hinweis
+
+Diese Datei ist ein historischer Readiness-Snapshot aus der initialen Projektprüfung. Für den aktuellen Arbeitsstand gelten `README.md`, `TESTING.md`, `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/WORKBENCH_DASHBOARD.md` und `docs/LANGUAGE_PAIRS.md`. Die unten genannten Testzahlen, Git-Sauberkeit und Docker-Verfügbarkeit sind als damaliger Befund zu lesen, nicht als Live-Inventar.
+
+Nach den späteren Workbench-Automationsläufen enthält der zentrale Verify-Runner zusätzliche Prüfungen für Dokumentations-Sprachpaare, Secret-Hygiene und Dist-ZIP-Drift. Der aktuelle Pflichtbefehl bleibt:
+
+```powershell
+python scripts/verify_openwebui_workspace.py
+```
+
 ## Zusammenfassung
 
-Das Projekt ist ein portabler OpenWebUI-Workbench-Arbeitsbereich und im aktuellen Zustand arbeitsfähig. Git ist initialisiert, der Branch `main` ist mit `origin/main` synchron, der GitHub-Remote zeigt auf `https://github.com/adrianweidig/openwebui-workbench`, und die nicht-mutierende Projektprüfung läuft erfolgreich durch. Eine eindeutig veraltete lokale Pfadangabe wurde auf einen portablen Workspace-Platzhalter korrigiert.
+Zum Zeitpunkt der initialen Prüfung war das Projekt ein arbeitsfähiger portabler OpenWebUI-Workbench-Arbeitsbereich. Git war initialisiert, der Branch `main` war mit `origin/main` synchron, der GitHub-Remote zeigte auf `https://github.com/adrianweidig/openwebui-workbench`, und die nicht-mutierende Projektprüfung lief erfolgreich durch. Eine eindeutig veraltete lokale Pfadangabe wurde auf einen portablen Workspace-Platzhalter korrigiert.
 
 ## Projektroot
 
@@ -46,7 +56,7 @@ Optionale Abhängigkeiten wie `pydantic`, `fastapi`, `aiohttp`, `requests`, `sta
 
 ## Tests und Builds
 
-Ausgeführt:
+Damals ausgeführt:
 
 ```powershell
 python scripts/verify_openwebui_workspace.py
@@ -62,7 +72,7 @@ Ergebnis:
 - JSON-Validierung erfolgreich: 87 JSON-Dateien gelesen
 - Generator meldete `Änderungen erkannt: False`
 
-Nicht ausgeführt:
+Damals nicht ausgeführt:
 
 ```powershell
 python scripts/verify_openwebui_workspace.py --include-docker-compose
@@ -134,6 +144,6 @@ Die Suche fand keine versionierten echten Secret-Dateien. Platzhalter wie `PASTE
 - Optional Docker verfügbar machen und danach `python scripts/verify_openwebui_workspace.py --include-docker-compose` ausführen.
 - Vor produktivem API-Import lokale `scripts/openwebui_workspace_config.yaml` aus dem Beispiel erstellen und mit echten Zielwerten nur lokal befüllen.
 
-## Endzustand
+## Historischer Endzustand
 
-Das Projekt ist nach der Prüfung arbeitsfähig, lokal validiert und mit GitHub synchron. Es bleiben nur optionale Docker-/Runtime-Prüfungen offen, die in dieser Shell nicht möglich waren.
+Das Projekt war nach dieser Prüfung arbeitsfähig, lokal validiert und mit GitHub synchron. Spätere Änderungen müssen über `TESTING.md` und den aktuellen Verify-Runner bewertet werden.

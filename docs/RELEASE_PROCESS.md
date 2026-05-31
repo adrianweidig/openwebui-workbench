@@ -41,6 +41,18 @@ Das Repository veröffentlicht versionierte Handover-Stände über GitHub Releas
 - `RELEASE_NOTES.md`
 - optional: `Deployment/images/*.tar.zst`
 
+## Automatisches Snapshot-Artefakt
+
+Bei jedem Push auf `main` erstellt `.github/workflows/release-artifact.yml` ein Actions-Artefakt aus dem aktuellen Commit. Der Workflow nutzt `git archive`, enthält keine `.git`-Daten und erzeugt:
+
+- ein ZIP mit Root-Verzeichnis aus Projektname, Branch und Kurz-SHA,
+- `RELEASE_NOTES.md` mit Repository, Branch, Commit, Event, Actor, UTC-Zeit und Commitliste,
+- `SHA256SUMS.txt` für ZIP und Release Notes.
+
+Branch-Namen werden für ZIP-Root und Actions-Artefaktnamen auf einen sicheren Slug normalisiert. Das verhindert ungültige Artefaktnamen oder verschachtelte Pfade, wenn der Workflow manuell auf einem Branch mit `/` oder anderen Sonderzeichen gestartet wird.
+
+Dieses Actions-Artefakt ist ein reproduzierbarer Snapshot für Prüfung und Handover. Es erstellt keine Tags und keine GitHub Releases. Die Veröffentlichung als GitHub Release bleibt eine bewusste Maintainer-Aktion.
+
 ## Ablauf
 
 1. Verify ausführen.

@@ -125,7 +125,7 @@ $RootCaPath = Read-WorkbenchValue -Prompt "Optionaler Host-Pfad zur Root-CA im P
 $RootCaPath = Test-RootCaFile -PathValue $RootCaPath
 
 $authUser = Read-WorkbenchValue -Prompt "Workbench-Benutzername" -Default "workbench"
-$authPassword = Read-WorkbenchSecret -Prompt "Workbench-Passwort (leer lassen, wenn später in Portainer gesetzt wird)"
+$authPassword = Read-WorkbenchSecret -Prompt "Workbench-Passwort (leer lassen, wenn später in Portainer gesetzt wird; Stack startet erst mit gesetztem Wert)"
 $adminToken = Read-WorkbenchSecret -Prompt "OpenWebUI-Admin-Token für Sync-Aktionen (optional)"
 
 $envPath = Join-Path $OutputDir "workbench.env"
@@ -261,7 +261,7 @@ $composeLines += @(
     "      WORKBENCH_COMMAND_TIMEOUT_SECONDS: `${WORKBENCH_COMMAND_TIMEOUT_SECONDS:-300}",
     "      WORKBENCH_LOCALE: `${WORKBENCH_LOCALE:-de}",
     "      WORKBENCH_AUTH_USERNAME: `${WORKBENCH_AUTH_USERNAME:-}",
-    "      WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:-}",
+    "      WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:?Set WORKBENCH_AUTH_PASSWORD in Portainer stack environment before starting Workbench}",
     "      OPENWEBUI_BASE_URL: `${OPENWEBUI_BASE_URL}",
     "      OPENWEBUI_PUBLIC_URL: `${OPENWEBUI_PUBLIC_URL}",
     "      OPENWEBUI_TLS_VERIFY: `${OPENWEBUI_TLS_VERIFY:-true}",

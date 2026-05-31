@@ -33,6 +33,7 @@ Einzeldiagnose:
 
 ```powershell
 python -m compileall -q scripts Tools
+python scripts/check_workbench_setup.py
 python scripts/validate_openwebui_extensions.py
 python scripts/configure_openwebui_tool_models.py --check
 python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.example.yaml
@@ -133,3 +134,16 @@ python Tools/import_openwebui_workspace.py --base-url http://localhost:3000
 - Keine Secrets wurden hinzugefügt.
 - Keine Funktionalität wurde absichtlich verändert.
 - Unsichere Punkte sind im Abschlussbericht als prüfpflichtig markiert.
+
+## Codex-To-do-Workspace
+
+- Dauerhafter To-do-Speicherort für dieses Repository: `E:\Codex-Shared-Workspace\Repo-Analysis-Todos\openwebui-workbench`.
+- Der übergeordnete Ordner `E:\Codex-Shared-Workspace\Repo-Analysis-Todos` wird auch von anderen Repository-Automationen genutzt. Für `openwebui-workbench` nur den repo-spezifischen Unterordner verwenden.
+- Lies bei Wartungs- oder Folgearbeiten zuerst `E:\Codex-Shared-Workspace\Repo-Analysis-Todos\openwebui-workbench\AGENTS.md`, danach `README.md`, `todo-prioritized.md`, `todo-active.md`, `todo-master-list.md` und `automation-state.json`.
+- Nutze `todo-prioritized.md` als primäre Arbeitsreihenfolge: zuerst P0, danach P1, P2 und P3.
+- Produktiver Code darf nur geändert werden, wenn die Änderung einer klaren To-do-ID zugeordnet ist oder der Nutzer ausdrücklich eine abweichende Aufgabe beauftragt.
+- Aktualisiere bei jeder Änderung im To-do-Workspace die Frontmatter-Zeitstempel der betroffenen Markdown-Dateien.
+- Dokumentiere jede To-do-Änderung in `todo-changelog.md` und jeden Automationslauf in `automation-run-log.md`.
+- Arbeite defensiv: keine Secrets ausgeben, keine produktiven Daten löschen, keine riskanten Migrationen oder Major-Dependency-Upgrades ohne manuelle Prüfung.
+- Führe nach Codeänderungen passende Tests, Lints, Builds oder Smoke-Checks aus und dokumentiere Grenzen.
+- Gewichte Installierbarkeit für Administratoren und Nutzerfreundlichkeit besonders hoch.

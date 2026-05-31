@@ -1,8 +1,13 @@
 from __future__ import annotations
 
 import base64
+import contextlib
+import io
 import json
 import os
+import socket
+import subprocess
+import sys
 import threading
 import tempfile
 import unittest
@@ -197,11 +202,153 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertTrue(summary["dashboard"]["auth_username_configured"])
         self.assertTrue(summary["dashboard"]["auth_password_configured"])
 
+    def test_empty_workspace_lists_are_explicitly_empty(self) -> None:
+        empty_state = WorkbenchState(WorkbenchConfig(root=self.root / "empty", openwebui_base_url="http://127.0.0.1:9"))
+
+        summary = empty_state.summary()
+
+        self.assertEqual(summary["counts"]["models"], 0)
+        self.assertEqual(summary["counts"]["tools"], 0)
+        self.assertEqual(summary["counts"]["skills"], 0)
+        self.assertEqual(empty_state.list_models(), [])
+        self.assertEqual(empty_state.list_tools(), [])
+        self.assertEqual(empty_state.list_skills(), [])
+
     def test_i18n_defaults_to_german_and_supports_english(self) -> None:
         self.assertEqual(normalize_locale("fr-FR"), "de")
         self.assertEqual(detect_locale("en-US,en;q=0.9"), "en")
         self.assertEqual(t("auth_required", "de"), "Authentifizierung erforderlich.")
         self.assertEqual(t("auth_required", "en"), "Authentication required.")
+        self.assertIn("Loopback", t("auth_required_for_non_loopback", "de"))
+        self.assertIn("loopback", t("auth_required_for_non_loopback", "en"))
+
+    def test_dashboard_server_defaults_to_localhost(self) -> None:
+        with patch.dict(os.environ, {"WORKBENCH_HOST": "", "WORKBENCH_PORT": ""}, clear=False):
+            os.environ.pop("WORKBENCH_HOST", None)
+            os.environ.pop("WORKBENCH_PORT", None)
+            dashboard_server.CONFIGURATION_ERRORS.clear()
+            args = dashboard_server.parse_args([])
+
+        self.assertEqual(args.host, "127.0.0.1")
+        self.assertEqual(args.port, 8088)
+        self.assertEqual(dashboard_server.configuration_errors(), [])
+
+    def test_dashboard_server_invalid_numeric_env_exits_without_traceback(self) -> None:
+        env = os.environ.copy()
+        for name in (
+            "WORKBENCH_COMMAND_TIMEOUT_SECONDS",
+            "WORKBENCH_IMPORT_TIMEOUT_SECONDS",
+            "WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS",
+            "WORKBENCH_MAX_BODY_BYTES",
+            "WORKBENCH_PORT",
+        ):
+            env.pop(name, None)
+        env["WORKBENCH_MAX_BODY_BYTES"] = "abc"
+        env["WORKBENCH_PORT"] = "not-a-port"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "Workbench.dashboard.server"],
+            cwd=Path(__file__).resolve().parents[3],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("startup failed", result.stderr)
+        self.assertIn("WORKBENCH_MAX_BODY_BYTES", result.stderr)
+        self.assertIn("WORKBENCH_PORT", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_dashboard_server_invalid_boolean_env_exits_without_traceback(self) -> None:
+        env = os.environ.copy()
+        for name in ("OPENWEBUI_TLS_VERIFY", "WORKBENCH_ALLOW_WRITE"):
+            env.pop(name, None)
+        env["OPENWEBUI_TLS_VERIFY"] = "maybe"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "Workbench.dashboard.server"],
+            cwd=Path(__file__).resolve().parents[3],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("startup failed", result.stderr)
+        self.assertIn("OPENWEBUI_TLS_VERIFY", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_dashboard_server_invalid_openwebui_url_exits_without_traceback(self) -> None:
+        env = os.environ.copy()
+        for name in ("OPENWEBUI_BASE_URL", "OPENWEBUI_PUBLIC_URL"):
+            env.pop(name, None)
+        env["OPENWEBUI_BASE_URL"] = "localhost:3000"
+        env["OPENWEBUI_PUBLIC_URL"] = "https://user:password@localhost:3000"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "Workbench.dashboard.server"],
+            cwd=Path(__file__).resolve().parents[3],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("startup failed", result.stderr)
+        self.assertIn("OPENWEBUI_BASE_URL", result.stderr)
+        self.assertIn("OPENWEBUI_PUBLIC_URL", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_dashboard_server_invalid_secret_file_exits_without_traceback(self) -> None:
+        env = os.environ.copy()
+        for name in ("WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE", "OPENWEBUI_ADMIN_TOKEN_FILE"):
+            env.pop(name, None)
+        env["WORKBENCH_AUTH_PASSWORD_FILE"] = str(self.root / "missing-password.txt")
+
+        result = subprocess.run(
+            [sys.executable, "-m", "Workbench.dashboard.server"],
+            cwd=Path(__file__).resolve().parents[3],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("startup failed", result.stderr)
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_FILE", result.stderr)
+        self.assertNotIn("missing-password", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_dashboard_server_bind_error_exits_without_traceback(self) -> None:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as occupied:
+            occupied.bind(("127.0.0.1", 0))
+            occupied.listen(1)
+            port = occupied.getsockname()[1]
+            stderr = io.StringIO()
+
+            with contextlib.redirect_stderr(stderr):
+                code = dashboard_server.main(["--host", "127.0.0.1", "--port", str(port)])
+
+        output = stderr.getvalue()
+        self.assertEqual(code, 1)
+        self.assertIn("startup failed", output)
+        self.assertIn(f"127.0.0.1:{port}", output)
+        self.assertNotIn("Traceback", output)
+
+    def test_non_loopback_bind_requires_auth(self) -> None:
+        no_auth = WorkbenchConfig(root=self.root, auth_username="", auth_password="")
+        with_auth = WorkbenchConfig(root=self.root, auth_username="workbench", auth_password="secret")
+
+        self.assertEqual(dashboard_server.bind_auth_error("127.0.0.1", no_auth), "")
+        self.assertEqual(dashboard_server.bind_auth_error("localhost", no_auth), "")
+        self.assertEqual(dashboard_server.bind_auth_error("::1", no_auth), "")
+        self.assertIn("WORKBENCH_AUTH_PASSWORD", dashboard_server.bind_auth_error("0.0.0.0", no_auth))
+        self.assertEqual(dashboard_server.bind_auth_error("0.0.0.0", with_auth), "")
 
     def test_import_action_uses_local_config_and_returns_failure_output(self) -> None:
         config_dir = self.root / "scripts"
@@ -236,6 +383,21 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertFalse(result["ok"])
         self.assertEqual(result["output"], "import failed\n")
         self.assertEqual(result["error"], "Aktion fehlgeschlagen (Exit-Code 2). Details stehen in der Ausgabe.")
+
+    def test_import_openwebui_requires_token_or_local_config(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://openwebui:8080",
+                locale="de",
+            )
+        )
+
+        with (
+            patch.dict(os.environ, {"OPENWEBUI_ADMIN_TOKEN": "", "OPENWEBUI_ADMIN_TOKEN_FILE": ""}),
+            self.assertRaisesRegex(PermissionError, "OPENWEBUI_ADMIN_TOKEN"),
+        ):
+            state.run_action("import-openwebui")
 
     def test_import_action_can_run_as_background_job_without_duplicate_start(self) -> None:
         state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://openwebui:8080", locale="de"))
@@ -284,6 +446,99 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "wrong")), 401)
         self.assertEqual(self.request_status(base_url, self.basic_auth("admin", "secret")), 200)
 
+    def test_healthz_remains_available_when_auth_is_enabled(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        base_url = self.start_server(state)
+        status, body = self.request(base_url, path="/healthz")
+
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body), {"ok": True, "service": "openwebui-workbench"})
+
+    def test_responses_include_browser_security_headers(self) -> None:
+        base_url = self.start_server(self.state)
+
+        status, _body, headers = self.request_with_headers(base_url, path="/")
+
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["X-Content-Type-Options"], "nosniff")
+        self.assertEqual(headers["X-Frame-Options"], "DENY")
+        self.assertEqual(headers["Referrer-Policy"], "no-referrer")
+        self.assertIn("frame-ancestors 'none'", headers["Content-Security-Policy"])
+        self.assertIn("img-src 'self' data:", headers["Content-Security-Policy"])
+
+    def test_mutating_routes_require_workbench_request_header(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        base_url = self.start_server(state)
+        body = json.dumps({"kind": "skill", "id": "csrf-skill", "content": "# CSRF Skill\n"})
+        auth = self.basic_auth("admin", "secret")
+
+        status, response = self.request(base_url, authorization=auth, path="/api/resources", method="POST", body=body)
+        self.assertEqual(status, 403)
+        self.assertIn("Same-Origin", json.loads(response)["error"])
+
+        status, response = self.request(
+            base_url,
+            authorization=auth,
+            path="/api/resources",
+            method="POST",
+            body=body,
+            headers={"X-Workbench-Request": "same-origin"},
+        )
+        self.assertEqual(status, 201)
+        self.assertEqual(json.loads(response)["id"], "csrf-skill")
+
+    def test_action_routes_require_workbench_request_header(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        base_url = self.start_server(state)
+        auth = self.basic_auth("admin", "secret")
+
+        status, response = self.request(base_url, authorization=auth, path="/api/actions/check", method="POST", body="{}")
+        self.assertEqual(status, 403)
+        self.assertIn("Same-Origin", json.loads(response)["error"])
+
+        result = {
+            "action": "check",
+            "label": "Verify workspace",
+            "returncode": 0,
+            "duration_seconds": 0.1,
+            "ok": True,
+            "output": "ok\n",
+            "error": "",
+        }
+        with patch.object(state, "run_action", return_value=result):
+            status, response = self.request(
+                base_url,
+                authorization=auth,
+                path="/api/actions/check",
+                method="POST",
+                body="{}",
+                headers={"X-Workbench-Request": "same-origin"},
+            )
+
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(response)["action"], "check")
+
     def test_basic_auth_uses_accept_language_when_available(self) -> None:
         state = WorkbenchState(
             WorkbenchConfig(
@@ -306,7 +561,27 @@ class WorkbenchStateTests(unittest.TestCase):
         status, _body = self.request(base_url, authorization=authorization, path=path)
         return status
 
-    def request(self, base_url: str, authorization: str = "", path: str = "/api/status", headers: dict[str, str] | None = None) -> tuple[int, str]:
+    def request(
+        self,
+        base_url: str,
+        authorization: str = "",
+        path: str = "/api/status",
+        headers: dict[str, str] | None = None,
+        method: str = "GET",
+        body: str | None = None,
+    ) -> tuple[int, str]:
+        status, body, _headers = self.request_with_headers(base_url, authorization, path, headers, method, body)
+        return status, body
+
+    def request_with_headers(
+        self,
+        base_url: str,
+        authorization: str = "",
+        path: str = "/api/status",
+        headers: dict[str, str] | None = None,
+        method: str = "GET",
+        body: str | None = None,
+    ) -> tuple[int, str, dict[str, str]]:
         host_port = base_url.removeprefix("http://")
         host, raw_port = host_port.rsplit(":", 1)
         connection = HTTPConnection(host, int(raw_port), timeout=5)
@@ -314,10 +589,12 @@ class WorkbenchStateTests(unittest.TestCase):
             request_headers = dict(headers or {})
             if authorization:
                 request_headers["Authorization"] = authorization
-            connection.request("GET", path, headers=request_headers)
+            if body is not None:
+                request_headers.setdefault("Content-Type", "application/json")
+            connection.request(method, path, body=body, headers=request_headers)
             response = connection.getresponse()
             body = response.read().decode("utf-8")
-            return response.status, body
+            return response.status, body, dict(response.getheaders())
         finally:
             connection.close()
 

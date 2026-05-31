@@ -15,6 +15,13 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from dist_zip_manifest import zip_drift_issues
+
+
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_FILE = Path(__file__).with_name("openwebui_workspace_config.yaml")
 CONFIG_EXAMPLE = Path(__file__).with_name("openwebui_workspace_config.example.yaml")
@@ -407,6 +414,57 @@ def write_archive_file(archive: zipfile.ZipFile, path: Path) -> None:
     info.compress_type = zipfile.ZIP_DEFLATED
     info.external_attr = ((0o755 if path.suffix == ".sh" else 0o644) & 0xFFFF) << 16
     archive.writestr(info, path.read_bytes())
+
+
+def tool_zip_sources() -> List[Path]:
+    sources: List[Path] = []
+    for item in [ROOT / "Tools" / "jupyter", ROOT / "Tools" / "openwebui_ext"]:
+        sources.extend(path for path in sorted(item.rglob("*")) if path.is_file() and should_archive(path))
+    sources.extend(
+        path
+        for path in sorted(
+            [
+                TOOLS_INDEX,
+                ROOT / "Tools" / "README.md",
+                IMPORT_SCRIPT,
+                CONFIG_EXAMPLE,
+                TOOL_REGISTRY,
+                OFFLINE_TOOL_IMPORT,
+                TOOL_IMPORT,
+                FUNCTION_REGISTRY,
+                FUNCTION_IMPORT,
+            ]
+        )
+        if path.exists()
+    )
+    return sources
+
+
+def model_zip_sources() -> List[Path]:
+    sources = [
+        path
+        for path in sorted(
+            [
+                MODEL_DIST / "README.md",
+                MODEL_IMPORT,
+                MODEL_FALLBACK,
+                TOOLS_FALLBACK_BUNDLE,
+                FUNCTIONS_FALLBACK_BUNDLE,
+                OFFLINE_TOOL_IMPORT,
+                TOOL_IMPORT,
+                FUNCTION_IMPORT,
+                REGISTRATION_PLAN,
+                MODEL_PARAMS_SUMMARY,
+                MODEL_DIST / "manual_import_checklist.md",
+                CONFIG_EXAMPLE,
+            ]
+        )
+        if path.exists()
+    ]
+    artifacts_dir = MODEL_DIST / "artifacts"
+    if artifacts_dir.exists():
+        sources.extend(path for path in sorted(artifacts_dir.rglob("*")) if path.is_file() and should_archive(path))
+    return sources
 
 
 def stable_tool_id(path: Path, indexed_by_path: Dict[str, Dict[str, Any]]) -> str:
@@ -1683,43 +1741,11 @@ def rebuild_zips() -> None:
         if target.exists():
             target.unlink()
     with zipfile.ZipFile(TOOLS_ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for item in [ROOT / "Tools" / "jupyter", ROOT / "Tools" / "openwebui_ext"]:
-            for path in sorted(item.rglob("*")):
-                if path.is_file() and should_archive(path):
-                    write_archive_file(archive, path)
-        for path in sorted([
-            TOOLS_INDEX,
-            ROOT / "Tools" / "README.md",
-            IMPORT_SCRIPT,
-            CONFIG_EXAMPLE,
-            TOOL_REGISTRY,
-            OFFLINE_TOOL_IMPORT,
-            TOOL_IMPORT,
-            FUNCTION_REGISTRY,
-            FUNCTION_IMPORT,
-        ]):
-            if path.exists():
-                write_archive_file(archive, path)
+        for path in tool_zip_sources():
+            write_archive_file(archive, path)
     with zipfile.ZipFile(MODELS_ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for path in sorted([
-            MODEL_DIST / "README.md",
-            MODEL_IMPORT,
-            MODEL_FALLBACK,
-            TOOLS_FALLBACK_BUNDLE,
-            FUNCTIONS_FALLBACK_BUNDLE,
-            OFFLINE_TOOL_IMPORT,
-            TOOL_IMPORT,
-            FUNCTION_IMPORT,
-            REGISTRATION_PLAN,
-            MODEL_PARAMS_SUMMARY,
-            MODEL_DIST / "manual_import_checklist.md",
-            CONFIG_EXAMPLE,
-        ]):
-            if path.exists():
-                write_archive_file(archive, path)
-        for path in sorted((MODEL_DIST / "artifacts").rglob("*")):
-            if path.is_file() and should_archive(path):
-                write_archive_file(archive, path)
+        for path in model_zip_sources():
+            write_archive_file(archive, path)
 
 
 def run_workspace_import(args: argparse.Namespace) -> int:
@@ -1826,6 +1852,17 @@ def main(argv: Iterable[str] | None = None) -> int:
     changed_model_params_summary = write_model_params_summary(models, args.write)
     changed_plan = write_registration_plan(records, function_records, models, args.write)
     issues = validate(records, function_records, models)
+    changed_generated_artifacts = (
+        changed_tools_index
+        or changed_tool_artifacts
+        or changed_function_artifacts
+        or changed_icon_artifacts
+        or changed_example_artifacts
+        or changed_model_i18n_artifacts
+        or changed_models
+        or changed_model_params_summary
+        or changed_plan
+    )
 
     print("# OpenWebUI Tool/Model Configuration")
     print(f"- Tools entdeckt: {len(records)}")
@@ -1839,10 +1876,15 @@ def main(argv: Iterable[str] | None = None) -> int:
     print(f"- Beispielartefakte geändert: {changed_example_artifacts}")
     print(f"- Produkt-i18n-Artefakte geändert: {changed_model_i18n_artifacts}")
     print(f"- Modellparameter-Zusammenfassung geändert: {changed_model_params_summary}")
-    print(f"- Änderungen erkannt: {changed_tools_index or changed_tool_artifacts or changed_function_artifacts or changed_icon_artifacts or changed_example_artifacts or changed_model_i18n_artifacts or changed_models or changed_model_params_summary or changed_plan}")
+    print(f"- Änderungen erkannt: {changed_generated_artifacts}")
     if args.write and args.rebuild_zips:
         rebuild_zips()
         print("- ZIP-Artefakte: neu gebaut")
+    if args.check:
+        if changed_generated_artifacts and not args.write:
+            issues.append("Generierte Dist-Artefakte sind nicht aktuell; `python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips` ausführen.")
+        issues.extend(zip_drift_issues(ROOT, TOOLS_ZIP, tool_zip_sources()))
+        issues.extend(zip_drift_issues(ROOT, MODELS_ZIP, model_zip_sources()))
     if issues:
         print("\n## Befunde")
         for issue in issues:

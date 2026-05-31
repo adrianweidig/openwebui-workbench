@@ -25,6 +25,7 @@ This repository bundles domain briefings, human-readable model packages, OpenWeb
 | Run local validation | [`TESTING.md`](TESTING.md) |
 | Understand deployment mounts | [`Deployment/README.md`](Deployment/README.md) |
 | Review architecture | [`docs/en/ARCHITECTURE.md`](docs/en/ARCHITECTURE.md) |
+| Check language pair maintenance | [`docs/LANGUAGE_PAIRS.md`](docs/LANGUAGE_PAIRS.md) |
 | Contribute | [`CONTRIBUTING.en.md`](CONTRIBUTING.en.md) |
 | Understand internationalization | [`docs/en/I18N.md`](docs/en/I18N.md) |
 
@@ -125,9 +126,14 @@ All text resources stay UTF-8. Umlauts, accents, emojis, and non-Latin character
 Start a local OpenWebUI instance plus the Workbench dashboard:
 
 ```powershell
-Copy-Item Deployment/workbench.env.example .env
+python scripts/init_workbench_env.py
+python scripts/init_workbench_env.py --check
+python scripts/check_workbench_setup.py
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
+
+The init command creates an ignored local `.env` with a random `WEBUI_SECRET_KEY` and `WORKBENCH_AUTH_PASSWORD`, does not overwrite an existing `.env` without `--force`, and does not print secret values.
+The setup doctor checks Python, the env template, the local `.env`, host ports, OpenWebUI URLs, boolean flags, numeric runtime limits, the Compose file, and Docker availability before startup. It does not start containers or print secret values. For administrator acceptance checks, use `python scripts/check_workbench_setup.py --require-docker` to treat missing Docker as a failure.
 
 Then open:
 
@@ -149,6 +155,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 Run the non-mutating verification suite:
 
 ```powershell
+python scripts/check_workbench_setup.py
 python scripts/verify_openwebui_workspace.py
 ```
 

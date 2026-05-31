@@ -48,6 +48,8 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
     steps = [
         CommandStep("Python syntax compile", [python, "-m", "compileall", "-q", "scripts", "Tools", "Workbench"]),
         CommandStep("German umlaut and UTF-8 check", [python, "scripts/check_german_umlauts.py"]),
+        CommandStep("Documentation language pair check", [python, "scripts/check_doc_language_pairs.py"]),
+        CommandStep("Security hygiene check", [python, "scripts/check_security_hygiene.py"]),
         CommandStep("Offline data budget check", [python, "scripts/check_offline_data_budget.py"]),
         CommandStep("KnowledgePack validation", [python, "scripts/validate_knowledgepacks.py"]),
         CommandStep("OpenWebUI extension validation", [python, "scripts/validate_openwebui_extensions.py"]),
@@ -61,9 +63,28 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
         steps.append(CommandStep("Unit tests", [python, "-m", "unittest", "discover", "Tools.openwebui_ext.tests"]))
         steps.append(CommandStep("Workbench dashboard tests", [python, "-m", "unittest", "discover", "Workbench.dashboard.tests"]))
     if args.include_docker_compose:
-        compose_auth_env = {"WORKBENCH_AUTH_PASSWORD": "verify-only-placeholder"}
+        compose_auth_env = {
+            "WEBUI_SECRET_KEY": "verify-only-placeholder",
+            "WORKBENCH_AUTH_PASSWORD": "verify-only-placeholder",
+            "WORKBENCH_ENTERPRISE_CA_HOST_FILE": "/tmp/workbench-verify-ca.pem",
+        }
         steps.append(CommandStep("Docker compose example config", ["docker", "compose", "-f", "Deployment/docker-compose.openwebui-offline.example.yml", "config"]))
         steps.append(CommandStep("Docker compose workbench config", ["docker", "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"], env=compose_auth_env))
+        steps.append(
+            CommandStep(
+                "Docker compose enterprise CA workbench config",
+                [
+                    "docker",
+                    "compose",
+                    "-f",
+                    "Deployment/docker-compose.workbench.yml",
+                    "-f",
+                    "Deployment/docker-compose.enterprise-ca.yml",
+                    "config",
+                ],
+                env=compose_auth_env,
+            )
+        )
         steps.append(
             CommandStep(
                 "Docker compose top.secret workbench config",
