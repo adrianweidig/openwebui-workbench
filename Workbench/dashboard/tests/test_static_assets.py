@@ -86,7 +86,7 @@ class DashboardStaticAssetsTests(unittest.TestCase):
         app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
 
         self.assertIn("window.history.replaceState", app_js)
-        for parameter in ("panel", "model", "file", "resource", "locale", "view"):
+        for parameter in ("panel", "model", "file", "resource", "locale", "view", "modelSearch", "resourceSearch"):
             with self.subTest(parameter=parameter):
                 self.assertIn(f'queryParams.get("{parameter}")', app_js)
                 self.assertRegex(app_js, rf"params\.(?:set|delete)\(\"{parameter}\"")
@@ -98,6 +98,16 @@ class DashboardStaticAssetsTests(unittest.TestCase):
         self.assertIn("SUPPORTED_VIEW_MODES", app_js)
         self.assertIn("localStorage.setItem(`workbench-${editor}-view`, nextMode)", app_js)
         self.assertIn("localStorage.getItem(`workbench-${editor}-view`)", app_js)
+
+    def test_search_filters_are_persisted(self) -> None:
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn("function detectInitialSearch", app_js)
+        self.assertIn("function persistSearchValue", app_js)
+        self.assertIn("localStorage.setItem(searchStorageKey(editor), value)", app_js)
+        self.assertIn("localStorage.removeItem(searchStorageKey(editor))", app_js)
+        self.assertIn('params.set("modelSearch", modelSearch)', app_js)
+        self.assertIn('params.set("resourceSearch", resourceSearch)', app_js)
 
     def test_read_only_editor_controls_are_covered(self) -> None:
         app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")

@@ -57,6 +57,31 @@ function detectInitialViewMode(editor) {
   return normalizeViewMode(localStorage.getItem(`workbench-${editor}-view`));
 }
 
+function normalizeSearchValue(value) {
+  return String(value || "").trim();
+}
+
+function searchStorageKey(editor) {
+  return `workbench-${editor}-search`;
+}
+
+function detectInitialSearch(editor) {
+  const queryValue = editor === "model" ? queryParams.get("modelSearch") : queryParams.get("resourceSearch");
+  if (queryValue !== null) return normalizeSearchValue(queryValue);
+  return normalizeSearchValue(localStorage.getItem(searchStorageKey(editor)));
+}
+
+function currentSearchValue(editor) {
+  const inputId = editor === "model" ? "model-search" : "resource-search";
+  return normalizeSearchValue(el(inputId).value);
+}
+
+function persistSearchValue(editor) {
+  const value = currentSearchValue(editor);
+  if (value) localStorage.setItem(searchStorageKey(editor), value);
+  else localStorage.removeItem(searchStorageKey(editor));
+}
+
 async function fetchMessages(locale) {
   const response = await fetch(`/static/locales/${locale}.json`, { cache: "no-store" });
   if (!response.ok) throw new Error(`Locale ${locale} could not be loaded`);
@@ -141,6 +166,13 @@ function syncUrlState() {
 
   if (state.locale === DEFAULT_LOCALE) params.delete("locale");
   else params.set("locale", state.locale);
+
+  const modelSearch = currentSearchValue("model");
+  const resourceSearch = currentSearchValue("resource");
+  if (activePanel === "models" && modelSearch) params.set("modelSearch", modelSearch);
+  else params.delete("modelSearch");
+  if (activePanel === "resources" && resourceSearch) params.set("resourceSearch", resourceSearch);
+  else params.delete("resourceSearch");
 
   if (activePanel === "models" && state.selectedModel) {
     params.set("model", state.selectedModel.id);
@@ -1052,8 +1084,16 @@ function wireEvents() {
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.addEventListener("click", () => activatePanel(button.dataset.panel));
   });
-  el("model-search").addEventListener("input", renderModels);
-  el("resource-search").addEventListener("input", renderResources);
+  el("model-search").addEventListener("input", () => {
+    persistSearchValue("model");
+    renderModels();
+    syncUrlState();
+  });
+  el("resource-search").addEventListener("input", () => {
+    persistSearchValue("resource");
+    renderResources();
+    syncUrlState();
+  });
   el("markdown-editor").addEventListener("input", () => {
     state.modelDirty = true;
     updateModelPreview();
@@ -1129,6 +1169,8 @@ async function init() {
   state.resourceView = detectInitialViewMode("resource");
   applyView("model", state.modelView, false);
   applyView("resource", state.resourceView, false);
+  el("model-search").value = detectInitialSearch("model");
+  el("resource-search").value = detectInitialSearch("resource");
   wireEvents();
   activatePanel(requestedPanel);
   await Promise.all([refreshStatus(), refreshModels(false), refreshResources(false)]);
