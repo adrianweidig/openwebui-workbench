@@ -86,10 +86,35 @@ class DashboardStaticAssetsTests(unittest.TestCase):
         app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
 
         self.assertIn("window.history.replaceState", app_js)
-        for parameter in ("panel", "model", "file", "resource", "locale"):
+        for parameter in ("panel", "model", "file", "resource", "locale", "view"):
             with self.subTest(parameter=parameter):
                 self.assertIn(f'queryParams.get("{parameter}")', app_js)
                 self.assertRegex(app_js, rf"params\.(?:set|delete)\(\"{parameter}\"")
+
+    def test_view_mode_preferences_are_persisted(self) -> None:
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn("function detectInitialViewMode", app_js)
+        self.assertIn("SUPPORTED_VIEW_MODES", app_js)
+        self.assertIn("localStorage.setItem(`workbench-${editor}-view`, nextMode)", app_js)
+        self.assertIn("localStorage.getItem(`workbench-${editor}-view`)", app_js)
+
+    def test_read_only_editor_controls_are_covered(self) -> None:
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn('t("editor.disabled.readOnly")', app_js)
+        self.assertIn("function updateEditorWriteControls", app_js)
+        self.assertIn("textarea.readOnly = readOnly", app_js)
+        for control in (
+            "add-model-file",
+            "save-file",
+            "delete-model-file",
+            "add-resource",
+            "save-resource",
+            "delete-resource",
+        ):
+            with self.subTest(control=control):
+                self.assertIn(f'setWriteControlState("{control}"', app_js)
 
 
 if __name__ == "__main__":

@@ -20,8 +20,10 @@ const el = (id) => document.getElementById(id);
 const DEFAULT_LOCALE = "de";
 const DEFAULT_PANEL = "models";
 const DEFAULT_MODEL_FILE = "systemprompt.md";
+const DEFAULT_VIEW_MODE = "split";
 const SUPPORTED_LOCALES = ["de", "en"];
 const SUPPORTED_PANELS = new Set(["models", "resources", "actions", "assets"]);
+const SUPPORTED_VIEW_MODES = new Set(["split", "edit", "preview"]);
 const WRITE_ACTIONS = new Set(["generate", "import-dry-run", "import-openwebui"]);
 const queryParams = new URLSearchParams(window.location.search);
 
@@ -37,6 +39,22 @@ function detectInitialLocale() {
   if (explicit) return normalizeLocale(explicit);
   const browserLocale = (navigator.languages && navigator.languages[0]) || navigator.language || "";
   return normalizeLocale(browserLocale);
+}
+
+function normalizeViewMode(value) {
+  const mode = String(value || "").trim().toLowerCase();
+  return SUPPORTED_VIEW_MODES.has(mode) ? mode : DEFAULT_VIEW_MODE;
+}
+
+function detectInitialViewMode(editor) {
+  const specificView = queryParams.get(`${editor}View`);
+  if (specificView) return normalizeViewMode(specificView);
+  const requestedPanel = queryParams.get("panel") || DEFAULT_PANEL;
+  const sharedView = queryParams.get("view");
+  if (sharedView && ((editor === "model" && requestedPanel === "models") || (editor === "resource" && requestedPanel === "resources"))) {
+    return normalizeViewMode(sharedView);
+  }
+  return normalizeViewMode(localStorage.getItem(`workbench-${editor}-view`));
 }
 
 async function fetchMessages(locale) {
@@ -128,6 +146,8 @@ function syncUrlState() {
     params.set("model", state.selectedModel.id);
     if (state.selectedFile && state.selectedFile !== DEFAULT_MODEL_FILE) params.set("file", state.selectedFile);
     else params.delete("file");
+    if (state.modelView !== DEFAULT_VIEW_MODE) params.set("view", state.modelView);
+    else params.delete("view");
   } else {
     params.delete("model");
     params.delete("file");
@@ -135,9 +155,12 @@ function syncUrlState() {
 
   if (activePanel === "resources" && state.selectedResource) {
     params.set("resource", `${state.selectedResource.kind}:${state.selectedResource.id}`);
+    if (state.resourceView !== DEFAULT_VIEW_MODE) params.set("view", state.resourceView);
+    else params.delete("view");
   } else {
     params.delete("resource");
   }
+  if (!["models", "resources"].includes(activePanel)) params.delete("view");
 
   const nextUrl = `${url.pathname}${url.search}${url.hash}`;
   const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -310,15 +333,20 @@ function updateResourcePreview() {
   }
 }
 
-function applyView(editor, mode) {
+function applyView(editor, mode, persist = true) {
+  const nextMode = normalizeViewMode(mode);
   const workspace = el(editor === "model" ? "model-workspace" : "resource-workspace");
   workspace.classList.remove("split-mode", "edit-mode", "preview-mode");
-  workspace.classList.add(`${mode}-mode`);
-  if (editor === "model") state.modelView = mode;
-  if (editor === "resource") state.resourceView = mode;
+  workspace.classList.add(`${nextMode}-mode`);
+  if (editor === "model") state.modelView = nextMode;
+  if (editor === "resource") state.resourceView = nextMode;
   document.querySelectorAll(`.view-mode[data-editor="${editor}"]`).forEach((button) => {
-    button.classList.toggle("active", button.dataset.mode === mode);
+    button.classList.toggle("active", button.dataset.mode === nextMode);
   });
+  if (persist) {
+    localStorage.setItem(`workbench-${editor}-view`, nextMode);
+    syncUrlState();
+  }
 }
 
 function applyTheme(theme) {
@@ -362,6 +390,7 @@ function renderStatus() {
   setSignalState("signal-artifacts", existingArtifacts === artifacts.length ? "ok" : "warn");
   renderSetupChecks(status, existingArtifacts, artifacts.length);
   renderActionReadiness();
+  updateEditorWriteControls();
 
   const artifactList = el("artifact-list");
   artifactList.replaceChildren();
@@ -463,6 +492,46 @@ function renderActionReadiness() {
     button.setAttribute("aria-disabled", String(Boolean(reason)));
     button.title = reason;
   });
+}
+
+function editorWriteDisabledReason() {
+  const status = state.status;
+  if (status && !status.write_enabled) return t("editor.disabled.readOnly");
+  return "";
+}
+
+function setWriteControlState(id, disabled, reason) {
+  const button = el(id);
+  const locked = Boolean(reason);
+  button.disabled = disabled || locked;
+  button.classList.toggle("disabled", locked);
+  if (locked) button.title = reason;
+  else button.removeAttribute("title");
+}
+
+function updateEditorWriteControls() {
+  const reason = editorWriteDisabledReason();
+  const readOnly = Boolean(reason);
+  [el("markdown-editor"), el("resource-editor")].forEach((textarea) => {
+    textarea.readOnly = readOnly;
+    textarea.setAttribute("aria-readonly", String(readOnly));
+    if (readOnly) textarea.title = reason;
+    else textarea.removeAttribute("title");
+  });
+  setWriteControlState("add-model-file", !state.selectedModel, reason);
+  setWriteControlState("save-file", !state.selectedModel || el("markdown-editor").disabled, reason);
+  setWriteControlState("delete-model-file", !selectedModelFileExists(), reason);
+  setWriteControlState("add-resource", false, reason);
+  setWriteControlState("save-resource", !state.selectedResource || el("resource-editor").disabled, reason);
+  setWriteControlState("delete-resource", !state.selectedResource, reason);
+}
+
+function canUseEditorWrites(stateId) {
+  const reason = editorWriteDisabledReason();
+  if (!reason) return true;
+  if (stateId) setText(stateId, reason);
+  updateEditorWriteControls();
+  return false;
 }
 
 function setSignalState(id, level) {
@@ -652,6 +721,7 @@ function resetModelEditor() {
   el("delete-model-file").disabled = true;
   setText("editor-state", t("state.ready"));
   renderFileTabs();
+  updateEditorWriteControls();
   syncUrlState();
 }
 
@@ -666,6 +736,7 @@ function resetResourceEditor() {
   el("save-resource").disabled = true;
   el("delete-resource").disabled = true;
   setText("resource-state", t("state.ready"));
+  updateEditorWriteControls();
   syncUrlState();
 }
 
@@ -702,6 +773,7 @@ function renderFileTabs() {
     tabs.append(section);
   });
   el("delete-model-file").disabled = !selectedModelFileExists();
+  updateEditorWriteControls();
 }
 
 async function selectResource(kind, resourceId) {
@@ -721,6 +793,7 @@ async function selectResource(kind, resourceId) {
   el("save-resource").disabled = false;
   el("delete-resource").disabled = false;
   setText("resource-state", t("state.loaded", { path: payload.path }));
+  updateEditorWriteControls();
   syncUrlState();
 }
 
@@ -752,10 +825,12 @@ async function loadFile(name) {
   el("delete-model-file").disabled = !payload.exists;
   state.modelDirty = false;
   setText("editor-state", payload.exists ? t("state.loaded", { path: payload.path }) : t("state.newFile", { path: payload.path }));
+  updateEditorWriteControls();
   syncUrlState();
 }
 
 async function addModelFile() {
+  if (!canUseEditorWrites("editor-state")) return;
   if (!state.selectedModel) return;
   if (!confirmDiscardUnsaved("model")) return;
   const name = window.prompt(t("prompt.modelFileName"), "beispiele/neues-beispiel.md");
@@ -778,6 +853,7 @@ async function addModelFile() {
 }
 
 async function deleteModelFile() {
+  if (!canUseEditorWrites("editor-state")) return;
   if (!state.selectedModel || !state.selectedFile) return;
   if (!window.confirm(t("prompt.deleteFile", { name: state.selectedFile }))) return;
   setText("editor-state", t("state.deleting"));
@@ -806,6 +882,7 @@ function resourceTemplate(kind, id) {
 }
 
 async function addResource() {
+  if (!canUseEditorWrites("resource-state")) return;
   if (!confirmDiscardUnsaved("resource")) return;
   const rawKind = window.prompt(t("prompt.resourceKind"), "skill");
   if (!rawKind) return;
@@ -830,6 +907,7 @@ async function addResource() {
 }
 
 async function deleteResource() {
+  if (!canUseEditorWrites("resource-state")) return;
   if (!state.selectedResource) return;
   const { kind, id } = state.selectedResource;
   if (!window.confirm(t("prompt.deleteResource", { name: `${kind}/${id}` }))) return;
@@ -847,12 +925,14 @@ async function deleteResource() {
     setText("resource-description", t("resources.pick"));
     setText("resource-state", t("state.deleted"));
     await refreshResources(false);
+    updateEditorWriteControls();
   } catch (error) {
     setText("resource-state", error.message);
   }
 }
 
 async function saveResource() {
+  if (!canUseEditorWrites("resource-state")) return;
   if (!state.selectedResource) return;
   el("save-resource").disabled = true;
   setText("resource-state", t("state.saving"));
@@ -871,10 +951,12 @@ async function saveResource() {
     setText("resource-state", error.message);
   } finally {
     el("save-resource").disabled = false;
+    updateEditorWriteControls();
   }
 }
 
 async function saveFile() {
+  if (!canUseEditorWrites("editor-state")) return;
   if (!state.selectedModel || !state.selectedFile) return;
   el("save-file").disabled = true;
   setText("editor-state", t("state.saving"));
@@ -890,6 +972,7 @@ async function saveFile() {
     setText("editor-state", error.message);
   } finally {
     el("save-file").disabled = false;
+    updateEditorWriteControls();
   }
 }
 
@@ -948,6 +1031,7 @@ async function refreshResources(keepSelection = true) {
     resetResourceEditor();
   }
   renderResources();
+  updateEditorWriteControls();
 }
 
 async function refreshModels(keepSelection = true) {
@@ -961,6 +1045,7 @@ async function refreshModels(keepSelection = true) {
     resetModelEditor();
   }
   renderModels();
+  updateEditorWriteControls();
 }
 
 function wireEvents() {
@@ -1040,8 +1125,10 @@ async function init() {
   const requestedPanel = queryParams.get("panel") || "models";
   await setLocale(detectInitialLocale(), false);
   applyTheme(localStorage.getItem("workbench-theme") || "dark");
-  applyView("model", state.modelView);
-  applyView("resource", state.resourceView);
+  state.modelView = detectInitialViewMode("model");
+  state.resourceView = detectInitialViewMode("resource");
+  applyView("model", state.modelView, false);
+  applyView("resource", state.resourceView, false);
   wireEvents();
   activatePanel(requestedPanel);
   await Promise.all([refreshStatus(), refreshModels(false), refreshResources(false)]);

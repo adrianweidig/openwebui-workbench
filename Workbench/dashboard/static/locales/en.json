@@ -18,6 +18,7 @@
   "config.tlsVerified": "TLS verified",
   "config.token": "API token",
   "config.write": "Write mode",
+  "editor.disabled.readOnly": "Editor locked in read-only mode",
   "hero.body": "Edit model text and HTML examples, generate dist artifacts, and run controlled imports.",
   "hero.eyebrow": "Repository Control Center",
   "hero.title": "Manage OpenWebUI centrally",

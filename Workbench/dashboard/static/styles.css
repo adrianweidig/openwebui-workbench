@@ -392,6 +392,11 @@ textarea:focus {
   opacity: 0.45;
 }
 
+.ghost:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .danger-action {
   color: var(--danger);
 }
@@ -500,6 +505,11 @@ textarea {
   font-family: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 14px;
   line-height: 1.55;
+}
+
+textarea:read-only:not(:disabled) {
+  cursor: default;
+  opacity: 0.82;
 }
 
 .viewer-toolbar {
