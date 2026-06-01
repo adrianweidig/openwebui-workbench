@@ -614,7 +614,7 @@ class WorkbenchStateTests(unittest.TestCase):
 
         status, response = self.request(base_url, authorization=auth, path="/api/resources", method="POST", body=body)
         self.assertEqual(status, 403)
-        self.assertIn("Same-Origin", json.loads(response)["error"])
+        self.assertIn("same-origin", json.loads(response)["error"].lower())
 
         status, response = self.request(
             base_url,
@@ -641,7 +641,7 @@ class WorkbenchStateTests(unittest.TestCase):
 
         status, response = self.request(base_url, authorization=auth, path="/api/actions/check", method="POST", body="{}")
         self.assertEqual(status, 403)
-        self.assertIn("Same-Origin", json.loads(response)["error"])
+        self.assertIn("same-origin", json.loads(response)["error"].lower())
 
         result = {
             "action": "check",
@@ -680,7 +680,7 @@ class WorkbenchStateTests(unittest.TestCase):
 
         status, response = self.request(base_url, authorization=auth, path="/api/automation/run", method="POST", body="{}")
         self.assertEqual(status, 403)
-        self.assertIn("Same-Origin", json.loads(response)["error"])
+        self.assertIn("same-origin", json.loads(response)["error"].lower())
 
         status, response = self.request(
             base_url,
