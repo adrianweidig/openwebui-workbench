@@ -418,6 +418,29 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertEqual(levels["File references"], "fail")
             self.assertIn("WORKBENCH_ENTERPRISE_CA_HOST_FILE", rendered)
 
+    def test_missing_enterprise_ca_host_file_can_warn_for_portainer_host_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            missing_ca = Path(temp_dir) / "docker-host-only-ca.pem"
+            env_file.write_text(
+                f"WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nWORKBENCH_ENTERPRISE_CA_HOST_FILE={missing_ca}\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+                allow_unverified_root_ca_path=True,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "warn")
+            self.assertIn("Docker/Portainer host path", rendered)
+            self.assertIn("Verify the PEM certificate", rendered)
+
     def test_enterprise_ca_host_file_rejects_private_keys(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
@@ -433,6 +456,29 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
                 env_file,
                 compose_file,
                 lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "fail")
+            self.assertIn("certificates only", rendered)
+
+    def test_enterprise_ca_host_file_still_rejects_private_keys_with_portainer_opt_in(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            ca_file = Path(temp_dir) / "root-ca.pem"
+            ca_file.write_text("-----BEGIN PRIVATE KEY-----\nnot-a-key\n-----END PRIVATE KEY-----\n", encoding="utf-8")
+            env_file.write_text(
+                f"WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nWORKBENCH_ENTERPRISE_CA_HOST_FILE={ca_file}\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+                allow_unverified_root_ca_path=True,
             )
             rendered = check_workbench_setup.render_results(results)
 

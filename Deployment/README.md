@@ -29,6 +29,13 @@ python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-c
 ```
 
 Der Setup-Doctor führt bei explizitem `--docker-command` zusätzlich `docker compose version` aus. Ein deaktivierter `WSLService` oder ein nicht erreichbarer WSL-Docker-Pfad wird damit als Preflight-Fehler gemeldet, bevor Compose-Konfigurationen oder Containerstarts versucht werden.
+Für Portainer-Hostpfade, die vom Windows-Generator nicht lokal gelesen werden können, kann dieselbe Prüfung bewusst als Hostpfad-Warnung laufen:
+
+```powershell
+python scripts/check_workbench_setup.py --allow-unverified-root-ca-path
+```
+
+Dieser Schalter ersetzt keine CA-Prüfung: lokal lesbare PEM-Dateien werden weiterhin validiert, und der Admin muss die Datei auf dem Docker-/Portainer-Host vor dem Stack-Start prüfen.
 
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 Die Workbench-Dashboard-Automation läuft standardmäßig alle 30 Minuten mit der nicht-mutierenden Aktion `check`. In Portainer kann der Administrator dies über `WORKBENCH_AUTOMATION_ENABLED`, `WORKBENCH_AUTOMATION_INTERVAL_MINUTES`, `WORKBENCH_AUTOMATION_ACTIONS` und `WORKBENCH_AUTOMATION_RUN_ON_START` anpassen. Schreibende Aktionen wie `generate`, `import-dry-run` oder `import-openwebui` sind nicht Teil des sicheren Defaults und sollten nur nach bewusster Admin-Entscheidung ergänzt werden.
@@ -82,7 +89,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Dep
 Der Workbench-Container installiert `ca-certificates` im Image und führt beim Start immer `update-ca-certificates` aus. Wenn `WORKBENCH_CA_BUNDLE` gesetzt ist, wird die gemountete PEM-Datei vorab geprüft: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte führen zu einem klaren Startfehler. Secrets, Tokens und Private Keys gehören nicht in diese CA-Datei.
 Der Setup-Doctor prüft `WORKBENCH_ENTERPRISE_CA_HOST_FILE` schon vor dem Compose-Start als Hostdatei: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte werden als Installationsfehler gemeldet.
 
-Der Portainer-Wizard prüft den Root-CA-Pfad ebenfalls lokal, wenn die Datei vom ausführenden System aus lesbar ist. Wenn du den Wizard unter Windows ausführst, der CA-Pfad aber nur auf dem Docker-/Portainer-Host existiert, prüfe die PEM-Datei vorher administrativ und starte den Wizard mit `-AllowUnverifiedRootCaPath`. Der generierte Stack mountet den Pfad dann unverändert als `WORKBENCH_ENTERPRISE_CA_HOST_FILE`; Containerstart und Setup-Doctor auf dem Zielhost prüfen die Datei anschließend erneut.
+Der Portainer-Wizard prüft den Root-CA-Pfad ebenfalls lokal, wenn die Datei vom ausführenden System aus lesbar ist. Wenn du den Wizard unter Windows ausführst, der CA-Pfad aber nur auf dem Docker-/Portainer-Host existiert, prüfe die PEM-Datei vorher administrativ und starte den Wizard mit `-AllowUnverifiedRootCaPath`. Der generierte Stack mountet den Pfad dann unverändert als `WORKBENCH_ENTERPRISE_CA_HOST_FILE`; Containerstart und Setup-Doctor auf dem Zielhost prüfen die Datei anschließend erneut. Für die Windows-seitige Preflight-Prüfung derselben generierten Env-Datei nutze zusätzlich `python scripts/check_workbench_setup.py --allow-unverified-root-ca-path`.
 
 Bei einem bereits vorhandenen OpenWebUI über HTTPS setzt du zusätzlich:
 

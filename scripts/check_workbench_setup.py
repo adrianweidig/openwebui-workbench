@@ -79,6 +79,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="run 'docker compose config' when Docker and the env file are available",
     )
+    parser.add_argument(
+        "--allow-unverified-root-ca-path",
+        action="store_true",
+        help=(
+            "treat a missing WORKBENCH_ENTERPRISE_CA_HOST_FILE as a warning for Docker/Portainer host-only paths; "
+            "locally readable CA files are still validated"
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -352,7 +360,7 @@ def _validate_pem_certificate_file(path: Path, key: str) -> tuple[str | None, st
     return None, None
 
 
-def check_file_references(env_path: Path) -> CheckResult:
+def check_file_references(env_path: Path, *, allow_unverified_root_ca_path: bool = False) -> CheckResult:
     try:
         values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
     except OSError as exc:
@@ -365,11 +373,17 @@ def check_file_references(env_path: Path) -> CheckResult:
     enterprise_ca = values.get("WORKBENCH_ENTERPRISE_CA_HOST_FILE", "").strip()
     if enterprise_ca:
         ca_path = _env_path(enterprise_ca, env_path)
-        error, action = _validate_pem_certificate_file(ca_path, "WORKBENCH_ENTERPRISE_CA_HOST_FILE")
-        if error:
-            failures.append(error)
-            if action:
-                actions.append(action)
+        if allow_unverified_root_ca_path and not ca_path.exists():
+            warnings.append(
+                "WORKBENCH_ENTERPRISE_CA_HOST_FILE was not found locally but is allowed as a Docker/Portainer host path."
+            )
+            actions.append("Verify the PEM certificate on the Docker/Portainer host before starting the stack.")
+        else:
+            error, action = _validate_pem_certificate_file(ca_path, "WORKBENCH_ENTERPRISE_CA_HOST_FILE")
+            if error:
+                failures.append(error)
+                if action:
+                    actions.append(action)
 
     for key, kind in OPTIONAL_FILE_KEYS.items():
         raw = values.get(key, "").strip()
@@ -384,6 +398,7 @@ def check_file_references(env_path: Path) -> CheckResult:
             expected = "file"
         if not exists:
             warnings.append(f"{key} is set but was not found as a local {expected}.")
+            actions.append("If these are container-only secret or CA paths, verify the matching mount before startup.")
 
     if failures:
         return CheckResult(
@@ -397,7 +412,8 @@ def check_file_references(env_path: Path) -> CheckResult:
             "warn",
             "File references",
             " ".join(warnings),
-            "If these are container-only secret or CA paths, verify the matching mount before startup.",
+            " ".join(dict.fromkeys(actions))
+            or "If these are container-only secret or CA paths, verify the matching mount before startup.",
         )
     return CheckResult("ok", "File references", "No invalid local file references found.")
 
@@ -557,6 +573,7 @@ def evaluate_setup(
     docker_path: str | None = None,
     docker_command: Sequence[str] | None = None,
     lookup_docker: bool = True,
+    allow_unverified_root_ca_path: bool = False,
 ) -> list[CheckResult]:
     resolved_docker_command = resolve_docker_command(
         docker_command,
@@ -576,7 +593,12 @@ def evaluate_setup(
         results.append(check_boolean_values(env_path))
         results.append(check_numeric_values(env_path))
         results.append(check_automation_actions(env_path))
-        results.append(check_file_references(env_path))
+        results.append(
+            check_file_references(
+                env_path,
+                allow_unverified_root_ca_path=allow_unverified_root_ca_path,
+            )
+        )
     if run_compose:
         if resolved_docker_command:
             results.append(run_compose_config(resolved_docker_command, compose_path, env_path))
@@ -620,6 +642,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         require_docker=args.require_docker,
         run_compose=args.run_compose_config,
         docker_command=args.docker_command,
+        allow_unverified_root_ca_path=args.allow_unverified_root_ca_path,
     )
     print(render_results(results))
     return 1 if any(result.level == "fail" for result in results) else 0
