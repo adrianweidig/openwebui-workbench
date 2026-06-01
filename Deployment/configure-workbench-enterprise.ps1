@@ -277,6 +277,12 @@ if ($OpenWebUIMode -eq "bundled") {
         )
     }
     $composeLines += @(
+        "    healthcheck:",
+        '      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen(''http://127.0.0.1:8080/health'', timeout=5).read()\""]',
+        "      interval: 30s",
+        "      timeout: 10s",
+        "      retries: 5",
+        "      start_period: 60s",
         "    volumes:",
         "      - openwebui-data:/app/backend/data",
         "      - type: bind",
@@ -335,6 +341,12 @@ $composeLines += @(
     "      WORKBENCH_SYSTEM_CA_BUNDLE: `${WORKBENCH_SYSTEM_CA_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}",
     "      SSL_CERT_FILE: `${SSL_CERT_FILE:-/etc/ssl/certs/ca-certificates.crt}",
     "      REQUESTS_CA_BUNDLE: `${REQUESTS_CA_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}",
+    "    healthcheck:",
+    '      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen(''http://127.0.0.1:8088/healthz'', timeout=5).read()\""]',
+    "      interval: 30s",
+    "      timeout: 10s",
+    "      retries: 5",
+    "      start_period: 20s",
     "    volumes:",
     "      - type: bind",
     "        source: `${WORKBENCH_WORKSPACE_HOST_PATH}",

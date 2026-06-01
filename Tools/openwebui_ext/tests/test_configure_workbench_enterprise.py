@@ -62,6 +62,15 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn('Test-WorkbenchUrl -Name "OPENWEBUI_BASE_URL"', script)
         self.assertIn('Test-WorkbenchUrl -Name "OPENWEBUI_PUBLIC_URL"', script)
 
+    def test_generated_portainer_stack_includes_healthchecks(self) -> None:
+        script = WIZARD.read_text(encoding="utf-8")
+
+        self.assertIn("    healthcheck:", script)
+        self.assertIn("http://127.0.0.1:8080/health", script)
+        self.assertIn("http://127.0.0.1:8088/healthz", script)
+        self.assertIn("      start_period: 60s", script)
+        self.assertIn("      start_period: 20s", script)
+
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_existing_mode_does_not_emit_unused_openwebui_volume(self) -> None:
         assert POWERSHELL is not None
@@ -96,8 +105,37 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
 
         self.assertNotIn("  openwebui:", compose)
         self.assertNotIn("openwebui-data:", compose)
+        self.assertNotIn("http://127.0.0.1:8080/health", compose)
+        self.assertIn("http://127.0.0.1:8088/healthz", compose)
         self.assertIn("    external: true", compose)
         self.assertIn("    name: ${WORKBENCH_DOCKER_NETWORK}", compose)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_bundled_mode_emits_openwebui_and_workbench_healthchecks(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                check=True,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            compose = (Path(tmpdir) / "portainer-compose.yml").read_text(encoding="utf-8")
+
+        self.assertIn("http://127.0.0.1:8080/health", compose)
+        self.assertIn("http://127.0.0.1:8088/healthz", compose)
+        self.assertGreaterEqual(compose.count("    healthcheck:"), 2)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_unverified_remote_root_ca_path_is_written_when_explicitly_allowed(self) -> None:
