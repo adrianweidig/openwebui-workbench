@@ -152,7 +152,17 @@ Then open:
 - Workbench: `http://localhost:8088`
 - Optional local `top.secret` edge route: `https://workbench.top.secret`
 
-For Portainer installations, [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) can generate a stack Compose file that can be pasted into Portainer. The wizard also asks for the Docker network name and optional Portainer URL for later runtime probes, and can attach Workbench plus the optional bundled OpenWebUI service to an existing external network without creating that network itself.
+For Portainer installations, [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) can generate a stack Compose file that can be pasted into Portainer. The wizard also asks for the Docker network name and optional Portainer URL for later runtime probes, and can attach Workbench to an existing external network without creating that network itself.
+
+When OpenWebUI, RAGFlow, and Seafile already run as shared target containers, [`Deployment/docker-compose.shared-targets.yml`](Deployment/docker-compose.shared-targets.yml) is the intended WSL/Portainer start path. It starts only the Workbench, uses `WORKBENCH_SHARED_DOCKER_NETWORK`, and does not duplicate target containers:
+
+```powershell
+$env:WORKBENCH_SHARED_DOCKER_NETWORK="ki_infra_seu_test"
+$env:OPENWEBUI_BASE_URL="http://openwebui:8080"
+$env:RAGFLOW_BASE_URL="http://ragflow:9380"
+$env:SEAFILE_BASE_URL="http://seafile"
+docker compose --env-file .env -f Deployment/docker-compose.shared-targets.yml up -d --build
+```
 
 The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` is set. The dashboard also runs the non-mutating `check` action every 30 minutes by default; mutating automatic actions are active only after explicit environment configuration. It uses HTTP Basic Auth whenever `WORKBENCH_AUTH_USERNAME` and `WORKBENCH_AUTH_PASSWORD` or `WORKBENCH_AUTH_PASSWORD_FILE` are set. Details are in [`docs/en/WORKBENCH_DASHBOARD.md`](docs/en/WORKBENCH_DASHBOARD.md).
 

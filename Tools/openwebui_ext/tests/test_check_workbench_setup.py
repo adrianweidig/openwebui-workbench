@@ -172,6 +172,63 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("Compose config", rendered)
             self.assertEqual(check_workbench_setup.summarize(results), "failed")
 
+    def test_compose_config_is_skipped_when_compose_file_preflight_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            missing_override = Path(temp_dir) / "missing-override.yml"
+            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
+
+            with patch.object(check_workbench_setup.subprocess, "run") as run:
+                run.return_value = SimpleNamespace(returncode=0, stdout="Docker Compose version v2.0.0", stderr="")
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    compose_overrides=[missing_override],
+                    docker_command=["custom-docker"],
+                    require_docker=True,
+                    run_compose=True,
+                    lookup_docker=False,
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            self.assertEqual(run.call_count, 1)
+            self.assertIn("Compose override", rendered)
+            self.assertIn("compose files failed preflight", rendered)
+            self.assertEqual(check_workbench_setup.summarize(results), "failed")
+
+    def test_compose_config_is_skipped_when_required_compose_variables_are_missing(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            override = Path(temp_dir) / "docker-compose.secret.yml"
+            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
+            override.write_text(
+                "services:\n"
+                "  workbench:\n"
+                "    volumes:\n"
+                "      - ${WORKBENCH_AUTH_PASSWORD_HOST_FILE:?Set password file}:/run/secrets/workbench-auth-password:ro\n",
+                encoding="utf-8",
+            )
+
+            with patch.object(check_workbench_setup.subprocess, "run") as run:
+                run.return_value = SimpleNamespace(returncode=0, stdout="Docker Compose version v2.0.0", stderr="")
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    compose_overrides=[override],
+                    docker_command=["custom-docker"],
+                    require_docker=True,
+                    run_compose=True,
+                    lookup_docker=False,
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            self.assertEqual(run.call_count, 1)
+            self.assertIn("Required compose variable(s) missing: WORKBENCH_AUTH_PASSWORD_HOST_FILE", rendered)
+            self.assertIn("required compose variables are missing", rendered)
+            self.assertEqual(check_workbench_setup.summarize(results), "failed")
+
     def test_compose_config_uses_custom_docker_command_and_relative_paths(self) -> None:
         with tempfile.TemporaryDirectory(dir=check_workbench_setup.ROOT) as temp_dir:
             root = Path(temp_dir)
@@ -361,6 +418,29 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             levels = {result.title: result.level for result in results}
             self.assertEqual(levels["Optional service URLs"], "ok")
             self.assertIn("PORTAINER_URL=https://portainer.local:9443", rendered)
+
+    def test_optional_shared_target_urls_are_validated_without_runtime_probe(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "RAGFLOW_BASE_URL=http://ragflow:9380\n"
+                "SEAFILE_BASE_URL=http://seafile\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Optional service URLs"], "ok")
+            self.assertIn("RAGFLOW_BASE_URL=http://ragflow:9380", rendered)
+            self.assertIn("SEAFILE_BASE_URL=http://seafile", rendered)
 
     def test_optional_portainer_url_rejects_credentials_without_printing_secret(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

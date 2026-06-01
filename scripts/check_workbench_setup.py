@@ -53,6 +53,8 @@ TRUE_VALUES = {"1", "true", "yes", "on"}
 FALSE_VALUES = {"0", "false", "no", "off"}
 AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
 PRIVATE_KEY_RE = re.compile(r"BEGIN .*PRIVATE KEY")
+COMPOSE_REQUIRED_ENV_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*):\?[^}]*\}")
+OPTIONAL_SERVICE_URL_KEYS = ("PORTAINER_URL", "RAGFLOW_BASE_URL", "SEAFILE_BASE_URL")
 DOCKER_PROBE_TIMEOUT_SECONDS = 20
 RUNTIME_PROBE_TIMEOUT_SECONDS = 3
 AUTH_REACHABLE_STATUS_CODES = {401, 403}
@@ -282,19 +284,25 @@ def check_optional_service_urls(env_path: Path) -> CheckResult:
     except OSError as exc:
         return CheckResult("fail", "Optional service URLs", str(exc), "Check file permissions.")
 
-    raw_portainer_url = values.get("PORTAINER_URL", "").strip()
-    if not raw_portainer_url:
+    configured = [key for key in OPTIONAL_SERVICE_URL_KEYS if values.get(key, "").strip()]
+    if not configured:
         return CheckResult("ok", "Optional service URLs", "No optional service URLs configured.")
-    parsed, error = _env_url(values, "PORTAINER_URL", "")
-    if error:
+    parsed_values: list[str] = []
+    errors: list[str] = []
+    for key in configured:
+        parsed, error = _env_url(values, key, "")
+        if error:
+            errors.append(error)
+        elif parsed is not None:
+            parsed_values.append(f"{key}={_display_url(parsed)}")
+    if errors:
         return CheckResult(
             "fail",
             "Optional service URLs",
-            error,
-            "Use a full http:// or https:// Portainer URL without credentials, or leave PORTAINER_URL empty.",
+            " ".join(errors),
+            "Use full http:// or https:// service URLs without credentials, or leave the optional key empty.",
         )
-    assert parsed is not None
-    return CheckResult("ok", "Optional service URLs", f"PORTAINER_URL={_display_url(parsed)}.")
+    return CheckResult("ok", "Optional service URLs", ", ".join(parsed_values) + ".")
 
 
 def _env_bool(values: dict[str, str], key: str, default: str) -> tuple[str | None, str | None]:
@@ -541,6 +549,49 @@ def check_compose_file(compose_path: Path, *, title: str = "Compose file") -> Ch
     return CheckResult("ok", title, f"{_display_path(compose_path)} exists.")
 
 
+def check_compose_env_requirements(env_path: Path, compose_files: Sequence[Path]) -> CheckResult:
+    values: dict[str, str] = {}
+    if env_path.exists():
+        try:
+            values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+        except OSError as exc:
+            return CheckResult("fail", "Compose variables", str(exc), "Check file permissions.")
+
+    required: set[str] = set()
+    unreadable: list[str] = []
+    for compose_file in compose_files:
+        if not compose_file.exists():
+            continue
+        try:
+            required.update(COMPOSE_REQUIRED_ENV_RE.findall(compose_file.read_text(encoding="utf-8")))
+        except OSError:
+            unreadable.append(_display_path(compose_file))
+
+    if unreadable:
+        return CheckResult(
+            "fail",
+            "Compose variables",
+            f"Could not read compose file(s): {', '.join(unreadable)}.",
+            "Check file permissions before running docker compose config.",
+        )
+    if not required:
+        return CheckResult("ok", "Compose variables", "No required compose variables found.")
+
+    missing = sorted(key for key in required if not values.get(key, "").strip() and not os.environ.get(key, "").strip())
+    if missing:
+        return CheckResult(
+            "fail",
+            "Compose variables",
+            f"Required compose variable(s) missing: {', '.join(missing)}.",
+            "Set the missing keys in the local .env or the current environment before running docker compose config.",
+        )
+    return CheckResult(
+        "ok",
+        "Compose variables",
+        f"Required compose variable(s) are set: {', '.join(sorted(required))}. Secret values were not printed.",
+    )
+
+
 def _runtime_probe_level(require_runtime: bool) -> str:
     return "fail" if require_runtime else "warn"
 
@@ -578,7 +629,11 @@ def _ssl_context_from_env(values: dict[str, str], env_path: Path) -> ssl.SSLCont
     return None
 
 
-def _probe_url(base_url: str, paths: Sequence[str], context: ssl.SSLContext | None) -> tuple[bool, str]:
+def _probe_url(
+    base_url: str,
+    paths: Sequence[str],
+    context: ssl.SSLContext | None,
+) -> tuple[bool, str]:
     last_error = ""
     for path in paths:
         url = f"{base_url}{path}"
@@ -847,15 +902,16 @@ def evaluate_setup(
         lookup_docker=lookup_docker,
     )
     docker_result = check_docker(resolved_docker_command, require_docker)
+    compose_file_result = check_compose_file(compose_path)
+    compose_override_results = [check_compose_file(override, title="Compose override") for override in compose_overrides]
     results = [
         check_python_version(),
         check_template(template_path),
         check_env_file(env_path),
-        check_compose_file(compose_path),
+        compose_file_result,
         docker_result,
     ]
-    for override in compose_overrides:
-        results.append(check_compose_file(override, title="Compose override"))
+    results.extend(compose_override_results)
     if env_path.exists():
         results.append(check_env_ports(env_path))
         results.append(check_openwebui_urls(env_path))
@@ -888,7 +944,27 @@ def evaluate_setup(
             )
         )
     if run_compose:
-        if resolved_docker_command and docker_result.level == "ok":
+        compose_env_result = check_compose_env_requirements(env_path, [compose_path, *compose_overrides])
+        results.append(compose_env_result)
+        if any(result.level != "ok" for result in [compose_file_result, *compose_override_results]):
+            results.append(
+                CheckResult(
+                    "fail",
+                    "Compose config",
+                    "Skipped because one or more compose files failed preflight.",
+                    "Fix the compose file path or remove the invalid --compose-override value before running docker compose config.",
+                )
+            )
+        elif compose_env_result.level != "ok":
+            results.append(
+                CheckResult(
+                    "fail",
+                    "Compose config",
+                    "Skipped because required compose variables are missing.",
+                    "Fix the Compose variables preflight before running docker compose config.",
+                )
+            )
+        elif resolved_docker_command and docker_result.level == "ok":
             results.append(run_compose_config(resolved_docker_command, compose_path, env_path, compose_overrides))
         elif resolved_docker_command:
             results.append(

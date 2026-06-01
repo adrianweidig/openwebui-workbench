@@ -105,6 +105,22 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
         )
         steps.append(
             CommandStep(
+                "Docker compose shared-targets workbench config",
+                [*docker, "compose", "-f", "Deployment/docker-compose.shared-targets.yml", "config"],
+                env={
+                    **compose_auth_env,
+                    "WORKBENCH_SHARED_DOCKER_NETWORK": "ki_infra_seu_test",
+                    "OPENWEBUI_BASE_URL": "http://openwebui:8080",
+                    "OPENWEBUI_PUBLIC_URL": "http://localhost:3000",
+                    "RAGFLOW_BASE_URL": "http://ragflow:9380",
+                    "SEAFILE_BASE_URL": "http://seafile",
+                    "PORTAINER_URL": "http://portainer:9000",
+                },
+                requires_docker=True,
+            )
+        )
+        steps.append(
+            CommandStep(
                 "Docker compose enterprise CA workbench config",
                 [
                     *docker,
@@ -218,8 +234,22 @@ def _looks_like_disabled_wsl_service(output: str) -> bool:
     )
 
 
+def _command_with_wsl_env(command: Sequence[str], env: dict[str, str] | None) -> list[str]:
+    if not env or not command:
+        return list(command)
+    if Path(command[0]).name.lower() not in {"wsl", "wsl.exe"}:
+        return list(command)
+    try:
+        separator_index = list(command).index("--")
+    except ValueError:
+        return list(command)
+    assignments = [f"{key}={value}" for key, value in sorted(env.items())]
+    return [*command[: separator_index + 1], "env", *assignments, *command[separator_index + 1 :]]
+
+
 def _run_docker_step(step: CommandStep, env: dict[str, str] | None) -> StepResult:
-    completed = subprocess.run(step.command, cwd=ROOT, env=env, capture_output=True, text=True)
+    command = _command_with_wsl_env(step.command, step.env)
+    completed = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, text=True)
     stdout = _clean_command_output(completed.stdout)
     stderr = _clean_command_output(completed.stderr)
     if stdout:

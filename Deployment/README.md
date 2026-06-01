@@ -5,6 +5,7 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 ## Compose-Varianten
 
 - `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können.
+- `docker-compose.shared-targets.yml`: Workbench-only-Start für eine bestehende gemeinsame WSL-/Portainer-Runtime. Diese Variante erstellt keinen OpenWebUI-, RAGFlow- oder Seafile-Container, sondern hängt die Workbench an `WORKBENCH_SHARED_DOCKER_NETWORK` und nutzt die vorhandenen Docker-DNS-Namen.
 - `docker-compose.workbench-password-file.yml`: optionaler Override, der `WORKBENCH_AUTH_PASSWORD_HOST_FILE` read-only nach `WORKBENCH_AUTH_PASSWORD_FILE` in den Workbench-Container mountet.
 - `docker-compose.openwebui-admin-token-file.yml`: optionaler Override, der `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` read-only nach `OPENWEBUI_ADMIN_TOKEN_FILE` in den Workbench-Container mountet.
 - `docker-compose.enterprise-ca.yml`: optionaler Override für Unternehmensnetze mit eigener Root-CA. Die CA wird in OpenWebUI und Workbench gemountet; der Workbench-Container aktualisiert den System-Truststore bei jedem Start.
@@ -20,8 +21,22 @@ python scripts/check_workbench_setup.py
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
+Für den Parallelbetrieb mit einem zweiten Agenten und bestehenden gemeinsamen Zielcontainern ist stattdessen die Shared-Targets-Variante vorgesehen:
+
+```powershell
+python scripts/init_workbench_env.py
+$env:WORKBENCH_SHARED_DOCKER_NETWORK="ki_infra_seu_test"
+$env:OPENWEBUI_BASE_URL="http://openwebui:8080"
+$env:OPENWEBUI_PUBLIC_URL="http://localhost:3000"
+$env:RAGFLOW_BASE_URL="http://ragflow:9380"
+$env:SEAFILE_BASE_URL="http://seafile"
+docker compose --env-file .env -f Deployment/docker-compose.shared-targets.yml up -d --build
+```
+
+Diese Variante erzeugt ausschließlich den agentenspezifischen Workbench-Container `openwebui-workbench` mit eigenem Host-Port `WORKBENCH_PORT` und nutzt das externe Netzwerk `WORKBENCH_SHARED_DOCKER_NETWORK`. Die Zielcontainer bleiben extern: OpenWebUI wird über `OPENWEBUI_BASE_URL`, RAGFlow über `RAGFLOW_BASE_URL` und Seafile über `SEAFILE_BASE_URL` adressiert. Der Workbench-Stack darf diese gemeinsamen Zielcontainer nicht neu erzeugen, ersetzen oder über eigene Volumes überschreiben.
+
 `scripts/init_workbench_env.py` erzeugt eine ignorierte lokale `.env` aus `Deployment/workbench.env.example` und füllt `WEBUI_SECRET_KEY` sowie `WORKBENCH_AUTH_PASSWORD` mit zufälligen lokalen Werten. Bestehende `.env`-Dateien werden ohne `--force` nicht überschrieben, und Secret-Werte werden nicht auf der Konsole ausgegeben. `WORKBENCH_AUTH_USERNAME` fällt sonst auf `workbench` zurück. Für Portainer oder Docker-Secrets kann statt `WORKBENCH_AUTH_PASSWORD` eine gemountete Datei über `WORKBENCH_AUTH_PASSWORD_FILE` genutzt werden. Compose und der Portainer-Wizard setzen `WORKBENCH_REQUIRE_AUTH=true`; der Dashboard-Container startet dann erst, wenn Benutzername und Passwort oder Passwortdatei wirksam konfiguriert sind.
-`scripts/check_workbench_setup.py` ist der nicht-mutierende Setup-Doctor für Administratoren: Er prüft Python-Version, Env-Vorlage, lokale `.env`, Host-Portwerte, OpenWebUI-URLs, boolesche Flags, numerische Runtime-Grenzen, dateibasierte Runtime-Pfade, Compose-Datei und Docker-Verfügbarkeit, ohne Dienste zu starten oder Secret-Werte auszugeben. Fehlendes Docker ist standardmäßig eine Warnung; mit `--require-docker` wird es für Installationsabnahmen als Fehler gewertet.
+`scripts/check_workbench_setup.py` ist der nicht-mutierende Setup-Doctor für Administratoren: Er prüft Python-Version, Env-Vorlage, lokale `.env`, Host-Portwerte, OpenWebUI-URLs, optionale Portainer-/RAGFlow-/Seafile-URLs, boolesche Flags, numerische Runtime-Grenzen, dateibasierte Runtime-Pfade, Compose-Datei und Docker-Verfügbarkeit, ohne Dienste zu starten oder Secret-Werte auszugeben. Mit `--probe-runtime` werden OpenWebUI und optional Portainer zusätzlich per HTTP geprüft; fehlendes Docker ist standardmäßig eine Warnung und kann mit `--require-docker` für Installationsabnahmen als Fehler gewertet werden.
 Wenn Docker unter Windows nicht in der PATH liegt, aber `wsl.exe` verfügbar ist, meldet der Setup-Doctor diesen WSL-Pfad ausdrücklich. Führe `--require-docker`, `--run-compose-config` und die echten Compose-Starts dann in der WSL-Umgebung mit Docker aus.
 Wenn der Aufruf aus Windows heraus trotzdem die WSL-Docker-Installation nutzen soll, kann der Docker-Befehl für nicht-mutierende Compose-Prüfungen explizit gesetzt werden:
 
@@ -67,6 +82,8 @@ Der Probe ruft keine Admin-APIs mit Token auf. OpenWebUI wird über `OPENWEBUI_P
 
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 Die Workbench-Dashboard-Automation läuft standardmäßig alle 30 Minuten mit der nicht-mutierenden Aktion `check`. In Portainer kann der Administrator dies über `WORKBENCH_AUTOMATION_ENABLED`, `WORKBENCH_AUTOMATION_INTERVAL_MINUTES`, `WORKBENCH_AUTOMATION_ACTIONS` und `WORKBENCH_AUTOMATION_RUN_ON_START` anpassen. Schreibende Aktionen wie `generate`, `import-dry-run` oder `import-openwebui` sind nicht Teil des sicheren Defaults und sollten nur nach bewusster Admin-Entscheidung ergänzt werden.
+
+In der Shared-Targets-Variante prüft der Workbench-Healthcheck nur das Dashboard selbst. Die Zielcontainer werden nicht kontrolliert oder neu gestartet; ihre Betriebsfähigkeit bleibt Aufgabe der gemeinsamen KI-Infra-/Portainer-Umgebung. Der Setup-Doctor validiert die konfigurierten Ziel-URLs syntaktisch; nicht-mutierende Reachability-Prüfungen der Zielcontainer laufen gezielt über WSL-/Container-Smokes im gemeinsamen Docker-Netz. Die Dashboard-Statusanzeige bleibt auf OpenWebUI und den Workbench-Zustand fokussiert.
 
 ## Admin-Smoke-Check
 

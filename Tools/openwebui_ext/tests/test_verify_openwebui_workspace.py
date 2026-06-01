@@ -49,9 +49,16 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
         commands = [" ".join(step.command) for step in steps]
 
         self.assertTrue(any("docker compose" in command for command in commands))
+        self.assertTrue(any("docker-compose.shared-targets.yml" in command for command in commands))
         self.assertTrue(any("docker-compose.enterprise-ca.yml" in command for command in commands))
         self.assertTrue(any("docker-compose.workbench-password-file.yml" in command for command in commands))
         self.assertTrue(any("docker-compose.openwebui-admin-token-file.yml" in command for command in commands))
+        shared_step = next(step for step in steps if "shared-targets" in step.label)
+        self.assertEqual(shared_step.env["WORKBENCH_SHARED_DOCKER_NETWORK"], "ki_infra_seu_test")
+        self.assertEqual(shared_step.env["OPENWEBUI_BASE_URL"], "http://openwebui:8080")
+        self.assertEqual(shared_step.env["RAGFLOW_BASE_URL"], "http://ragflow:9380")
+        self.assertEqual(shared_step.env["SEAFILE_BASE_URL"], "http://seafile")
+        self.assertTrue(shared_step.requires_docker)
         combined_secret_step = next(step for step in steps if "combined secret-file" in step.label)
         combined_secret_command = " ".join(combined_secret_step.command)
         self.assertIn("docker-compose.workbench-password-file.yml", combined_secret_command)
@@ -117,6 +124,28 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
         self.assertEqual(result.status, "Fehlgeschlagen")
         self.assertIn("WSLService", result.detail)
         self.assertNotIn("\x00", result.detail)
+
+    def test_wsl_docker_step_injects_compose_env_inside_wsl_command(self) -> None:
+        module = load_verify_module()
+        step = module.CommandStep(
+            "Docker compose config",
+            ["wsl.exe", "-d", "Debian", "--", "docker", "compose", "config"],
+            env={"WEBUI_SECRET_KEY": "verify-only-placeholder"},
+            requires_docker=True,
+        )
+
+        with (
+            patch.object(module.shutil, "which", return_value="C:\\Windows\\System32\\wsl.exe"),
+            patch.object(module.subprocess, "run") as run,
+        ):
+            run.return_value = SimpleNamespace(returncode=0, stdout="", stderr="")
+            result = module.run_command_step(step)
+
+        command = run.call_args.args[0]
+        self.assertEqual(result.status, "Erfolgreich")
+        self.assertEqual(command[:5], ["wsl.exe", "-d", "Debian", "--", "env"])
+        self.assertIn("WEBUI_SECRET_KEY=verify-only-placeholder", command)
+        self.assertIn("docker", command)
 
     def test_json_validation_ignores_git_directory(self) -> None:
         module = load_verify_module()

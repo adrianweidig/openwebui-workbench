@@ -165,7 +165,17 @@ Danach:
 - Workbench: `http://localhost:8088`
 - Optional mit lokalem `top.secret`-Edge-Proxy: `https://workbench.top.secret`
 
-Für Portainer-Installationen kann [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) eine einfügbare Stack-Compose-Datei erzeugen. Der Assistent fragt auch den Docker-Netzwerknamen und optional die Portainer-URL für spätere Runtime-Probes ab und kann Workbench plus optional gebündeltes OpenWebUI an ein vorhandenes externes Netzwerk binden, ohne dieses Netzwerk neu anzulegen.
+Für Portainer-Installationen kann [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) eine einfügbare Stack-Compose-Datei erzeugen. Der Assistent fragt auch den Docker-Netzwerknamen und optional die Portainer-URL für spätere Runtime-Probes ab und kann die Workbench an ein vorhandenes externes Netzwerk binden, ohne dieses Netzwerk neu anzulegen.
+
+Wenn OpenWebUI, RAGFlow und Seafile bereits als gemeinsame Zielcontainer laufen, ist [`Deployment/docker-compose.shared-targets.yml`](Deployment/docker-compose.shared-targets.yml) der vorgesehene WSL-/Portainer-Start. Diese Variante startet nur die Workbench, nutzt `WORKBENCH_SHARED_DOCKER_NETWORK` und dupliziert keine Zielcontainer:
+
+```powershell
+$env:WORKBENCH_SHARED_DOCKER_NETWORK="ki_infra_seu_test"
+$env:OPENWEBUI_BASE_URL="http://openwebui:8080"
+$env:RAGFLOW_BASE_URL="http://ragflow:9380"
+$env:SEAFILE_BASE_URL="http://seafile"
+docker compose --env-file .env -f Deployment/docker-compose.shared-targets.yml up -d --build
+```
 
 Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` zur OpenWebUI-API synchronisieren. Zusätzlich läuft im Dashboard standardmäßig alle 30 Minuten die nicht-mutierende Aktion `check`; schreibende automatische Aktionen sind nur nach bewusster Env-Konfiguration aktiv. Das Dashboard nutzt HTTP Basic Auth, sobald `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` gesetzt sind. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
 
