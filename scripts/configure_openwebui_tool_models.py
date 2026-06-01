@@ -391,7 +391,7 @@ def write_text(path: Path, text: str) -> None:
 
 def stable_text_bytes(path: Path) -> bytes:
     data = path.read_bytes()
-    if path.suffix.lower() in {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml"}:
+    if path.suffix.lower() in {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}:
         return data.replace(b"\r\n", b"\n")
     return data
 
@@ -413,7 +413,7 @@ def write_archive_file(archive: zipfile.ZipFile, path: Path) -> None:
     info = zipfile.ZipInfo(rel(path), ZIP_EPOCH)
     info.compress_type = zipfile.ZIP_DEFLATED
     info.external_attr = ((0o755 if path.suffix == ".sh" else 0o644) & 0xFFFF) << 16
-    archive.writestr(info, path.read_bytes())
+    archive.writestr(info, stable_text_bytes(path))
 
 
 def tool_zip_sources() -> List[Path]:

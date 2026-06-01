@@ -47,6 +47,21 @@ class ConfigureOpenWebUIToolModelsTests(unittest.TestCase):
 
         self.assertEqual(issues, [])
 
+    def test_zip_drift_issues_accepts_lf_archive_for_crlf_text_source(self) -> None:
+        module = load_dist_zip_manifest_module()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "src" / "file.html"
+            source.parent.mkdir()
+            source.write_bytes(b"<p>zeile eins</p>\r\n<p>zeile zwei</p>\r\n")
+            target = root / "dist.zip"
+            with zipfile.ZipFile(target, "w") as archive:
+                archive.writestr("src/file.html", b"<p>zeile eins</p>\n<p>zeile zwei</p>\n")
+
+            issues = module.zip_drift_issues(root, target, [source])
+
+        self.assertEqual(issues, [])
+
     def test_zip_drift_issues_reports_stale_content(self) -> None:
         module = load_dist_zip_manifest_module()
         with tempfile.TemporaryDirectory() as temp_dir:
