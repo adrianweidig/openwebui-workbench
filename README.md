@@ -163,6 +163,8 @@ Danach:
 - Workbench: `http://localhost:8088`
 - Optional mit lokalem `top.secret`-Edge-Proxy: `https://workbench.top.secret`
 
+Für Portainer-Installationen kann [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) eine einfügbare Stack-Compose-Datei erzeugen. Der Assistent fragt auch den Docker-Netzwerknamen ab und kann Workbench plus optional gebündeltes OpenWebUI an ein vorhandenes externes Netzwerk binden, ohne dieses Netzwerk neu anzulegen.
+
 Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` zur OpenWebUI-API synchronisieren. Zusätzlich läuft im Dashboard standardmäßig alle 30 Minuten die nicht-mutierende Aktion `check`; schreibende automatische Aktionen sind nur nach bewusster Env-Konfiguration aktiv. Das Dashboard nutzt HTTP Basic Auth, sobald `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` gesetzt sind. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
 
 Wenn OpenWebUI bereits läuft, kann nur der Workbench-Container gestartet werden:

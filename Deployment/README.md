@@ -104,6 +104,7 @@ Der Assistent fragt ab:
 - ob OpenWebUI im Stack mitgestartet oder eine vorhandene Instanz genutzt wird
 - die interne und öffentliche OpenWebUI-URL
 - den Docker-/Portainer-sichtbaren Repository-Pfad
+- den Docker-Netzwerknamen und ob ein vorhandenes externes Netzwerk genutzt werden soll
 - optional den Root-CA-Pfad
 - Dashboard-Login und optionalen OpenWebUI-Admin-Token
 
@@ -114,6 +115,7 @@ Ausgabe:
 
 `Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss.
 Die generierte Workbench-Service-Definition verlangt `WORKBENCH_AUTH_PASSWORD`; wenn der Wert im Assistenten leer bleibt, muss er vor dem Stack-Start in Portainer gesetzt werden.
+Wenn Workbench und OpenWebUI in ein bereits vorhandenes gemeinsames Docker-Netz sollen, etwa für eine bestehende OpenWebUI-, Reverse-Proxy- oder Portainer-Umgebung, im Assistenten den vorhandenen Netzwerknamen angeben und das externe Netzwerk bestätigen. Dann erzeugt der Stack das Netzwerk nicht selbst, sondern bindet beide Services über `external: true` an `WORKBENCH_DOCKER_NETWORK`. Ohne diese Auswahl legt der generierte Stack ein eigenes Bridge-Netz mit diesem Namen an.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
 

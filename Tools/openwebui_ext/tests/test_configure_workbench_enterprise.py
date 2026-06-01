@@ -27,6 +27,16 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn("WORKBENCH_AUTOMATION_INTERVAL_MINUTES: `${WORKBENCH_AUTOMATION_INTERVAL_MINUTES:-30}", script)
         self.assertIn("WORKBENCH_AUTOMATION_ACTIONS: `${WORKBENCH_AUTOMATION_ACTIONS:-check}", script)
 
+    def test_generated_portainer_stack_supports_existing_docker_network(self) -> None:
+        script = WIZARD.read_text(encoding="utf-8")
+
+        self.assertIn('[string]$DockerNetworkName = "openwebui-workbench_workbench"', script)
+        self.assertIn("[switch]$UseExternalDockerNetwork", script)
+        self.assertIn("WORKBENCH_DOCKER_NETWORK=$DockerNetworkName", script)
+        self.assertIn('"    external: true"', script)
+        self.assertIn('"    name: `${WORKBENCH_DOCKER_NETWORK}"', script)
+        self.assertIn('"    name: `${WORKBENCH_DOCKER_NETWORK:-openwebui-workbench_workbench}"', script)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -9,7 +9,9 @@ param(
     [string]$OpenWebUIImage = "ghcr.io/open-webui/open-webui:main",
     [string]$WorkbenchPublishedBind = "127.0.0.1:8088",
     [string]$OpenWebUIPublishedBind = "127.0.0.1:3000",
+    [string]$DockerNetworkName = "openwebui-workbench_workbench",
     [string]$OutputDir = "Deployment/generated",
+    [switch]$UseExternalDockerNetwork,
     [switch]$NonInteractive
 )
 
@@ -104,6 +106,18 @@ if ([string]::IsNullOrWhiteSpace($WorkspaceHostPath)) {
 $WorkspaceHostPath = Read-WorkbenchValue -Prompt "Host-Pfad zum openwebui-workbench-Repository aus Docker/Portainer-Sicht" -Default $WorkspaceHostPath -Required
 $WorkbenchImage = Read-WorkbenchValue -Prompt "Workbench-Dashboard-Image" -Default $WorkbenchImage -Required
 $WorkbenchPublishedBind = Read-WorkbenchValue -Prompt "Workbench-Portbindung" -Default $WorkbenchPublishedBind -Required
+$DockerNetworkName = Read-WorkbenchValue -Prompt "Docker-Netzwerkname für Workbench und OpenWebUI" -Default $DockerNetworkName -Required
+if ($DockerNetworkName -match "\s") {
+    throw "Docker-Netzwerkname darf keine Leerzeichen enthalten: $DockerNetworkName"
+}
+$useExternalDockerNetworkValue = [bool]$UseExternalDockerNetwork
+if (-not $NonInteractive -and -not $PSBoundParameters.ContainsKey("UseExternalDockerNetwork")) {
+    $networkMode = Read-WorkbenchValue -Prompt "Vorhandenes externes Docker-Netzwerk verwenden? (yes/no)" -Default "no" -Required
+    if ($networkMode -notin @("yes", "no", "y", "n", "ja", "nein", "j")) {
+        throw "Erlaubte Werte: yes/no oder ja/nein."
+    }
+    $useExternalDockerNetworkValue = $networkMode -in @("yes", "y", "ja", "j")
+}
 
 if ($OpenWebUIMode -eq "bundled") {
     $OpenWebUIImage = Read-WorkbenchValue -Prompt "OpenWebUI-Image" -Default $OpenWebUIImage -Required
@@ -138,6 +152,7 @@ $envLines = @(
     "WORKBENCH_IMAGE=$WorkbenchImage",
     "WORKBENCH_WORKSPACE_HOST_PATH=$WorkspaceHostPath",
     "WORKBENCH_PUBLISHED_BIND=$WorkbenchPublishedBind",
+    "WORKBENCH_DOCKER_NETWORK=$DockerNetworkName",
     "WORKBENCH_AUTH_USERNAME=$authUser",
     "WORKBENCH_AUTH_PASSWORD=$authPassword",
     "WORKBENCH_ALLOW_WRITE=true",
@@ -304,10 +319,23 @@ $composeLines += @(
     "volumes:",
     "  openwebui-data:",
     "",
-    "networks:",
-    "  workbench:",
-    "    driver: bridge"
+    "networks:"
 )
+
+if ($useExternalDockerNetworkValue) {
+    $composeLines += @(
+        "  workbench:",
+        "    external: true",
+        "    name: `${WORKBENCH_DOCKER_NETWORK}"
+    )
+}
+else {
+    $composeLines += @(
+        "  workbench:",
+        "    name: `${WORKBENCH_DOCKER_NETWORK:-openwebui-workbench_workbench}",
+        "    driver: bridge"
+    )
+}
 
 Write-TextFile -PathValue $envPath -Lines $envLines
 Write-TextFile -PathValue $composePath -Lines $composeLines
