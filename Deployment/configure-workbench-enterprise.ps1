@@ -6,6 +6,8 @@ param(
     [string]$PortainerUrl = "",
     [string]$WorkspaceHostPath = "",
     [string]$RootCaPath = "",
+    [string]$OpenWebUIAdminTokenHostFile = "",
+    [string]$OpenWebUIAdminTokenContainerFile = "/run/secrets/openwebui-admin-token",
     [string]$WorkbenchImage = "ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest",
     [string]$OpenWebUIImage = "ghcr.io/open-webui/open-webui:main",
     [string]$WorkbenchPublishedBind = "127.0.0.1:8088",
@@ -14,6 +16,7 @@ param(
     [string]$OutputDir = "Deployment/generated",
     [switch]$UseExternalDockerNetwork,
     [switch]$AllowUnverifiedRootCaPath,
+    [switch]$AllowUnverifiedSecretFilePath,
     [switch]$NonInteractive
 )
 
@@ -86,6 +89,31 @@ function Test-RootCaFile {
     }
     if ($content -notmatch "BEGIN CERTIFICATE") {
         throw "Root-CA-Datei sieht nicht wie ein PEM-Zertifikatsbundle aus: $($resolved.Path)"
+    }
+    return $resolved.Path
+}
+
+function Test-WorkbenchHostFile {
+    param(
+        [string]$Name,
+        [string]$PathValue,
+        [switch]$AllowUnverified
+    )
+    if ([string]::IsNullOrWhiteSpace($PathValue)) {
+        return ""
+    }
+    try {
+        $resolved = Resolve-Path -LiteralPath $PathValue -ErrorAction Stop
+    }
+    catch {
+        if ($AllowUnverified) {
+            return $PathValue.Trim()
+        }
+        throw "$Name ist lokal nicht lesbar: $PathValue. Wenn dies bewusst ein Docker-/Portainer-Hostpfad ist, prüfe die Datei administrativ und starte den Assistenten mit -AllowUnverifiedSecretFilePath. Der Assistent liest keine Token-Dateiinhalte."
+    }
+    $item = Get-Item -LiteralPath $resolved.Path -ErrorAction Stop
+    if ($item.PSIsContainer) {
+        throw "$Name muss auf eine Datei zeigen, nicht auf ein Verzeichnis: $($resolved.Path)"
     }
     return $resolved.Path
 }
@@ -180,6 +208,17 @@ $RootCaPath = Test-RootCaFile -PathValue $RootCaPath -AllowUnverified:$AllowUnve
 $authUser = Read-WorkbenchValue -Prompt "Workbench-Benutzername" -Default "workbench"
 $authPassword = Read-WorkbenchSecret -Prompt "Workbench-Passwort (leer lassen, wenn später in Portainer gesetzt wird; Stack startet erst mit gesetztem Wert)"
 $adminToken = Read-WorkbenchSecret -Prompt "OpenWebUI-Admin-Token für Sync-Aktionen (optional)"
+$selectedAdminCredentialHostFile = Read-WorkbenchValue -Prompt "Optionaler Docker-/Portainer-Hostpfad zu einer OpenWebUI-Admin-Token-Datei" -Default $OpenWebUIAdminTokenHostFile
+$verifiedAdminCredentialHostFile = Test-WorkbenchHostFile -Name "OPENWEBUI_ADMIN_TOKEN_HOST_FILE" -PathValue $selectedAdminCredentialHostFile -AllowUnverified:$AllowUnverifiedSecretFilePath
+$OpenWebUIAdminTokenHostFile = $verifiedAdminCredentialHostFile
+$OpenWebUIAdminTokenFile = ""
+if ($OpenWebUIAdminTokenHostFile) {
+    $OpenWebUIAdminTokenContainerFile = Read-WorkbenchValue -Prompt "Containerpfad für die OpenWebUI-Admin-Token-Datei" -Default $OpenWebUIAdminTokenContainerFile -Required
+    if (-not $OpenWebUIAdminTokenContainerFile.StartsWith("/")) {
+        throw "OPENWEBUI_ADMIN_TOKEN_FILE muss ein absoluter Containerpfad sein."
+    }
+    $OpenWebUIAdminTokenFile = $OpenWebUIAdminTokenContainerFile
+}
 
 $envPath = Join-Path $OutputDir "workbench.env"
 $composePath = Join-Path $OutputDir "portainer-compose.yml"
@@ -206,7 +245,8 @@ $envLines = @(
     "PORTAINER_URL=$PortainerUrl",
     "OPENWEBUI_TLS_VERIFY=true",
     "OPENWEBUI_ADMIN_TOKEN=$adminToken",
-    "OPENWEBUI_ADMIN_TOKEN_FILE="
+    "OPENWEBUI_ADMIN_TOKEN_FILE=$OpenWebUIAdminTokenFile",
+    "OPENWEBUI_ADMIN_TOKEN_HOST_FILE=$OpenWebUIAdminTokenHostFile"
 )
 
 if ($OpenWebUIMode -eq "bundled") {
@@ -354,6 +394,15 @@ $composeLines += @(
     "        source: `${WORKBENCH_WORKSPACE_HOST_PATH}",
     "        target: /workspace"
 )
+
+if ($OpenWebUIAdminTokenHostFile) {
+    $composeLines += @(
+        "      - type: bind",
+        "        source: `${OPENWEBUI_ADMIN_TOKEN_HOST_FILE}",
+        "        target: `${OPENWEBUI_ADMIN_TOKEN_FILE}",
+        "        read_only: true"
+    )
+}
 
 if ($RootCaPath) {
     $composeLines += @(

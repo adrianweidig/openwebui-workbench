@@ -125,7 +125,7 @@ Der Assistent fragt ab:
 - den Docker-/Portainer-sichtbaren Repository-Pfad
 - den Docker-Netzwerknamen und ob ein vorhandenes externes Netzwerk genutzt werden soll
 - optional den Root-CA-Pfad
-- Dashboard-Login und optionalen OpenWebUI-Admin-Token
+- Dashboard-Login, optionalen OpenWebUI-Admin-Token und optionalen Hostpfad zu einer Token-Datei
 
 Ausgabe:
 
@@ -137,7 +137,7 @@ Die generierte Workbench-Service-Definition verlangt `WORKBENCH_AUTH_PASSWORD`; 
 Die generierte Portainer-Compose-Datei enthält Healthchecks für die gebündelte OpenWebUI-Instanz (`/health`) und das Workbench-Dashboard (`/healthz`), damit Portainer den Startzustand direkt als healthy oder unhealthy anzeigen kann.
 Die OpenWebUI-URL-Felder werden als vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten validiert, bevor sie in `workbench.env` geschrieben werden.
 Eine optional gesetzte `PORTAINER_URL` wird als vollständige `http`- oder `https`-URL ohne eingebettete Zugangsdaten validiert und nur in `workbench.env` gespeichert. Sie dient dem hostseitigen Setup-Doctor für Reachability-Prüfungen und wird nicht als Token oder Secret behandelt.
-Wenn der OpenWebUI-Admin-Token als Docker-/Portainer-Secret oder Bind-Datei gemountet wird, kann `OPENWEBUI_ADMIN_TOKEN_FILE` in `workbench.env` auf diesen Containerpfad gesetzt werden. Der Wizard schreibt keinen Token in diese Datei.
+Wenn der OpenWebUI-Admin-Token als Docker-/Portainer-Secret oder Bind-Datei gemountet wird, kann der Assistent einen Hostpfad abfragen und ihn read-only in den Workbench-Container einhängen. Dann setzt er `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` auf den Docker-/Portainer-sichtbaren Hostpfad und `OPENWEBUI_ADMIN_TOKEN_FILE` standardmäßig auf `/run/secrets/openwebui-admin-token`. Der Assistent liest oder schreibt keine Token-Dateiinhalte. Wenn der Hostpfad nur auf dem Docker-/Portainer-Host existiert und vom ausführenden Windows-System nicht lesbar ist, prüfe die Datei administrativ und starte den Assistenten mit `-AllowUnverifiedSecretFilePath`.
 Wenn Workbench und OpenWebUI in ein bereits vorhandenes gemeinsames Docker-Netz sollen, etwa für eine bestehende OpenWebUI-, Reverse-Proxy- oder Portainer-Umgebung, im Assistenten den vorhandenen Netzwerknamen angeben und das externe Netzwerk bestätigen. Dann erzeugt der Stack das Netzwerk nicht selbst, sondern bindet beide Services über `external: true` an `WORKBENCH_DOCKER_NETWORK`. Ohne diese Auswahl legt der generierte Stack ein eigenes Bridge-Netz mit diesem Namen an.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:

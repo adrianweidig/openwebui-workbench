@@ -47,7 +47,7 @@ services:
   # Required local decisions:
   # - Set WORKBENCH_AUTH_PASSWORD in an ignored .env before starting the dashboard.
   #   WORKBENCH_AUTH_USERNAME defaults to "workbench".
-  # - Set OPENWEBUI_ADMIN_TOKEN only when the dashboard should perform real OpenWebUI sync.
+  # - Set OPENWEBUI_ADMIN_TOKEN or OPENWEBUI_ADMIN_TOKEN_FILE only when the dashboard should perform real OpenWebUI sync.
   workbench:
     build:
       context: ..

@@ -60,7 +60,12 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         script = WIZARD.read_text(encoding="utf-8")
 
         self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE=", script)
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_HOST_FILE=", script)
+        self.assertIn("[switch]$AllowUnverifiedSecretFilePath", script)
         self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE: `${OPENWEBUI_ADMIN_TOKEN_FILE:-}", script)
+        self.assertIn("source: `${OPENWEBUI_ADMIN_TOKEN_HOST_FILE}", script)
+        self.assertIn("target: `${OPENWEBUI_ADMIN_TOKEN_FILE}", script)
+        self.assertIn("Der Assistent liest keine Token-Dateiinhalte", script)
 
     def test_wizard_validates_openwebui_urls_before_writing_env(self) -> None:
         script = WIZARD.read_text(encoding="utf-8")
@@ -201,6 +206,102 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
 
         self.assertIn(f"PORTAINER_URL={portainer_url}", env_text)
         self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE=", env_text)
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_HOST_FILE=", env_text)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_local_admin_token_file_is_mounted_read_only(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            token_file = Path(tmpdir) / "openwebui-admin-token.txt"
+            token_file.write_text("not-a-real-token\n", encoding="utf-8")
+            subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-OpenWebUIAdminTokenHostFile",
+                    str(token_file),
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                check=True,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            env_text = (Path(tmpdir) / "workbench.env").read_text(encoding="utf-8")
+            compose = (Path(tmpdir) / "portainer-compose.yml").read_text(encoding="utf-8")
+
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE=/run/secrets/openwebui-admin-token", env_text)
+        self.assertIn(f"OPENWEBUI_ADMIN_TOKEN_HOST_FILE={token_file.resolve()}", env_text)
+        self.assertIn("source: ${OPENWEBUI_ADMIN_TOKEN_HOST_FILE}", compose)
+        self.assertIn("target: ${OPENWEBUI_ADMIN_TOKEN_FILE}", compose)
+        self.assertIn("read_only: true", compose)
+        self.assertNotIn("not-a-real-token", env_text)
+        self.assertNotIn("not-a-real-token", compose)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_unverified_remote_admin_token_file_is_written_when_explicitly_allowed(self) -> None:
+        assert POWERSHELL is not None
+        remote_token_path = "/run/portainer-secrets/openwebui-admin-token"
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-OpenWebUIAdminTokenHostFile",
+                    remote_token_path,
+                    "-AllowUnverifiedSecretFilePath",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                check=True,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            env_text = (Path(tmpdir) / "workbench.env").read_text(encoding="utf-8")
+            compose = (Path(tmpdir) / "portainer-compose.yml").read_text(encoding="utf-8")
+
+        self.assertIn(f"OPENWEBUI_ADMIN_TOKEN_HOST_FILE={remote_token_path}", env_text)
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE=/run/secrets/openwebui-admin-token", env_text)
+        self.assertIn("source: ${OPENWEBUI_ADMIN_TOKEN_HOST_FILE}", compose)
+        self.assertIn("target: ${OPENWEBUI_ADMIN_TOKEN_FILE}", compose)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_unverified_remote_admin_token_file_fails_without_opt_in(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-OpenWebUIAdminTokenHostFile",
+                    "/run/portainer-secrets/openwebui-admin-token",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_HOST_FILE ist lokal nicht lesbar", result.stderr + result.stdout)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_portainer_url_rejects_embedded_credentials_without_leaking_secret(self) -> None:
