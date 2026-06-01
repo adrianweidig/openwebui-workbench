@@ -73,6 +73,13 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--template", type=Path, default=DEFAULT_TEMPLATE, help="env template to validate")
     parser.add_argument("--env-file", type=Path, default=DEFAULT_ENV_FILE, help="local env file to validate")
     parser.add_argument("--compose-file", type=Path, default=DEFAULT_COMPOSE_FILE, help="compose file to validate")
+    parser.add_argument(
+        "--compose-override",
+        type=Path,
+        action="append",
+        default=[],
+        help="additional compose override file to include in --run-compose-config; repeat for multiple overrides",
+    )
     parser.add_argument("--require-docker", action="store_true", help="treat a missing Docker CLI as a failure")
     parser.add_argument(
         "--docker-command",
@@ -523,15 +530,15 @@ def check_file_references(
     return CheckResult("ok", "File references", "No invalid local file references found.")
 
 
-def check_compose_file(compose_path: Path) -> CheckResult:
+def check_compose_file(compose_path: Path, *, title: str = "Compose file") -> CheckResult:
     if not compose_path.exists():
         return CheckResult(
             "fail",
-            "Compose file",
+            title,
             f"{_display_path(compose_path)} was not found.",
-            "Restore Deployment/docker-compose.workbench.yml.",
+            "Restore the compose file or pass the correct path.",
         )
-    return CheckResult("ok", "Compose file", f"{_display_path(compose_path)} exists.")
+    return CheckResult("ok", title, f"{_display_path(compose_path)} exists.")
 
 
 def _runtime_probe_level(require_runtime: bool) -> str:
@@ -776,7 +783,12 @@ def _path_argument(path: Path) -> str:
         return str(path)
 
 
-def run_compose_config(docker_command: Sequence[str], compose_path: Path, env_path: Path) -> CheckResult:
+def run_compose_config(
+    docker_command: Sequence[str],
+    compose_path: Path,
+    env_path: Path,
+    compose_overrides: Sequence[Path] = (),
+) -> CheckResult:
     if not env_path.exists():
         return CheckResult(
             "warn",
@@ -791,8 +803,10 @@ def run_compose_config(docker_command: Sequence[str], compose_path: Path, env_pa
         _path_argument(env_path),
         "-f",
         _path_argument(compose_path),
-        "config",
     ]
+    for override in compose_overrides:
+        command.extend(["-f", _path_argument(override)])
+    command.append("config")
     try:
         completed = subprocess.run(command, check=False, capture_output=True, text=True, timeout=60)
     except (OSError, subprocess.TimeoutExpired) as exc:
@@ -804,7 +818,10 @@ def run_compose_config(docker_command: Sequence[str], compose_path: Path, env_pa
             f"docker compose config exited with code {completed.returncode}.",
             "Run the same command manually; do not paste secret values into issue reports.",
         )
-    return CheckResult("ok", "Compose config", "docker compose config completed successfully.")
+    detail = "docker compose config completed successfully."
+    if compose_overrides:
+        detail = f"docker compose config completed successfully with {len(compose_overrides)} override file(s)."
+    return CheckResult("ok", "Compose config", detail)
 
 
 def evaluate_setup(
@@ -812,6 +829,7 @@ def evaluate_setup(
     env_path: Path,
     compose_path: Path,
     *,
+    compose_overrides: Sequence[Path] = (),
     require_docker: bool = False,
     run_compose: bool = False,
     docker_path: str | None = None,
@@ -828,13 +846,16 @@ def evaluate_setup(
         docker_path=docker_path,
         lookup_docker=lookup_docker,
     )
+    docker_result = check_docker(resolved_docker_command, require_docker)
     results = [
         check_python_version(),
         check_template(template_path),
         check_env_file(env_path),
         check_compose_file(compose_path),
-        check_docker(resolved_docker_command, require_docker),
+        docker_result,
     ]
+    for override in compose_overrides:
+        results.append(check_compose_file(override, title="Compose override"))
     if env_path.exists():
         results.append(check_env_ports(env_path))
         results.append(check_openwebui_urls(env_path))
@@ -867,8 +888,17 @@ def evaluate_setup(
             )
         )
     if run_compose:
-        if resolved_docker_command:
-            results.append(run_compose_config(resolved_docker_command, compose_path, env_path))
+        if resolved_docker_command and docker_result.level == "ok":
+            results.append(run_compose_config(resolved_docker_command, compose_path, env_path, compose_overrides))
+        elif resolved_docker_command:
+            results.append(
+                CheckResult(
+                    "fail" if require_docker else "warn",
+                    "Compose config",
+                    "Skipped because the Docker CLI preflight failed.",
+                    "Fix the Docker CLI preflight before running docker compose config.",
+                )
+            )
         else:
             results.append(
                 CheckResult(
@@ -906,6 +936,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.template,
         args.env_file,
         args.compose_file,
+        compose_overrides=args.compose_override,
         require_docker=args.require_docker,
         run_compose=args.run_compose_config,
         docker_command=args.docker_command,

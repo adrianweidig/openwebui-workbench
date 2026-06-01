@@ -42,6 +42,11 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    ```
 
    Der Setup-Doctor führt bei explizitem `--docker-command` vorab `docker compose version` aus. Ein deaktivierter `WSLService` oder ein nicht nutzbarer WSL-Docker-Pfad wird dadurch als Preflight-Fehler sichtbar, ohne Container zu starten.
+   Zusätzliche lokale Compose-Overrides können für denselben Preflight wiederholbar angegeben werden:
+
+   ```powershell
+   python scripts/check_workbench_setup.py --require-docker --run-compose-config --compose-override Deployment/docker-compose.workbench-password-file.yml --compose-override Deployment/docker-compose.openwebui-admin-token-file.yml
+   ```
 
 4. Wenn Tool-, Filter-, Skill- oder Modellartefakte bewusst geändert wurden, Dist-Artefakte neu erzeugen und danach erneut prüfen:
 

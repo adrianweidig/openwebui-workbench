@@ -50,6 +50,11 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Dep
 ```
 
 Bei Nutzung beider Dateien müssen in `.env` die jeweiligen Host- und Containerpfade gesetzt sein: `WORKBENCH_AUTH_PASSWORD_HOST_FILE` plus `WORKBENCH_AUTH_PASSWORD_FILE` beziehungsweise `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` plus `OPENWEBUI_ADMIN_TOKEN_FILE`.
+Der Setup-Doctor kann dieselbe Kombination vor dem Start nicht-mutierend rendern:
+
+```powershell
+python scripts/check_workbench_setup.py --require-docker --run-compose-config --compose-override Deployment/docker-compose.workbench-password-file.yml --compose-override Deployment/docker-compose.openwebui-admin-token-file.yml
+```
 
 Für Abnahmen nach einem Stack-Start kann der Setup-Doctor zusätzlich nicht-mutierende HTTP-Probes ausführen. Ohne `--require-runtime` sind nicht erreichbare Dienste Warnungen; mit `--require-runtime` werden sie zu Fehlern:
 

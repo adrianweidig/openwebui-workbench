@@ -149,6 +149,29 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("WSLService", rendered)
             self.assertEqual(check_workbench_setup.summarize(results), "failed")
 
+    def test_compose_config_is_skipped_when_docker_preflight_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
+
+            with patch.object(check_workbench_setup.subprocess, "run") as run:
+                run.return_value = SimpleNamespace(returncode=1, stdout="", stderr="Fehlercode: Wsl/0x80070422")
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    docker_command=["wsl.exe", "-d", "Debian", "--", "docker"],
+                    require_docker=True,
+                    run_compose=True,
+                    lookup_docker=False,
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            self.assertEqual(run.call_count, 1)
+            self.assertIn("Docker CLI preflight failed", rendered)
+            self.assertIn("Compose config", rendered)
+            self.assertEqual(check_workbench_setup.summarize(results), "failed")
+
     def test_compose_config_uses_custom_docker_command_and_relative_paths(self) -> None:
         with tempfile.TemporaryDirectory(dir=check_workbench_setup.ROOT) as temp_dir:
             root = Path(temp_dir)
@@ -171,6 +194,39 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("--env-file", command)
             self.assertIn("-f", command)
             self.assertFalse(any(str(check_workbench_setup.ROOT) in part for part in command))
+
+    def test_compose_config_accepts_multiple_override_files(self) -> None:
+        with tempfile.TemporaryDirectory(dir=check_workbench_setup.ROOT) as temp_dir:
+            root = Path(temp_dir)
+            env_file = root / ".env"
+            compose_file = root / "docker-compose.yml"
+            password_override = root / "docker-compose.password.yml"
+            token_override = root / "docker-compose.token.yml"
+            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
+            compose_file.write_text("services:\n  workbench:\n    image: local/workbench:test\n", encoding="utf-8")
+            password_override.write_text("services:\n  workbench:\n    environment:\n      A: B\n", encoding="utf-8")
+            token_override.write_text("services:\n  workbench:\n    environment:\n      C: D\n", encoding="utf-8")
+
+            with patch.object(check_workbench_setup.subprocess, "run") as run:
+                run.return_value = SimpleNamespace(returncode=0)
+                results = check_workbench_setup.evaluate_setup(
+                    check_workbench_setup.DEFAULT_TEMPLATE,
+                    env_file,
+                    compose_file,
+                    compose_overrides=[password_override, token_override],
+                    run_compose=True,
+                    docker_command=["custom-docker"],
+                    lookup_docker=False,
+                )
+
+            command = run.call_args.args[0]
+            f_positions = [index for index, part in enumerate(command) if part == "-f"]
+            rendered = check_workbench_setup.render_results(results)
+            self.assertEqual(len(f_positions), 3)
+            self.assertIn("docker-compose.password.yml", command[f_positions[1] + 1])
+            self.assertIn("docker-compose.token.yml", command[f_positions[2] + 1])
+            self.assertIn("2 override file(s)", rendered)
+            self.assertEqual(check_workbench_setup.summarize(results), "ready")
 
     def test_default_ports_are_valid_when_port_values_are_missing(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
