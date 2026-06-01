@@ -154,7 +154,7 @@ Then open:
 
 For Portainer installations, [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) can generate a stack Compose file that can be pasted into Portainer. The wizard also asks for the Docker network name and optional Portainer URL for later runtime probes, and can attach Workbench plus the optional bundled OpenWebUI service to an existing external network without creating that network itself.
 
-The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` is set. The dashboard also runs the non-mutating `check` action every 30 minutes by default; mutating automatic actions are active only after explicit environment configuration.
+The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` is set. The dashboard also runs the non-mutating `check` action every 30 minutes by default; mutating automatic actions are active only after explicit environment configuration. It uses HTTP Basic Auth whenever `WORKBENCH_AUTH_USERNAME` and `WORKBENCH_AUTH_PASSWORD` or `WORKBENCH_AUTH_PASSWORD_FILE` are set. Details are in [`docs/en/WORKBENCH_DASHBOARD.md`](docs/en/WORKBENCH_DASHBOARD.md).
 
 If OpenWebUI is already running, start only the Workbench container:
 
