@@ -7,6 +7,7 @@ import argparse
 import ipaddress
 import json
 import os
+import re
 import socket
 import sys
 import urllib.error
@@ -82,6 +83,12 @@ PROVIDERS: dict[str, Provider] = {
 }
 
 AUTO_PROVIDER_ORDER = ("openrouter", "gemini", "deepseek", "mistral", "groq", "perplexity")
+REDACTED_SECRET = "[REDACTED]"
+SECRET_PATTERNS = (
+    re.compile(r"(?i)(authorization\s*[:=]\s*bearer\s+)([^\s,;\"'}]+)"),
+    re.compile(r"(?i)(x-goog-api-key\s*[:=]\s*)([^\s,;\"'}]+)"),
+    re.compile(r"(?i)([?&]key=)([^&\s\"'}]+)"),
+)
 
 
 class SmokeError(RuntimeError):
@@ -123,6 +130,25 @@ def _select_provider(name: str) -> Provider | None:
     return None
 
 
+def _known_secret_values() -> list[str]:
+    values = [
+        value
+        for provider in PROVIDERS.values()
+        for value in [os.environ.get(provider.key_env)]
+        if value and len(value) >= 6
+    ]
+    return sorted(set(values), key=len, reverse=True)
+
+
+def _redact_secrets(text: str) -> str:
+    redacted = text
+    for value in _known_secret_values():
+        redacted = redacted.replace(value, REDACTED_SECRET)
+    for pattern in SECRET_PATTERNS:
+        redacted = pattern.sub(lambda match: f"{match.group(1)}{REDACTED_SECRET}", redacted)
+    return redacted
+
+
 def _request_json(url: str, headers: dict[str, str], payload: dict[str, Any], timeout: int) -> Any:
     body = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(url, data=body, headers=headers, method="POST")
@@ -131,10 +157,10 @@ def _request_json(url: str, headers: dict[str, str], payload: dict[str, Any], ti
         with urllib.request.urlopen(request, timeout=timeout) as response:  # nosec B310
             return response.status, json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")[:400]
+        detail = _redact_secrets(exc.read().decode("utf-8", errors="replace"))[:400]
         raise SmokeError(f"provider HTTP {exc.code}: {detail}") from exc
     except urllib.error.URLError as exc:
-        raise SmokeError(f"provider request failed: {exc.reason}") from exc
+        raise SmokeError(f"provider request failed: {_redact_secrets(str(exc.reason))}") from exc
 
 
 def _gemini_generate_content_url(base_url: str, model: str) -> str:

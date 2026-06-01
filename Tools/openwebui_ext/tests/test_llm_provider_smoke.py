@@ -1,3 +1,4 @@
+import io
 import os
 import unittest
 from unittest.mock import patch
@@ -59,6 +60,57 @@ class LlmProviderSmokeTest(unittest.TestCase):
             self.assertNotIn("secret-test-value", url)
             self.assertNotIn("?key=", url)
             self.assertEqual(headers["x-goog-api-key"], "secret-test-value")
+        finally:
+            os.environ.clear()
+            os.environ.update(old_env)
+
+    def test_provider_error_redaction_masks_keys_and_auth_fragments(self):
+        old_env = os.environ.copy()
+        try:
+            os.environ.clear()
+            sentinel_one = "secret" + "-test-value"
+            sentinel_two = "another" + "-secret-value"
+            sentinel_three = "query" + "-secret-value"
+            os.environ["OPENROUTER_API_KEY"] = sentinel_one
+            rendered = smoke._redact_secrets(
+                f"Authorization: Bearer {sentinel_one}; "
+                f"x-goog-api-key={sentinel_two}; "
+                f"https://api.example.invalid/v1?key={sentinel_three}"
+            )
+            self.assertNotIn(sentinel_one, rendered)
+            self.assertNotIn(sentinel_two, rendered)
+            self.assertNotIn(sentinel_three, rendered)
+            self.assertIn("Authorization: Bearer [REDACTED]", rendered)
+            self.assertIn("x-goog-api-key=[REDACTED]", rendered)
+            self.assertIn("?key=[REDACTED]", rendered)
+        finally:
+            os.environ.clear()
+            os.environ.update(old_env)
+
+    def test_http_error_body_is_redacted_before_surface(self):
+        old_env = os.environ.copy()
+        try:
+            os.environ.clear()
+            os.environ["OPENROUTER_API_KEY"] = "secret-test-value"
+            error = smoke.urllib.error.HTTPError(
+                "https://api.example.invalid/v1/chat/completions",
+                401,
+                "Unauthorized",
+                {},
+                io.BytesIO(b'{"error":"secret-test-value Authorization: Bearer echoed-secret"}'),
+            )
+            with patch.object(smoke.urllib.request, "urlopen", side_effect=error):
+                with self.assertRaises(smoke.SmokeError) as raised:
+                    smoke._request_json(
+                        "https://api.example.invalid/v1/chat/completions",
+                        {"Authorization": "Bearer secret-test-value"},
+                        {"messages": []},
+                        5,
+                    )
+            rendered = str(raised.exception)
+            self.assertNotIn("secret-test-value", rendered)
+            self.assertNotIn("echoed-secret", rendered)
+            self.assertIn("[REDACTED]", rendered)
         finally:
             os.environ.clear()
             os.environ.update(old_env)
