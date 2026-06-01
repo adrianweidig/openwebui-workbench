@@ -575,6 +575,58 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("requires authentication", rendered)
             self.assertEqual(open_url.call_count, 2)
 
+    def test_runtime_probe_uses_portainer_url_from_env_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "OPENWEBUI_PUBLIC_URL=http://localhost:3000\n"
+                "PORTAINER_URL=https://portainer.local\n",
+                encoding="utf-8",
+            )
+
+            with patch.object(check_workbench_setup, "urlopen") as open_url:
+                open_url.return_value = _FakeHttpResponse(200)
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    lookup_docker=False,
+                    probe_runtime=True,
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Runtime OpenWebUI"], "ok")
+            self.assertEqual(levels["Runtime Portainer"], "ok")
+            self.assertIn("https://portainer.local/api/status", rendered)
+            self.assertEqual(open_url.call_count, 2)
+
+    def test_cli_portainer_url_overrides_env_file_for_runtime_probe(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "OPENWEBUI_PUBLIC_URL=http://localhost:3000\n"
+                "PORTAINER_URL=https://portainer-from-env.local\n",
+                encoding="utf-8",
+            )
+
+            with patch.object(check_workbench_setup, "urlopen") as open_url:
+                open_url.return_value = _FakeHttpResponse(200)
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    lookup_docker=False,
+                    probe_runtime=True,
+                    portainer_url="https://portainer-from-cli.local",
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            self.assertIn("https://portainer-from-cli.local/api/status", rendered)
+            self.assertNotIn("portainer-from-env", rendered)
+
     def test_runtime_probe_failure_can_be_required_for_acceptance(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))

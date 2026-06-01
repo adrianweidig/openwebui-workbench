@@ -555,6 +555,7 @@ def check_runtime_reachability(
         ]
 
     context = _ssl_context_from_env(values, env_path)
+    effective_portainer_url = portainer_url.strip() or values.get("PORTAINER_URL", "").strip()
     results = [
         check_runtime_url(
             "Runtime OpenWebUI",
@@ -565,11 +566,11 @@ def check_runtime_reachability(
             context=context,
         )
     ]
-    if portainer_url.strip():
+    if effective_portainer_url:
         results.append(
             check_runtime_url(
                 "Runtime Portainer",
-                portainer_url,
+                effective_portainer_url,
                 key="PORTAINER_URL",
                 paths=("/api/status", "/"),
                 require_runtime=require_runtime,
