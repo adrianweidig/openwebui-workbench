@@ -38,7 +38,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 
 Der Init-Befehl erzeugt eine lokale, ignorierte `.env` aus `Deployment/workbench.env.example`, setzt zufällige Werte für `WEBUI_SECRET_KEY` und `WORKBENCH_AUTH_PASSWORD` und gibt diese Werte nicht auf der Konsole aus. Bestehende `.env`-Dateien werden ohne `--force` nicht überschrieben.
 
-Die lokale `.env` muss `WORKBENCH_AUTH_PASSWORD` setzen. Ohne dieses Passwort bricht Docker Compose vor dem Start ab; mit gesetztem Passwort schützt das Dashboard alle Routen per HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` ist optional und nutzt standardmäßig `workbench`.
+Die lokale `.env` muss für Compose/Portainer `WORKBENCH_REQUIRE_AUTH=true` sowie `WORKBENCH_AUTH_PASSWORD` oder eine gemountete `WORKBENCH_AUTH_PASSWORD_FILE` setzen. Ohne wirksame Authentifizierung beendet der Dashboard-Container den Start mit einer klaren Fehlermeldung; mit gesetztem Passwort schützt das Dashboard alle Routen per HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` ist optional und nutzt standardmäßig `workbench`.
 
 Danach:
 
@@ -131,8 +131,10 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternativer Pfad zu einer Token-Datei im Container. |
 | `WEBUI_SECRET_KEY` | Stabiler lokaler OpenWebUI-Secret-Key, damit Sessions nach Container-Neustarts erhalten bleiben. |
 | `WORKBENCH_AUTH_USERNAME` | Benutzername für die HTTP-Basic-Auth des Dashboards. Standard in Compose: `workbench`. |
-| `WORKBENCH_AUTH_PASSWORD` | Passwort für die HTTP-Basic-Auth des Dashboards. In Compose erforderlich und nicht committen. |
+| `WORKBENCH_REQUIRE_AUTH` | `true` verlangt wirksame Dashboard-Authentifizierung beim Start. Compose/Portainer setzen dies standardmäßig. |
+| `WORKBENCH_AUTH_PASSWORD` | Passwort für die HTTP-Basic-Auth des Dashboards. Alternative zu `WORKBENCH_AUTH_PASSWORD_FILE`; nicht committen. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternativer Pfad zu einer Passwortdatei im Container. |
+| `WORKBENCH_AUTH_PASSWORD_HOST_FILE` | Hostpfad für generierte Portainer-Stacks, der read-only nach `WORKBENCH_AUTH_PASSWORD_FILE` gemountet wird. |
 | `WORKBENCH_ALLOW_WRITE` | `true` erlaubt Markdown-Schreibzugriff. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Dry-Run- und Verify-Aktionen. |
 | `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Prozess-Timeout für den Hintergrund-Sync nach OpenWebUI. Standard: 1800 Sekunden, damit ein seltener Clean-Import nicht vom Dashboard abgebrochen wird. |
@@ -152,7 +154,8 @@ UI-Texte liegen unter `Workbench/dashboard/static/locales/`. Server- und API-Mel
 ## Sicherheit
 
 - Das Dashboard ist in der Compose-Datei nur an `127.0.0.1` gebunden.
-- Wenn `WORKBENCH_AUTH_USERNAME` und ein Passwort gesetzt sind, schützt das Dashboard alle Routen per HTTP Basic Auth.
+- Wenn `WORKBENCH_AUTH_USERNAME` und ein Passwort oder eine Passwortdatei gesetzt sind, schützt das Dashboard alle Routen per HTTP Basic Auth.
+- Bei `WORKBENCH_REQUIRE_AUTH=true` startet das Dashboard ohne diese Auth-Konfiguration nicht.
 - Ohne beide Auth-Variablen bleibt nur der Loopback-Entwicklerstart möglich; Nicht-Loopback-Bindings wie `0.0.0.0` werden beim Direktstart blockiert.
 - Dark Mode ist der Standard; die Theme-Auswahl bleibt lokal im Browser gespeichert.
 - API-Token werden nur über Umgebung oder Token-Datei gelesen und in Aktionsausgaben redigiert.

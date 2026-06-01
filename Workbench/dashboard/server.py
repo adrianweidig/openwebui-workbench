@@ -283,6 +283,12 @@ def bind_auth_error(host: str, config: "WorkbenchConfig") -> str:
     return t("auth_required_for_non_loopback", config.locale)
 
 
+def required_auth_error(config: "WorkbenchConfig") -> str:
+    if not config.auth_required or config.auth_enabled:
+        return ""
+    return t("auth_required_for_runtime", config.locale)
+
+
 def tls_verify_from_env() -> bool:
     return env_bool("OPENWEBUI_TLS_VERIFY", True)
 
@@ -302,6 +308,7 @@ def openwebui_ssl_context(tls_verify: bool | None = None, ca_file: str = "", ca_
 class WorkbenchConfig:
     root: Path = REPO_ROOT
     allow_write: bool = env_bool("WORKBENCH_ALLOW_WRITE", True)
+    auth_required: bool = env_bool("WORKBENCH_REQUIRE_AUTH", False)
     auth_username: str = os.environ.get("WORKBENCH_AUTH_USERNAME", "").strip()
     auth_password: str = read_secret_from_env("WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE")
     openwebui_base_url: str = env_url("OPENWEBUI_BASE_URL", "http://openwebui:8080")
@@ -360,6 +367,7 @@ class WorkbenchState:
             },
             "write_enabled": self.config.allow_write,
             "dashboard": {
+                "auth_required": self.config.auth_required,
                 "auth_enabled": self.config.auth_enabled,
                 "auth_username_configured": bool(self.config.auth_username),
                 "auth_password_configured": bool(self.config.auth_password),
@@ -1192,6 +1200,10 @@ def main(argv: list[str] | None = None) -> int:
     config_errors = configuration_errors()
     if config_errors:
         print_startup_errors(config_errors)
+        return 1
+    auth_error = required_auth_error(STATE.config)
+    if auth_error:
+        print_startup_errors([auth_error])
         return 1
     auth_error = bind_auth_error(args.host, STATE.config)
     if auth_error:

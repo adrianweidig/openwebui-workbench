@@ -38,7 +38,7 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 
 The init command creates an ignored local `.env` from `Deployment/workbench.env.example`, sets random values for `WEBUI_SECRET_KEY` and `WORKBENCH_AUTH_PASSWORD`, and does not print those values to the console. Existing `.env` files are not overwritten without `--force`.
 
-The local `.env` must set `WORKBENCH_AUTH_PASSWORD`. Without this password Docker Compose fails before starting the dashboard; with a password set, all dashboard routes are protected with HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` is optional and defaults to `workbench`.
+For Compose or Portainer, the local `.env` must set `WORKBENCH_REQUIRE_AUTH=true` and either `WORKBENCH_AUTH_PASSWORD` or a mounted `WORKBENCH_AUTH_PASSWORD_FILE`. Without effective authentication the dashboard container exits with a clear startup error; with a password set, all dashboard routes are protected with HTTP Basic Auth. `WORKBENCH_AUTH_USERNAME` is optional and defaults to `workbench`.
 
 Then open:
 
@@ -96,8 +96,10 @@ The dashboard defaults to German. It can switch to English through the language 
 | `OPENWEBUI_ADMIN_TOKEN` | Admin API key for real synchronization. |
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternative path to a token file in the container. |
 | `WORKBENCH_AUTH_USERNAME` | Username for dashboard HTTP Basic Auth. Compose default: `workbench`. |
-| `WORKBENCH_AUTH_PASSWORD` | Password for dashboard HTTP Basic Auth. Required by Compose. Do not commit it. |
+| `WORKBENCH_REQUIRE_AUTH` | `true` requires effective dashboard authentication at startup. Compose/Portainer set this by default. |
+| `WORKBENCH_AUTH_PASSWORD` | Password for dashboard HTTP Basic Auth. Alternative to `WORKBENCH_AUTH_PASSWORD_FILE`; do not commit it. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternative path to a password file in the container. |
+| `WORKBENCH_AUTH_PASSWORD_HOST_FILE` | Host path for generated Portainer stacks, bind-mounted read-only to `WORKBENCH_AUTH_PASSWORD_FILE`. |
 | `WORKBENCH_ALLOW_WRITE` | `true` allows Markdown write access. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout for generator, dry-run, and verification actions. |
 | `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Process timeout for the background OpenWebUI sync. Default: 1800 seconds. |
@@ -110,7 +112,7 @@ The dashboard defaults to German. It can switch to English through the language 
 
 ## Security
 
-The dashboard is intended for local use. In Compose it is bound to `127.0.0.1`. When `WORKBENCH_AUTH_USERNAME` and a password are set, all routes are protected with HTTP Basic Auth. Direct non-loopback binds such as `0.0.0.0` are blocked unless that auth configuration is present. API tokens are read only from environment variables or token files and are redacted in action output.
+The dashboard is intended for local use. In Compose it is bound to `127.0.0.1`. When `WORKBENCH_AUTH_USERNAME` and a password or password file are set, all routes are protected with HTTP Basic Auth. With `WORKBENCH_REQUIRE_AUTH=true`, the dashboard does not start without that auth configuration. Direct non-loopback binds such as `0.0.0.0` are blocked unless authentication is present. API tokens are read only from environment variables or token files and are redacted in action output.
 
 Mutating API routes (`POST`, `PUT`, `DELETE`) also require the `X-Workbench-Request: same-origin` header. The dashboard UI sends it automatically; direct API clients must set it explicitly.
 

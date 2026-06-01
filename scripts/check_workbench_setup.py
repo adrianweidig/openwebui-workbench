@@ -28,6 +28,7 @@ DEFAULT_COMPOSE_FILE = ROOT / "Deployment" / "docker-compose.workbench.yml"
 BOOLEAN_DEFAULTS = {
     "OPENWEBUI_TLS_VERIFY": "true",
     "WORKBENCH_ALLOW_WRITE": "true",
+    "WORKBENCH_REQUIRE_AUTH": "true",
     "WORKBENCH_AUTOMATION_ENABLED": "true",
     "WORKBENCH_AUTOMATION_RUN_ON_START": "false",
     "WEBUI_AUTH": "true",
@@ -96,8 +97,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "--allow-unverified-secret-file-path",
         action="store_true",
         help=(
-            "treat a missing OPENWEBUI_ADMIN_TOKEN_HOST_FILE as a warning for Docker/Portainer host-only paths; "
-            "token file contents are never read"
+            "treat missing secret host files as warnings for Docker/Portainer host-only paths; "
+            "secret file contents are never read"
         ),
     )
     parser.add_argument(
@@ -466,8 +467,29 @@ def check_file_references(
                 if action:
                     actions.append(action)
 
+    auth_password_host_file = values.get("WORKBENCH_AUTH_PASSWORD_HOST_FILE", "").strip()
+    auth_password_container_file = values.get("WORKBENCH_AUTH_PASSWORD_FILE", "").strip()
+    if auth_password_host_file:
+        if not auth_password_container_file:
+            failures.append("WORKBENCH_AUTH_PASSWORD_HOST_FILE is set but WORKBENCH_AUTH_PASSWORD_FILE is empty.")
+            actions.append("Set WORKBENCH_AUTH_PASSWORD_FILE to the Workbench container mount target.")
+        auth_password_host_path = _env_path(auth_password_host_file, env_path)
+        if not auth_password_host_path.exists() and allow_unverified_secret_file_path:
+            warnings.append(
+                "WORKBENCH_AUTH_PASSWORD_HOST_FILE was not found locally but is allowed as a Docker/Portainer host path."
+            )
+            actions.append("Verify the password file on the Docker/Portainer host before starting the stack.")
+        else:
+            error, action = _validate_existing_file(auth_password_host_path, "WORKBENCH_AUTH_PASSWORD_HOST_FILE")
+            if error:
+                failures.append(error)
+                if action:
+                    actions.append(action)
+
     for key, kind in OPTIONAL_FILE_KEYS.items():
         if key == "OPENWEBUI_ADMIN_TOKEN_FILE" and admin_token_host_file:
+            continue
+        if key == "WORKBENCH_AUTH_PASSWORD_FILE" and auth_password_host_file:
             continue
         raw = values.get(key, "").strip()
         if not raw:

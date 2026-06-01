@@ -48,6 +48,20 @@ class SecurityHygieneTests(unittest.TestCase):
 
         self.assertEqual(findings, [])
 
+    def test_powershell_helper_assignment_is_not_a_secret_value(self) -> None:
+        module = load_security_module()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            script = root / "configure.ps1"
+            script.write_text(
+                '$verifiedSecretHostFile = Test-WorkbenchHostFile -Name "WORKBENCH_AUTH_PASSWORD_HOST_FILE"\n',
+                encoding="utf-8",
+            )
+
+            _checked, findings = module.scan_paths([script], root)
+
+        self.assertEqual(findings, [])
+
 
 if __name__ == "__main__":
     unittest.main()

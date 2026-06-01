@@ -144,7 +144,7 @@ def looks_like_secret_value(value: str, line: str) -> bool:
         return False
     if any(marker in clean for marker in ("(", ")", "[", "]", "{", "}")):
         return False
-    if clean.startswith(("Read-", "self.", "os.", "Path.", "runtime.", "value.", "state.")):
+    if clean.startswith(("Read-", "Test-", "self.", "os.", "Path.", "runtime.", "value.", "state.")):
         return False
     if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_.]*", clean):
         return False

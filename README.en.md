@@ -132,7 +132,7 @@ python scripts/check_workbench_setup.py
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
 ```
 
-The init command creates an ignored local `.env` with a random `WEBUI_SECRET_KEY` and `WORKBENCH_AUTH_PASSWORD`, does not overwrite an existing `.env` without `--force`, and does not print secret values.
+The init command creates an ignored local `.env` with a random `WEBUI_SECRET_KEY` and `WORKBENCH_AUTH_PASSWORD`, does not overwrite an existing `.env` without `--force`, and does not print secret values. For Portainer or Docker-secret setups, a mounted `WORKBENCH_AUTH_PASSWORD_FILE` can be used instead of the direct password value; Compose/Portainer then require effective dashboard authentication at startup through `WORKBENCH_REQUIRE_AUTH=true`.
 The setup doctor checks Python, the env template, the local `.env`, host ports, OpenWebUI URLs, boolean flags, numeric runtime limits, file-backed runtime paths, the Compose file, and Docker availability before startup. It does not start containers or print secret values. For administrator acceptance checks, use `python scripts/check_workbench_setup.py --require-docker` to treat missing Docker as a failure.
 If Docker is not on the Windows PATH but `wsl.exe` is available, the setup doctor points admins to the WSL path. Run Docker and Compose checks from the WSL environment where Docker is installed.
 For Windows sessions that should use a WSL Docker installation, pass the Docker command explicitly for non-mutating Compose checks:

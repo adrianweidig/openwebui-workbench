@@ -8,6 +8,8 @@ param(
     [string]$RootCaPath = "",
     [string]$OpenWebUIAdminTokenHostFile = "",
     [string]$OpenWebUIAdminTokenContainerFile = "/run/secrets/openwebui-admin-token",
+    [string]$WorkbenchAuthPasswordHostFile = "",
+    [string]$WorkbenchAuthPasswordContainerFile = "/run/secrets/workbench-auth-password",
     [string]$WorkbenchImage = "ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest",
     [string]$OpenWebUIImage = "ghcr.io/open-webui/open-webui:main",
     [string]$WorkbenchPublishedBind = "127.0.0.1:8088",
@@ -109,7 +111,7 @@ function Test-WorkbenchHostFile {
         if ($AllowUnverified) {
             return $PathValue.Trim()
         }
-        throw "$Name ist lokal nicht lesbar: $PathValue. Wenn dies bewusst ein Docker-/Portainer-Hostpfad ist, prüfe die Datei administrativ und starte den Assistenten mit -AllowUnverifiedSecretFilePath. Der Assistent liest keine Token-Dateiinhalte."
+        throw "$Name ist lokal nicht lesbar: $PathValue. Wenn dies bewusst ein Docker-/Portainer-Hostpfad ist, prüfe die Datei administrativ und starte den Assistenten mit -AllowUnverifiedSecretFilePath. Der Assistent liest keine Secret-Dateiinhalte."
     }
     $item = Get-Item -LiteralPath $resolved.Path -ErrorAction Stop
     if ($item.PSIsContainer) {
@@ -206,7 +208,18 @@ $RootCaPath = Read-WorkbenchValue -Prompt "Optionaler Host-Pfad zur Root-CA im P
 $RootCaPath = Test-RootCaFile -PathValue $RootCaPath -AllowUnverified:$AllowUnverifiedRootCaPath
 
 $authUser = Read-WorkbenchValue -Prompt "Workbench-Benutzername" -Default "workbench"
-$authPassword = Read-WorkbenchSecret -Prompt "Workbench-Passwort (leer lassen, wenn später in Portainer gesetzt wird; Stack startet erst mit gesetztem Wert)"
+$authPassword = Read-WorkbenchSecret -Prompt "Workbench-Passwort (leer lassen, wenn später in Portainer gesetzt oder per Datei gemountet wird; Stack startet erst mit gesetzter Authentifizierung)"
+$selectedWorkbenchPasswordHostFile = Read-WorkbenchValue -Prompt "Optionaler Docker-/Portainer-Hostpfad zu einer Workbench-Passwortdatei" -Default $WorkbenchAuthPasswordHostFile
+$verifiedWorkbenchPasswordHostFile = Test-WorkbenchHostFile -Name "WORKBENCH_AUTH_PASSWORD_HOST_FILE" -PathValue $selectedWorkbenchPasswordHostFile -AllowUnverified:$AllowUnverifiedSecretFilePath
+$WorkbenchAuthPasswordHostFile = $verifiedWorkbenchPasswordHostFile
+$WorkbenchAuthPasswordFile = ""
+if ($WorkbenchAuthPasswordHostFile) {
+    $WorkbenchAuthPasswordContainerFile = Read-WorkbenchValue -Prompt "Containerpfad für die Workbench-Passwortdatei" -Default $WorkbenchAuthPasswordContainerFile -Required
+    if (-not $WorkbenchAuthPasswordContainerFile.StartsWith("/")) {
+        throw "WORKBENCH_AUTH_PASSWORD_FILE muss ein absoluter Containerpfad sein."
+    }
+    $WorkbenchAuthPasswordFile = $WorkbenchAuthPasswordContainerFile
+}
 $adminToken = Read-WorkbenchSecret -Prompt "OpenWebUI-Admin-Token für Sync-Aktionen (optional)"
 $selectedAdminCredentialHostFile = Read-WorkbenchValue -Prompt "Optionaler Docker-/Portainer-Hostpfad zu einer OpenWebUI-Admin-Token-Datei" -Default $OpenWebUIAdminTokenHostFile
 $verifiedAdminCredentialHostFile = Test-WorkbenchHostFile -Name "OPENWEBUI_ADMIN_TOKEN_HOST_FILE" -PathValue $selectedAdminCredentialHostFile -AllowUnverified:$AllowUnverifiedSecretFilePath
@@ -232,7 +245,10 @@ $envLines = @(
     "WORKBENCH_PUBLISHED_BIND=$WorkbenchPublishedBind",
     "WORKBENCH_DOCKER_NETWORK=$DockerNetworkName",
     "WORKBENCH_AUTH_USERNAME=$authUser",
+    "WORKBENCH_REQUIRE_AUTH=true",
     "WORKBENCH_AUTH_PASSWORD=$authPassword",
+    "WORKBENCH_AUTH_PASSWORD_FILE=$WorkbenchAuthPasswordFile",
+    "WORKBENCH_AUTH_PASSWORD_HOST_FILE=$WorkbenchAuthPasswordHostFile",
     "WORKBENCH_ALLOW_WRITE=true",
     "WORKBENCH_COMMAND_TIMEOUT_SECONDS=300",
     "WORKBENCH_AUTOMATION_ENABLED=true",
@@ -370,8 +386,10 @@ $composeLines += @(
     "      WORKBENCH_AUTOMATION_ACTIONS: `${WORKBENCH_AUTOMATION_ACTIONS:-check}",
     "      WORKBENCH_AUTOMATION_RUN_ON_START: `${WORKBENCH_AUTOMATION_RUN_ON_START:-false}",
     "      WORKBENCH_LOCALE: `${WORKBENCH_LOCALE:-de}",
+    "      WORKBENCH_REQUIRE_AUTH: `${WORKBENCH_REQUIRE_AUTH:-true}",
     "      WORKBENCH_AUTH_USERNAME: `${WORKBENCH_AUTH_USERNAME:-}",
-    "      WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:?Set WORKBENCH_AUTH_PASSWORD in Portainer stack environment before starting Workbench}",
+    "      WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:-}",
+    "      WORKBENCH_AUTH_PASSWORD_FILE: `${WORKBENCH_AUTH_PASSWORD_FILE:-}",
     "      OPENWEBUI_BASE_URL: `${OPENWEBUI_BASE_URL}",
     "      OPENWEBUI_PUBLIC_URL: `${OPENWEBUI_PUBLIC_URL}",
     "      OPENWEBUI_TLS_VERIFY: `${OPENWEBUI_TLS_VERIFY:-true}",
@@ -394,6 +412,15 @@ $composeLines += @(
     "        source: `${WORKBENCH_WORKSPACE_HOST_PATH}",
     "        target: /workspace"
 )
+
+if ($WorkbenchAuthPasswordHostFile) {
+    $composeLines += @(
+        "      - type: bind",
+        "        source: `${WORKBENCH_AUTH_PASSWORD_HOST_FILE}",
+        "        target: `${WORKBENCH_AUTH_PASSWORD_FILE}",
+        "        read_only: true"
+    )
+}
 
 if ($OpenWebUIAdminTokenHostFile) {
     $composeLines += @(

@@ -25,7 +25,10 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
         template = root / "workbench.env.example"
         env_file = root / ".env"
         compose_file = root / "docker-compose.workbench.yml"
-        template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_LOCALE=de\n", encoding="utf-8")
+        template.write_text(
+            "WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\nWORKBENCH_LOCALE=de\n",
+            encoding="utf-8",
+        )
         compose_file.write_text("services:\n  workbench:\n    image: local/workbench:test\n", encoding="utf-8")
         return template, env_file, compose_file
 
@@ -607,6 +610,83 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             levels = {result.title: result.level for result in results}
             self.assertEqual(levels["File references"], "ok")
             self.assertNotIn("DO_NOT_PRINT_TOKEN_VALUE", rendered)
+
+    def test_workbench_password_host_file_is_validated_without_reading_secret_value(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            password_file = Path(temp_dir) / "workbench-password.txt"
+            password_file.write_text("DO_NOT_PRINT_PASSWORD_VALUE\n", encoding="utf-8")
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=\n"
+                f"WORKBENCH_AUTH_PASSWORD_HOST_FILE={password_file}\n"
+                "WORKBENCH_AUTH_PASSWORD_FILE=/run/secrets/workbench-auth-password\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Local .env"], "ok")
+            self.assertEqual(levels["File references"], "ok")
+            self.assertNotIn("DO_NOT_PRINT_PASSWORD_VALUE", rendered)
+
+    def test_missing_workbench_password_host_file_can_warn_for_portainer_host_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            missing_password_file = Path(temp_dir) / "docker-host-only-workbench-password.txt"
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=\n"
+                f"WORKBENCH_AUTH_PASSWORD_HOST_FILE={missing_password_file}\n"
+                "WORKBENCH_AUTH_PASSWORD_FILE=/run/secrets/workbench-auth-password\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+                allow_unverified_secret_file_path=True,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Local .env"], "ok")
+            self.assertEqual(levels["File references"], "warn")
+            self.assertIn("WORKBENCH_AUTH_PASSWORD_HOST_FILE", rendered)
+            self.assertIn("Docker/Portainer host path", rendered)
+            self.assertIn("Verify the password file", rendered)
+
+    def test_workbench_password_host_file_requires_container_mount_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            password_file = Path(temp_dir) / "workbench-password.txt"
+            password_file.write_text("DO_NOT_PRINT_PASSWORD_VALUE\n", encoding="utf-8")
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=\n"
+                f"WORKBENCH_AUTH_PASSWORD_HOST_FILE={password_file}\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Local .env"], "ok")
+            self.assertEqual(levels["File references"], "fail")
+            self.assertIn("WORKBENCH_AUTH_PASSWORD_FILE is empty", rendered)
+            self.assertNotIn("DO_NOT_PRINT_PASSWORD_VALUE", rendered)
 
     def test_missing_admin_token_host_file_fails_without_portainer_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

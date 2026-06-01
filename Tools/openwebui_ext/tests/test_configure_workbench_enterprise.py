@@ -13,14 +13,17 @@ POWERSHELL = shutil.which("powershell") or shutil.which("pwsh")
 
 
 class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
-    def test_generated_portainer_stack_requires_workbench_password(self) -> None:
+    def test_generated_portainer_stack_requires_runtime_auth_without_compose_secret_interpolation(self) -> None:
         script = WIZARD.read_text(encoding="utf-8")
 
+        self.assertIn("WORKBENCH_REQUIRE_AUTH=true", script)
+        self.assertIn("WORKBENCH_REQUIRE_AUTH: `${WORKBENCH_REQUIRE_AUTH:-true}", script)
         self.assertIn(
-            "WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:?Set WORKBENCH_AUTH_PASSWORD",
+            "WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:-}",
             script,
         )
-        self.assertNotIn("WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:-}", script)
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_FILE: `${WORKBENCH_AUTH_PASSWORD_FILE:-}", script)
+        self.assertNotIn("WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:?", script)
 
     def test_generated_portainer_stack_sets_safe_automation_defaults(self) -> None:
         script = WIZARD.read_text(encoding="utf-8")
@@ -65,7 +68,17 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE: `${OPENWEBUI_ADMIN_TOKEN_FILE:-}", script)
         self.assertIn("source: `${OPENWEBUI_ADMIN_TOKEN_HOST_FILE}", script)
         self.assertIn("target: `${OPENWEBUI_ADMIN_TOKEN_FILE}", script)
-        self.assertIn("Der Assistent liest keine Token-Dateiinhalte", script)
+        self.assertIn("Der Assistent liest keine Secret-Dateiinhalte", script)
+
+    def test_wizard_exposes_workbench_password_file_path(self) -> None:
+        script = WIZARD.read_text(encoding="utf-8")
+
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_FILE=", script)
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_HOST_FILE=", script)
+        self.assertIn('[string]$WorkbenchAuthPasswordContainerFile = "/run/secrets/workbench-auth-password"', script)
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_FILE: `${WORKBENCH_AUTH_PASSWORD_FILE:-}", script)
+        self.assertIn("source: `${WORKBENCH_AUTH_PASSWORD_HOST_FILE}", script)
+        self.assertIn("target: `${WORKBENCH_AUTH_PASSWORD_FILE}", script)
 
     def test_wizard_validates_openwebui_urls_before_writing_env(self) -> None:
         script = WIZARD.read_text(encoding="utf-8")
@@ -245,6 +258,43 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertNotIn("not-a-real-token", compose)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_local_workbench_password_file_is_mounted_read_only(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            password_file = Path(tmpdir) / "workbench-password.txt"
+            password_file.write_text("not-a-real-password\n", encoding="utf-8")
+            subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-WorkbenchAuthPasswordHostFile",
+                    str(password_file),
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                check=True,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            env_text = (Path(tmpdir) / "workbench.env").read_text(encoding="utf-8")
+            compose = (Path(tmpdir) / "portainer-compose.yml").read_text(encoding="utf-8")
+
+        self.assertIn("WORKBENCH_REQUIRE_AUTH=true", env_text)
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_FILE=/run/secrets/workbench-auth-password", env_text)
+        self.assertIn(f"WORKBENCH_AUTH_PASSWORD_HOST_FILE={password_file.resolve()}", env_text)
+        self.assertIn("source: ${WORKBENCH_AUTH_PASSWORD_HOST_FILE}", compose)
+        self.assertIn("target: ${WORKBENCH_AUTH_PASSWORD_FILE}", compose)
+        self.assertIn("read_only: true", compose)
+        self.assertNotIn("not-a-real-password", env_text)
+        self.assertNotIn("not-a-real-password", compose)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_unverified_remote_admin_token_file_is_written_when_explicitly_allowed(self) -> None:
         assert POWERSHELL is not None
         remote_token_path = "/run/portainer-secrets/openwebui-admin-token"
@@ -278,6 +328,39 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn("target: ${OPENWEBUI_ADMIN_TOKEN_FILE}", compose)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_unverified_remote_workbench_password_file_is_written_when_explicitly_allowed(self) -> None:
+        assert POWERSHELL is not None
+        remote_password_path = "/run/portainer-secrets/workbench-auth-password"
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-WorkbenchAuthPasswordHostFile",
+                    remote_password_path,
+                    "-AllowUnverifiedSecretFilePath",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                check=True,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            env_text = (Path(tmpdir) / "workbench.env").read_text(encoding="utf-8")
+            compose = (Path(tmpdir) / "portainer-compose.yml").read_text(encoding="utf-8")
+
+        self.assertIn(f"WORKBENCH_AUTH_PASSWORD_HOST_FILE={remote_password_path}", env_text)
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_FILE=/run/secrets/workbench-auth-password", env_text)
+        self.assertIn("source: ${WORKBENCH_AUTH_PASSWORD_HOST_FILE}", compose)
+        self.assertIn("target: ${WORKBENCH_AUTH_PASSWORD_FILE}", compose)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_unverified_remote_admin_token_file_fails_without_opt_in(self) -> None:
         assert POWERSHELL is not None
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -302,6 +385,32 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
 
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("OPENWEBUI_ADMIN_TOKEN_HOST_FILE ist lokal nicht lesbar", result.stderr + result.stdout)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_unverified_remote_workbench_password_file_fails_without_opt_in(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-WorkbenchAuthPasswordHostFile",
+                    "/run/portainer-secrets/workbench-auth-password",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("WORKBENCH_AUTH_PASSWORD_HOST_FILE ist lokal nicht lesbar", result.stderr + result.stdout)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_portainer_url_rejects_embedded_credentials_without_leaking_secret(self) -> None:

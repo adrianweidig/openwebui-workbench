@@ -213,11 +213,13 @@ class WorkbenchStateTests(unittest.TestCase):
             WorkbenchConfig(
                 root=self.root,
                 openwebui_base_url="http://127.0.0.1:9",
+                auth_required=True,
                 auth_username="admin",
                 auth_password="secret",
             )
         )
         summary = state.summary()
+        self.assertTrue(summary["dashboard"]["auth_required"])
         self.assertTrue(summary["dashboard"]["auth_enabled"])
         self.assertTrue(summary["dashboard"]["auth_username_configured"])
         self.assertTrue(summary["dashboard"]["auth_password_configured"])
@@ -298,6 +300,8 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(t("auth_required", "en"), "Authentication required.")
         self.assertIn("Loopback", t("auth_required_for_non_loopback", "de"))
         self.assertIn("loopback", t("auth_required_for_non_loopback", "en"))
+        self.assertIn("WORKBENCH_REQUIRE_AUTH", t("auth_required_for_runtime", "de"))
+        self.assertIn("WORKBENCH_REQUIRE_AUTH", t("auth_required_for_runtime", "en"))
 
     def test_dashboard_server_defaults_to_localhost(self) -> None:
         with patch.dict(os.environ, {"WORKBENCH_HOST": "", "WORKBENCH_PORT": ""}, clear=False):
@@ -426,6 +430,51 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(dashboard_server.bind_auth_error("::1", no_auth), "")
         self.assertIn("WORKBENCH_AUTH_PASSWORD", dashboard_server.bind_auth_error("0.0.0.0", no_auth))
         self.assertEqual(dashboard_server.bind_auth_error("0.0.0.0", with_auth), "")
+
+    def test_required_auth_requires_password_or_password_file(self) -> None:
+        no_password = WorkbenchConfig(
+            root=self.root,
+            auth_required=True,
+            auth_username="workbench",
+            auth_password="",
+        )
+        with_password = WorkbenchConfig(
+            root=self.root,
+            auth_required=True,
+            auth_username="workbench",
+            auth_password="secret",
+        )
+        not_required = WorkbenchConfig(
+            root=self.root,
+            auth_required=False,
+            auth_username="workbench",
+            auth_password="",
+        )
+
+        self.assertIn("WORKBENCH_AUTH_PASSWORD", dashboard_server.required_auth_error(no_password))
+        self.assertEqual(dashboard_server.required_auth_error(with_password), "")
+        self.assertEqual(dashboard_server.required_auth_error(not_required), "")
+
+    def test_dashboard_server_required_auth_error_exits_without_traceback(self) -> None:
+        env = os.environ.copy()
+        for name in ("WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE"):
+            env.pop(name, None)
+        env["WORKBENCH_AUTH_USERNAME"] = "workbench"
+        env["WORKBENCH_REQUIRE_AUTH"] = "true"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "Workbench.dashboard.server"],
+            cwd=Path(__file__).resolve().parents[3],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("startup failed", result.stderr)
+        self.assertIn("WORKBENCH_REQUIRE_AUTH", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
 
     def test_import_action_uses_local_config_and_returns_failure_output(self) -> None:
         config_dir = self.root / "scripts"

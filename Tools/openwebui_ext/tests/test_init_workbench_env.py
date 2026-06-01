@@ -16,7 +16,7 @@ class InitWorkbenchEnvTests(unittest.TestCase):
             template = root / "workbench.env.example"
             output = root / ".env"
             template.write_text(
-                "WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nOPENWEBUI_ADMIN_TOKEN=\nWORKBENCH_LOCALE=de\n",
+                "WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\nOPENWEBUI_ADMIN_TOKEN=\nWORKBENCH_LOCALE=de\n",
                 encoding="utf-8",
             )
 
@@ -34,7 +34,7 @@ class InitWorkbenchEnvTests(unittest.TestCase):
             root = Path(temp_dir)
             template = root / "workbench.env.example"
             output = root / ".env"
-            template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\n", encoding="utf-8")
+            template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\n", encoding="utf-8")
             output.write_text("WEBUI_SECRET_KEY=keep\nWORKBENCH_AUTH_PASSWORD=keep\n", encoding="utf-8")
 
             with self.assertRaises(FileExistsError):
@@ -59,14 +59,40 @@ class InitWorkbenchEnvTests(unittest.TestCase):
             env_file = Path(temp_dir) / ".env"
             env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=\n", encoding="utf-8")
 
-            self.assertEqual(init_workbench_env.missing_required_values(env_file), ["WORKBENCH_AUTH_PASSWORD"])
+            self.assertEqual(
+                init_workbench_env.missing_required_values(env_file),
+                ["WORKBENCH_AUTH_PASSWORD or WORKBENCH_AUTH_PASSWORD_FILE"],
+            )
+
+    def test_check_accepts_auth_password_file_alternative(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            env_file = Path(temp_dir) / ".env"
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\n"
+                "WORKBENCH_REQUIRE_AUTH=true\n"
+                "WORKBENCH_AUTH_PASSWORD=\n"
+                "WORKBENCH_AUTH_PASSWORD_FILE=/run/secrets/workbench-auth-password\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(init_workbench_env.missing_required_values(env_file), [])
+
+    def test_check_allows_disabled_auth_for_local_only_start(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            env_file = Path(temp_dir) / ".env"
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_REQUIRE_AUTH=false\nWORKBENCH_AUTH_PASSWORD=\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(init_workbench_env.missing_required_values(env_file), [])
 
     def test_cli_reports_existing_file_without_traceback(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             template = root / "workbench.env.example"
             output = root / ".env"
-            template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\n", encoding="utf-8")
+            template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\n", encoding="utf-8")
             output.write_text("WEBUI_SECRET_KEY=keep\nWORKBENCH_AUTH_PASSWORD=keep\n", encoding="utf-8")
             stdout = io.StringIO()
             stderr = io.StringIO()
