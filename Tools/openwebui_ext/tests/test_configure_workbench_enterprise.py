@@ -56,6 +56,12 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn('Test-WorkbenchUrl -Name "PORTAINER_URL"', script)
         self.assertIn("PORTAINER_URL=$PortainerUrl", script)
 
+    def test_wizard_validates_openwebui_urls_before_writing_env(self) -> None:
+        script = WIZARD.read_text(encoding="utf-8")
+
+        self.assertIn('Test-WorkbenchUrl -Name "OPENWEBUI_BASE_URL"', script)
+        self.assertIn('Test-WorkbenchUrl -Name "OPENWEBUI_PUBLIC_URL"', script)
+
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_existing_mode_does_not_emit_unused_openwebui_volume(self) -> None:
         assert POWERSHELL is not None
@@ -177,6 +183,38 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         rendered = result.stderr + result.stdout
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("PORTAINER_URL darf keine eingebetteten Zugangsdaten enthalten", rendered)
+        self.assertNotIn("super-secret", rendered)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_openwebui_urls_reject_embedded_credentials_without_leaking_secret(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-OpenWebUIMode",
+                    "existing",
+                    "-OpenWebUIBaseUrl",
+                    "https://svc:super-secret@openwebui.local",
+                    "-OpenWebUIPublicUrl",
+                    "https://openwebui.local",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+
+        rendered = result.stderr + result.stdout
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("OPENWEBUI_BASE_URL darf keine eingebetteten Zugangsdaten enthalten", rendered)
         self.assertNotIn("super-secret", rendered)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")

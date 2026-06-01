@@ -170,6 +170,8 @@ else {
     $OpenWebUIPublicUrl = Read-WorkbenchValue -Prompt "Browser-URL für OpenWebUI" -Default $(if ($OpenWebUIPublicUrl) { $OpenWebUIPublicUrl } else { $OpenWebUIBaseUrl }) -Required
 }
 
+$OpenWebUIBaseUrl = Test-WorkbenchUrl -Name "OPENWEBUI_BASE_URL" -Value $OpenWebUIBaseUrl
+$OpenWebUIPublicUrl = Test-WorkbenchUrl -Name "OPENWEBUI_PUBLIC_URL" -Value $OpenWebUIPublicUrl
 $PortainerUrl = Read-WorkbenchValue -Prompt "Optionale Portainer-URL für Runtime-Probes" -Default $PortainerUrl
 $PortainerUrl = Test-WorkbenchUrl -Name "PORTAINER_URL" -Value $PortainerUrl
 $RootCaPath = Read-WorkbenchValue -Prompt "Optionaler Host-Pfad zur Root-CA im PEM-Format" -Default $RootCaPath
