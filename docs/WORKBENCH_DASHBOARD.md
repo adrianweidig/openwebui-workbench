@@ -129,6 +129,7 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `OPENWEBUI_CA_PATH` | Optionales CA-Verzeichnis für private lokale OpenWebUI-Zertifikate. |
 | `OPENWEBUI_ADMIN_TOKEN` | Admin-API-Key für echte Synchronisierung. Nicht nötig für Lesen, Bearbeiten, Generieren oder Dry-Run. |
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternativer Pfad zu einer Token-Datei im Container. |
+| `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` | Hostpfad für generierte Portainer-Stacks oder den optionalen Compose-Override `docker-compose.openwebui-admin-token-file.yml`, der read-only nach `OPENWEBUI_ADMIN_TOKEN_FILE` gemountet wird. |
 | `WEBUI_SECRET_KEY` | Stabiler lokaler OpenWebUI-Secret-Key, damit Sessions nach Container-Neustarts erhalten bleiben. |
 | `WORKBENCH_AUTH_USERNAME` | Benutzername für die HTTP-Basic-Auth des Dashboards. Standard in Compose: `workbench`. |
 | `WORKBENCH_REQUIRE_AUTH` | `true` verlangt wirksame Dashboard-Authentifizierung beim Start. Compose/Portainer setzen dies standardmäßig. |

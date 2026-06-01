@@ -95,6 +95,7 @@ The dashboard defaults to German. It can switch to English through the language 
 | `OPENWEBUI_CA_PATH` | Optional CA directory for private local certificates. |
 | `OPENWEBUI_ADMIN_TOKEN` | Admin API key for real synchronization. |
 | `OPENWEBUI_ADMIN_TOKEN_FILE` | Alternative path to a token file in the container. |
+| `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` | Host path for generated Portainer stacks or the optional Compose override `docker-compose.openwebui-admin-token-file.yml`, bind-mounted read-only to `OPENWEBUI_ADMIN_TOKEN_FILE`. |
 | `WORKBENCH_AUTH_USERNAME` | Username for dashboard HTTP Basic Auth. Compose default: `workbench`. |
 | `WORKBENCH_REQUIRE_AUTH` | `true` requires effective dashboard authentication at startup. Compose/Portainer set this by default. |
 | `WORKBENCH_AUTH_PASSWORD` | Password for dashboard HTTP Basic Auth. Alternative to `WORKBENCH_AUTH_PASSWORD_FILE`; do not commit it. |
