@@ -137,6 +137,7 @@ Die generierte Workbench-Service-Definition verlangt `WORKBENCH_AUTH_PASSWORD`; 
 Die generierte Portainer-Compose-Datei enthält Healthchecks für die gebündelte OpenWebUI-Instanz (`/health`) und das Workbench-Dashboard (`/healthz`), damit Portainer den Startzustand direkt als healthy oder unhealthy anzeigen kann.
 Die OpenWebUI-URL-Felder werden als vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten validiert, bevor sie in `workbench.env` geschrieben werden.
 Eine optional gesetzte `PORTAINER_URL` wird als vollständige `http`- oder `https`-URL ohne eingebettete Zugangsdaten validiert und nur in `workbench.env` gespeichert. Sie dient dem hostseitigen Setup-Doctor für Reachability-Prüfungen und wird nicht als Token oder Secret behandelt.
+Wenn der OpenWebUI-Admin-Token als Docker-/Portainer-Secret oder Bind-Datei gemountet wird, kann `OPENWEBUI_ADMIN_TOKEN_FILE` in `workbench.env` auf diesen Containerpfad gesetzt werden. Der Wizard schreibt keinen Token in diese Datei.
 Wenn Workbench und OpenWebUI in ein bereits vorhandenes gemeinsames Docker-Netz sollen, etwa für eine bestehende OpenWebUI-, Reverse-Proxy- oder Portainer-Umgebung, im Assistenten den vorhandenen Netzwerknamen angeben und das externe Netzwerk bestätigen. Dann erzeugt der Stack das Netzwerk nicht selbst, sondern bindet beide Services über `external: true` an `WORKBENCH_DOCKER_NETWORK`. Ohne diese Auswahl legt der generierte Stack ein eigenes Bridge-Netz mit diesem Namen an.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:

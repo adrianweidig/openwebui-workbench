@@ -205,7 +205,8 @@ $envLines = @(
     "OPENWEBUI_PUBLIC_URL=$OpenWebUIPublicUrl",
     "PORTAINER_URL=$PortainerUrl",
     "OPENWEBUI_TLS_VERIFY=true",
-    "OPENWEBUI_ADMIN_TOKEN=$adminToken"
+    "OPENWEBUI_ADMIN_TOKEN=$adminToken",
+    "OPENWEBUI_ADMIN_TOKEN_FILE="
 )
 
 if ($OpenWebUIMode -eq "bundled") {
@@ -337,6 +338,7 @@ $composeLines += @(
     "      OPENWEBUI_CA_FILE: `${OPENWEBUI_CA_FILE:-}",
     "      OPENWEBUI_CA_PATH: `${OPENWEBUI_CA_PATH:-}",
     "      OPENWEBUI_ADMIN_TOKEN: `${OPENWEBUI_ADMIN_TOKEN:-}",
+    "      OPENWEBUI_ADMIN_TOKEN_FILE: `${OPENWEBUI_ADMIN_TOKEN_FILE:-}",
     "      WORKBENCH_CA_BUNDLE: `${WORKBENCH_CA_BUNDLE:-}",
     "      WORKBENCH_SYSTEM_CA_BUNDLE: `${WORKBENCH_SYSTEM_CA_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}",
     "      SSL_CERT_FILE: `${SSL_CERT_FILE:-/etc/ssl/certs/ca-certificates.crt}",

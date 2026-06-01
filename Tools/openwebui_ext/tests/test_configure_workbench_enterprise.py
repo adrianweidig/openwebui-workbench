@@ -56,6 +56,12 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn('Test-WorkbenchUrl -Name "PORTAINER_URL"', script)
         self.assertIn("PORTAINER_URL=$PortainerUrl", script)
 
+    def test_wizard_exposes_admin_token_file_path(self) -> None:
+        script = WIZARD.read_text(encoding="utf-8")
+
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE=", script)
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE: `${OPENWEBUI_ADMIN_TOKEN_FILE:-}", script)
+
     def test_wizard_validates_openwebui_urls_before_writing_env(self) -> None:
         script = WIZARD.read_text(encoding="utf-8")
 
@@ -194,6 +200,7 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
             env_text = (Path(tmpdir) / "workbench.env").read_text(encoding="utf-8")
 
         self.assertIn(f"PORTAINER_URL={portainer_url}", env_text)
+        self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE=", env_text)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_portainer_url_rejects_embedded_credentials_without_leaking_secret(self) -> None:
