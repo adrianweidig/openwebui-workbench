@@ -92,7 +92,7 @@ Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwend
 4. Optional Tools unter `Tools/openwebui_ext/tools/*.py` oder Skills unter `Tools/openwebui_ext/skills/*.md` im Dashboard bearbeiten. Python-Tools werden in der Vorschau mit Syntax-Highlighting angezeigt.
 5. `Artefakte neu erzeugen` ausführen.
 6. `Import prüfen` ausführen.
-7. Mit gesetztem `OPENWEBUI_ADMIN_TOKEN` `Zu OpenWebUI synchronisieren` ausführen.
+7. Mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` `Zu OpenWebUI synchronisieren` ausführen.
 
 Der echte OpenWebUI-Sync läuft im Dashboard als Hintergrundjob. Die Oberfläche bleibt währenddessen bedienbar; ein zweiter Sync-Klick startet keinen parallelen Import, sondern zeigt den laufenden Job weiter an.
 

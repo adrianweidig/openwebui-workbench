@@ -54,7 +54,7 @@ If the local `top.secret` edge proxy is used, the Workbench can also be exposed 
 3. Save the file.
 4. Run `Regenerate artifacts`.
 5. Run `Check import`.
-6. With `OPENWEBUI_ADMIN_TOKEN` set, run `Sync to OpenWebUI`.
+6. With `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` set, run `Sync to OpenWebUI`.
 
 The real OpenWebUI sync runs as a background job. The dashboard remains usable while it runs; triggering the same sync again shows the active job instead of starting a parallel import.
 
