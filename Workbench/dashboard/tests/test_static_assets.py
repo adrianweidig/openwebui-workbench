@@ -137,6 +137,25 @@ class DashboardStaticAssetsTests(unittest.TestCase):
         self.assertIn("function automationDetailText", app_js)
         self.assertIn("automation.interval_minutes", app_js)
 
+    def test_model_sync_status_is_visible_in_setup_checks(self) -> None:
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn("status.model_sync", app_js)
+        self.assertIn("function modelSyncLevel", app_js)
+        self.assertIn("function modelSyncDetail", app_js)
+        for status_key in ("conflict", "read_error", "local_only", "remote_inactive", "remote_only"):
+            with self.subTest(status_key=status_key):
+                self.assertIn(f'"{status_key}"', app_js)
+        for message_key in (
+            "setup.modelSyncReady",
+            "setup.modelSyncReview",
+            "setup.modelSyncConflict",
+            "setup.modelSyncMissing",
+            "setup.modelSyncDetail",
+        ):
+            with self.subTest(message_key=message_key):
+                self.assertIn(f't("{message_key}"', app_js)
+
 
 if __name__ == "__main__":
     unittest.main()

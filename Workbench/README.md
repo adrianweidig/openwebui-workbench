@@ -65,9 +65,11 @@ Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN`
 - Dist-Artefakte neu erzeugen.
 - Import-Payload lokal prüfen.
 - Tools, Filter, Skills, Knowledge und Modelle zur konfigurierten OpenWebUI-Instanz als Hintergrundjob synchronisieren.
+- OpenWebUI-Modelle gegen den Workbench-Stand vergleichen und Remote-only-Modelle als schreibgeschützten Snapshot sichtbar machen.
 - Zentrale Workspace-Verifikation starten.
 
 OpenWebUI-Syncs blockieren die Dashboard-Oberfläche nicht. Ein laufender Sync wird wiederverwendet, wenn derselbe Import erneut ausgelöst wird; parallele Importprozesse werden dadurch vermieden.
+Der OpenWebUI-zu-Workbench-Snapshot schreibt nur unter `Artefakte/openwebui_sync/`; Konflikte und deaktivierte Remote-Modelle werden sichtbar, aber nicht automatisch in lokale Modellpakete übernommen.
 
 ## HTTPS und lokale Zertifikate
 

@@ -104,6 +104,36 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertIn("test", models[0]["tags"])
         self.assertEqual(models[1]["id"], "übersetzung-lokalisierung")
 
+    def test_lists_openwebui_only_models_from_sync_snapshot(self) -> None:
+        sync_file = self.root / "Artefakte" / "openwebui_sync" / "status.json"
+        sync_file.parent.mkdir(parents=True)
+        sync_file.write_text(
+            json.dumps(
+                {
+                    "generated_at": "2026-06-01 12:00:00",
+                    "counts": {"remote_only": 1},
+                    "items": [
+                        {
+                            "id": "remote-only",
+                            "name": "Remote Only",
+                            "status": "remote_only",
+                            "action": "Review remote model.",
+                            "remote_snapshot": "Artefakte/openwebui_sync/remote_models/remote-only.json",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        models = self.state.list_models()
+        remote = next(model for model in models if model["id"] == "remote-only")
+
+        self.assertTrue(remote["remote_only"])
+        self.assertEqual(remote["source"], "openwebui")
+        self.assertEqual(remote["sync_status"], "remote_only")
+        self.assertEqual(remote["files"], [])
+
     def test_reads_and_writes_allowed_markdown(self) -> None:
         before = self.state.read_model_file("demo-model", "systemprompt.md")
         self.assertEqual(before["content"], "System\n")
@@ -161,7 +191,7 @@ class WorkbenchStateTests(unittest.TestCase):
     def test_read_only_state_blocks_write_actions(self) -> None:
         state = WorkbenchState(WorkbenchConfig(root=self.root, allow_write=False, locale="de"))
 
-        for action in ("generate", "import-dry-run", "import-openwebui"):
+        for action in ("generate", "import-dry-run", "import-openwebui", "pull-openwebui"):
             with self.subTest(action=action), self.assertRaisesRegex(PermissionError, "Schreibzugriff"):
                 state.run_action(action)
 
@@ -177,6 +207,30 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(result["output"], "ok\n")
         self.assertEqual(run.call_args.kwargs["cwd"], self.root)
         self.assertEqual(run.call_args.kwargs["env"]["WORKBENCH_ALLOW_WRITE"], "true")
+
+    def test_sync_status_action_uses_token_env_without_command_exposure(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="https://openwebui.top.secret",
+                ca_file="/certs/top-secret-edge-root-ca.pem",
+                locale="de",
+            )
+        )
+        completed = SimpleNamespace(returncode=0, stdout="sync ok\n")
+
+        with (
+            patch.dict(os.environ, {"OPENWEBUI_ADMIN_TOKEN": "secret-token", "OPENWEBUI_ADMIN_TOKEN_FILE": ""}),
+            patch("Workbench.dashboard.server.subprocess.run", return_value=completed) as run,
+        ):
+            result = state.run_action("sync-status")
+
+        command = run.call_args.args[0]
+        self.assertIn("scripts/sync_openwebui_models.py", command)
+        self.assertNotIn("secret-token", command)
+        self.assertEqual(run.call_args.kwargs["env"]["OPENWEBUI_ADMIN_TOKEN"], "secret-token")
+        self.assertEqual(run.call_args.kwargs["env"]["OPENWEBUI_CA_FILE"], "/certs/top-secret-edge-root-ca.pem")
+        self.assertTrue(result["ok"])
 
     def test_reads_and_writes_tool_resource(self) -> None:
         before = self.state.read_resource("tool", "demo_tool")

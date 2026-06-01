@@ -9,6 +9,7 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 - `docker-compose.workbench-password-file.yml`: optionaler Override, der `WORKBENCH_AUTH_PASSWORD_HOST_FILE` read-only nach `WORKBENCH_AUTH_PASSWORD_FILE` in den Workbench-Container mountet.
 - `docker-compose.openwebui-admin-token-file.yml`: optionaler Override, der `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` read-only nach `OPENWEBUI_ADMIN_TOKEN_FILE` in den Workbench-Container mountet.
 - `docker-compose.enterprise-ca.yml`: optionaler Override für Unternehmensnetze mit eigener Root-CA. Die CA wird in OpenWebUI und Workbench gemountet; der Workbench-Container aktualisiert den System-Truststore bei jedem Start.
+- `docker-compose.shared-targets-enterprise-ca.yml`: optionaler CA-Override für `docker-compose.shared-targets.yml`. Diese Variante mountet die Root-CA nur in den Workbench-Container und erzeugt keine OpenWebUI-, RAGFlow- oder Seafile-Services.
 - `docker-compose.top-secret.yml`: optionaler lokaler Override, der den Workbench-Container zusätzlich an das bestehende `top.secret`-Edge-Netz hängt und dort als `workbench` sowie `workbench.top.secret` verfügbar macht.
 - `docker-compose.openwebui-offline.example.yml`: portable Offline-Beispielvorlage mit repo-relativen Mounts, named volumes und optional überschreibbaren OpenWebUI-/Jupyter-Images.
 
@@ -140,6 +141,14 @@ Start mit CA-Override:
 ```powershell
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.enterprise-ca.yml up -d --build
 ```
+
+Start im Shared-Targets-Betrieb mit bestehendem OpenWebUI, RAGFlow und Seafile:
+
+```powershell
+docker compose --env-file .env -f Deployment/docker-compose.shared-targets.yml -f Deployment/docker-compose.shared-targets-enterprise-ca.yml up -d --build
+```
+
+Für `*.top.secret` in der lokalen WSL-Testumgebung ist der Host-Pfad typischerweise `/mnt/docker_data/test/edge/certs/top-secret-edge-root-ca.pem`. Die CA-Datei muss eine gültige CA-Key-Usage enthalten, insbesondere `Certificate Sign` und `CRL Sign`; ungültige lokale Test-CAs müssen an der Edge-Erzeugungsquelle neu erstellt werden.
 
 Der Workbench-Container installiert `ca-certificates` im Image und führt beim Start immer `update-ca-certificates` aus. Wenn `WORKBENCH_CA_BUNDLE` gesetzt ist, wird die gemountete PEM-Datei vorab geprüft: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte führen zu einem klaren Startfehler. Secrets, Tokens und Private Keys gehören nicht in diese CA-Datei.
 Der Setup-Doctor prüft `WORKBENCH_ENTERPRISE_CA_HOST_FILE` schon vor dem Compose-Start als Hostdatei: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte werden als Installationsfehler gemeldet.

@@ -24,7 +24,7 @@ const DEFAULT_VIEW_MODE = "split";
 const SUPPORTED_LOCALES = ["de", "en"];
 const SUPPORTED_PANELS = new Set(["models", "resources", "actions", "assets"]);
 const SUPPORTED_VIEW_MODES = new Set(["split", "edit", "preview"]);
-const WRITE_ACTIONS = new Set(["generate", "import-dry-run", "import-openwebui"]);
+const WRITE_ACTIONS = new Set(["generate", "import-dry-run", "import-openwebui", "pull-openwebui"]);
 const queryParams = new URLSearchParams(window.location.search);
 
 function normalizeLocale(value) {
@@ -475,6 +475,7 @@ function renderStatus() {
 function setupChecks(status, existingArtifacts, artifactTotal) {
   const syncReady = Boolean(status.openwebui.admin_token_configured || status.config.local_config_exists);
   const automation = status.automation || {};
+  const modelSync = status.model_sync || {};
   return [
     {
       level: status.dashboard?.auth_enabled ? "ok" : "warn",
@@ -494,6 +495,11 @@ function setupChecks(status, existingArtifacts, artifactTotal) {
       detail: syncReady ? t("setup.syncReadyDetail") : t("setup.syncMissingDetail"),
     },
     {
+      level: modelSyncLevel(modelSync),
+      title: modelSyncTitle(modelSync),
+      detail: modelSyncDetail(modelSync),
+    },
+    {
       level: existingArtifacts === artifactTotal ? "ok" : "warn",
       title: existingArtifacts === artifactTotal ? t("setup.artifactsReady") : t("setup.artifactsMissing"),
       detail: t("artifacts.existing", { existing: existingArtifacts, total: artifactTotal }),
@@ -509,6 +515,40 @@ function setupChecks(status, existingArtifacts, artifactTotal) {
       detail: automationDetailText(automation),
     },
   ];
+}
+
+function modelSyncCount(modelSync, key) {
+  return Number(modelSync?.counts?.[key] || 0);
+}
+
+function modelSyncLevel(modelSync) {
+  if (!modelSync?.exists) return "warn";
+  if (modelSync.error) return "danger";
+  if (modelSyncCount(modelSync, "conflict") || modelSyncCount(modelSync, "read_error")) return "danger";
+  if (modelSyncCount(modelSync, "local_only") || modelSyncCount(modelSync, "remote_inactive")) return "warn";
+  return "ok";
+}
+
+function modelSyncTitle(modelSync) {
+  if (!modelSync?.exists) return t("setup.modelSyncMissing");
+  if (modelSync.error || modelSyncCount(modelSync, "conflict") || modelSyncCount(modelSync, "read_error")) {
+    return t("setup.modelSyncConflict");
+  }
+  if (modelSyncCount(modelSync, "local_only") || modelSyncCount(modelSync, "remote_inactive")) {
+    return t("setup.modelSyncReview");
+  }
+  return t("setup.modelSyncReady");
+}
+
+function modelSyncDetail(modelSync) {
+  if (!modelSync?.exists) return t("setup.modelSyncMissingDetail");
+  if (modelSync.error) return modelSync.error;
+  return t("setup.modelSyncDetail", {
+    identical: formatNumber(modelSyncCount(modelSync, "identical")),
+    localOnly: formatNumber(modelSyncCount(modelSync, "local_only")),
+    remoteOnly: formatNumber(modelSyncCount(modelSync, "remote_only")),
+    conflicts: formatNumber(modelSyncCount(modelSync, "conflict")),
+  });
 }
 
 function renderSetupChecks(status, existingArtifacts, artifactTotal) {
@@ -547,6 +587,9 @@ function actionDisabledReason(action) {
   const status = state.status;
   if (!status) return "";
   if (WRITE_ACTIONS.has(action) && !status.write_enabled) return t("sync.disabled.readOnly");
+  if (["sync-status", "pull-openwebui"].includes(action) && !status.openwebui.admin_token_configured) {
+    return t("sync.disabled.tokenMissing");
+  }
   if (action === "import-openwebui" && !status.openwebui.admin_token_configured && !status.config.local_config_exists) {
     return t("sync.disabled.targetMissing");
   }
@@ -566,6 +609,7 @@ function renderActionReadiness() {
 function editorWriteDisabledReason() {
   const status = state.status;
   if (status && !status.write_enabled) return t("editor.disabled.readOnly");
+  if (state.selectedModel?.remote_only) return t("editor.disabled.remoteOnly");
   return "";
 }
 
@@ -717,10 +761,15 @@ function renderModels() {
     title.textContent = modelDisplayName(model);
     const meta = document.createElement("div");
     meta.className = "row-meta";
-    meta.append(
-      makeChip(model.base_model_id || t("models.noBase"), "accent"),
-      makeChip(t("models.filesCount", { existing: model.files.filter((file) => file.exists).length, total: model.files.length }), "ok"),
-    );
+    if (model.remote_only) {
+      meta.append(makeChip("OpenWebUI", "accent"), makeChip(t("sync.status.remoteOnly"), "warn"));
+    } else {
+      meta.append(
+        makeChip(model.base_model_id || t("models.noBase"), "accent"),
+        makeChip(t("models.filesCount", { existing: model.files.filter((file) => file.exists).length, total: model.files.length }), "ok"),
+      );
+    }
+    if (model.sync_status && !["identical", "remote_only"].includes(model.sync_status)) meta.append(makeChip(t(`sync.status.${model.sync_status}`), "warn"));
     if (model.tags?.[0]) meta.append(makeChip(model.tags[0]));
     const sub = document.createElement("span");
     sub.textContent = modelDisplayDescription(model);
@@ -876,6 +925,17 @@ async function selectModel(modelId) {
   setText("model-description", modelDisplayDescription(model));
   renderModels();
   renderFileTabs();
+  if (model.remote_only || !model.files.length) {
+    el("markdown-editor").value = model.sync_action || "";
+    el("markdown-editor").disabled = true;
+    updateModelPreview();
+    el("save-file").disabled = true;
+    el("delete-model-file").disabled = true;
+    setText("editor-state", model.path ? t("sync.remoteSnapshot", { path: model.path }) : t("sync.status.remoteOnly"));
+    updateEditorWriteControls();
+    syncUrlState();
+    return;
+  }
   await loadFile(state.selectedFile);
 }
 

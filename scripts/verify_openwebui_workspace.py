@@ -171,6 +171,30 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
         )
         steps.append(
             CommandStep(
+                "Docker compose shared-targets enterprise CA config",
+                [
+                    *docker,
+                    "compose",
+                    "-f",
+                    "Deployment/docker-compose.shared-targets.yml",
+                    "-f",
+                    "Deployment/docker-compose.shared-targets-enterprise-ca.yml",
+                    "config",
+                ],
+                env={
+                    **compose_auth_env,
+                    "WORKBENCH_SHARED_DOCKER_NETWORK": "ki_infra_seu_test",
+                    "OPENWEBUI_BASE_URL": "http://openwebui:8080",
+                    "OPENWEBUI_PUBLIC_URL": "https://openwebui.top.secret",
+                    "RAGFLOW_BASE_URL": "http://ragflow",
+                    "SEAFILE_BASE_URL": "http://seafile",
+                    "PORTAINER_URL": "http://portainer:9000",
+                },
+                requires_docker=True,
+            )
+        )
+        steps.append(
+            CommandStep(
                 "Docker compose workbench password-file config",
                 [
                     *docker,

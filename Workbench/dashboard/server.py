@@ -124,8 +124,8 @@ MODEL_EXAMPLE_SUFFIXES = {
     ".svg",
     ".txt",
 }
-WRITE_ACTIONS = {"generate", "import-dry-run", "import-openwebui"}
-AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
+WRITE_ACTIONS = {"generate", "import-dry-run", "import-openwebui", "pull-openwebui"}
+AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui", "sync-status"}
 DEFAULT_AUTOMATION_ACTIONS = ("check",)
 MIN_AUTOMATION_INTERVAL_MINUTES = 5
 MAX_AUTOMATION_INTERVAL_MINUTES = 1440
@@ -350,6 +350,7 @@ class WorkbenchState:
         self.skills_root = self.root / "Tools" / "openwebui_ext" / "skills"
         self.dist_root = self.root / "Modelle" / "dist"
         self.tools_dist_root = self.root / "Tools" / "dist"
+        self.model_sync_status_file = self.root / "Artefakte" / "openwebui_sync" / "status.json"
         self.config_file = self.root / "scripts" / "openwebui_workspace_config.yaml"
         self.config_example = self.root / "scripts" / "openwebui_workspace_config.example.yaml"
         self.action_lock = threading.Lock()
@@ -397,6 +398,7 @@ class WorkbenchState:
             },
             "automation": self.automation_status(),
             "artifacts": self.artifact_status(),
+            "model_sync": self.model_sync_status(),
         }
 
     def ensure_automation_scheduler(self) -> "WorkbenchAutomationScheduler":
@@ -470,45 +472,124 @@ class WorkbenchState:
             )
         return items
 
+    def model_sync_status(self) -> dict[str, Any]:
+        if not self.model_sync_status_file.exists():
+            return {
+                "exists": False,
+                "path": rel(self.model_sync_status_file),
+                "generated_at": None,
+                "counts": {},
+                "items": [],
+            }
+        try:
+            payload = read_json_file(self.model_sync_status_file)
+        except (OSError, json.JSONDecodeError) as exc:
+            return {
+                "exists": True,
+                "path": rel(self.model_sync_status_file),
+                "generated_at": None,
+                "counts": {},
+                "items": [],
+                "error": str(exc),
+            }
+        if not isinstance(payload, dict):
+            return {
+                "exists": True,
+                "path": rel(self.model_sync_status_file),
+                "generated_at": None,
+                "counts": {},
+                "items": [],
+                "error": "status.json is not a JSON object",
+            }
+        return {
+            "exists": True,
+            "path": rel(self.model_sync_status_file),
+            "generated_at": payload.get("generated_at"),
+            "counts": payload.get("counts") if isinstance(payload.get("counts"), dict) else {},
+            "items": payload.get("items") if isinstance(payload.get("items"), list) else [],
+        }
+
     def list_models(self) -> list[dict[str, Any]]:
         if not self.models_root.exists():
-            return []
-        models: list[dict[str, Any]] = []
-        for directory in sorted(path for path in self.models_root.iterdir() if path.is_dir()):
-            model_id = directory.name
-            model_json = directory / "model.json"
-            payload: dict[str, Any] = {}
-            if model_json.exists():
-                try:
-                    raw = read_json_file(model_json)
-                    if isinstance(raw, list) and raw and isinstance(raw[0], dict):
-                        payload = raw[0]
-                except Exception:
-                    payload = {}
-            meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
-            product_i18n = meta.get("productI18n") if isinstance(meta.get("productI18n"), dict) else {}
-            files = self.model_files(model_id)
-            models.append(
+            local_models: list[dict[str, Any]] = []
+        else:
+            local_models = []
+            sync_items = {
+                str(item.get("id")): item
+                for item in self.model_sync_status().get("items", [])
+                if isinstance(item, dict) and item.get("id")
+            }
+            for directory in sorted(path for path in self.models_root.iterdir() if path.is_dir()):
+                model_id = directory.name
+                model_json = directory / "model.json"
+                payload: dict[str, Any] = {}
+                if model_json.exists():
+                    try:
+                        raw = read_json_file(model_json)
+                        if isinstance(raw, list) and raw and isinstance(raw[0], dict):
+                            payload = raw[0]
+                    except Exception:
+                        payload = {}
+                meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
+                product_i18n = meta.get("productI18n") if isinstance(meta.get("productI18n"), dict) else {}
+                files = self.model_files(model_id)
+                sync_item = sync_items.get(model_id, {})
+                local_models.append(
+                    {
+                        "id": model_id,
+                        "name": payload.get("name") or model_id,
+                        "base_model_id": payload.get("base_model_id") or "",
+                        "description": meta.get("description") or "",
+                        "default_locale": meta.get("defaultLocale") or "de",
+                        "fallback_locale": meta.get("fallbackLocale") or "en",
+                        "supported_locales": meta.get("supportedLocales") if isinstance(meta.get("supportedLocales"), list) else [],
+                        "i18n": product_i18n,
+                        "path": rel(directory),
+                        "mtime": format_mtime(directory),
+                        "files": files,
+                        "tags": [
+                            item.get("name")
+                            for item in (meta.get("tags") or [])
+                            if isinstance(item, dict) and item.get("name")
+                        ],
+                        "sync_status": sync_item.get("status", ""),
+                        "sync_action": sync_item.get("action", ""),
+                        "sync_diff_paths": sync_item.get("diff_paths", []),
+                        "source": "workbench",
+                    }
+                )
+        existing_ids = {model["id"] for model in local_models}
+        remote_models: list[dict[str, Any]] = []
+        for item in self.model_sync_status().get("items", []):
+            if not isinstance(item, dict) or item.get("status") != "remote_only":
+                continue
+            model_id = str(item.get("id") or "")
+            if not model_id or model_id in existing_ids:
+                continue
+            remote_models.append(
                 {
                     "id": model_id,
-                    "name": payload.get("name") or model_id,
-                    "base_model_id": payload.get("base_model_id") or "",
-                    "description": meta.get("description") or "",
-                    "default_locale": meta.get("defaultLocale") or "de",
-                    "fallback_locale": meta.get("fallbackLocale") or "en",
-                    "supported_locales": meta.get("supportedLocales") if isinstance(meta.get("supportedLocales"), list) else [],
-                    "i18n": product_i18n,
-                    "path": rel(directory),
-                    "mtime": format_mtime(directory),
-                    "files": files,
-                    "tags": [
-                        item.get("name")
-                        for item in (meta.get("tags") or [])
-                        if isinstance(item, dict) and item.get("name")
-                    ],
+                    "name": item.get("name") or model_id,
+                    "base_model_id": "",
+                    "description": item.get("action") or "OpenWebUI-only model snapshot.",
+                    "default_locale": "de",
+                    "fallback_locale": "en",
+                    "supported_locales": [],
+                    "i18n": {},
+                    "path": item.get("remote_snapshot") or "",
+                    "mtime": self.model_sync_status().get("generated_at"),
+                    "files": [],
+                    "tags": ["openwebui-only"],
+                    "sync_status": item.get("status", ""),
+                    "sync_action": item.get("action", ""),
+                    "sync_diff_paths": item.get("diff_paths", []),
+                    "source": "openwebui",
+                    "remote_only": True,
                 }
             )
-        return models
+        if remote_models:
+            return [*local_models, *remote_models]
+        return local_models
 
     def model_files(self, model_id: str) -> list[dict[str, Any]]:
         directory = self.model_dir(model_id)
@@ -733,6 +814,29 @@ class WorkbenchState:
                 str(config_path),
             ]
             label = "Import dry-run"
+        elif action in {"sync-status", "pull-openwebui"}:
+            token = self.config.admin_token
+            if not token:
+                raise PermissionError(t("token_missing", self.config.locale))
+            command = [
+                sys.executable,
+                "scripts/sync_openwebui_models.py",
+                "--base-url",
+                self.config.openwebui_base_url,
+                "--timeout",
+                str(self.config.import_http_timeout),
+            ]
+            if action == "pull-openwebui":
+                command.append("--write-snapshot")
+            command_env.update(
+                {
+                    "OPENWEBUI_ADMIN_TOKEN": token,
+                    "OPENWEBUI_TLS_VERIFY": "true" if self.config.tls_verify else "false",
+                    "OPENWEBUI_CA_FILE": self.config.ca_file,
+                    "OPENWEBUI_CA_PATH": self.config.ca_path,
+                }
+            )
+            label = "Compare OpenWebUI models" if action == "sync-status" else "Snapshot OpenWebUI models"
         elif action == "import-openwebui":
             token = self.config.admin_token
             if not token and not self.config_file.exists():

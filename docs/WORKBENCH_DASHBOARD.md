@@ -93,14 +93,55 @@ Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwend
 5. `Artefakte neu erzeugen` ausführen.
 6. `Import prüfen` ausführen.
 7. Mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` `Zu OpenWebUI synchronisieren` ausführen.
+8. `Modellstatus vergleichen` ausführen, um die verwalteten Modellfelder der Workbench mit OpenWebUI zu vergleichen.
+9. `OpenWebUI-Snapshot aktualisieren` ausführen, wenn OpenWebUI-only-Modelle in der Workbench sichtbar werden sollen.
 
 Der echte OpenWebUI-Sync läuft im Dashboard als Hintergrundjob. Die Oberfläche bleibt währenddessen bedienbar; ein zweiter Sync-Klick startet keinen parallelen Import, sondern zeigt den laufenden Job weiter an.
+
+## Bidirektionale Modellprüfung
+
+Die Workbench bleibt die Schreibquelle für die versionierten Modellpakete unter `Modelle/einzelmodelle/`. Der bestehende API-Import spiegelt diese Pakete nach OpenWebUI. Für die Gegenrichtung gibt es bewusst keinen automatischen destruktiven Pull: `scripts/sync_openwebui_models.py` liest OpenWebUI über die API, vergleicht die verwalteten Felder `id`, `name`, `base_model_id`, `params` und die bekannten Workbench-`meta`-Schlüssel mit dem lokalen Modellstand und schreibt bei Bedarf einen prüfbaren Snapshot unter `Artefakte/openwebui_sync/`.
+
+Die Statuswerte sind:
+
+- `identical`: Workbench und OpenWebUI sind in den verwalteten Feldern gleich.
+- `local_only`: Das Modell existiert nur lokal; ein Workbench-zu-OpenWebUI-Import kann es erzeugen.
+- `remote_only`: Das Modell existiert nur in OpenWebUI; es wird als schreibgeschützter Snapshot in der Modellliste sichtbar.
+- `conflict`: Beide Seiten enthalten denselben Modell-ID-Eintrag, aber verwaltete Werte unterscheiden sich. Keine Seite wird automatisch überschrieben.
+- `remote_inactive`: OpenWebUI meldet das Modell als inaktiv; die Workbench übernimmt daraus keine Löschung.
+- `read_error`: Eine Seite konnte nicht sauber gelesen werden.
+
+CLI-Prüfung ohne lokale Schreibwirkung:
+
+```powershell
+python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem
+```
+
+CLI-Snapshot für die Workbench-Sicht:
+
+```powershell
+python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem --write-snapshot
+```
+
+Nach `--write-snapshot` liest das Dashboard `Artefakte/openwebui_sync/status.json`. Remote-only-Modelle erscheinen in der Modellliste mit dem Status `nur OpenWebUI`; der Editor bleibt für diese Einträge schreibgeschützt, damit keine lokale Modellquelle erfunden oder überschrieben wird.
+
+Manuelle End-to-End-Prüfung:
+
+1. Ausgangszustand mit `Modellstatus vergleichen` prüfen.
+2. Neues lokales Modellpaket unter `Modelle/einzelmodelle/` anlegen oder ein bestehendes Modell ändern.
+3. `Artefakte neu erzeugen`, `Import prüfen` und danach `Zu OpenWebUI synchronisieren` ausführen.
+4. In OpenWebUI prüfen, ob der neue oder geänderte Eintrag sichtbar ist.
+5. In OpenWebUI ein Testmodell direkt anlegen oder ein bestehendes Testmodell ändern.
+6. `OpenWebUI-Snapshot aktualisieren` ausführen.
+7. In der Workbench prüfen, ob das OpenWebUI-only-Modell oder der Konfliktstatus sichtbar ist.
+8. Einen Konflikt erzeugen, indem dieselbe Modell-ID lokal und remote unterschiedlich geändert wird; `Modellstatus vergleichen` muss `conflict` melden und beide Seiten dürfen nicht automatisch überschrieben werden.
+9. Ein Modell in OpenWebUI deaktivieren oder entfernen; der nächste Snapshot muss dies als `remote_inactive` oder `local_only` sichtbar machen, ohne lokale Dateien zu löschen.
 
 ## Automation
 
 Beim normalen Dashboard-Start richtet die Workbench eine interne Automation ein. Der sichere Default ist ein nicht-mutierender Workspace-Check alle 30 Minuten (`WORKBENCH_AUTOMATION_ACTIONS=check`). Dadurch werden Status-, Generator-, JSON- und Unit-Test-Drift regelmäßig sichtbar, ohne Modelle oder OpenWebUI automatisch zu verändern.
 
-Schreibende Automationsaktionen sind bewusst opt-in: `generate`, `import-dry-run` oder `import-openwebui` dürfen nur in `WORKBENCH_AUTOMATION_ACTIONS` ergänzt werden, wenn der Administrator die Schreib- beziehungsweise API-Wirkung akzeptiert und passende Tokens/Konfigurationen gesetzt hat. Der Scheduler nutzt dieselben Job-Locks wie die manuelle UI; ein bereits laufender gleicher Job wird nicht parallel neu gestartet.
+Schreibende Automationsaktionen sind bewusst opt-in: `generate`, `import-dry-run` oder `import-openwebui` dürfen nur in `WORKBENCH_AUTOMATION_ACTIONS` ergänzt werden, wenn der Administrator die Schreib- beziehungsweise API-Wirkung akzeptiert und passende Tokens/Konfigurationen gesetzt hat. `sync-status` ist nicht-mutierend und kann bei Bedarf automatisiert werden; `pull-openwebui` schreibt lokale Snapshots und bleibt deshalb eine bewusste manuelle Aktion. Der Scheduler nutzt dieselben Job-Locks wie die manuelle UI; ein bereits laufender gleicher Job wird nicht parallel neu gestartet.
 
 Ein manueller Lauf bleibt unabhängig vom Intervall möglich:
 
@@ -116,6 +157,7 @@ Der Sync verwendet die vorhandenen Skripte:
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.example.yaml
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url <OPENWEBUI_BASE_URL> --token <OPENWEBUI_ADMIN_TOKEN>
+python scripts/sync_openwebui_models.py --base-url <OPENWEBUI_BASE_URL> --token-file <OPENWEBUI_ADMIN_TOKEN_FILE> --write-snapshot
 ```
 
 ## Konfiguration

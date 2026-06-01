@@ -1050,6 +1050,23 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertEqual(context, "ctx")
             create_context.assert_called_once_with(cafile=str(ca_file), capath=None)
 
+    def test_file_reference_ca_file_process_environment_overrides_env_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            env_file = root / ".env"
+            ca_file = root / "root-ca.pem"
+            ca_file.write_text("-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n", encoding="utf-8")
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nOPENWEBUI_CA_FILE=/container-only/root-ca.pem\n",
+                encoding="utf-8",
+            )
+
+            with patch.dict(os.environ, {"OPENWEBUI_CA_FILE": str(ca_file)}, clear=False):
+                result = check_workbench_setup.check_file_references(env_file)
+
+            self.assertEqual(result.level, "ok")
+            self.assertNotIn("container-only", result.detail)
+
     def test_runtime_probe_rejects_portainer_url_credentials_without_printing_secret(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))

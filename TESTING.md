@@ -78,6 +78,18 @@ JSON-Artefakte werden durch `scripts/verify_openwebui_workspace.py` mitgeprüft.
 
 Die Unit-Tests unter `Tools.openwebui_ext.tests` enthalten zusätzlich leichte Workflow-Hygiene-Prüfungen für sicher benannte Release-Artefakte. Die Dashboard-Tests prüfen neben API- und Schreibpfaden auch die Browser-Security-Header der lokalen Workbench-Oberfläche, die 30-Minuten-Dashboard-Automation mit manuellem Trigger und kurze Startup-Fehler für ungültige numerische, boolesche, URL-basierte oder dateibasierte Dashboard-Env-Werte, erzwungene Dashboard-Authentifizierung sowie für belegte Dashboard-Ports.
 
+Die bidirektionale OpenWebUI-Modellprüfung wird durch `scripts/sync_openwebui_models.py` abgedeckt. Die Unit-Tests klassifizieren `identical`, `local_only`, `remote_only`, `conflict`, `remote_inactive` und Snapshot-Schreibpfade ohne echte OpenWebUI-Instanz. In einer Live-Umgebung kann der Vergleich ohne Zieländerung ausgeführt werden:
+
+```powershell
+python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem
+```
+
+Der prüfbare Gegenrichtungs-Snapshot schreibt nur unter `Artefakte/openwebui_sync/` und überschreibt keine Workbench-Modellpakete:
+
+```powershell
+python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem --write-snapshot
+```
+
 Der Setup-Doctor ist nicht-mutierend und prüft zusätzlich, ob `OPENWEBUI_PORT` und `WORKBENCH_PORT` gültige, unterschiedliche Host-Ports ergeben, ob `OPENWEBUI_BASE_URL`, `OPENWEBUI_PUBLIC_URL` sowie optional gesetzte `PORTAINER_URL`, `RAGFLOW_BASE_URL` und `SEAFILE_BASE_URL` vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten sind, ob boolesche Flags wie `OPENWEBUI_TLS_VERIFY` und `WORKBENCH_REQUIRE_AUTH` explizite Wahr/Falsch-Werte enthalten, ob Timeout-/Größenwerte und `WORKBENCH_AUTOMATION_INTERVAL_MINUTES` gültige Ganzzahlen sind, ob Automationsaktionen aus der erlaubten Liste stammen und ob dateibasierte Runtime-Pfade plausibel sind. Mit `--probe-runtime` prüft der Setup-Doctor OpenWebUI und optional Portainer per HTTP, ohne Tokens zu nutzen oder Dienste zu verändern. `WORKBENCH_ENTERPRISE_CA_HOST_FILE` wird als lokale Hostdatei und PEM-Zertifikat geprüft; mit `--allow-unverified-root-ca-path` darf ein nicht lokal sichtbarer Docker-/Portainer-Hostpfad als Warnung durchlaufen, während lokal lesbare PEM-Dateien weiterhin validiert werden. `WORKBENCH_AUTH_PASSWORD_HOST_FILE` und `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` werden als lokale Hostdateien geprüft; mit `--allow-unverified-secret-file-path` darf ein nicht lokal sichtbarer Docker-/Portainer-Hostpfad als Warnung durchlaufen, ohne Secret-Dateiinhalte zu lesen oder auszugeben. Container-only Secret- oder CA-Pfade werden als Warnung markiert, wenn sie hostseitig nicht sichtbar sind. Fehlende Werte nutzen die Compose-Defaults.
 
 Mit `--probe-runtime` führt der Setup-Doctor zusätzlich nicht-mutierende HTTP-Probes aus. OpenWebUI wird über `OPENWEBUI_PUBLIC_URL` geprüft; Portainer wird nur geprüft, wenn `--portainer-url`, die Prozessumgebung `PORTAINER_URL` oder `PORTAINER_URL` in der lokalen `.env` gesetzt ist. Der CLI-Wert hat Vorrang vor `.env`. Der Probe nutzt keine Tokens, behandelt HTTP 401/403 als erreichbaren Auth-Endpunkt und wird mit `--require-runtime` abnahmehart.

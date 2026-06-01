@@ -55,6 +55,24 @@ AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
 PRIVATE_KEY_RE = re.compile(r"BEGIN .*PRIVATE KEY")
 COMPOSE_REQUIRED_ENV_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*):\?[^}]*\}")
 OPTIONAL_SERVICE_URL_KEYS = ("PORTAINER_URL", "RAGFLOW_BASE_URL", "SEAFILE_BASE_URL")
+ENV_OVERRIDE_KEYS = (
+    set(BOOLEAN_DEFAULTS)
+    | set(INTEGER_DEFAULTS)
+    | set(OPTIONAL_FILE_KEYS)
+    | set(OPTIONAL_SERVICE_URL_KEYS)
+    | {
+        "OPENWEBUI_BASE_URL",
+        "OPENWEBUI_PUBLIC_URL",
+        "OPENWEBUI_ADMIN_TOKEN_FILE",
+        "OPENWEBUI_ADMIN_TOKEN_HOST_FILE",
+        "WEBUI_SECRET_KEY",
+        "WORKBENCH_AUTH_PASSWORD",
+        "WORKBENCH_AUTH_PASSWORD_FILE",
+        "WORKBENCH_AUTH_PASSWORD_HOST_FILE",
+        "WORKBENCH_ENTERPRISE_CA_HOST_FILE",
+        "WORKBENCH_LOCALE",
+    }
+)
 DOCKER_PROBE_TIMEOUT_SECONDS = 20
 RUNTIME_PROBE_TIMEOUT_SECONDS = 3
 AUTH_REACHABLE_STATUS_CODES = {401, 403}
@@ -140,6 +158,15 @@ def _display_path(path: Path) -> str:
         return str(path.resolve())
     except OSError:
         return str(path)
+
+
+def env_values_with_process_overrides(env_path: Path) -> dict[str, str]:
+    values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+    for key in ENV_OVERRIDE_KEYS:
+        value = os.environ.get(key)
+        if value is not None and value.strip():
+            values[key] = value
+    return values
 
 
 def check_python_version() -> CheckResult:
@@ -440,7 +467,7 @@ def check_file_references(
     allow_unverified_secret_file_path: bool = False,
 ) -> CheckResult:
     try:
-        values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+        values = env_values_with_process_overrides(env_path)
     except OSError as exc:
         return CheckResult("fail", "File references", str(exc), "Check file permissions.")
 
@@ -709,7 +736,7 @@ def check_runtime_reachability(
     require_runtime: bool = False,
 ) -> list[CheckResult]:
     try:
-        values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+        values = env_values_with_process_overrides(env_path)
     except OSError as exc:
         return [
             CheckResult(
