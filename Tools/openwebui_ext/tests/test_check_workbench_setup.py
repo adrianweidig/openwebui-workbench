@@ -591,6 +591,28 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertEqual(levels["Automation config"], "fail")
             self.assertIn("delete-all", rendered)
 
+    def test_sync_status_automation_action_is_valid(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\n"
+                "WORKBENCH_AUTH_PASSWORD=set\n"
+                "WORKBENCH_AUTOMATION_ACTIONS=check,sync-status\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Automation config"], "ok")
+            self.assertIn("WORKBENCH_AUTOMATION_ACTIONS=check, sync-status", rendered)
+
     def test_missing_enterprise_ca_host_file_fails_before_compose_start(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))

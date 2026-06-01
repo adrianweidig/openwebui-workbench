@@ -55,14 +55,43 @@ If the local `top.secret` edge proxy is used, the Workbench can also be exposed 
 4. Run `Regenerate artifacts`.
 5. Run `Check import`.
 6. With `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` set, run `Sync to OpenWebUI`.
+7. Run `Compare model status` to compare Workbench-managed model fields with OpenWebUI.
+8. Run `Refresh OpenWebUI snapshot` when OpenWebUI-only models should be visible in the Workbench.
 
 The real OpenWebUI sync runs as a background job. The dashboard remains usable while it runs; triggering the same sync again shows the active job instead of starting a parallel import.
+
+## Bidirectional Model Check
+
+The Workbench remains the write source for the versioned model packages under `Modelle/einzelmodelle/`. The existing API import mirrors these packages to OpenWebUI. The reverse direction deliberately has no automatic destructive pull: `scripts/sync_openwebui_models.py` reads OpenWebUI through the API, compares the managed fields `id`, `name`, `base_model_id`, `params`, and known Workbench `meta` keys with the local model state, and can write an auditable snapshot under `Artefakte/openwebui_sync/`.
+
+Status values are:
+
+- `identical`: local Workbench source and active OpenWebUI model match in the managed fields.
+- `local_only`: the model exists locally but not in OpenWebUI.
+- `remote_only`: the model exists in OpenWebUI but has no local Workbench source.
+- `conflict`: both sides exist, but at least one managed field differs.
+- `remote_inactive`: OpenWebUI still knows the model ID, but it is inactive or deleted.
+- `read_error`: OpenWebUI could not be queried or the response could not be parsed.
+
+CLI check without local writes:
+
+```powershell
+python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem
+```
+
+CLI snapshot for the Workbench view:
+
+```powershell
+python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem --write-snapshot
+```
+
+After `--write-snapshot`, the dashboard reads `Artefakte/openwebui_sync/status.json`. Remote-only models appear in the model list with the `OpenWebUI only` status; the editor remains read-only for these entries so no local model source is invented or overwritten.
 
 ## Automation
 
 On normal dashboard startup the Workbench configures an internal automation. The safe default is a non-mutating workspace check every 30 minutes (`WORKBENCH_AUTOMATION_ACTIONS=check`). This keeps status, generator, JSON, and unit-test drift visible without changing model sources or OpenWebUI automatically.
 
-Mutating automation actions are opt-in: add `generate`, `import-dry-run`, or `import-openwebui` to `WORKBENCH_AUTOMATION_ACTIONS` only after the administrator accepts the write/API effect and has configured the required tokens. The scheduler uses the same job locks as the manual UI; an already running job for the same action is not started in parallel.
+Mutating automation actions are opt-in: add `generate`, `import-dry-run`, or `import-openwebui` to `WORKBENCH_AUTOMATION_ACTIONS` only after the administrator accepts the write/API effect and has configured the required tokens. `sync-status` is non-mutating and can be automated when desired; `pull-openwebui` writes local snapshots and therefore remains a deliberate manual action. The scheduler uses the same job locks as the manual UI; an already running job for the same action is not started in parallel.
 
 A manual automation run remains independent from the interval:
 
@@ -78,6 +107,7 @@ The sync actions use the existing scripts:
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.example.yaml
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --base-url <OPENWEBUI_BASE_URL> --token <OPENWEBUI_ADMIN_TOKEN>
+python scripts/sync_openwebui_models.py --base-url <OPENWEBUI_BASE_URL> --token-file <OPENWEBUI_ADMIN_TOKEN_FILE> --write-snapshot
 ```
 
 ## Internationalization
@@ -107,7 +137,7 @@ The dashboard defaults to German. It can switch to English through the language 
 | `WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS` | HTTP timeout per OpenWebUI API request during import. Default: 600 seconds. |
 | `WORKBENCH_AUTOMATION_ENABLED` | Enables dashboard automation. Default: `true`. |
 | `WORKBENCH_AUTOMATION_INTERVAL_MINUTES` | Dashboard automation interval. Default: `30`, allowed range: `5` to `1440`. |
-| `WORKBENCH_AUTOMATION_ACTIONS` | Comma-separated actions for automatic runs. Default: `check`; allowed values: `check`, `generate`, `import-dry-run`, `import-openwebui`. |
+| `WORKBENCH_AUTOMATION_ACTIONS` | Comma-separated actions for automatic runs. Default: `check`; allowed values: `check`, `generate`, `import-dry-run`, `import-openwebui`, `sync-status`. |
 | `WORKBENCH_AUTOMATION_RUN_ON_START` | `true` starts the first automation run immediately on dashboard startup. Default: `false`, keeping startup quiet. |
 | `WORKBENCH_LOCALE` | Dashboard default locale, currently `de` or `en`. |
 

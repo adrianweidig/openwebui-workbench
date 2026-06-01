@@ -184,7 +184,7 @@ python scripts/sync_openwebui_models.py --base-url <OPENWEBUI_BASE_URL> --token-
 | `WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS` | HTTP-Timeout pro OpenWebUI-API-Request während des Imports. Standard: 600 Sekunden. |
 | `WORKBENCH_AUTOMATION_ENABLED` | Aktiviert die Dashboard-Automation. Standard: `true`. |
 | `WORKBENCH_AUTOMATION_INTERVAL_MINUTES` | Intervall der Dashboard-Automation. Standard: `30`, erlaubter Bereich: `5` bis `1440`. |
-| `WORKBENCH_AUTOMATION_ACTIONS` | Kommagetrennte Aktionen für automatische Läufe. Standard: `check`; erlaubte Werte: `check`, `generate`, `import-dry-run`, `import-openwebui`. |
+| `WORKBENCH_AUTOMATION_ACTIONS` | Kommagetrennte Aktionen für automatische Läufe. Standard: `check`; erlaubte Werte: `check`, `generate`, `import-dry-run`, `import-openwebui`, `sync-status`. |
 | `WORKBENCH_AUTOMATION_RUN_ON_START` | `true` startet den ersten Automationslauf sofort beim Dashboard-Start. Standard: `false`, damit Starts ruhig bleiben. |
 | `WORKBENCH_LOCALE` | Standard-Locale des Dashboards, aktuell `de` oder `en`. Unbekannte Werte fallen auf Deutsch zurück. |
 

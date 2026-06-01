@@ -51,7 +51,7 @@ OPTIONAL_FILE_KEYS = {
 }
 TRUE_VALUES = {"1", "true", "yes", "on"}
 FALSE_VALUES = {"0", "false", "no", "off"}
-AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
+AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui", "sync-status"}
 PRIVATE_KEY_RE = re.compile(r"BEGIN .*PRIVATE KEY")
 COMPOSE_REQUIRED_ENV_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*):\?[^}]*\}")
 OPTIONAL_SERVICE_URL_KEYS = ("PORTAINER_URL", "RAGFLOW_BASE_URL", "SEAFILE_BASE_URL")
