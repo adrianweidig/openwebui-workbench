@@ -137,6 +137,11 @@ def _request_json(url: str, headers: dict[str, str], payload: dict[str, Any], ti
         raise SmokeError(f"provider request failed: {exc.reason}") from exc
 
 
+def _gemini_generate_content_url(base_url: str, model: str) -> str:
+    encoded_model = urllib.parse.quote(model, safe="")
+    return f"{base_url.rstrip('/')}/models/{encoded_model}:generateContent"
+
+
 def _run_openai_style(provider: Provider, base_url: str, model: str, prompt: str, timeout: int) -> dict[str, Any]:
     api_key = os.environ.get(provider.key_env)
     if not api_key:
@@ -172,8 +177,7 @@ def _run_gemini(provider: Provider, base_url: str, model: str, prompt: str, time
     api_key = os.environ.get(provider.key_env)
     if not api_key:
         raise SmokeError(f"missing provider key env: {provider.key_env}")
-    encoded_model = urllib.parse.quote(model, safe="")
-    url = f"{base_url.rstrip('/')}/models/{encoded_model}:generateContent?key={urllib.parse.quote(api_key)}"
+    url = _gemini_generate_content_url(base_url, model)
     payload = {
         "contents": [
             {
@@ -189,7 +193,7 @@ def _run_gemini(provider: Provider, base_url: str, model: str, prompt: str, time
             "maxOutputTokens": 16,
         },
     }
-    status, data = _request_json(url, {"Content-Type": "application/json"}, payload, timeout)
+    status, data = _request_json(url, {"Content-Type": "application/json", "x-goog-api-key": api_key}, payload, timeout)
     candidates = data.get("candidates") or []
     parts = candidates[0].get("content", {}).get("parts", []) if candidates else []
     content = "".join(str(part.get("text", "")) for part in parts)

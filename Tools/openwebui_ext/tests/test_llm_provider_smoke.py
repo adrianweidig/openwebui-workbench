@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import patch
 
 from scripts import run_llm_provider_smoke as smoke
 
@@ -36,6 +37,28 @@ class LlmProviderSmokeTest(unittest.TestCase):
             args = smoke.parse_args([])
             result = smoke.run_smoke(args)
             self.assertTrue(result["skipped"])
+        finally:
+            os.environ.clear()
+            os.environ.update(old_env)
+
+    def test_gemini_uses_api_key_header_not_url_query(self):
+        old_env = os.environ.copy()
+        try:
+            os.environ.clear()
+            os.environ["GEMINI_API_KEY"] = "secret-test-value"
+            provider = smoke.PROVIDERS["gemini"]
+            with patch.object(smoke, "_request_json", return_value=(200, {"candidates": []})) as request_json:
+                smoke._run_gemini(
+                    provider,
+                    "https://generativelanguage.googleapis.com/v1beta",
+                    "gemini-2.5-pro",
+                    "Return exactly: OK",
+                    5,
+                )
+            url, headers, _payload, _timeout = request_json.call_args.args
+            self.assertNotIn("secret-test-value", url)
+            self.assertNotIn("?key=", url)
+            self.assertEqual(headers["x-goog-api-key"], "secret-test-value")
         finally:
             os.environ.clear()
             os.environ.update(old_env)
