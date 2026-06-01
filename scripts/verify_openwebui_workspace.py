@@ -153,6 +153,38 @@ def validate_json_files(root: Path) -> StepResult:
     return StepResult("JSON validation", "Erfolgreich", f"{checked} JSON-Dateien gelesen")
 
 
+def _clean_command_output(output: str) -> str:
+    return " ".join(output.replace("\x00", "").split())
+
+
+def _looks_like_disabled_wsl_service(output: str) -> bool:
+    normalized = _clean_command_output(output).lower()
+    return "wsl/0x80070422" in normalized or (
+        "dienst" in normalized and "deaktiviert" in normalized
+    )
+
+
+def _run_docker_step(step: CommandStep, env: dict[str, str] | None) -> StepResult:
+    completed = subprocess.run(step.command, cwd=ROOT, env=env, capture_output=True, text=True)
+    stdout = _clean_command_output(completed.stdout)
+    stderr = _clean_command_output(completed.stderr)
+    if stdout:
+        print(stdout, flush=True)
+    if stderr:
+        print(stderr, flush=True)
+    if completed.returncode == 0:
+        return StepResult(step.label, "Erfolgreich")
+
+    combined_output = f"{stdout} {stderr}"
+    if _looks_like_disabled_wsl_service(combined_output):
+        return StepResult(
+            step.label,
+            "Fehlgeschlagen",
+            "WSLService ist deaktiviert oder nicht erreichbar; Docker-Compose-Prüfung über WSL kann nicht laufen",
+        )
+    return StepResult(step.label, "Fehlgeschlagen", f"Exit-Code {completed.returncode}")
+
+
 def run_command_step(step: CommandStep) -> StepResult:
     if step.requires_docker and shutil.which(step.command[0]) is None:
         detail = f"{step.command[0]} ist in dieser Umgebung nicht verfügbar"
@@ -168,6 +200,8 @@ def run_command_step(step: CommandStep) -> StepResult:
     if step.env:
         env = dict(os.environ)
         env.update(step.env)
+    if step.requires_docker:
+        return _run_docker_step(step, env)
     completed = subprocess.run(step.command, cwd=ROOT, env=env)
     if completed.returncode != 0:
         return StepResult(step.label, "Fehlgeschlagen", f"Exit-Code {completed.returncode}")

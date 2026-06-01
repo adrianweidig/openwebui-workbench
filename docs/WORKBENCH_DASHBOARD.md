@@ -171,4 +171,10 @@ python -m unittest discover Workbench.dashboard.tests
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml config
 ```
 
-Die Docker-Prüfung ist optional und erfordert eine lokale Docker-Installation.
+Die Docker-Prüfung ist optional und erfordert eine lokale Docker-Installation. Wenn Docker nur in WSL verfügbar ist, kann der Setup-Doctor den Pfad nicht-mutierend prüfen:
+
+```powershell
+python scripts/check_workbench_setup.py --docker-command "wsl.exe -d Debian -- docker" --require-docker
+```
+
+Dieser Preflight führt `docker compose version` aus und meldet einen deaktivierten `WSLService` oder nicht erreichbaren WSL-Docker-Pfad, ohne Container zu starten.

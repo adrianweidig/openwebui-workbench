@@ -124,4 +124,10 @@ python -m unittest discover Workbench.dashboard.tests
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml config
 ```
 
-The Docker check is optional and requires a local Docker installation.
+The Docker check is optional and requires a local Docker installation. If Docker is available only through WSL, the setup doctor can probe that path without starting containers:
+
+```powershell
+python scripts/check_workbench_setup.py --docker-command "wsl.exe -d Debian -- docker" --require-docker
+```
+
+This preflight runs `docker compose version` and reports a disabled `WSLService` or unavailable WSL Docker path before any Compose startup is attempted.

@@ -155,6 +155,8 @@ python scripts/check_workbench_setup.py --docker-command "wsl.exe -d Debian -- d
 python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-command "wsl.exe -d Debian -- docker"
 ```
 
+Der Setup-Doctor prüft bei explizitem `--docker-command` zusätzlich `docker compose version`. Ein deaktivierter `WSLService` oder ein nicht erreichbarer WSL-Docker-Pfad wird dadurch bereits im Preflight als Fehler gemeldet, bevor Compose-Konfigurationen oder Containerstarts versucht werden.
+
 Danach:
 
 - OpenWebUI: `http://localhost:3000`

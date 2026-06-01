@@ -28,6 +28,8 @@ python scripts/check_workbench_setup.py --docker-command "wsl.exe -d Debian -- d
 python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-command "wsl.exe -d Debian -- docker"
 ```
 
+Der Setup-Doctor führt bei explizitem `--docker-command` zusätzlich `docker compose version` aus. Ein deaktivierter `WSLService` oder ein nicht erreichbarer WSL-Docker-Pfad wird damit als Preflight-Fehler gemeldet, bevor Compose-Konfigurationen oder Containerstarts versucht werden.
+
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 Die Workbench-Dashboard-Automation läuft standardmäßig alle 30 Minuten mit der nicht-mutierenden Aktion `check`. In Portainer kann der Administrator dies über `WORKBENCH_AUTOMATION_ENABLED`, `WORKBENCH_AUTOMATION_INTERVAL_MINUTES`, `WORKBENCH_AUTOMATION_ACTIONS` und `WORKBENCH_AUTOMATION_RUN_ON_START` anpassen. Schreibende Aktionen wie `generate`, `import-dry-run` oder `import-openwebui` sind nicht Teil des sicheren Defaults und sollten nur nach bewusster Admin-Entscheidung ergänzt werden.
 

@@ -41,6 +41,8 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-command "wsl.exe -d Debian -- docker"
    ```
 
+   Der Setup-Doctor führt bei explizitem `--docker-command` vorab `docker compose version` aus. Ein deaktivierter `WSLService` oder ein nicht nutzbarer WSL-Docker-Pfad wird dadurch als Preflight-Fehler sichtbar, ohne Container zu starten.
+
 4. Wenn Tool-, Filter-, Skill- oder Modellartefakte bewusst geändert wurden, Dist-Artefakte neu erzeugen und danach erneut prüfen:
 
    ```powershell

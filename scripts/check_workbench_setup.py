@@ -49,6 +49,7 @@ TRUE_VALUES = {"1", "true", "yes", "on"}
 FALSE_VALUES = {"0", "false", "no", "off"}
 AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
 PRIVATE_KEY_RE = re.compile(r"BEGIN .*PRIVATE KEY")
+DOCKER_PROBE_TIMEOUT_SECONDS = 20
 
 
 @dataclass(frozen=True)
@@ -416,6 +417,17 @@ def _shell_join(command: Sequence[str]) -> str:
     return " ".join(shlex.quote(part) for part in command)
 
 
+def _clean_command_output(output: str) -> str:
+    return " ".join(output.replace("\x00", "").split())
+
+
+def _looks_like_disabled_wsl_service(output: str) -> bool:
+    normalized = _clean_command_output(output).lower()
+    return "wsl/0x80070422" in normalized or (
+        "dienst" in normalized and "deaktiviert" in normalized
+    )
+
+
 def resolve_docker_command(
     docker_command: Sequence[str] | None,
     *,
@@ -431,9 +443,58 @@ def resolve_docker_command(
     return command
 
 
+def _docker_probe_result(command: Sequence[str], require_docker: bool) -> CheckResult | None:
+    probe_command = [*command, "compose", "version"]
+    try:
+        completed = subprocess.run(
+            probe_command,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=DOCKER_PROBE_TIMEOUT_SECONDS,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        level = "fail" if require_docker else "warn"
+        return CheckResult(
+            level,
+            "Docker CLI",
+            f"{_shell_join(command)} is not usable: {type(exc).__name__}: {exc}.",
+            "Install Docker, expose the Docker CLI on PATH, or run from an environment where docker compose is available.",
+        )
+    if completed.returncode == 0:
+        return None
+
+    combined_output = _clean_command_output(f"{completed.stdout} {completed.stderr}")
+    level = "fail" if require_docker else "warn"
+    if _looks_like_disabled_wsl_service(combined_output):
+        return CheckResult(
+            level,
+            "Docker CLI",
+            f"{_shell_join(command)} is not usable because WSL reports a disabled service.",
+            "Enable/start WSLService with administrator rights or run the check from an already available WSL/Docker runtime.",
+        )
+
+    detail = f"{_shell_join(command)} compose version exited with code {completed.returncode}."
+    if combined_output:
+        detail = f"{detail} {combined_output}"
+    return CheckResult(
+        level,
+        "Docker CLI",
+        detail,
+        "Run the reported docker compose version command manually in the target runtime.",
+    )
+
+
 def check_docker(docker_command: Sequence[str] | None, require_docker: bool) -> CheckResult:
     if docker_command:
-        return CheckResult("ok", "Docker CLI", f"Using command: {_shell_join(docker_command)}.")
+        probe_failure = _docker_probe_result(docker_command, require_docker)
+        if probe_failure:
+            return probe_failure
+        return CheckResult(
+            "ok",
+            "Docker CLI",
+            f"Using command: {_shell_join(docker_command)} (compose version check passed).",
+        )
     level = "fail" if require_docker else "warn"
     wsl_hint = ""
     if os.name == "nt" and shutil.which("wsl.exe"):

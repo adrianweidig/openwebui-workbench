@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from types import SimpleNamespace
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -77,6 +78,30 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
 
         self.assertEqual(result.status, "Übersprungen")
         self.assertIn("wsl.exe ist verfügbar", result.detail)
+
+    def test_wsl_docker_step_reports_disabled_service_without_nul_noise(self) -> None:
+        module = load_verify_module()
+        step = module.CommandStep(
+            "Docker compose config",
+            ["wsl.exe", "-d", "Debian", "--", "docker", "compose", "config"],
+            requires_docker=True,
+        )
+        disabled_wsl = (
+            "D\x00e\x00r\x00 \x00a\x00n\x00g\x00e\x00g\x00e\x00b\x00e\x00n\x00e\x00 "
+            "D\x00i\x00e\x00n\x00s\x00t\x00 \x00i\x00s\x00t\x00 \x00d\x00e\x00a\x00k\x00t\x00i\x00v\x00i\x00e\x00r\x00t\x00. "
+            "F\x00e\x00h\x00l\x00e\x00r\x00c\x00o\x00d\x00e\x00:\x00 \x00W\x00s\x00l\x00/\x000\x00x\x008\x000\x000\x007\x000\x004\x002\x002\x00"
+        )
+
+        with (
+            patch.object(module.shutil, "which", return_value="C:\\Windows\\System32\\wsl.exe"),
+            patch.object(module.subprocess, "run") as run,
+        ):
+            run.return_value = SimpleNamespace(returncode=1, stdout="", stderr=disabled_wsl)
+            result = module.run_command_step(step)
+
+        self.assertEqual(result.status, "Fehlgeschlagen")
+        self.assertIn("WSLService", result.detail)
+        self.assertNotIn("\x00", result.detail)
 
     def test_json_validation_ignores_git_directory(self) -> None:
         module = load_verify_module()

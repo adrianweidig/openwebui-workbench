@@ -91,18 +91,49 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
             env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
 
-            results = check_workbench_setup.evaluate_setup(
-                template,
-                env_file,
-                compose_file,
-                docker_command=["wsl.exe", "-d", "Debian", "--", "docker"],
-                lookup_docker=False,
-            )
+            with patch.object(check_workbench_setup.subprocess, "run") as run:
+                run.return_value = SimpleNamespace(returncode=0, stdout="Docker Compose version v2.0.0", stderr="")
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    docker_command=["wsl.exe", "-d", "Debian", "--", "docker"],
+                    lookup_docker=False,
+                )
             rendered = check_workbench_setup.render_results(results)
 
             levels = {result.title: result.level for result in results}
             self.assertEqual(levels["Docker CLI"], "ok")
             self.assertIn("wsl.exe -d Debian -- docker", rendered)
+            self.assertIn("compose version check passed", rendered)
+
+    def test_custom_wsl_docker_command_reports_disabled_wsl_service(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n", encoding="utf-8")
+
+            disabled_wsl = (
+                "Der angegebene Dienst kann nicht gestartet werden. "
+                "Er ist deaktiviert oder nicht mit aktivierten Geräten verbunden. "
+                "Fehlercode: Wsl/0x80070422"
+            )
+            with patch.object(check_workbench_setup.subprocess, "run") as run:
+                run.return_value = SimpleNamespace(returncode=1, stdout="", stderr=disabled_wsl)
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    docker_command=["wsl.exe", "-d", "Debian", "--", "docker"],
+                    require_docker=True,
+                    lookup_docker=False,
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Docker CLI"], "fail")
+            self.assertIn("disabled service", rendered)
+            self.assertIn("WSLService", rendered)
+            self.assertEqual(check_workbench_setup.summarize(results), "failed")
 
     def test_compose_config_uses_custom_docker_command_and_relative_paths(self) -> None:
         with tempfile.TemporaryDirectory(dir=check_workbench_setup.ROOT) as temp_dir:
