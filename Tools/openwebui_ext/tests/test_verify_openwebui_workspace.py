@@ -56,7 +56,8 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
         shared_step = next(step for step in steps if "shared-targets" in step.label)
         self.assertEqual(shared_step.env["WORKBENCH_SHARED_DOCKER_NETWORK"], "ki_infra_seu_test")
         self.assertEqual(shared_step.env["OPENWEBUI_BASE_URL"], "http://openwebui:8080")
-        self.assertEqual(shared_step.env["RAGFLOW_BASE_URL"], "http://ragflow:9380")
+        self.assertEqual(shared_step.env["OPENWEBUI_PUBLIC_URL"], "https://openwebui.top.secret")
+        self.assertEqual(shared_step.env["RAGFLOW_BASE_URL"], "http://ragflow")
         self.assertEqual(shared_step.env["SEAFILE_BASE_URL"], "http://seafile")
         self.assertTrue(shared_step.requires_docker)
         combined_secret_step = next(step for step in steps if "combined secret-file" in step.label)
@@ -85,6 +86,35 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
 
         self.assertEqual(compose_step.command[:5], ["wsl.exe", "-d", "Debian", "--", "docker"])
         self.assertIn("compose", compose_step.command)
+
+    def test_llm_provider_smoke_is_explicit_and_uses_secret_loader(self) -> None:
+        module = load_verify_module()
+        default_args = module.parse_args([])
+        default_commands = "\n".join(" ".join(step.command) for step in module.build_command_steps(default_args))
+        self.assertNotIn("run_llm_provider_smoke.py", default_commands)
+
+        args = module.parse_args(["--include-llm-provider-smoke", "--require-llm-provider-smoke"])
+        class FakeLoader:
+            def is_file(self) -> bool:
+                return True
+
+            def __str__(self) -> str:
+                return "C:\\Users\\tester\\.codex\\local-secrets\\llm-providers\\Invoke-WithLlmProviderEnv.ps1"
+
+        fake_loader = FakeLoader()
+        with (
+            patch.object(module, "LLM_PROVIDER_LOADER", fake_loader),
+            patch.object(module.os, "name", "nt"),
+            patch.object(module.shutil, "which", side_effect=lambda name: "pwsh" if name == "pwsh" else None),
+        ):
+            steps = module.build_command_steps(args)
+
+        smoke_step = next(step for step in steps if step.label == "External LLM provider smoke")
+        command = " ".join(smoke_step.command)
+        self.assertEqual(smoke_step.command[0], "pwsh")
+        self.assertIn("Invoke-WithLlmProviderEnv.ps1", command)
+        self.assertIn("run_llm_provider_smoke.py", command)
+        self.assertIn("--require", command)
 
     def test_skipped_windows_docker_step_mentions_wsl_when_available(self) -> None:
         module = load_verify_module()

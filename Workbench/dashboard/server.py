@@ -129,6 +129,7 @@ AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
 DEFAULT_AUTOMATION_ACTIONS = ("check",)
 MIN_AUTOMATION_INTERVAL_MINUTES = 5
 MAX_AUTOMATION_INTERVAL_MINUTES = 1440
+OPENWEBUI_STATUS_TIMEOUT_SECONDS = 5
 
 
 def configure_utf8_stdio() -> None:
@@ -296,7 +297,8 @@ def tls_verify_from_env() -> bool:
 def openwebui_ssl_context(tls_verify: bool | None = None, ca_file: str = "", ca_path: str = "") -> ssl.SSLContext | None:
     verify = tls_verify_from_env() if tls_verify is None else tls_verify
     if not verify:
-        return ssl._create_unverified_context()
+        # Explicit admin opt-out via OPENWEBUI_TLS_VERIFY=false.
+        return ssl._create_unverified_context()  # nosec B323
     cafile = ca_file or os.environ.get("OPENWEBUI_CA_FILE", "").strip() or None
     capath = ca_path or os.environ.get("OPENWEBUI_CA_PATH", "").strip() or None
     if cafile or capath:
@@ -429,9 +431,10 @@ class WorkbenchState:
         for path in ("/health", "/"):
             request = Request(f"{url}{path}", method="GET", headers={"Accept": "text/plain"})
             try:
-                with urlopen(
+                # Base URL is validated by env_url as http(s) without credentials.
+                with urlopen(  # nosec B310
                     request,
-                    timeout=2,
+                    timeout=OPENWEBUI_STATUS_TIMEOUT_SECONDS,
                     context=openwebui_ssl_context(self.config.tls_verify, self.config.ca_file, self.config.ca_path),
                 ) as response:
                     return {"ok": True, "status": response.status, "path": path}
@@ -958,13 +961,20 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         if parsed.path == "/healthz":
             self.send_json({"ok": True, "service": "openwebui-workbench"})
             return
+        static_path: Path | None = None
+        if parsed.path.startswith("/static/"):
+            try:
+                static_path = static_file_path(parsed.path.removeprefix("/static/"))
+            except Exception as exc:
+                self.handle_exception(exc)
+                return
         if not self.require_auth():
             return
         try:
             if parsed.path == "/":
                 self.send_static(STATIC_ROOT / "index.html", "text/html; charset=utf-8")
-            elif parsed.path.startswith("/static/"):
-                self.send_static(static_file_path(parsed.path.removeprefix("/static/")), self.content_type(parsed.path))
+            elif static_path is not None:
+                self.send_static(static_path, self.content_type(parsed.path))
             elif parsed.path == "/api/status":
                 self.send_json(STATE.summary())
             elif parsed.path == "/api/models":

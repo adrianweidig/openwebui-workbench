@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import os
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -1009,6 +1010,45 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertEqual(levels["Runtime Portainer"], "fail")
             self.assertIn("connection refused", rendered)
             self.assertEqual(check_workbench_setup.summarize(results), "failed")
+
+    def test_runtime_probe_explains_invalid_private_ca_key_usage(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "OPENWEBUI_PUBLIC_URL=https://openwebui.top.secret\n",
+                encoding="utf-8",
+            )
+
+            error = "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: CA cert does not include key usage extension"
+            with patch.object(check_workbench_setup, "urlopen", side_effect=check_workbench_setup.URLError(error)):
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    lookup_docker=False,
+                    probe_runtime=True,
+                    require_runtime=True,
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            self.assertIn("keyUsage/keyCertSign", rendered)
+            self.assertIn("OPENWEBUI_CA_FILE/OPENWEBUI_CA_PATH", rendered)
+            self.assertEqual(check_workbench_setup.summarize(results), "failed")
+
+    def test_runtime_probe_ca_file_can_come_from_process_environment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            ca_file = Path(temp_dir) / "root-ca.pem"
+            ca_file.write_text("-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n", encoding="utf-8")
+
+            with (
+                patch.dict(os.environ, {"OPENWEBUI_CA_FILE": str(ca_file)}, clear=False),
+                patch.object(check_workbench_setup.ssl, "create_default_context", return_value="ctx") as create_context,
+            ):
+                context = check_workbench_setup._ssl_context_from_env({"OPENWEBUI_CA_FILE": ""}, Path(temp_dir) / ".env")
+
+            self.assertEqual(context, "ctx")
+            create_context.assert_called_once_with(cafile=str(ca_file), capath=None)
 
     def test_runtime_probe_rejects_portainer_url_credentials_without_printing_secret(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

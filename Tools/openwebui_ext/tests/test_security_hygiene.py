@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -61,6 +62,21 @@ class SecurityHygieneTests(unittest.TestCase):
             _checked, findings = module.scan_paths([script], root)
 
         self.assertEqual(findings, [])
+
+    def test_bandit_success_prints_status(self) -> None:
+        module = load_security_module()
+
+        class Completed:
+            returncode = 0
+
+        with (
+            patch.object(module.shutil, "which", return_value="bandit"),
+            patch.object(module.subprocess, "run", return_value=Completed()),
+            patch("builtins.print") as mocked_print,
+        ):
+            self.assertEqual(module.run_bandit(ROOT), 0)
+
+        mocked_print.assert_any_call("- Bandit: keine Medium-/High-Befunde")
 
 
 if __name__ == "__main__":

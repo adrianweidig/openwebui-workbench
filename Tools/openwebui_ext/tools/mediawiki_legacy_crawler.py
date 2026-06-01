@@ -255,7 +255,8 @@ class _MediaWikiClient:
         self.cookiejar = http.cookiejar.CookieJar()
         handlers: List[Any] = [urllib.request.HTTPCookieProcessor(self.cookiejar)]
         if insecure_tls:
-            handlers.append(urllib.request.HTTPSHandler(context=ssl._create_unverified_context()))
+            # Explicit valve for legacy/internal wikis only.
+            handlers.append(urllib.request.HTTPSHandler(context=ssl._create_unverified_context()))  # nosec B323
         self.opener = urllib.request.build_opener(*handlers)
         self.user_agent = user_agent
         self.logged_in = False

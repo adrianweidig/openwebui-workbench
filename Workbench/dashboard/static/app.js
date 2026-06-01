@@ -431,8 +431,11 @@ function renderStatus() {
   setText("config-token", `${status.openwebui.admin_token_configured ? t("state.set") : t("state.notSet")} · ${tlsMode} · ${caMode}`);
   setText("config-write", status.write_enabled ? t("state.active") : t("state.disabled"));
   setText("config-automation", automationDetailText(status.automation));
+  const openwebuiReachabilityDetail = status.openwebui.reachable.ok
+    ? status.openwebui.base_url
+    : status.openwebui.reachable.error || status.openwebui.base_url;
   setText("signal-api", status.openwebui.reachable.ok ? t("signals.connected") : t("signals.unreachable"));
-  setText("signal-api-detail", status.openwebui.base_url);
+  setText("signal-api-detail", openwebuiReachabilityDetail);
   setText("signal-auth", status.dashboard?.auth_enabled ? t("signals.authEnabled") : t("signals.localMode"));
   setText("signal-auth-detail", status.dashboard?.auth_enabled ? t("signals.allRoutesProtected") : t("signals.authEnvMissing"));
   setText("signal-write", status.write_enabled ? t("signals.writeEnabled") : t("signals.readOnly"));
@@ -481,7 +484,9 @@ function setupChecks(status, existingArtifacts, artifactTotal) {
     {
       level: status.openwebui.reachable.ok ? "ok" : "danger",
       title: status.openwebui.reachable.ok ? t("setup.openwebuiReady") : t("setup.openwebuiMissing"),
-      detail: status.openwebui.base_url,
+      detail: status.openwebui.reachable.ok
+        ? status.openwebui.base_url
+        : status.openwebui.reachable.error || status.openwebui.base_url,
     },
     {
       level: syncReady ? "ok" : "warn",

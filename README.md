@@ -158,6 +158,15 @@ python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-c
 Der Setup-Doctor prüft bei explizitem `--docker-command` zusätzlich `docker compose version`. Ein deaktivierter `WSLService` oder ein nicht erreichbarer WSL-Docker-Pfad wird dadurch bereits im Preflight als Fehler gemeldet, bevor Compose-Konfigurationen oder Containerstarts versucht werden.
 Wenn eine Root-CA-Datei nur auf dem Docker-/Portainer-Host existiert, kann der nicht-mutierende Preflight bewusst mit `--allow-unverified-root-ca-path` laufen; lokal lesbare PEM-Dateien werden weiterhin geprüft.
 Nach einem Stack-Start kann derselbe Doctor mit `--probe-runtime --portainer-url https://portainer.top.secret` OpenWebUI und Portainer ohne Token prüfen; alternativ kann `PORTAINER_URL` in der lokalen `.env` stehen. `--require-runtime` macht fehlende Erreichbarkeit für Abnahmen zum Fehler.
+Wenn eine private Edge-Root-CA von Python mit `CA cert does not include key usage extension` abgelehnt wird, muss die CA mit gültiger CA-Key-Usage, insbesondere `keyCertSign`, neu erstellt oder als gültige CA-Datei über `OPENWEBUI_CA_FILE`/`OPENWEBUI_CA_PATH` bereitgestellt werden.
+
+Scharfe KI-Smoke-Tests mit echter Modellinferenz sind bewusst vom Air-Gap-Verify getrennt. Sie dürfen nicht auf lokale OpenWebUI-/Ollama-Modelle fallen, sondern müssen externe Provider-Keys pro Prozess über den lokalen DPAPI-Loader laden:
+
+```powershell
+& C:\Users\adria\.codex\local-secrets\llm-providers\Invoke-WithLlmProviderEnv.ps1 -All -Command @('python','scripts/run_llm_provider_smoke.py','--require')
+```
+
+Der Smoke-Test schreibt keine Keys in das Repository, gibt keine Key-Werte aus und verweigert lokale oder private Provider-Endpunkte. Ein konkretes starkes Modell kann über `LLM_PROVIDER_SMOKE_PROVIDER` und `LLM_PROVIDER_SMOKE_MODEL` gesetzt werden.
 
 Danach:
 
@@ -172,12 +181,13 @@ Wenn OpenWebUI, RAGFlow und Seafile bereits als gemeinsame Zielcontainer laufen,
 ```powershell
 $env:WORKBENCH_SHARED_DOCKER_NETWORK="ki_infra_seu_test"
 $env:OPENWEBUI_BASE_URL="http://openwebui:8080"
-$env:RAGFLOW_BASE_URL="http://ragflow:9380"
+$env:OPENWEBUI_PUBLIC_URL="https://openwebui.top.secret"
+$env:RAGFLOW_BASE_URL="http://ragflow"
 $env:SEAFILE_BASE_URL="http://seafile"
 docker compose --env-file .env -f Deployment/docker-compose.shared-targets.yml up -d --build
 ```
 
-Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` zur OpenWebUI-API synchronisieren. Zusätzlich läuft im Dashboard standardmäßig alle 30 Minuten die nicht-mutierende Aktion `check`; schreibende automatische Aktionen sind nur nach bewusster Env-Konfiguration aktiv. Das Dashboard nutzt HTTP Basic Auth, sobald `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` gesetzt sind. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
+`OPENWEBUI_PUBLIC_URL` ist in dieser Variante Pflicht und muss auf die browserseitig erreichbare Adresse des gemeinsamen OpenWebUI-Zielcontainers zeigen, zum Beispiel `https://openwebui.top.secret`. Die Workbench mountet dieses Repository als `/workspace`, bearbeitet Modell-Markdown-Dateien direkt unter `Modelle/einzelmodelle/`, Tool-Quellen unter `Tools/openwebui_ext/tools/` und Skill-Markdown unter `Tools/openwebui_ext/skills/`. Daraus kann sie Dist-Artefakte erzeugen, Import-Dry-Runs ausführen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` zur OpenWebUI-API synchronisieren. Zusätzlich läuft im Dashboard standardmäßig alle 30 Minuten die nicht-mutierende Aktion `check`; schreibende automatische Aktionen sind nur nach bewusster Env-Konfiguration aktiv. Das Dashboard nutzt HTTP Basic Auth, sobald `WORKBENCH_AUTH_USERNAME` und `WORKBENCH_AUTH_PASSWORD` oder `WORKBENCH_AUTH_PASSWORD_FILE` gesetzt sind. Details stehen in [`docs/WORKBENCH_DASHBOARD.md`](docs/WORKBENCH_DASHBOARD.md).
 
 Wenn OpenWebUI bereits läuft, kann nur der Workbench-Container gestartet werden:
 

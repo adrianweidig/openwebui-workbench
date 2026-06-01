@@ -96,7 +96,8 @@ class Tools:
             headers["Authorization"] = f"Bearer {token}"
         request = urllib.request.Request(url, headers=headers, method="GET")
         try:
-            with urllib.request.urlopen(request, timeout=max(1, int(self.valves.timeout_seconds))) as response:
+            # Exact https://api.github.com host is enforced above.
+            with urllib.request.urlopen(request, timeout=max(1, int(self.valves.timeout_seconds))) as response:  # nosec B310
                 return json.loads(response.read(256000).decode("utf-8", errors="replace"))
         except urllib.error.HTTPError as exc:
             if optional and exc.code in {403, 404}:

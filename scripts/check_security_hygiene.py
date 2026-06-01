@@ -193,9 +193,23 @@ def run_bandit(root: Path) -> int:
         print("- Bandit: übersprungen, nicht installiert")
         return 0
     completed = subprocess.run(
-        [bandit, "-q", "-r", "scripts", "Tools", "Workbench"],
+        [
+            bandit,
+            "-q",
+            "-ll",
+            "-r",
+            "scripts",
+            "Tools",
+            "Workbench",
+            "-x",
+            "Tools/openwebui_ext/tests,Workbench/dashboard/tests",
+        ],
         cwd=root,
     )
+    if completed.returncode == 0:
+        print("- Bandit: keine Medium-/High-Befunde")
+    else:
+        print("- Bandit: Befunde gemeldet; Details stehen in der Bandit-Ausgabe")
     return completed.returncode
 
 

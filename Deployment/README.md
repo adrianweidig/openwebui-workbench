@@ -27,13 +27,14 @@ Für den Parallelbetrieb mit einem zweiten Agenten und bestehenden gemeinsamen Z
 python scripts/init_workbench_env.py
 $env:WORKBENCH_SHARED_DOCKER_NETWORK="ki_infra_seu_test"
 $env:OPENWEBUI_BASE_URL="http://openwebui:8080"
-$env:OPENWEBUI_PUBLIC_URL="http://localhost:3000"
-$env:RAGFLOW_BASE_URL="http://ragflow:9380"
+$env:OPENWEBUI_PUBLIC_URL="https://openwebui.top.secret"
+$env:RAGFLOW_BASE_URL="http://ragflow"
 $env:SEAFILE_BASE_URL="http://seafile"
 docker compose --env-file .env -f Deployment/docker-compose.shared-targets.yml up -d --build
 ```
 
-Diese Variante erzeugt ausschließlich den agentenspezifischen Workbench-Container `openwebui-workbench` mit eigenem Host-Port `WORKBENCH_PORT` und nutzt das externe Netzwerk `WORKBENCH_SHARED_DOCKER_NETWORK`. Die Zielcontainer bleiben extern: OpenWebUI wird über `OPENWEBUI_BASE_URL`, RAGFlow über `RAGFLOW_BASE_URL` und Seafile über `SEAFILE_BASE_URL` adressiert. Der Workbench-Stack darf diese gemeinsamen Zielcontainer nicht neu erzeugen, ersetzen oder über eigene Volumes überschreiben.
+Diese Variante erzeugt ausschließlich den agentenspezifischen Workbench-Container `openwebui-workbench` mit eigenem Host-Port `WORKBENCH_PORT` und nutzt das externe Netzwerk `WORKBENCH_SHARED_DOCKER_NETWORK`. Die Zielcontainer bleiben extern: OpenWebUI wird über `OPENWEBUI_BASE_URL`, RAGFlow über `RAGFLOW_BASE_URL` und Seafile über `SEAFILE_BASE_URL` adressiert. Der Workbench-Stack darf diese gemeinsamen Zielcontainer nicht neu erzeugen, ersetzen oder über eigene Volumes überschreiben. Setze `RAGFLOW_BASE_URL` auf den im gemeinsamen Stack wirklich lauschenden internen HTTP-Endpunkt; im lokalen `ki_infra_seu_test` ist das `http://ki-test-ragflow` beziehungsweise der Docker-DNS-Alias `http://ragflow`, nicht Port `9380`.
+`OPENWEBUI_PUBLIC_URL` ist in dieser Variante bewusst Pflicht und muss auf die browserseitig erreichbare Adresse des gemeinsamen OpenWebUI-Zielcontainers zeigen, zum Beispiel den lokalen Edge-Host `https://openwebui.top.secret`. Nutze `http://localhost:3000` nur, wenn dieser Host-Port nachweislich auf denselben gemeinsamen OpenWebUI-Zielcontainer zeigt; ein alter separater Workbench-OpenWebUI-Container darf dadurch nicht als Zielsystem getarnt werden.
 
 `scripts/init_workbench_env.py` erzeugt eine ignorierte lokale `.env` aus `Deployment/workbench.env.example` und füllt `WEBUI_SECRET_KEY` sowie `WORKBENCH_AUTH_PASSWORD` mit zufälligen lokalen Werten. Bestehende `.env`-Dateien werden ohne `--force` nicht überschrieben, und Secret-Werte werden nicht auf der Konsole ausgegeben. `WORKBENCH_AUTH_USERNAME` fällt sonst auf `workbench` zurück. Für Portainer oder Docker-Secrets kann statt `WORKBENCH_AUTH_PASSWORD` eine gemountete Datei über `WORKBENCH_AUTH_PASSWORD_FILE` genutzt werden. Compose und der Portainer-Wizard setzen `WORKBENCH_REQUIRE_AUTH=true`; der Dashboard-Container startet dann erst, wenn Benutzername und Passwort oder Passwortdatei wirksam konfiguriert sind.
 `scripts/check_workbench_setup.py` ist der nicht-mutierende Setup-Doctor für Administratoren: Er prüft Python-Version, Env-Vorlage, lokale `.env`, Host-Portwerte, OpenWebUI-URLs, optionale Portainer-/RAGFlow-/Seafile-URLs, boolesche Flags, numerische Runtime-Grenzen, dateibasierte Runtime-Pfade, Compose-Datei und Docker-Verfügbarkeit, ohne Dienste zu starten oder Secret-Werte auszugeben. Mit `--probe-runtime` werden OpenWebUI und optional Portainer zusätzlich per HTTP geprüft; fehlendes Docker ist standardmäßig eine Warnung und kann mit `--require-docker` für Installationsabnahmen als Fehler gewertet werden.
@@ -79,6 +80,15 @@ python scripts/check_workbench_setup.py --probe-runtime --require-runtime --port
 ```
 
 Der Probe ruft keine Admin-APIs mit Token auf. OpenWebUI wird über `OPENWEBUI_PUBLIC_URL` geprüft, Portainer über `--portainer-url` oder `PORTAINER_URL` in der lokalen `.env`; der CLI-Wert hat Vorrang. HTTP 401/403 zählt als erreichbar, weil damit der Dienst antwortet und Auth verlangt. Der Portainer-Wizard kann `PORTAINER_URL` direkt in die generierte `workbench.env` schreiben, damit derselbe Wert für spätere Setup-Doctor-Abnahmen verfügbar ist.
+Wenn der Probe bei einer privaten Edge-CA mit `CA cert does not include key usage extension` fehlschlägt, ist nicht die Workbench-URL das Problem, sondern die Root-CA. Erzeuge oder installiere eine Root-CA mit gültiger Key-Usage für CA-Zertifikate, insbesondere `keyCertSign`, und stelle sie über `OPENWEBUI_CA_FILE` oder `OPENWEBUI_CA_PATH` bereit. `OPENWEBUI_TLS_VERIFY=false` bleibt nur eine kurzlebige lokale Diagnoseoption.
+
+Scharfe KI-Smoke-Tests laufen nicht gegen lokale Modelle. Wenn ein Administrator echte Modellinferenz prüfen will, werden die Provider-Keys nur für den gestarteten Prozess aus dem lokalen DPAPI-Store geladen:
+
+```powershell
+& C:\Users\adria\.codex\local-secrets\llm-providers\Invoke-WithLlmProviderEnv.ps1 -All -Command @('python','scripts/run_llm_provider_smoke.py','--require')
+```
+
+Der Smoke-Test verweigert lokale OpenWebUI-, Ollama-, `localhost`- und private Docker-Netz-Endpunkte. Er gibt nur Provider, Modell, Host, HTTP-Status und Antwortlänge aus; Secret-Werte werden weder gelesen noch geloggt. Für eine feste Auswahl setzt der Administrator `LLM_PROVIDER_SMOKE_PROVIDER` und `LLM_PROVIDER_SMOKE_MODEL` in der Prozessumgebung.
 
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 Die Workbench-Dashboard-Automation läuft standardmäßig alle 30 Minuten mit der nicht-mutierenden Aktion `check`. In Portainer kann der Administrator dies über `WORKBENCH_AUTOMATION_ENABLED`, `WORKBENCH_AUTOMATION_INTERVAL_MINUTES`, `WORKBENCH_AUTOMATION_ACTIONS` und `WORKBENCH_AUTOMATION_RUN_ON_START` anpassen. Schreibende Aktionen wie `generate`, `import-dry-run` oder `import-openwebui` sind nicht Teil des sicheren Defaults und sollten nur nach bewusster Admin-Entscheidung ergänzt werden.

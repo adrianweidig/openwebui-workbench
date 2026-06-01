@@ -102,10 +102,18 @@ def is_already_registered_error(exc: RuntimeError) -> bool:
 
 def openwebui_ssl_context(tls_verify: bool, ca_file: str = "", ca_path: str = "") -> ssl.SSLContext | None:
     if not tls_verify:
-        return ssl._create_unverified_context()
+        # Explicit local/admin opt-out via tls_verify=false.
+        return ssl._create_unverified_context()  # nosec B323
     if ca_file or ca_path:
         return ssl.create_default_context(cafile=ca_file or None, capath=ca_path or None)
     return None
+
+
+def require_http_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise ValueError("OpenWebUI API requests must use http(s) URLs with a host.")
+    return url
 
 
 @dataclass(frozen=True)
@@ -155,7 +163,7 @@ class OpenWebUIClient:
         url = f"{self.base_url}{path}"
         if query:
             url = f"{url}?{urlencode(query)}"
-        return url
+        return require_http_url(url)
 
     def request(
         self,
@@ -178,7 +186,8 @@ class OpenWebUIClient:
         for attempt in range(3):
             request = Request(url, data=body, headers=request_headers, method=method)
             try:
-                with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:
+                # URL is built from the validated http(s) OpenWebUI base URL.
+                with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:  # nosec B310
                     raw = response.read()
                     if response.status not in expected:
                         raise RuntimeError(f"{method} {path} returned HTTP {response.status}: {raw[:500]!r}")
@@ -261,7 +270,8 @@ class OpenWebUIClient:
             method="POST",
         )
         try:
-            with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:
+            # URL is built from the validated http(s) OpenWebUI base URL.
+            with urlopen(request, timeout=self.timeout, context=self.ssl_context) as response:  # nosec B310
                 return json.loads(response.read().decode("utf-8"))
         except HTTPError as exc:
             raw = exc.read().decode("utf-8", errors="replace")

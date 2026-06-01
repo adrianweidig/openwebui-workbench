@@ -615,13 +615,19 @@ def _url_value(raw: str, key: str) -> tuple[str | None, str | None]:
 
 
 def _ssl_context_from_env(values: dict[str, str], env_path: Path) -> ssl.SSLContext | None:
-    verify, error = _env_bool(values, "OPENWEBUI_TLS_VERIFY", "true")
+    effective_values = dict(values)
+    for key in ("OPENWEBUI_TLS_VERIFY", "OPENWEBUI_CA_FILE", "OPENWEBUI_CA_PATH"):
+        if os.environ.get(key, "").strip():
+            effective_values[key] = os.environ[key]
+
+    verify, error = _env_bool(effective_values, "OPENWEBUI_TLS_VERIFY", "true")
     if error:
         return None
     if verify == "false":
-        return ssl._create_unverified_context()
-    ca_file = values.get("OPENWEBUI_CA_FILE", "").strip()
-    ca_path = values.get("OPENWEBUI_CA_PATH", "").strip()
+        # Explicit admin opt-out via OPENWEBUI_TLS_VERIFY=false.
+        return ssl._create_unverified_context()  # nosec B323
+    ca_file = effective_values.get("OPENWEBUI_CA_FILE", "").strip()
+    ca_path = effective_values.get("OPENWEBUI_CA_PATH", "").strip()
     cafile = str(_env_path(ca_file, env_path)) if ca_file and _env_path(ca_file, env_path).is_file() else None
     capath = str(_env_path(ca_path, env_path)) if ca_path and _env_path(ca_path, env_path).is_dir() else None
     if cafile or capath:
@@ -639,7 +645,8 @@ def _probe_url(
         url = f"{base_url}{path}"
         request = Request(url, method="GET", headers={"Accept": "text/plain, application/json"})
         try:
-            with urlopen(
+            # Base URL was validated by _validate_url before probing.
+            with urlopen(  # nosec B310
                 request,
                 timeout=RUNTIME_PROBE_TIMEOUT_SECONDS,
                 context=context,
@@ -679,8 +686,20 @@ def check_runtime_url(
         _runtime_probe_level(require_runtime),
         title,
         detail,
-        "Start or repair the target service, then rerun the runtime probe.",
+        runtime_probe_action(detail, key),
     )
+
+
+def runtime_probe_action(detail: str, key: str) -> str:
+    lowered = detail.lower()
+    if "certificate_verify_failed" in lowered and "key usage extension" in lowered:
+        return (
+            "Regenerate or install a private root CA with a valid keyUsage/keyCertSign extension, "
+            f"then configure OPENWEBUI_CA_FILE/OPENWEBUI_CA_PATH for the {key} endpoint and rerun the probe."
+        )
+    if "certificate_verify_failed" in lowered:
+        return "Mount or configure the trusted root CA via OPENWEBUI_CA_FILE/OPENWEBUI_CA_PATH, then rerun the runtime probe."
+    return "Start or repair the target service, then rerun the runtime probe."
 
 
 def check_runtime_reachability(
@@ -721,6 +740,7 @@ def check_runtime_reachability(
                 key="PORTAINER_URL",
                 paths=("/api/status", "/"),
                 require_runtime=require_runtime,
+                context=context,
             )
         )
     else:

@@ -65,7 +65,7 @@
         "OPENWEBUI_JUPYTER_TIMEOUT_SECONDS",
         "OPENWEBUI_JUPYTER_ALLOWED_WORKDIR"
       ],
-      "sha256": "2e9c2f300c18d3756092b65bb6e1233c4811d1287102091b851339f9fb3a002a",
+      "sha256": "c68a96629556604fd4d7789f11b8f9b72268a8564870004041e2adc96a72603c",
       "importable": true,
       "methods": [
         "run_python"
@@ -119,7 +119,7 @@
       "purpose": "Read-only GitHub repository metadata inspection with optional token support through Valves or OpenWebUI OAuth.",
       "offline": false,
       "configuration": [],
-      "sha256": "8a4fb9e8de81f7652657ee5300406557a413e509aae6de4f1f4c1b7c165260ac",
+      "sha256": "13183cfb32e8351f66724bbe4b1f928d6ea0502a9d84a843ac29cc8478348f52",
       "importable": true,
       "methods": [
         "evaluate_tool_candidate",
@@ -190,7 +190,7 @@
       "purpose": "Crawl an internal MediaWiki instance through the MediaWiki API with support for legacy username/password login flows.",
       "offline": true,
       "configuration": [],
-      "sha256": "9714bb733d13bb617c3cc6bcb4c20395edc9088b8db2c08de04abd36d0a6e37e",
+      "sha256": "503bbed500b6cbcb4b0808cfdaa7717f7f47ab9020f9745bc6b08db1f29ddf8d",
       "importable": true,
       "methods": [
         "check_mediawiki",

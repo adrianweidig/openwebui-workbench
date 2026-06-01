@@ -8,11 +8,12 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Iterable, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
+LLM_PROVIDER_LOADER = Path.home() / ".codex" / "local-secrets" / "llm-providers" / "Invoke-WithLlmProviderEnv.ps1"
 
 
 @dataclass(frozen=True)
@@ -48,6 +49,26 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         default=["docker"],
         help='docker command prefix for compose checks, for example: "wsl.exe -d Debian -- docker"',
     )
+    parser.add_argument(
+        "--include-llm-provider-smoke",
+        action="store_true",
+        help="run an explicit live LLM smoke test through external provider keys only; local model endpoints are refused",
+    )
+    parser.add_argument(
+        "--require-llm-provider-smoke",
+        action="store_true",
+        help="make the live LLM provider smoke fail instead of skip when no external provider key is available",
+    )
+    parser.add_argument(
+        "--llm-provider",
+        default=os.environ.get("LLM_PROVIDER_SMOKE_PROVIDER", "auto"),
+        help="external provider for the live LLM smoke, for example openrouter or gemini",
+    )
+    parser.add_argument(
+        "--llm-provider-model",
+        default=os.environ.get("LLM_PROVIDER_SMOKE_MODEL", ""),
+        help="hosted provider model ID for the live LLM smoke; defaults to the provider's strong model",
+    )
     return parser.parse_args(argv)
 
 
@@ -77,15 +98,28 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
     if not args.skip_unit_tests:
         steps.append(CommandStep("Unit tests", [python, "-m", "unittest", "discover", "Tools.openwebui_ext.tests"]))
         steps.append(CommandStep("Workbench dashboard tests", [python, "-m", "unittest", "discover", "Workbench.dashboard.tests"]))
+    if args.include_llm_provider_smoke:
+        steps.append(
+            CommandStep(
+                "External LLM provider smoke",
+                llm_provider_smoke_command(
+                    python,
+                    provider=args.llm_provider,
+                    model=args.llm_provider_model,
+                    require=args.require_llm_provider_smoke,
+                ),
+            )
+        )
     if args.include_docker_compose:
         docker = list(args.docker_command)
+        verify_host_path = lambda name: str(PurePosixPath("/", "tmp", name))
         compose_auth_env = {
             "WEBUI_SECRET_KEY": "verify-only-placeholder",
             "WORKBENCH_AUTH_PASSWORD": "verify-only-placeholder",
-            "WORKBENCH_ENTERPRISE_CA_HOST_FILE": "/tmp/workbench-verify-ca.pem",
-            "WORKBENCH_AUTH_PASSWORD_HOST_FILE": "/tmp/workbench-auth-password.txt",
+            "WORKBENCH_ENTERPRISE_CA_HOST_FILE": verify_host_path("workbench-verify-ca.pem"),
+            "WORKBENCH_AUTH_PASSWORD_HOST_FILE": verify_host_path("workbench-auth-password.txt"),
             "WORKBENCH_AUTH_PASSWORD_FILE": "/run/secrets/workbench-auth-password",
-            "OPENWEBUI_ADMIN_TOKEN_HOST_FILE": "/tmp/openwebui-admin-token.txt",
+            "OPENWEBUI_ADMIN_TOKEN_HOST_FILE": verify_host_path("openwebui-admin-token.txt"),
             "OPENWEBUI_ADMIN_TOKEN_FILE": "/run/secrets/openwebui-admin-token",
         }
         steps.append(
@@ -111,8 +145,8 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
                     **compose_auth_env,
                     "WORKBENCH_SHARED_DOCKER_NETWORK": "ki_infra_seu_test",
                     "OPENWEBUI_BASE_URL": "http://openwebui:8080",
-                    "OPENWEBUI_PUBLIC_URL": "http://localhost:3000",
-                    "RAGFLOW_BASE_URL": "http://ragflow:9380",
+                    "OPENWEBUI_PUBLIC_URL": "https://openwebui.top.secret",
+                    "RAGFLOW_BASE_URL": "http://ragflow",
                     "SEAFILE_BASE_URL": "http://seafile",
                     "PORTAINER_URL": "http://portainer:9000",
                 },
@@ -202,6 +236,34 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
             )
         )
     return steps
+
+
+def llm_provider_smoke_command(python: str, *, provider: str, model: str, require: bool) -> list[str]:
+    smoke_command = [python, "scripts/run_llm_provider_smoke.py", "--provider", provider]
+    if model:
+        smoke_command.extend(["--model", model])
+    if require:
+        smoke_command.append("--require")
+    if os.name == "nt" and LLM_PROVIDER_LOADER.is_file():
+        command_array = ", ".join(powershell_literal(part) for part in smoke_command)
+        invoke_command = f"& {powershell_literal(str(LLM_PROVIDER_LOADER))} -All -Command @({command_array})"
+        return [
+            powershell_executable(),
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            invoke_command,
+        ]
+    return smoke_command
+
+
+def powershell_literal(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
+
+
+def powershell_executable() -> str:
+    return shutil.which("pwsh") or shutil.which("pwsh.exe") or "powershell"
 
 
 def iter_json_files(root: Path) -> Iterable[Path]:

@@ -145,6 +145,15 @@ python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-c
 When `--docker-command` is set, the setup doctor also runs `docker compose version`. A disabled `WSLService` or unavailable WSL Docker path is reported as a preflight error before Compose configuration or container startup is attempted.
 If a root CA file exists only on the Docker or Portainer host, the non-mutating preflight can be run with `--allow-unverified-root-ca-path`; locally readable PEM files are still validated.
 After stack startup, the same doctor can probe OpenWebUI and Portainer without tokens via `--probe-runtime --portainer-url https://portainer.top.secret`; alternatively set `PORTAINER_URL` in the local `.env`. Add `--require-runtime` to make missing reachability fail acceptance checks.
+If Python rejects a private edge root CA with `CA cert does not include key usage extension`, regenerate or install the root CA with valid CA key usage, especially `keyCertSign`, and provide it through `OPENWEBUI_CA_FILE` or `OPENWEBUI_CA_PATH`.
+
+Live AI smoke tests with real model inference are intentionally separate from the air-gap verify path. They must not fall back to local OpenWebUI or Ollama models. Load external provider keys only for the child process through the local DPAPI-backed loader:
+
+```powershell
+& C:\Users\adria\.codex\local-secrets\llm-providers\Invoke-WithLlmProviderEnv.ps1 -All -Command @('python','scripts/run_llm_provider_smoke.py','--require')
+```
+
+The smoke test does not write keys to the repository, does not print key values, and refuses local or private provider endpoints. Set `LLM_PROVIDER_SMOKE_PROVIDER` and `LLM_PROVIDER_SMOKE_MODEL` to force a specific strong hosted model.
 
 Then open:
 
@@ -159,12 +168,13 @@ When OpenWebUI, RAGFlow, and Seafile already run as shared target containers, [`
 ```powershell
 $env:WORKBENCH_SHARED_DOCKER_NETWORK="ki_infra_seu_test"
 $env:OPENWEBUI_BASE_URL="http://openwebui:8080"
-$env:RAGFLOW_BASE_URL="http://ragflow:9380"
+$env:OPENWEBUI_PUBLIC_URL="https://openwebui.top.secret"
+$env:RAGFLOW_BASE_URL="http://ragflow"
 $env:SEAFILE_BASE_URL="http://seafile"
 docker compose --env-file .env -f Deployment/docker-compose.shared-targets.yml up -d --build
 ```
 
-The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` is set. The dashboard also runs the non-mutating `check` action every 30 minutes by default; mutating automatic actions are active only after explicit environment configuration. It uses HTTP Basic Auth whenever `WORKBENCH_AUTH_USERNAME` and `WORKBENCH_AUTH_PASSWORD` or `WORKBENCH_AUTH_PASSWORD_FILE` are set. Details are in [`docs/en/WORKBENCH_DASHBOARD.md`](docs/en/WORKBENCH_DASHBOARD.md).
+`OPENWEBUI_PUBLIC_URL` is required for this variant and must point to the browser-reachable URL of the shared OpenWebUI target container, for example `https://openwebui.top.secret`. The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` is set. The dashboard also runs the non-mutating `check` action every 30 minutes by default; mutating automatic actions are active only after explicit environment configuration. It uses HTTP Basic Auth whenever `WORKBENCH_AUTH_USERNAME` and `WORKBENCH_AUTH_PASSWORD` or `WORKBENCH_AUTH_PASSWORD_FILE` are set. Details are in [`docs/en/WORKBENCH_DASHBOARD.md`](docs/en/WORKBENCH_DASHBOARD.md).
 
 If OpenWebUI is already running, start only the Workbench container:
 

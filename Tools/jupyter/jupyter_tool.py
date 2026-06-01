@@ -217,7 +217,8 @@ class _JupyterClient:
     def request(self, method: str, path: str, payload: Optional[dict] = None) -> dict:
         data = None if payload is None else json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(self._url(path), data=data, method=method, headers=self._headers())
-        with urllib.request.urlopen(req, timeout=self.timeout_seconds) as response:
+        # Base URL is validated as http(s) in __init__.
+        with urllib.request.urlopen(req, timeout=self.timeout_seconds) as response:  # nosec B310
             raw = response.read().decode("utf-8")
         return json.loads(raw) if raw else {}
 

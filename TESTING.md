@@ -9,6 +9,7 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
 - Optional: `pydantic`, `fastapi`, `aiohttp`, `requests` und `starlette`, wenn OpenWebUI-nahe GUI-Schema-Importtests ohne Skip laufen sollen.
 - Optional: Docker, wenn die Compose-Beispielkonfiguration zusätzlich geprüft werden soll.
 - Keine echten OpenWebUI-Admin-Tokens, Jupyter-Tokens oder Produktivdienste für die Basisprüfung.
+- Scharfe KI-/LLM-Inferenztests dürfen keine lokalen Modelle oder lokale Ollama-/`localhost:11434`-Backends als Fallback nutzen. Wenn Modellinferenz wirklich Teil des Tests ist, müssen externe Provider-Keys pro Prozess über den lokalen Secret-Loader geladen werden.
 
 ## Empfohlene Codex-Reihenfolge
 
@@ -111,6 +112,15 @@ Danach im Browser zwischen Deutsch und Englisch wechseln und prüfen, dass Umlau
 ## Externe Dienste und Secrets
 
 Die Basisprüfung darf keine produktiven Dienste aufrufen. Für API-Importe wird `scripts/openwebui_workspace_config.yaml` lokal aus `scripts/openwebui_workspace_config.example.yaml` erstellt und bleibt durch `.gitignore` unversioniert. Echte Werte wie `OPENWEBUI_ADMIN_TOKEN`, Jupyter-Tokens, lokale Hostnamen und Volume-Pfade gehören nur in diese lokale Datei oder in die Zielumgebung.
+
+Scharfe KI-Tests mit echter Modellinferenz sind getrennt von der Basisprüfung. Sie sollen hochwertige gehostete Provider-Modelle verwenden und dürfen nicht still auf lokale Modelle ausweichen. API-Keys werden nicht in dieses Repository geschrieben, sondern nur für den gestarteten Prozess geladen:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\local-secrets\llm-providers\Show-LlmProviderSecretStatus.ps1"
+& "$env:USERPROFILE\.codex\local-secrets\llm-providers\Invoke-WithLlmProviderEnv.ps1" -All -Command @('python','scripts/run_llm_provider_smoke.py','--require')
+```
+
+Der Statusbefehl zeigt nur, welche Provider gespeichert sind, und gibt keine Schlüsselwerte aus. `scripts/run_llm_provider_smoke.py` nutzt standardmäßig den ersten konfigurierten externen Provider, gibt nur Provider, Modell, Host, HTTP-Status und Antwortlänge aus und verweigert lokale OpenWebUI-, Ollama-, `localhost`- oder private Docker-Netz-Endpunkte. Wenn die benötigten Provider-Keys fehlen oder die Zielinstanz nur lokale Modelle anbietet, wird der scharfe KI-Test als nicht ausführbar dokumentiert statt mit lokalen Modellen fortgesetzt.
 
 ## Typische Befunde
 

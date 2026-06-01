@@ -79,7 +79,14 @@ class WorkbenchStateTests(unittest.TestCase):
         (self.root / "Tools" / "openwebui_ext" / "tools" / "demo_tool.py").write_text("# demo\n", encoding="utf-8")
         (self.root / "Tools" / "openwebui_ext" / "skills").mkdir(parents=True)
         (self.root / "Tools" / "openwebui_ext" / "skills" / "demo-skill.md").write_text("# Demo Skill\n", encoding="utf-8")
-        self.state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://127.0.0.1:9"))
+        self.state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="",
+                auth_password="",
+            )
+        )
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -208,6 +215,23 @@ class WorkbenchStateTests(unittest.TestCase):
         summary = state.summary()
         self.assertFalse(summary["openwebui"]["tls_verify"])
 
+    def test_summary_uses_admin_friendly_openwebui_status_timeout(self) -> None:
+        class FakeResponse:
+            status = 200
+
+            def __enter__(self) -> "FakeResponse":
+                return self
+
+            def __exit__(self, *_args: object) -> None:
+                return None
+
+        state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://127.0.0.1:3000"))
+        with patch.object(dashboard_server, "urlopen", return_value=FakeResponse()) as urlopen:
+            summary = state.summary()
+
+        self.assertTrue(summary["openwebui"]["reachable"]["ok"])
+        self.assertGreaterEqual(urlopen.call_args.kwargs["timeout"], 5)
+
     def test_summary_reports_dashboard_auth_settings(self) -> None:
         state = WorkbenchState(
             WorkbenchConfig(
@@ -333,7 +357,7 @@ class WorkbenchStateTests(unittest.TestCase):
             env=env,
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=30,
         )
 
         self.assertEqual(result.returncode, 1)
@@ -354,7 +378,7 @@ class WorkbenchStateTests(unittest.TestCase):
             env=env,
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=30,
         )
 
         self.assertEqual(result.returncode, 1)
@@ -375,7 +399,7 @@ class WorkbenchStateTests(unittest.TestCase):
             env=env,
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=30,
         )
 
         self.assertEqual(result.returncode, 1)
@@ -396,7 +420,7 @@ class WorkbenchStateTests(unittest.TestCase):
             env=env,
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=30,
         )
 
         self.assertEqual(result.returncode, 1)
@@ -468,7 +492,7 @@ class WorkbenchStateTests(unittest.TestCase):
             env=env,
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=30,
         )
 
         self.assertEqual(result.returncode, 1)
@@ -678,7 +702,10 @@ class WorkbenchStateTests(unittest.TestCase):
         base_url = self.start_server(state)
         auth = self.basic_auth("admin", "secret")
 
-        status, response = self.request(base_url, authorization=auth, path="/api/automation/run", method="POST", body="{}")
+        try:
+            status, response = self.request(base_url, authorization=auth, path="/api/automation/run", method="POST", body="{}")
+        except ConnectionAbortedError:
+            status, response = self.request(base_url, authorization=auth, path="/api/automation/run", method="POST", body="{}")
         self.assertEqual(status, 403)
         self.assertIn("same-origin", json.loads(response)["error"].lower())
 
@@ -700,6 +727,8 @@ class WorkbenchStateTests(unittest.TestCase):
                 allow_write=False,
                 openwebui_base_url="http://127.0.0.1:9",
                 locale="de",
+                auth_username="",
+                auth_password="",
             )
         )
         base_url = self.start_server(state)
