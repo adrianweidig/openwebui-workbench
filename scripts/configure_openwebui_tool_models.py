@@ -400,6 +400,14 @@ def rel(path: Path) -> str:
     return path.relative_to(ROOT).as_posix()
 
 
+def archive_sort_key(path: Path) -> str:
+    return rel(path).casefold()
+
+
+def sorted_archive_paths(paths: Iterable[Path]) -> List[Path]:
+    return sorted(paths, key=archive_sort_key)
+
+
 def should_archive(path: Path) -> bool:
     ignored_dirs = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
     if any(part in ignored_dirs for part in path.parts):
@@ -419,10 +427,10 @@ def write_archive_file(archive: zipfile.ZipFile, path: Path) -> None:
 def tool_zip_sources() -> List[Path]:
     sources: List[Path] = []
     for item in [ROOT / "Tools" / "jupyter", ROOT / "Tools" / "openwebui_ext"]:
-        sources.extend(path for path in sorted(item.rglob("*")) if path.is_file() and should_archive(path))
+        sources.extend(path for path in sorted_archive_paths(item.rglob("*")) if path.is_file() and should_archive(path))
     sources.extend(
         path
-        for path in sorted(
+        for path in sorted_archive_paths(
             [
                 TOOLS_INDEX,
                 ROOT / "Tools" / "README.md",
@@ -443,7 +451,7 @@ def tool_zip_sources() -> List[Path]:
 def model_zip_sources() -> List[Path]:
     sources = [
         path
-        for path in sorted(
+        for path in sorted_archive_paths(
             [
                 MODEL_DIST / "README.md",
                 MODEL_IMPORT,
@@ -463,7 +471,7 @@ def model_zip_sources() -> List[Path]:
     ]
     artifacts_dir = MODEL_DIST / "artifacts"
     if artifacts_dir.exists():
-        sources.extend(path for path in sorted(artifacts_dir.rglob("*")) if path.is_file() and should_archive(path))
+        sources.extend(path for path in sorted_archive_paths(artifacts_dir.rglob("*")) if path.is_file() and should_archive(path))
     return sources
 
 

@@ -77,6 +77,33 @@ class ConfigureOpenWebUIToolModelsTests(unittest.TestCase):
 
         self.assertTrue(any("veralteten Inhalt" in issue for issue in issues))
 
+    def test_zip_drift_issues_reports_entry_order_drift(self) -> None:
+        module = load_dist_zip_manifest_module()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            first = root / "src" / "a.txt"
+            second = root / "src" / "b.txt"
+            first.parent.mkdir()
+            first.write_text("eins", encoding="utf-8")
+            second.write_text("zwei", encoding="utf-8")
+            target = root / "dist.zip"
+            with zipfile.ZipFile(target, "w") as archive:
+                archive.writestr("src/b.txt", b"zwei")
+                archive.writestr("src/a.txt", b"eins")
+
+            issues = module.zip_drift_issues(root, target, [first, second])
+
+        self.assertTrue(any("Eintragsreihenfolge" in issue for issue in issues))
+
+    def test_zip_sources_use_platform_stable_order(self) -> None:
+        module = load_configure_module()
+        readme = ROOT / "Tools" / "jupyter" / "README.md"
+        config = ROOT / "Tools" / "jupyter" / "jupyter_config.example.json"
+
+        ordered = module.sorted_archive_paths([readme, config])
+
+        self.assertEqual(ordered, [config, readme])
+
 
 if __name__ == "__main__":
     unittest.main()
