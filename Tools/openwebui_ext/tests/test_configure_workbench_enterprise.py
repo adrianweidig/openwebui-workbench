@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import shutil
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[3]
 WIZARD = ROOT / "Deployment" / "configure-workbench-enterprise.ps1"
+POWERSHELL = shutil.which("powershell") or shutil.which("pwsh")
 
 
 class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
@@ -36,6 +40,43 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn('"    external: true"', script)
         self.assertIn('"    name: `${WORKBENCH_DOCKER_NETWORK}"', script)
         self.assertIn('"    name: `${WORKBENCH_DOCKER_NETWORK:-openwebui-workbench_workbench}"', script)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_existing_mode_does_not_emit_unused_openwebui_volume(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-OpenWebUIMode",
+                    "existing",
+                    "-OpenWebUIBaseUrl",
+                    "http://openwebui:8080",
+                    "-OpenWebUIPublicUrl",
+                    "http://localhost:3000",
+                    "-UseExternalDockerNetwork",
+                    "-DockerNetworkName",
+                    "shared_ai_net",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                check=True,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            compose = (Path(tmpdir) / "portainer-compose.yml").read_text(encoding="utf-8")
+
+        self.assertNotIn("  openwebui:", compose)
+        self.assertNotIn("openwebui-data:", compose)
+        self.assertIn("    external: true", compose)
+        self.assertIn("    name: ${WORKBENCH_DOCKER_NETWORK}", compose)
 
 
 if __name__ == "__main__":

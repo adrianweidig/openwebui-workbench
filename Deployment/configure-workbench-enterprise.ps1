@@ -315,10 +315,18 @@ $composeLines += @(
     "      - `"host.docker.internal:host-gateway`"",
     "    networks:",
     "      - workbench",
-    "",
-    "volumes:",
-    "  openwebui-data:",
-    "",
+    ""
+)
+
+if ($OpenWebUIMode -eq "bundled") {
+    $composeLines += @(
+        "volumes:",
+        "  openwebui-data:",
+        ""
+    )
+}
+
+$composeLines += @(
     "networks:"
 )
 
