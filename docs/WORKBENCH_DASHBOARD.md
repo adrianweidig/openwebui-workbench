@@ -134,7 +134,7 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `WORKBENCH_REQUIRE_AUTH` | `true` verlangt wirksame Dashboard-Authentifizierung beim Start. Compose/Portainer setzen dies standardmäßig. |
 | `WORKBENCH_AUTH_PASSWORD` | Passwort für die HTTP-Basic-Auth des Dashboards. Alternative zu `WORKBENCH_AUTH_PASSWORD_FILE`; nicht committen. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternativer Pfad zu einer Passwortdatei im Container. |
-| `WORKBENCH_AUTH_PASSWORD_HOST_FILE` | Hostpfad für generierte Portainer-Stacks, der read-only nach `WORKBENCH_AUTH_PASSWORD_FILE` gemountet wird. |
+| `WORKBENCH_AUTH_PASSWORD_HOST_FILE` | Hostpfad für generierte Portainer-Stacks oder den optionalen Compose-Override `docker-compose.workbench-password-file.yml`, der read-only nach `WORKBENCH_AUTH_PASSWORD_FILE` gemountet wird. |
 | `WORKBENCH_ALLOW_WRITE` | `true` erlaubt Markdown-Schreibzugriff. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Dry-Run- und Verify-Aktionen. |
 | `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Prozess-Timeout für den Hintergrund-Sync nach OpenWebUI. Standard: 1800 Sekunden, damit ein seltener Clean-Import nicht vom Dashboard abgebrochen wird. |

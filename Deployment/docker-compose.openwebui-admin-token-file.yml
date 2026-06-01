@@ -1,0 +1,16 @@
+name: openwebui-workbench
+
+services:
+  # Optional OpenWebUI admin-token file mount for local Docker Compose.
+  #
+  # Use this file only together with docker-compose.workbench.yml when the
+  # dashboard should read the OpenWebUI admin token from a host-side secret file.
+  workbench:
+    environment:
+      OPENWEBUI_ADMIN_TOKEN: ""
+      OPENWEBUI_ADMIN_TOKEN_FILE: ${OPENWEBUI_ADMIN_TOKEN_FILE:?Set OPENWEBUI_ADMIN_TOKEN_FILE to the Workbench container target path}
+    volumes:
+      - type: bind
+        source: ${OPENWEBUI_ADMIN_TOKEN_HOST_FILE:?Set OPENWEBUI_ADMIN_TOKEN_HOST_FILE to the host token file}
+        target: ${OPENWEBUI_ADMIN_TOKEN_FILE:?Set OPENWEBUI_ADMIN_TOKEN_FILE to the Workbench container target path}
+        read_only: true

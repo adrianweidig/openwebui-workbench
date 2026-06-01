@@ -5,6 +5,8 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 ## Compose-Varianten
 
 - `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können.
+- `docker-compose.workbench-password-file.yml`: optionaler Override, der `WORKBENCH_AUTH_PASSWORD_HOST_FILE` read-only nach `WORKBENCH_AUTH_PASSWORD_FILE` in den Workbench-Container mountet.
+- `docker-compose.openwebui-admin-token-file.yml`: optionaler Override, der `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` read-only nach `OPENWEBUI_ADMIN_TOKEN_FILE` in den Workbench-Container mountet.
 - `docker-compose.enterprise-ca.yml`: optionaler Override für Unternehmensnetze mit eigener Root-CA. Die CA wird in OpenWebUI und Workbench gemountet; der Workbench-Container aktualisiert den System-Truststore bei jedem Start.
 - `docker-compose.top-secret.yml`: optionaler lokaler Override, der den Workbench-Container zusätzlich an das bestehende `top.secret`-Edge-Netz hängt und dort als `workbench` sowie `workbench.top.secret` verfügbar macht.
 - `docker-compose.openwebui-offline.example.yml`: portable Offline-Beispielvorlage mit repo-relativen Mounts, named volumes und optional überschreibbaren OpenWebUI-/Jupyter-Images.
@@ -38,6 +40,15 @@ python scripts/check_workbench_setup.py --allow-unverified-root-ca-path --allow-
 
 Dieser Schalter ersetzt keine CA-Prüfung: lokal lesbare PEM-Dateien werden weiterhin validiert, und der Admin muss die Datei auf dem Docker-/Portainer-Host vor dem Stack-Start prüfen.
 Der Secret-Dateipfad-Schalter gilt für `WORKBENCH_AUTH_PASSWORD_HOST_FILE` und `OPENWEBUI_ADMIN_TOKEN_HOST_FILE`: lokal lesbare Secret-Dateipfade werden als Datei geprüft, aber Secret-Dateiinhalte werden nicht gelesen oder ausgegeben.
+
+Für lokale Docker-Compose-Starts ohne direkte Secret-Werte in `.env` können die dateibasierten Overrides getrennt zugeschaltet werden. So bleibt die Passwortdatei unabhängig vom optionalen OpenWebUI-Admin-Token nutzbar:
+
+```powershell
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.workbench-password-file.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.openwebui-admin-token-file.yml up -d --build workbench
+```
+
+Bei Nutzung beider Dateien müssen in `.env` die jeweiligen Host- und Containerpfade gesetzt sein: `WORKBENCH_AUTH_PASSWORD_HOST_FILE` plus `WORKBENCH_AUTH_PASSWORD_FILE` beziehungsweise `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` plus `OPENWEBUI_ADMIN_TOKEN_FILE`.
 
 Für Abnahmen nach einem Stack-Start kann der Setup-Doctor zusätzlich nicht-mutierende HTTP-Probes ausführen. Ohne `--require-runtime` sind nicht erreichbare Dienste Warnungen; mit `--require-runtime` werden sie zu Fehlern:
 
@@ -134,7 +145,7 @@ Ausgabe:
 - `Deployment/generated/portainer-compose.yml`
 - `Deployment/generated/workbench.env`
 
-`Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss.
+`Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss. Die lokalen Override-Dateien `docker-compose.workbench-password-file.yml` und `docker-compose.openwebui-admin-token-file.yml` sind für den normalen Docker-Compose-Pfad gedacht; der Portainer-Wizard erzeugt die entsprechenden Mounts direkt in seiner Stack-Datei.
 Die generierte Workbench-Service-Definition setzt `WORKBENCH_REQUIRE_AUTH=true` und akzeptiert entweder `WORKBENCH_AUTH_PASSWORD` oder eine gemountete `WORKBENCH_AUTH_PASSWORD_FILE`. Wenn das Passwort im Assistenten leer bleibt und keine Passwortdatei gemountet wird, muss einer dieser Werte vor dem Stack-Start in Portainer gesetzt werden.
 Die generierte Portainer-Compose-Datei enthält Healthchecks für die gebündelte OpenWebUI-Instanz (`/health`) und das Workbench-Dashboard (`/healthz`), damit Portainer den Startzustand direkt als healthy oder unhealthy anzeigen kann.
 Die OpenWebUI-URL-Felder werden als vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten validiert, bevor sie in `workbench.env` geschrieben werden.

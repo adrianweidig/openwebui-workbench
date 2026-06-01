@@ -32,7 +32,7 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    python scripts/verify_openwebui_workspace.py --include-docker-compose
    ```
 
-   In GitHub Actions läuft derselbe Compose-Config-Pfad als separater CI-Job. Es werden nur Compose-Dateien gerendert, keine Container gestartet.
+   In GitHub Actions läuft derselbe Compose-Config-Pfad als separater CI-Job. Es werden nur Compose-Dateien gerendert, keine Container gestartet. Der optionale Verify-Pfad rendert neben Standard-, Enterprise-CA- und `top.secret`-Overrides auch die separaten Passwortdatei- und OpenWebUI-Admin-Token-Datei-Overrides.
    Auf Windows-Hosts ohne Docker in der PATH, aber mit verfügbarer WSL, weisen Setup-Doctor und Verify-Runner auf den WSL-Pfad hin. Die Compose-Prüfungen sollen dann aus der WSL-Umgebung laufen, die Docker bereitstellt.
    Für nicht-mutierende Prüfungen aus Windows heraus kann der Docker-Befehl explizit gesetzt werden:
 

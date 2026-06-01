@@ -50,10 +50,18 @@ class VerifyOpenWebUIWorkspaceTests(unittest.TestCase):
 
         self.assertTrue(any("docker compose" in command for command in commands))
         self.assertTrue(any("docker-compose.enterprise-ca.yml" in command for command in commands))
+        self.assertTrue(any("docker-compose.workbench-password-file.yml" in command for command in commands))
+        self.assertTrue(any("docker-compose.openwebui-admin-token-file.yml" in command for command in commands))
         enterprise_step = next(step for step in steps if "enterprise CA" in step.label)
         self.assertEqual(enterprise_step.env["WORKBENCH_AUTH_PASSWORD"], "verify-only-placeholder")
         self.assertEqual(enterprise_step.env["WORKBENCH_ENTERPRISE_CA_HOST_FILE"], "/tmp/workbench-verify-ca.pem")
         self.assertTrue(enterprise_step.requires_docker)
+        password_file_step = next(step for step in steps if "password-file" in step.label)
+        self.assertEqual(password_file_step.env["WORKBENCH_AUTH_PASSWORD_HOST_FILE"], "/tmp/workbench-auth-password.txt")
+        self.assertEqual(password_file_step.env["WORKBENCH_AUTH_PASSWORD_FILE"], "/run/secrets/workbench-auth-password")
+        token_file_step = next(step for step in steps if "admin-token-file" in step.label)
+        self.assertEqual(token_file_step.env["OPENWEBUI_ADMIN_TOKEN_HOST_FILE"], "/tmp/openwebui-admin-token.txt")
+        self.assertEqual(token_file_step.env["OPENWEBUI_ADMIN_TOKEN_FILE"], "/run/secrets/openwebui-admin-token")
 
     def test_docker_compose_steps_accept_custom_docker_command(self) -> None:
         module = load_verify_module()

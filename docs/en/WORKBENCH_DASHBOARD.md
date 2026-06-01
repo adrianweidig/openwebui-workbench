@@ -99,7 +99,7 @@ The dashboard defaults to German. It can switch to English through the language 
 | `WORKBENCH_REQUIRE_AUTH` | `true` requires effective dashboard authentication at startup. Compose/Portainer set this by default. |
 | `WORKBENCH_AUTH_PASSWORD` | Password for dashboard HTTP Basic Auth. Alternative to `WORKBENCH_AUTH_PASSWORD_FILE`; do not commit it. |
 | `WORKBENCH_AUTH_PASSWORD_FILE` | Alternative path to a password file in the container. |
-| `WORKBENCH_AUTH_PASSWORD_HOST_FILE` | Host path for generated Portainer stacks, bind-mounted read-only to `WORKBENCH_AUTH_PASSWORD_FILE`. |
+| `WORKBENCH_AUTH_PASSWORD_HOST_FILE` | Host path for generated Portainer stacks or the optional Compose override `docker-compose.workbench-password-file.yml`, bind-mounted read-only to `WORKBENCH_AUTH_PASSWORD_FILE`. |
 | `WORKBENCH_ALLOW_WRITE` | `true` allows Markdown write access. |
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout for generator, dry-run, and verification actions. |
 | `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Process timeout for the background OpenWebUI sync. Default: 1800 seconds. |

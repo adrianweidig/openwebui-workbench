@@ -83,6 +83,10 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
             "WEBUI_SECRET_KEY": "verify-only-placeholder",
             "WORKBENCH_AUTH_PASSWORD": "verify-only-placeholder",
             "WORKBENCH_ENTERPRISE_CA_HOST_FILE": "/tmp/workbench-verify-ca.pem",
+            "WORKBENCH_AUTH_PASSWORD_HOST_FILE": "/tmp/workbench-auth-password.txt",
+            "WORKBENCH_AUTH_PASSWORD_FILE": "/run/secrets/workbench-auth-password",
+            "OPENWEBUI_ADMIN_TOKEN_HOST_FILE": "/tmp/openwebui-admin-token.txt",
+            "OPENWEBUI_ADMIN_TOKEN_FILE": "/run/secrets/openwebui-admin-token",
         }
         steps.append(
             CommandStep(
@@ -109,6 +113,38 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
                     "Deployment/docker-compose.workbench.yml",
                     "-f",
                     "Deployment/docker-compose.enterprise-ca.yml",
+                    "config",
+                ],
+                env=compose_auth_env,
+                requires_docker=True,
+            )
+        )
+        steps.append(
+            CommandStep(
+                "Docker compose workbench password-file config",
+                [
+                    *docker,
+                    "compose",
+                    "-f",
+                    "Deployment/docker-compose.workbench.yml",
+                    "-f",
+                    "Deployment/docker-compose.workbench-password-file.yml",
+                    "config",
+                ],
+                env=compose_auth_env,
+                requires_docker=True,
+            )
+        )
+        steps.append(
+            CommandStep(
+                "Docker compose OpenWebUI admin-token-file config",
+                [
+                    *docker,
+                    "compose",
+                    "-f",
+                    "Deployment/docker-compose.workbench.yml",
+                    "-f",
+                    "Deployment/docker-compose.openwebui-admin-token-file.yml",
                     "config",
                 ],
                 env=compose_auth_env,
