@@ -82,6 +82,8 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Dep
 Der Workbench-Container installiert `ca-certificates` im Image und führt beim Start immer `update-ca-certificates` aus. Wenn `WORKBENCH_CA_BUNDLE` gesetzt ist, wird die gemountete PEM-Datei vorab geprüft: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte führen zu einem klaren Startfehler. Secrets, Tokens und Private Keys gehören nicht in diese CA-Datei.
 Der Setup-Doctor prüft `WORKBENCH_ENTERPRISE_CA_HOST_FILE` schon vor dem Compose-Start als Hostdatei: fehlende Dateien, Private Keys und Nicht-PEM-Inhalte werden als Installationsfehler gemeldet.
 
+Der Portainer-Wizard prüft den Root-CA-Pfad ebenfalls lokal, wenn die Datei vom ausführenden System aus lesbar ist. Wenn du den Wizard unter Windows ausführst, der CA-Pfad aber nur auf dem Docker-/Portainer-Host existiert, prüfe die PEM-Datei vorher administrativ und starte den Wizard mit `-AllowUnverifiedRootCaPath`. Der generierte Stack mountet den Pfad dann unverändert als `WORKBENCH_ENTERPRISE_CA_HOST_FILE`; Containerstart und Setup-Doctor auf dem Zielhost prüfen die Datei anschließend erneut.
+
 Bei einem bereits vorhandenen OpenWebUI über HTTPS setzt du zusätzlich:
 
 ```env

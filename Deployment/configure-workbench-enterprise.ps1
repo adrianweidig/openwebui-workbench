@@ -12,6 +12,7 @@ param(
     [string]$DockerNetworkName = "openwebui-workbench_workbench",
     [string]$OutputDir = "Deployment/generated",
     [switch]$UseExternalDockerNetwork,
+    [switch]$AllowUnverifiedRootCaPath,
     [switch]$NonInteractive
 )
 
@@ -62,11 +63,22 @@ function Read-WorkbenchSecret {
 }
 
 function Test-RootCaFile {
-    param([string]$PathValue)
+    param(
+        [string]$PathValue,
+        [switch]$AllowUnverified
+    )
     if ([string]::IsNullOrWhiteSpace($PathValue)) {
         return ""
     }
-    $resolved = Resolve-Path -LiteralPath $PathValue
+    try {
+        $resolved = Resolve-Path -LiteralPath $PathValue -ErrorAction Stop
+    }
+    catch {
+        if ($AllowUnverified) {
+            return $PathValue.Trim()
+        }
+        throw "Root-CA-Datei ist lokal nicht lesbar: $PathValue. Wenn dies bewusst ein Docker-/Portainer-Hostpfad ist, prüfe die PEM-Datei administrativ und starte den Assistenten mit -AllowUnverifiedRootCaPath."
+    }
     $content = Get-Content -Raw -LiteralPath $resolved.Path
     if ($content -match "BEGIN .*PRIVATE KEY") {
         throw "Root-CA-Datei darf keinen Private Key enthalten: $($resolved.Path)"
@@ -136,7 +148,7 @@ else {
 }
 
 $RootCaPath = Read-WorkbenchValue -Prompt "Optionaler Host-Pfad zur Root-CA im PEM-Format" -Default $RootCaPath
-$RootCaPath = Test-RootCaFile -PathValue $RootCaPath
+$RootCaPath = Test-RootCaFile -PathValue $RootCaPath -AllowUnverified:$AllowUnverifiedRootCaPath
 
 $authUser = Read-WorkbenchValue -Prompt "Workbench-Benutzername" -Default "workbench"
 $authPassword = Read-WorkbenchSecret -Prompt "Workbench-Passwort (leer lassen, wenn später in Portainer gesetzt wird; Stack startet erst mit gesetztem Wert)"
