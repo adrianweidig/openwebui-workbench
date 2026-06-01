@@ -72,6 +72,8 @@ Die Unit-Tests unter `Tools.openwebui_ext.tests` enthalten zusätzlich leichte W
 
 Der Setup-Doctor ist nicht-mutierend und prüft zusätzlich, ob `OPENWEBUI_PORT` und `WORKBENCH_PORT` gültige, unterschiedliche Host-Ports ergeben, ob `OPENWEBUI_BASE_URL` sowie `OPENWEBUI_PUBLIC_URL` vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten sind, ob boolesche Flags wie `OPENWEBUI_TLS_VERIFY` explizite Wahr/Falsch-Werte enthalten, ob Timeout-/Größenwerte und `WORKBENCH_AUTOMATION_INTERVAL_MINUTES` gültige Ganzzahlen sind, ob Automationsaktionen aus der erlaubten Liste stammen und ob dateibasierte Runtime-Pfade plausibel sind. `WORKBENCH_ENTERPRISE_CA_HOST_FILE` wird als lokale Hostdatei und PEM-Zertifikat geprüft; mit `--allow-unverified-root-ca-path` darf ein nicht lokal sichtbarer Docker-/Portainer-Hostpfad als Warnung durchlaufen, während lokal lesbare PEM-Dateien weiterhin validiert werden. Container-only Secret- oder CA-Pfade werden als Warnung markiert, wenn sie hostseitig nicht sichtbar sind. Fehlende Werte nutzen die Compose-Defaults.
 
+Mit `--probe-runtime` führt der Setup-Doctor zusätzlich nicht-mutierende HTTP-Probes aus. OpenWebUI wird über `OPENWEBUI_PUBLIC_URL` geprüft; Portainer wird nur geprüft, wenn `--portainer-url` oder `PORTAINER_URL` gesetzt ist. Der Probe nutzt keine Tokens, behandelt HTTP 401/403 als erreichbaren Auth-Endpunkt und wird mit `--require-runtime` abnahmehart.
+
 ## Security-Hygiene prüfen
 
 Der Standard-Verify-Lauf enthält `scripts/check_security_hygiene.py`. Der Check betrachtet versionierte und nicht ignorierte Textdateien, meldet nur Pfad, Zeile und Befundart und gibt verdächtige Werte absichtlich nicht aus.

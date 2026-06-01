@@ -5,12 +5,15 @@ import os
 import re
 import shlex
 import shutil
+import ssl
 import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
+from urllib.error import HTTPError, URLError
 from urllib.parse import ParseResult, urlparse
+from urllib.request import Request, urlopen
 
 try:
     from scripts import init_workbench_env
@@ -50,6 +53,8 @@ FALSE_VALUES = {"0", "false", "no", "off"}
 AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
 PRIVATE_KEY_RE = re.compile(r"BEGIN .*PRIVATE KEY")
 DOCKER_PROBE_TIMEOUT_SECONDS = 20
+RUNTIME_PROBE_TIMEOUT_SECONDS = 3
+AUTH_REACHABLE_STATUS_CODES = {401, 403}
 
 
 @dataclass(frozen=True)
@@ -86,6 +91,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
             "treat a missing WORKBENCH_ENTERPRISE_CA_HOST_FILE as a warning for Docker/Portainer host-only paths; "
             "locally readable CA files are still validated"
         ),
+    )
+    parser.add_argument(
+        "--probe-runtime",
+        action="store_true",
+        help="non-mutating HTTP probe for configured OpenWebUI and optional Portainer reachability",
+    )
+    parser.add_argument(
+        "--require-runtime",
+        action="store_true",
+        help="treat failed runtime probes as failures instead of warnings",
+    )
+    parser.add_argument(
+        "--portainer-url",
+        default=os.environ.get("PORTAINER_URL", ""),
+        help="optional Portainer base URL to probe without credentials, for example https://portainer.top.secret",
     )
     return parser.parse_args(argv)
 
@@ -429,6 +449,144 @@ def check_compose_file(compose_path: Path) -> CheckResult:
     return CheckResult("ok", "Compose file", f"{_display_path(compose_path)} exists.")
 
 
+def _runtime_probe_level(require_runtime: bool) -> str:
+    return "fail" if require_runtime else "warn"
+
+
+def _url_value(raw: str, key: str) -> tuple[str | None, str | None]:
+    value = raw.strip()
+    if not value:
+        return None, f"{key} is not configured."
+    parsed = urlparse(value)
+    if parsed.scheme not in {"http", "https"}:
+        return None, f"{key} must start with http:// or https://."
+    if not parsed.hostname:
+        return None, f"{key} must include a host name."
+    try:
+        parsed.port
+    except ValueError:
+        return None, f"{key} has an invalid port."
+    if parsed.username or parsed.password:
+        return None, f"{key} must not include credentials."
+    return value.rstrip("/"), None
+
+
+def _ssl_context_from_env(values: dict[str, str], env_path: Path) -> ssl.SSLContext | None:
+    verify, error = _env_bool(values, "OPENWEBUI_TLS_VERIFY", "true")
+    if error:
+        return None
+    if verify == "false":
+        return ssl._create_unverified_context()
+    ca_file = values.get("OPENWEBUI_CA_FILE", "").strip()
+    ca_path = values.get("OPENWEBUI_CA_PATH", "").strip()
+    cafile = str(_env_path(ca_file, env_path)) if ca_file and _env_path(ca_file, env_path).is_file() else None
+    capath = str(_env_path(ca_path, env_path)) if ca_path and _env_path(ca_path, env_path).is_dir() else None
+    if cafile or capath:
+        return ssl.create_default_context(cafile=cafile, capath=capath)
+    return None
+
+
+def _probe_url(base_url: str, paths: Sequence[str], context: ssl.SSLContext | None) -> tuple[bool, str]:
+    last_error = ""
+    for path in paths:
+        url = f"{base_url}{path}"
+        request = Request(url, method="GET", headers={"Accept": "text/plain, application/json"})
+        try:
+            with urlopen(
+                request,
+                timeout=RUNTIME_PROBE_TIMEOUT_SECONDS,
+                context=context,
+            ) as response:
+                return True, f"{url} returned HTTP {response.status}."
+        except HTTPError as exc:
+            if exc.code in AUTH_REACHABLE_STATUS_CODES:
+                return True, f"{url} returned HTTP {exc.code}; service is reachable and requires authentication."
+            last_error = f"{url} returned HTTP {exc.code}."
+        except (URLError, OSError, TimeoutError) as exc:
+            last_error = f"{url} is not reachable: {type(exc).__name__}: {exc}."
+    return False, last_error or f"{base_url} is not reachable."
+
+
+def check_runtime_url(
+    title: str,
+    raw_url: str,
+    *,
+    key: str,
+    paths: Sequence[str],
+    require_runtime: bool,
+    context: ssl.SSLContext | None = None,
+) -> CheckResult:
+    base_url, error = _url_value(raw_url, key)
+    if error:
+        return CheckResult(
+            _runtime_probe_level(require_runtime),
+            title,
+            error,
+            f"Set {key} to a reachable http(s) URL without credentials before runtime acceptance.",
+        )
+    assert base_url is not None
+    ok, detail = _probe_url(base_url, paths, context)
+    if ok:
+        return CheckResult("ok", title, detail)
+    return CheckResult(
+        _runtime_probe_level(require_runtime),
+        title,
+        detail,
+        "Start or repair the target service, then rerun the runtime probe.",
+    )
+
+
+def check_runtime_reachability(
+    env_path: Path,
+    *,
+    portainer_url: str = "",
+    require_runtime: bool = False,
+) -> list[CheckResult]:
+    try:
+        values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        return [
+            CheckResult(
+                _runtime_probe_level(require_runtime),
+                "Runtime probe",
+                str(exc),
+                "Check the local env file before probing runtime services.",
+            )
+        ]
+
+    context = _ssl_context_from_env(values, env_path)
+    results = [
+        check_runtime_url(
+            "Runtime OpenWebUI",
+            values.get("OPENWEBUI_PUBLIC_URL", "").strip() or "http://localhost:3000",
+            key="OPENWEBUI_PUBLIC_URL",
+            paths=("/health", "/"),
+            require_runtime=require_runtime,
+            context=context,
+        )
+    ]
+    if portainer_url.strip():
+        results.append(
+            check_runtime_url(
+                "Runtime Portainer",
+                portainer_url,
+                key="PORTAINER_URL",
+                paths=("/api/status", "/"),
+                require_runtime=require_runtime,
+            )
+        )
+    else:
+        results.append(
+            CheckResult(
+                _runtime_probe_level(require_runtime),
+                "Runtime Portainer",
+                "PORTAINER_URL is not configured; Portainer reachability was not probed.",
+                "Pass --portainer-url https://portainer.top.secret for Portainer acceptance checks.",
+            )
+        )
+    return results
+
+
 def _shell_join(command: Sequence[str]) -> str:
     return " ".join(shlex.quote(part) for part in command)
 
@@ -574,6 +732,9 @@ def evaluate_setup(
     docker_command: Sequence[str] | None = None,
     lookup_docker: bool = True,
     allow_unverified_root_ca_path: bool = False,
+    probe_runtime: bool = False,
+    require_runtime: bool = False,
+    portainer_url: str = "",
 ) -> list[CheckResult]:
     resolved_docker_command = resolve_docker_command(
         docker_command,
@@ -597,6 +758,23 @@ def evaluate_setup(
             check_file_references(
                 env_path,
                 allow_unverified_root_ca_path=allow_unverified_root_ca_path,
+            )
+        )
+        if probe_runtime:
+            results.extend(
+                check_runtime_reachability(
+                    env_path,
+                    portainer_url=portainer_url,
+                    require_runtime=require_runtime,
+                )
+            )
+    elif probe_runtime:
+        results.append(
+            CheckResult(
+                _runtime_probe_level(require_runtime),
+                "Runtime probe",
+                "Skipped because the local env file does not exist.",
+                "Run: python scripts/init_workbench_env.py",
             )
         )
     if run_compose:
@@ -643,6 +821,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         run_compose=args.run_compose_config,
         docker_command=args.docker_command,
         allow_unverified_root_ca_path=args.allow_unverified_root_ca_path,
+        probe_runtime=args.probe_runtime,
+        require_runtime=args.require_runtime,
+        portainer_url=args.portainer_url,
     )
     print(render_results(results))
     return 1 if any(result.level == "fail" for result in results) else 0

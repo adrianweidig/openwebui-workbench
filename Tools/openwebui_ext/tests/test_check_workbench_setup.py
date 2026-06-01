@@ -9,6 +9,17 @@ from unittest.mock import patch
 from scripts import check_workbench_setup
 
 
+class _FakeHttpResponse:
+    def __init__(self, status: int = 200) -> None:
+        self.status = status
+
+    def __enter__(self) -> "_FakeHttpResponse":
+        return self
+
+    def __exit__(self, exc_type: object, exc: object, traceback: object) -> bool:
+        return False
+
+
 class CheckWorkbenchSetupTests(unittest.TestCase):
     def _write_minimal_files(self, root: Path) -> tuple[Path, Path, Path]:
         template = root / "workbench.env.example"
@@ -529,6 +540,95 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertEqual(levels["File references"], "warn")
             self.assertIn("container-only secret or CA paths", rendered)
             self.assertNotIn(sentinel, rendered)
+
+    def test_runtime_probe_checks_openwebui_and_portainer_without_token(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "OPENWEBUI_PUBLIC_URL=http://localhost:3000\n",
+                encoding="utf-8",
+            )
+            auth_required = check_workbench_setup.HTTPError(
+                "https://portainer.local/api/status",
+                401,
+                "Unauthorized",
+                hdrs=None,
+                fp=None,
+            )
+
+            with patch.object(check_workbench_setup, "urlopen") as open_url:
+                open_url.side_effect = [_FakeHttpResponse(200), auth_required]
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    lookup_docker=False,
+                    probe_runtime=True,
+                    portainer_url="https://portainer.local",
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Runtime OpenWebUI"], "ok")
+            self.assertEqual(levels["Runtime Portainer"], "ok")
+            self.assertIn("requires authentication", rendered)
+            self.assertEqual(open_url.call_count, 2)
+
+    def test_runtime_probe_failure_can_be_required_for_acceptance(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "OPENWEBUI_PUBLIC_URL=http://localhost:3000\n",
+                encoding="utf-8",
+            )
+
+            with patch.object(check_workbench_setup, "urlopen") as open_url:
+                open_url.side_effect = check_workbench_setup.URLError("connection refused")
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    lookup_docker=False,
+                    probe_runtime=True,
+                    require_runtime=True,
+                    portainer_url="https://portainer.local",
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Runtime OpenWebUI"], "fail")
+            self.assertEqual(levels["Runtime Portainer"], "fail")
+            self.assertIn("connection refused", rendered)
+            self.assertEqual(check_workbench_setup.summarize(results), "failed")
+
+    def test_runtime_probe_rejects_portainer_url_credentials_without_printing_secret(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "OPENWEBUI_PUBLIC_URL=http://localhost:3000\n",
+                encoding="utf-8",
+            )
+
+            with patch.object(check_workbench_setup, "urlopen") as open_url:
+                open_url.return_value = _FakeHttpResponse(200)
+                results = check_workbench_setup.evaluate_setup(
+                    template,
+                    env_file,
+                    compose_file,
+                    lookup_docker=False,
+                    probe_runtime=True,
+                    portainer_url="https://admin:secret@portainer.local",
+                )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Runtime OpenWebUI"], "ok")
+            self.assertEqual(levels["Runtime Portainer"], "warn")
+            self.assertIn("PORTAINER_URL must not include credentials", rendered)
+            self.assertNotIn("secret", rendered)
 
 
 if __name__ == "__main__":

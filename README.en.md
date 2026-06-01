@@ -144,6 +144,7 @@ python scripts/verify_openwebui_workspace.py --include-docker-compose --docker-c
 
 When `--docker-command` is set, the setup doctor also runs `docker compose version`. A disabled `WSLService` or unavailable WSL Docker path is reported as a preflight error before Compose configuration or container startup is attempted.
 If a root CA file exists only on the Docker or Portainer host, the non-mutating preflight can be run with `--allow-unverified-root-ca-path`; locally readable PEM files are still validated.
+After stack startup, the same doctor can probe OpenWebUI and Portainer without tokens via `--probe-runtime --portainer-url https://portainer.top.secret`; add `--require-runtime` to make missing reachability fail acceptance checks.
 
 Then open:
 

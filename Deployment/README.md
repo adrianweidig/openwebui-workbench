@@ -37,6 +37,15 @@ python scripts/check_workbench_setup.py --allow-unverified-root-ca-path
 
 Dieser Schalter ersetzt keine CA-Prüfung: lokal lesbare PEM-Dateien werden weiterhin validiert, und der Admin muss die Datei auf dem Docker-/Portainer-Host vor dem Stack-Start prüfen.
 
+Für Abnahmen nach einem Stack-Start kann der Setup-Doctor zusätzlich nicht-mutierende HTTP-Probes ausführen. Ohne `--require-runtime` sind nicht erreichbare Dienste Warnungen; mit `--require-runtime` werden sie zu Fehlern:
+
+```powershell
+python scripts/check_workbench_setup.py --probe-runtime --portainer-url https://portainer.top.secret
+python scripts/check_workbench_setup.py --probe-runtime --require-runtime --portainer-url https://portainer.top.secret
+```
+
+Der Probe ruft keine Admin-APIs mit Token auf. OpenWebUI wird über `OPENWEBUI_PUBLIC_URL` geprüft, Portainer über `--portainer-url`; HTTP 401/403 zählt als erreichbar, weil damit der Dienst antwortet und Auth verlangt.
+
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 Die Workbench-Dashboard-Automation läuft standardmäßig alle 30 Minuten mit der nicht-mutierenden Aktion `check`. In Portainer kann der Administrator dies über `WORKBENCH_AUTOMATION_ENABLED`, `WORKBENCH_AUTOMATION_INTERVAL_MINUTES`, `WORKBENCH_AUTOMATION_ACTIONS` und `WORKBENCH_AUTOMATION_RUN_ON_START` anpassen. Schreibende Aktionen wie `generate`, `import-dry-run` oder `import-openwebui` sind nicht Teil des sicheren Defaults und sollten nur nach bewusster Admin-Entscheidung ergänzt werden.
 
