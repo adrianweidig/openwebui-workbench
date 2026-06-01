@@ -126,6 +126,17 @@ class DashboardStaticAssetsTests(unittest.TestCase):
             with self.subTest(control=control):
                 self.assertIn(f'setWriteControlState("{control}"', app_js)
 
+    def test_automation_status_is_visible(self) -> None:
+        collector = collect_index()
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        for element_id in ("signal-automation", "signal-automation-detail", "config-automation"):
+            with self.subTest(element_id=element_id):
+                self.assertIn(element_id, collector.ids)
+        self.assertIn("function automationStatusText", app_js)
+        self.assertIn("function automationDetailText", app_js)
+        self.assertIn("automation.interval_minutes", app_js)
+
 
 if __name__ == "__main__":
     unittest.main()

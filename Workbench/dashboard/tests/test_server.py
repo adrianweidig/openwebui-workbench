@@ -19,7 +19,7 @@ from unittest.mock import patch
 
 import Workbench.dashboard.server as dashboard_server
 from Workbench.dashboard.i18n import detect_locale, normalize_locale, t
-from Workbench.dashboard.server import WorkbenchConfig, WorkbenchState, openwebui_ssl_context
+from Workbench.dashboard.server import WorkbenchAutomationScheduler, WorkbenchConfig, WorkbenchState, openwebui_ssl_context
 
 
 class WorkbenchStateTests(unittest.TestCase):
@@ -221,6 +221,63 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertTrue(summary["dashboard"]["auth_enabled"])
         self.assertTrue(summary["dashboard"]["auth_username_configured"])
         self.assertTrue(summary["dashboard"]["auth_password_configured"])
+
+    def test_summary_reports_automation_defaults(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                automation_enabled=True,
+                automation_interval_minutes=30,
+                automation_actions=("check",),
+            )
+        )
+
+        automation = state.summary()["automation"]
+
+        self.assertTrue(automation["enabled"])
+        self.assertEqual(automation["interval_minutes"], 30)
+        self.assertEqual(automation["actions"], ["check"])
+        self.assertEqual(automation["status"], "configured")
+
+    def test_automation_scheduler_manual_run_starts_configured_actions(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                automation_actions=("check",),
+            )
+        )
+        scheduler = WorkbenchAutomationScheduler(state)
+        job = {"job_id": "job-1", "action": "check", "running": True, "ok": None}
+
+        with patch.object(state, "start_action_job", return_value=job) as start_action:
+            snapshot = scheduler.run_once("manual")
+
+        start_action.assert_called_once_with("check")
+        self.assertEqual(snapshot["last_trigger"], "manual")
+        self.assertEqual(snapshot["last_jobs"][0]["job_id"], "job-1")
+        self.assertEqual(snapshot["last_skipped"], [])
+
+    def test_automation_scheduler_skips_unready_write_actions(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                allow_write=False,
+                automation_actions=("generate",),
+                locale="de",
+            )
+        )
+        scheduler = WorkbenchAutomationScheduler(state)
+
+        with patch.object(state, "start_action_job") as start_action:
+            snapshot = scheduler.run_once("scheduled")
+
+        start_action.assert_not_called()
+        self.assertEqual(snapshot["last_jobs"], [])
+        self.assertEqual(snapshot["last_skipped"][0]["action"], "generate")
+        self.assertIn("Schreibzugriff", snapshot["last_skipped"][0]["reason"])
 
     def test_empty_workspace_lists_are_explicitly_empty(self) -> None:
         empty_state = WorkbenchState(WorkbenchConfig(root=self.root / "empty", openwebui_base_url="http://127.0.0.1:9"))
@@ -558,6 +615,34 @@ class WorkbenchStateTests(unittest.TestCase):
 
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(response)["action"], "check")
+
+    def test_automation_run_route_requires_workbench_request_header(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        state.automation_scheduler = SimpleNamespace(run_once=lambda trigger: {"trigger": trigger, "last_jobs": []})
+        base_url = self.start_server(state)
+        auth = self.basic_auth("admin", "secret")
+
+        status, response = self.request(base_url, authorization=auth, path="/api/automation/run", method="POST", body="{}")
+        self.assertEqual(status, 403)
+        self.assertIn("Same-Origin", json.loads(response)["error"])
+
+        status, response = self.request(
+            base_url,
+            authorization=auth,
+            path="/api/automation/run",
+            method="POST",
+            body="{}",
+            headers={"X-Workbench-Request": "same-origin"},
+        )
+        self.assertEqual(status, 202)
+        self.assertEqual(json.loads(response)["trigger"], "manual")
 
     def test_read_only_action_route_rejects_background_write_action(self) -> None:
         state = WorkbenchState(

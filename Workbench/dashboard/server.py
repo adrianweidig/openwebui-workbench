@@ -125,6 +125,10 @@ MODEL_EXAMPLE_SUFFIXES = {
     ".txt",
 }
 WRITE_ACTIONS = {"generate", "import-dry-run", "import-openwebui"}
+AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
+DEFAULT_AUTOMATION_ACTIONS = ("check",)
+MIN_AUTOMATION_INTERVAL_MINUTES = 5
+MAX_AUTOMATION_INTERVAL_MINUTES = 1440
 
 
 def configure_utf8_stdio() -> None:
@@ -148,6 +152,20 @@ def env_bool(name: str, default: bool = False) -> bool:
     safe = raw.replace("\r", "\\r").replace("\n", "\\n")
     record_configuration_error(f"{name} must be true or false; got {safe!r}.")
     return default
+
+
+def env_action_tuple(name: str, default: tuple[str, ...]) -> tuple[str, ...]:
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        return default
+    values = [item.strip() for item in raw.split(",") if item.strip()]
+    invalid = [item for item in values if item not in AUTOMATION_ACTIONS]
+    if not values or invalid:
+        allowed = ", ".join(sorted(AUTOMATION_ACTIONS))
+        bad = ", ".join(invalid) if invalid else raw
+        record_configuration_error(f"{name} contains unsupported action(s): {bad}. Allowed values: {allowed}.")
+        return default
+    return tuple(dict.fromkeys(values))
 
 
 def rel(path: Path, root: Path = REPO_ROOT) -> str:
@@ -195,6 +213,12 @@ def safe_mtime(path: Path) -> float | None:
 
 def format_mtime(path: Path) -> str | None:
     value = safe_mtime(path)
+    if value is None:
+        return None
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
+
+
+def format_local_time(value: float | None) -> str | None:
     if value is None:
         return None
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
@@ -285,6 +309,15 @@ class WorkbenchConfig:
     command_timeout: int = env_int("WORKBENCH_COMMAND_TIMEOUT_SECONDS", 300)
     import_timeout: int = env_int("WORKBENCH_IMPORT_TIMEOUT_SECONDS", 1800)
     import_http_timeout: int = env_int("WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS", 600)
+    automation_enabled: bool = env_bool("WORKBENCH_AUTOMATION_ENABLED", True)
+    automation_interval_minutes: int = env_int(
+        "WORKBENCH_AUTOMATION_INTERVAL_MINUTES",
+        30,
+        minimum=MIN_AUTOMATION_INTERVAL_MINUTES,
+        maximum=MAX_AUTOMATION_INTERVAL_MINUTES,
+    )
+    automation_actions: tuple[str, ...] = env_action_tuple("WORKBENCH_AUTOMATION_ACTIONS", DEFAULT_AUTOMATION_ACTIONS)
+    automation_run_on_start: bool = env_bool("WORKBENCH_AUTOMATION_RUN_ON_START", False)
     tls_verify: bool = tls_verify_from_env()
     ca_file: str = os.environ.get("OPENWEBUI_CA_FILE", "").strip()
     ca_path: str = os.environ.get("OPENWEBUI_CA_PATH", "").strip()
@@ -312,6 +345,7 @@ class WorkbenchState:
         self.config_example = self.root / "scripts" / "openwebui_workspace_config.example.yaml"
         self.action_lock = threading.Lock()
         self.action_jobs: dict[str, dict[str, Any]] = {}
+        self.automation_scheduler: WorkbenchAutomationScheduler | None = None
 
     def summary(self) -> dict[str, Any]:
         models = self.list_models()
@@ -351,8 +385,36 @@ class WorkbenchState:
                 "config_path": rel(self.config_file),
                 "config_example": rel(self.config_example),
             },
+            "automation": self.automation_status(),
             "artifacts": self.artifact_status(),
         }
+
+    def ensure_automation_scheduler(self) -> "WorkbenchAutomationScheduler":
+        if self.automation_scheduler is None:
+            self.automation_scheduler = WorkbenchAutomationScheduler(self)
+        return self.automation_scheduler
+
+    def automation_status(self) -> dict[str, Any]:
+        scheduler = self.automation_scheduler
+        payload: dict[str, Any] = {
+            "enabled": self.config.automation_enabled,
+            "interval_minutes": self.config.automation_interval_minutes,
+            "minimum_interval_minutes": MIN_AUTOMATION_INTERVAL_MINUTES,
+            "actions": list(self.config.automation_actions),
+            "run_on_start": self.config.automation_run_on_start,
+            "manual_actions": sorted(AUTOMATION_ACTIONS),
+            "status": "disabled" if not self.config.automation_enabled else "configured",
+            "next_run_at": None,
+            "last_triggered_at": None,
+            "last_trigger": "",
+            "last_jobs": [],
+            "last_skipped": [],
+            "last_error": "",
+            "thread_running": False,
+        }
+        if scheduler is not None:
+            payload.update(scheduler.snapshot())
+        return payload
 
     def probe_openwebui(self) -> dict[str, Any]:
         url = self.config.openwebui_base_url
@@ -773,6 +835,110 @@ class WorkbenchState:
         return current
 
 
+class WorkbenchAutomationScheduler:
+    def __init__(self, state: WorkbenchState) -> None:
+        self.state = state
+        self.lock = threading.Lock()
+        self.stop_event = threading.Event()
+        self.thread: threading.Thread | None = None
+        self.next_run_at: float | None = None
+        self.last_triggered_at: float | None = None
+        self.last_trigger = ""
+        self.last_jobs: list[dict[str, Any]] = []
+        self.last_skipped: list[dict[str, str]] = []
+        self.last_error = ""
+
+    @property
+    def interval_seconds(self) -> int:
+        return self.state.config.automation_interval_minutes * 60
+
+    def start(self) -> None:
+        if not self.state.config.automation_enabled:
+            return
+        with self.lock:
+            if self.thread and self.thread.is_alive():
+                return
+            self.stop_event.clear()
+            self.next_run_at = time.time() if self.state.config.automation_run_on_start else time.time() + self.interval_seconds
+            self.thread = threading.Thread(target=self._run_loop, name="workbench-automation", daemon=True)
+            self.thread.start()
+
+    def stop(self) -> None:
+        self.stop_event.set()
+
+    def _run_loop(self) -> None:
+        while not self.stop_event.is_set():
+            with self.lock:
+                due_at = self.next_run_at or (time.time() + self.interval_seconds)
+            if self.stop_event.wait(max(0.5, due_at - time.time())):
+                return
+            self.run_once("scheduled")
+            with self.lock:
+                self.next_run_at = time.time() + self.interval_seconds
+
+    def skip_reason(self, action: str) -> str:
+        if action in WRITE_ACTIONS and not self.state.config.allow_write:
+            return t("write_disabled", self.state.config.locale)
+        if action == "import-openwebui" and not self.state.config.admin_token and not self.state.config_file.exists():
+            return t("token_missing", self.state.config.locale)
+        return ""
+
+    def run_once(self, trigger: str = "manual") -> dict[str, Any]:
+        jobs: list[dict[str, Any]] = []
+        skipped: list[dict[str, str]] = []
+        errors: list[str] = []
+        for action in self.state.config.automation_actions:
+            reason = self.skip_reason(action)
+            if reason:
+                skipped.append({"action": action, "reason": reason})
+                continue
+            try:
+                job = self.state.start_action_job(action)
+                jobs.append(
+                    {
+                        "action": action,
+                        "job_id": str(job.get("job_id") or ""),
+                        "running": bool(job.get("running")),
+                        "ok": job.get("ok"),
+                    }
+                )
+            except Exception as exc:  # pragma: no cover - defensive scheduler boundary
+                errors.append(f"{action}: {type(exc).__name__}: {exc}")
+        with self.lock:
+            self.last_triggered_at = time.time()
+            self.last_trigger = trigger
+            self.last_jobs = jobs
+            self.last_skipped = skipped
+            self.last_error = "; ".join(errors)
+        return self.snapshot()
+
+    def snapshot(self) -> dict[str, Any]:
+        with self.lock:
+            thread_running = bool(self.thread and self.thread.is_alive())
+            if not self.state.config.automation_enabled:
+                status = "disabled"
+            elif thread_running:
+                status = "active"
+            else:
+                status = "configured"
+            return {
+                "enabled": self.state.config.automation_enabled,
+                "interval_minutes": self.state.config.automation_interval_minutes,
+                "minimum_interval_minutes": MIN_AUTOMATION_INTERVAL_MINUTES,
+                "actions": list(self.state.config.automation_actions),
+                "run_on_start": self.state.config.automation_run_on_start,
+                "manual_actions": sorted(AUTOMATION_ACTIONS),
+                "status": status,
+                "next_run_at": format_local_time(self.next_run_at),
+                "last_triggered_at": format_local_time(self.last_triggered_at),
+                "last_trigger": self.last_trigger,
+                "last_jobs": list(self.last_jobs),
+                "last_skipped": list(self.last_skipped),
+                "last_error": self.last_error,
+                "thread_running": thread_running,
+            }
+
+
 STATE = WorkbenchState(WorkbenchConfig())
 
 
@@ -856,6 +1022,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 result = STATE.run_action(action)
                 status = HTTPStatus.OK if result["ok"] else HTTPStatus.BAD_GATEWAY
                 self.send_json(result, status)
+            elif parsed.path == "/api/automation/run":
+                result = STATE.ensure_automation_scheduler().run_once("manual")
+                self.send_json(result, HTTPStatus.ACCEPTED)
             elif parsed.path == "/api/resources":
                 payload = self.read_json_body()
                 self.send_json(
@@ -1033,6 +1202,7 @@ def main(argv: list[str] | None = None) -> int:
     except OSError as exc:
         print_startup_errors([f"Could not bind dashboard to {args.host}:{args.port}: {exc}"])
         return 1
+    STATE.ensure_automation_scheduler().start()
     print(t("dashboard_listening", STATE.config.locale, host=args.host, port=args.port), flush=True)
     try:
         server.serve_forever()

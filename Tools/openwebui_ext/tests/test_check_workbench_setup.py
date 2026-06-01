@@ -151,6 +151,9 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("OPENWEBUI_TLS_VERIFY=true", rendered)
             self.assertEqual(levels["Numeric config"], "ok")
             self.assertIn("WORKBENCH_COMMAND_TIMEOUT_SECONDS=300", rendered)
+            self.assertIn("WORKBENCH_AUTOMATION_INTERVAL_MINUTES=30", rendered)
+            self.assertEqual(levels["Automation config"], "ok")
+            self.assertIn("WORKBENCH_AUTOMATION_ACTIONS=check", rendered)
 
     def test_invalid_port_value_fails_without_printing_secret_values(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -322,6 +325,46 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertEqual(levels["Numeric config"], "ok")
             self.assertIn("WORKBENCH_COMMAND_TIMEOUT_SECONDS=120", rendered)
             self.assertIn("WORKBENCH_MAX_BODY_BYTES=2048", rendered)
+
+    def test_invalid_automation_interval_fails_before_dashboard_start(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nWORKBENCH_AUTOMATION_INTERVAL_MINUTES=1\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Numeric config"], "fail")
+            self.assertIn("WORKBENCH_AUTOMATION_INTERVAL_MINUTES", rendered)
+
+    def test_invalid_automation_action_fails_before_dashboard_start(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\nWORKBENCH_AUTOMATION_ACTIONS=check,delete-all\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Automation config"], "fail")
+            self.assertIn("delete-all", rendered)
 
     def test_missing_enterprise_ca_host_file_fails_before_compose_start(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

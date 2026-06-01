@@ -25,16 +25,19 @@ DEFAULT_COMPOSE_FILE = ROOT / "Deployment" / "docker-compose.workbench.yml"
 BOOLEAN_DEFAULTS = {
     "OPENWEBUI_TLS_VERIFY": "true",
     "WORKBENCH_ALLOW_WRITE": "true",
+    "WORKBENCH_AUTOMATION_ENABLED": "true",
+    "WORKBENCH_AUTOMATION_RUN_ON_START": "false",
     "WEBUI_AUTH": "true",
     "DO_NOT_TRACK": "true",
     "SCARF_NO_ANALYTICS": "true",
     "ANONYMIZED_TELEMETRY": "false",
 }
 INTEGER_DEFAULTS = {
-    "WORKBENCH_COMMAND_TIMEOUT_SECONDS": 300,
-    "WORKBENCH_IMPORT_TIMEOUT_SECONDS": 1800,
-    "WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS": 600,
-    "WORKBENCH_MAX_BODY_BYTES": 1048576,
+    "WORKBENCH_COMMAND_TIMEOUT_SECONDS": (300, 1, None),
+    "WORKBENCH_IMPORT_TIMEOUT_SECONDS": (1800, 1, None),
+    "WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS": (600, 1, None),
+    "WORKBENCH_MAX_BODY_BYTES": (1048576, 1, None),
+    "WORKBENCH_AUTOMATION_INTERVAL_MINUTES": (30, 5, 1440),
 }
 OPTIONAL_FILE_KEYS = {
     "WORKBENCH_AUTH_PASSWORD_FILE": "file",
@@ -44,6 +47,7 @@ OPTIONAL_FILE_KEYS = {
 }
 TRUE_VALUES = {"1", "true", "yes", "on"}
 FALSE_VALUES = {"0", "false", "no", "off"}
+AUTOMATION_ACTIONS = {"check", "generate", "import-dry-run", "import-openwebui"}
 PRIVATE_KEY_RE = re.compile(r"BEGIN .*PRIVATE KEY")
 
 
@@ -261,13 +265,23 @@ def check_boolean_values(env_path: Path) -> CheckResult:
     return CheckResult("ok", "Boolean config", ", ".join(normalized_values) + ".")
 
 
-def _env_positive_int(values: dict[str, str], key: str, default: int) -> tuple[int | None, str | None]:
+def _env_ranged_int(
+    values: dict[str, str],
+    key: str,
+    default: int,
+    minimum: int,
+    maximum: int | None,
+) -> tuple[int | None, str | None]:
     raw = values.get(key, "").strip() or str(default)
     if not raw.isdecimal():
-        return None, f"{key} must be a positive whole number."
+        return None, f"{key} must be a whole number."
     value = int(raw)
-    if value < 1:
-        return None, f"{key} must be a positive whole number."
+    if value < minimum or (maximum is not None and value > maximum):
+        if maximum is None:
+            expected = f"at least {minimum}"
+        else:
+            expected = f"between {minimum} and {maximum}"
+        return None, f"{key} must be a whole number {expected}."
     return value, None
 
 
@@ -279,8 +293,8 @@ def check_numeric_values(env_path: Path) -> CheckResult:
 
     normalized_values: list[str] = []
     errors: list[str] = []
-    for key, default in INTEGER_DEFAULTS.items():
-        value, error = _env_positive_int(values, key, default)
+    for key, (default, minimum, maximum) in INTEGER_DEFAULTS.items():
+        value, error = _env_ranged_int(values, key, default, minimum, maximum)
         if error:
             errors.append(error)
         else:
@@ -293,6 +307,25 @@ def check_numeric_values(env_path: Path) -> CheckResult:
             "Use positive whole numbers for timeout and size values in the local .env.",
         )
     return CheckResult("ok", "Numeric config", ", ".join(normalized_values) + ".")
+
+
+def check_automation_actions(env_path: Path) -> CheckResult:
+    try:
+        values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        return CheckResult("fail", "Automation config", str(exc), "Check file permissions.")
+
+    raw = values.get("WORKBENCH_AUTOMATION_ACTIONS", "").strip() or "check"
+    actions = [item.strip() for item in raw.split(",") if item.strip()]
+    invalid = [item for item in actions if item not in AUTOMATION_ACTIONS]
+    if not actions or invalid:
+        return CheckResult(
+            "fail",
+            "Automation config",
+            f"Unsupported automation action(s): {', '.join(invalid) if invalid else raw}.",
+            f"Use comma-separated values from: {', '.join(sorted(AUTOMATION_ACTIONS))}.",
+        )
+    return CheckResult("ok", "Automation config", f"WORKBENCH_AUTOMATION_ACTIONS={', '.join(dict.fromkeys(actions))}.")
 
 
 def _env_path(raw: str, env_path: Path) -> Path:
@@ -481,6 +514,7 @@ def evaluate_setup(
         results.append(check_openwebui_urls(env_path))
         results.append(check_boolean_values(env_path))
         results.append(check_numeric_values(env_path))
+        results.append(check_automation_actions(env_path))
         results.append(check_file_references(env_path))
     if run_compose:
         if resolved_docker_command:

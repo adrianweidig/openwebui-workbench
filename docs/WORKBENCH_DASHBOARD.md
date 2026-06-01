@@ -96,6 +96,20 @@ Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwend
 
 Der echte OpenWebUI-Sync läuft im Dashboard als Hintergrundjob. Die Oberfläche bleibt währenddessen bedienbar; ein zweiter Sync-Klick startet keinen parallelen Import, sondern zeigt den laufenden Job weiter an.
 
+## Automation
+
+Beim normalen Dashboard-Start richtet die Workbench eine interne Automation ein. Der sichere Default ist ein nicht-mutierender Workspace-Check alle 30 Minuten (`WORKBENCH_AUTOMATION_ACTIONS=check`). Dadurch werden Status-, Generator-, JSON- und Unit-Test-Drift regelmäßig sichtbar, ohne Modelle oder OpenWebUI automatisch zu verändern.
+
+Schreibende Automationsaktionen sind bewusst opt-in: `generate`, `import-dry-run` oder `import-openwebui` dürfen nur in `WORKBENCH_AUTOMATION_ACTIONS` ergänzt werden, wenn der Administrator die Schreib- beziehungsweise API-Wirkung akzeptiert und passende Tokens/Konfigurationen gesetzt hat. Der Scheduler nutzt dieselben Job-Locks wie die manuelle UI; ein bereits laufender gleicher Job wird nicht parallel neu gestartet.
+
+Ein manueller Lauf bleibt unabhängig vom Intervall möglich:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri http://localhost:8088/api/automation/run -Headers @{ "X-Workbench-Request" = "same-origin" }
+```
+
+Bei aktivierter Basic Auth muss der Request zusätzlich die Dashboard-Zugangsdaten enthalten. Im Dashboard selbst bleiben die Aktionskarten unter `Sync` der bevorzugte manuelle Weg.
+
 Der Sync verwendet die vorhandenen Skripte:
 
 ```powershell
@@ -123,6 +137,10 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout für Generator-, Dry-Run- und Verify-Aktionen. |
 | `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Prozess-Timeout für den Hintergrund-Sync nach OpenWebUI. Standard: 1800 Sekunden, damit ein seltener Clean-Import nicht vom Dashboard abgebrochen wird. |
 | `WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS` | HTTP-Timeout pro OpenWebUI-API-Request während des Imports. Standard: 600 Sekunden. |
+| `WORKBENCH_AUTOMATION_ENABLED` | Aktiviert die Dashboard-Automation. Standard: `true`. |
+| `WORKBENCH_AUTOMATION_INTERVAL_MINUTES` | Intervall der Dashboard-Automation. Standard: `30`, erlaubter Bereich: `5` bis `1440`. |
+| `WORKBENCH_AUTOMATION_ACTIONS` | Kommagetrennte Aktionen für automatische Läufe. Standard: `check`; erlaubte Werte: `check`, `generate`, `import-dry-run`, `import-openwebui`. |
+| `WORKBENCH_AUTOMATION_RUN_ON_START` | `true` startet den ersten Automationslauf sofort beim Dashboard-Start. Standard: `false`, damit Starts ruhig bleiben. |
 | `WORKBENCH_LOCALE` | Standard-Locale des Dashboards, aktuell `de` oder `en`. Unbekannte Werte fallen auf Deutsch zurück. |
 
 ## Internationalisierung

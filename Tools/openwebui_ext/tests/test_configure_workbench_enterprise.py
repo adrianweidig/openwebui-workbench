@@ -18,6 +18,15 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         )
         self.assertNotIn("WORKBENCH_AUTH_PASSWORD: `${WORKBENCH_AUTH_PASSWORD:-}", script)
 
+    def test_generated_portainer_stack_sets_safe_automation_defaults(self) -> None:
+        script = WIZARD.read_text(encoding="utf-8")
+
+        self.assertIn("WORKBENCH_AUTOMATION_ENABLED=true", script)
+        self.assertIn("WORKBENCH_AUTOMATION_INTERVAL_MINUTES=30", script)
+        self.assertIn("WORKBENCH_AUTOMATION_ACTIONS=check", script)
+        self.assertIn("WORKBENCH_AUTOMATION_INTERVAL_MINUTES: `${WORKBENCH_AUTOMATION_INTERVAL_MINUTES:-30}", script)
+        self.assertIn("WORKBENCH_AUTOMATION_ACTIONS: `${WORKBENCH_AUTOMATION_ACTIONS:-check}", script)
+
 
 if __name__ == "__main__":
     unittest.main()

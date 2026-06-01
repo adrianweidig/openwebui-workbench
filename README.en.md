@@ -148,7 +148,7 @@ Then open:
 - Workbench: `http://localhost:8088`
 - Optional local `top.secret` edge route: `https://workbench.top.secret`
 
-The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` is set.
+The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` is set. The dashboard also runs the non-mutating `check` action every 30 minutes by default; mutating automatic actions are active only after explicit environment configuration.
 
 If OpenWebUI is already running, start only the Workbench container:
 

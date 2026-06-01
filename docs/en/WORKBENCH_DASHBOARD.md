@@ -58,6 +58,20 @@ If the local `top.secret` edge proxy is used, the Workbench can also be exposed 
 
 The real OpenWebUI sync runs as a background job. The dashboard remains usable while it runs; triggering the same sync again shows the active job instead of starting a parallel import.
 
+## Automation
+
+On normal dashboard startup the Workbench configures an internal automation. The safe default is a non-mutating workspace check every 30 minutes (`WORKBENCH_AUTOMATION_ACTIONS=check`). This keeps status, generator, JSON, and unit-test drift visible without changing model sources or OpenWebUI automatically.
+
+Mutating automation actions are opt-in: add `generate`, `import-dry-run`, or `import-openwebui` to `WORKBENCH_AUTOMATION_ACTIONS` only after the administrator accepts the write/API effect and has configured the required tokens. The scheduler uses the same job locks as the manual UI; an already running job for the same action is not started in parallel.
+
+A manual automation run remains independent from the interval:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri http://localhost:8088/api/automation/run -Headers @{ "X-Workbench-Request" = "same-origin" }
+```
+
+When Basic Auth is enabled, include the dashboard credentials as well. In the browser, the `Sync` action cards remain the preferred manual path.
+
 The sync actions use the existing scripts:
 
 ```powershell
@@ -88,6 +102,10 @@ The dashboard defaults to German. It can switch to English through the language 
 | `WORKBENCH_COMMAND_TIMEOUT_SECONDS` | Timeout for generator, dry-run, and verification actions. |
 | `WORKBENCH_IMPORT_TIMEOUT_SECONDS` | Process timeout for the background OpenWebUI sync. Default: 1800 seconds. |
 | `WORKBENCH_IMPORT_HTTP_TIMEOUT_SECONDS` | HTTP timeout per OpenWebUI API request during import. Default: 600 seconds. |
+| `WORKBENCH_AUTOMATION_ENABLED` | Enables dashboard automation. Default: `true`. |
+| `WORKBENCH_AUTOMATION_INTERVAL_MINUTES` | Dashboard automation interval. Default: `30`, allowed range: `5` to `1440`. |
+| `WORKBENCH_AUTOMATION_ACTIONS` | Comma-separated actions for automatic runs. Default: `check`; allowed values: `check`, `generate`, `import-dry-run`, `import-openwebui`. |
+| `WORKBENCH_AUTOMATION_RUN_ON_START` | `true` starts the first automation run immediately on dashboard startup. Default: `false`, keeping startup quiet. |
 | `WORKBENCH_LOCALE` | Dashboard default locale, currently `de` or `en`. |
 
 ## Security

@@ -389,6 +389,28 @@ function applyTheme(theme) {
   localStorage.setItem("workbench-theme", theme);
 }
 
+function automationActionsText(automation) {
+  return (automation?.actions || []).join(", ") || t("state.notSet");
+}
+
+function automationStatusText(automation) {
+  if (!automation?.enabled) return t("automation.disabled");
+  return t("automation.active", { minutes: automation.interval_minutes || 30 });
+}
+
+function automationDetailText(automation) {
+  const actions = automationActionsText(automation);
+  if (!automation?.enabled) return t("automation.manualOnly", { actions });
+  const nextRun = automation.next_run_at ? formatDateTime(automation.next_run_at) : t("automation.nextAfterStart");
+  return t("automation.detail", { actions, next: nextRun });
+}
+
+function automationLevel(automation) {
+  if (!automation?.enabled) return "warn";
+  if (automation.last_error || (automation.last_skipped || []).length) return "warn";
+  return "ok";
+}
+
 function renderStatus() {
   const status = state.status;
   if (!status) return;
@@ -408,17 +430,21 @@ function renderStatus() {
   const caMode = status.openwebui.ca_file_configured || status.openwebui.ca_path_configured ? t("config.customCa") : t("config.systemCa");
   setText("config-token", `${status.openwebui.admin_token_configured ? t("state.set") : t("state.notSet")} · ${tlsMode} · ${caMode}`);
   setText("config-write", status.write_enabled ? t("state.active") : t("state.disabled"));
+  setText("config-automation", automationDetailText(status.automation));
   setText("signal-api", status.openwebui.reachable.ok ? t("signals.connected") : t("signals.unreachable"));
   setText("signal-api-detail", status.openwebui.base_url);
   setText("signal-auth", status.dashboard?.auth_enabled ? t("signals.authEnabled") : t("signals.localMode"));
   setText("signal-auth-detail", status.dashboard?.auth_enabled ? t("signals.allRoutesProtected") : t("signals.authEnvMissing"));
   setText("signal-write", status.write_enabled ? t("signals.writeEnabled") : t("signals.readOnly"));
   setText("signal-config", status.config.local_config_exists ? t("signals.localConfig") : t("signals.exampleConfig"));
+  setText("signal-automation", automationStatusText(status.automation));
+  setText("signal-automation-detail", automationDetailText(status.automation));
   setText("signal-artifacts", t("artifacts.existing", { existing: existingArtifacts, total: artifacts.length }));
   setText("signal-artifacts-detail", t("artifacts.handover", { bytes: formatBytes(artifactBytes) }));
   setSignalState("signal-api", status.openwebui.reachable.ok ? "ok" : "danger");
   setSignalState("signal-auth", status.dashboard?.auth_enabled ? "ok" : "warn");
   setSignalState("signal-write", status.write_enabled ? "ok" : "warn");
+  setSignalState("signal-automation", automationLevel(status.automation));
   setSignalState("signal-artifacts", existingArtifacts === artifacts.length ? "ok" : "warn");
   renderSetupChecks(status, existingArtifacts, artifacts.length);
   renderActionReadiness();
@@ -445,6 +471,7 @@ function renderStatus() {
 
 function setupChecks(status, existingArtifacts, artifactTotal) {
   const syncReady = Boolean(status.openwebui.admin_token_configured || status.config.local_config_exists);
+  const automation = status.automation || {};
   return [
     {
       level: status.dashboard?.auth_enabled ? "ok" : "warn",
@@ -470,6 +497,11 @@ function setupChecks(status, existingArtifacts, artifactTotal) {
       level: status.write_enabled ? "ok" : "warn",
       title: status.write_enabled ? t("setup.writeReady") : t("setup.writeDisabled"),
       detail: status.write_enabled ? t("signals.writeEnabled") : t("signals.readOnly"),
+    },
+    {
+      level: automationLevel(automation),
+      title: automation.enabled ? t("setup.automationReady") : t("setup.automationManual"),
+      detail: automationDetailText(automation),
     },
   ];
 }
