@@ -93,6 +93,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--allow-unverified-secret-file-path",
+        action="store_true",
+        help=(
+            "treat a missing OPENWEBUI_ADMIN_TOKEN_HOST_FILE as a warning for Docker/Portainer host-only paths; "
+            "token file contents are never read"
+        ),
+    )
+    parser.add_argument(
         "--probe-runtime",
         action="store_true",
         help="non-mutating HTTP probe for configured OpenWebUI and optional Portainer reachability",
@@ -401,7 +409,20 @@ def _validate_pem_certificate_file(path: Path, key: str) -> tuple[str | None, st
     return None, None
 
 
-def check_file_references(env_path: Path, *, allow_unverified_root_ca_path: bool = False) -> CheckResult:
+def _validate_existing_file(path: Path, key: str) -> tuple[str | None, str | None]:
+    if not path.exists():
+        return f"{key} points to a missing file.", "Check the host path before startup."
+    if not path.is_file():
+        return f"{key} must point to a file, not a directory.", "Use a single secret file path."
+    return None, None
+
+
+def check_file_references(
+    env_path: Path,
+    *,
+    allow_unverified_root_ca_path: bool = False,
+    allow_unverified_secret_file_path: bool = False,
+) -> CheckResult:
     try:
         values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
     except OSError as exc:
@@ -426,7 +447,28 @@ def check_file_references(env_path: Path, *, allow_unverified_root_ca_path: bool
                 if action:
                     actions.append(action)
 
+    admin_token_host_file = values.get("OPENWEBUI_ADMIN_TOKEN_HOST_FILE", "").strip()
+    admin_token_container_file = values.get("OPENWEBUI_ADMIN_TOKEN_FILE", "").strip()
+    if admin_token_host_file:
+        if not admin_token_container_file:
+            failures.append("OPENWEBUI_ADMIN_TOKEN_HOST_FILE is set but OPENWEBUI_ADMIN_TOKEN_FILE is empty.")
+            actions.append("Set OPENWEBUI_ADMIN_TOKEN_FILE to the Workbench container mount target.")
+        token_host_path = _env_path(admin_token_host_file, env_path)
+        if not token_host_path.exists() and allow_unverified_secret_file_path:
+            warnings.append(
+                "OPENWEBUI_ADMIN_TOKEN_HOST_FILE was not found locally but is allowed as a Docker/Portainer host path."
+            )
+            actions.append("Verify the token file on the Docker/Portainer host before starting the stack.")
+        else:
+            error, action = _validate_existing_file(token_host_path, "OPENWEBUI_ADMIN_TOKEN_HOST_FILE")
+            if error:
+                failures.append(error)
+                if action:
+                    actions.append(action)
+
     for key, kind in OPTIONAL_FILE_KEYS.items():
+        if key == "OPENWEBUI_ADMIN_TOKEN_FILE" and admin_token_host_file:
+            continue
         raw = values.get(key, "").strip()
         if not raw:
             continue
@@ -754,6 +796,7 @@ def evaluate_setup(
     docker_command: Sequence[str] | None = None,
     lookup_docker: bool = True,
     allow_unverified_root_ca_path: bool = False,
+    allow_unverified_secret_file_path: bool = False,
     probe_runtime: bool = False,
     require_runtime: bool = False,
     portainer_url: str = "",
@@ -781,6 +824,7 @@ def evaluate_setup(
             check_file_references(
                 env_path,
                 allow_unverified_root_ca_path=allow_unverified_root_ca_path,
+                allow_unverified_secret_file_path=allow_unverified_secret_file_path,
             )
         )
         if probe_runtime:
@@ -844,6 +888,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         run_compose=args.run_compose_config,
         docker_command=args.docker_command,
         allow_unverified_root_ca_path=args.allow_unverified_root_ca_path,
+        allow_unverified_secret_file_path=args.allow_unverified_secret_file_path,
         probe_runtime=args.probe_runtime,
         require_runtime=args.require_runtime,
         portainer_url=args.portainer_url,

@@ -584,6 +584,102 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("container-only secret or CA paths", rendered)
             self.assertNotIn(sentinel, rendered)
 
+    def test_admin_token_host_file_is_validated_without_reading_secret_value(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            token_file = Path(temp_dir) / "openwebui-admin-token.txt"
+            token_file.write_text("DO_NOT_PRINT_TOKEN_VALUE\n", encoding="utf-8")
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                f"OPENWEBUI_ADMIN_TOKEN_HOST_FILE={token_file}\n"
+                "OPENWEBUI_ADMIN_TOKEN_FILE=/run/secrets/openwebui-admin-token\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "ok")
+            self.assertNotIn("DO_NOT_PRINT_TOKEN_VALUE", rendered)
+
+    def test_missing_admin_token_host_file_fails_without_portainer_opt_in(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            missing_token_file = Path(temp_dir) / "docker-host-only-token.txt"
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                f"OPENWEBUI_ADMIN_TOKEN_HOST_FILE={missing_token_file}\n"
+                "OPENWEBUI_ADMIN_TOKEN_FILE=/run/secrets/openwebui-admin-token\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "fail")
+            self.assertIn("OPENWEBUI_ADMIN_TOKEN_HOST_FILE", rendered)
+
+    def test_missing_admin_token_host_file_can_warn_for_portainer_host_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            missing_token_file = Path(temp_dir) / "docker-host-only-token.txt"
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                f"OPENWEBUI_ADMIN_TOKEN_HOST_FILE={missing_token_file}\n"
+                "OPENWEBUI_ADMIN_TOKEN_FILE=/run/secrets/openwebui-admin-token\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+                allow_unverified_secret_file_path=True,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "warn")
+            self.assertIn("Docker/Portainer host path", rendered)
+            self.assertIn("Verify the token file", rendered)
+
+    def test_admin_token_host_file_requires_container_mount_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            token_file = Path(temp_dir) / "openwebui-admin-token.txt"
+            token_file.write_text("DO_NOT_PRINT_TOKEN_VALUE\n", encoding="utf-8")
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                f"OPENWEBUI_ADMIN_TOKEN_HOST_FILE={token_file}\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["File references"], "fail")
+            self.assertIn("OPENWEBUI_ADMIN_TOKEN_FILE is empty", rendered)
+            self.assertNotIn("DO_NOT_PRINT_TOKEN_VALUE", rendered)
+
     def test_runtime_probe_checks_openwebui_and_portainer_without_token(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))

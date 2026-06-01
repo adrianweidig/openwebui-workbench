@@ -33,9 +33,11 @@ Für Portainer-Hostpfade, die vom Windows-Generator nicht lokal gelesen werden k
 
 ```powershell
 python scripts/check_workbench_setup.py --allow-unverified-root-ca-path
+python scripts/check_workbench_setup.py --allow-unverified-root-ca-path --allow-unverified-secret-file-path
 ```
 
 Dieser Schalter ersetzt keine CA-Prüfung: lokal lesbare PEM-Dateien werden weiterhin validiert, und der Admin muss die Datei auf dem Docker-/Portainer-Host vor dem Stack-Start prüfen.
+Der Secret-Dateipfad-Schalter gilt nur für `OPENWEBUI_ADMIN_TOKEN_HOST_FILE`: lokal lesbare Token-Dateipfade werden als Datei geprüft, aber Token-Dateiinhalte werden nicht gelesen oder ausgegeben.
 
 Für Abnahmen nach einem Stack-Start kann der Setup-Doctor zusätzlich nicht-mutierende HTTP-Probes ausführen. Ohne `--require-runtime` sind nicht erreichbare Dienste Warnungen; mit `--require-runtime` werden sie zu Fehlern:
 
@@ -137,7 +139,7 @@ Die generierte Workbench-Service-Definition verlangt `WORKBENCH_AUTH_PASSWORD`; 
 Die generierte Portainer-Compose-Datei enthält Healthchecks für die gebündelte OpenWebUI-Instanz (`/health`) und das Workbench-Dashboard (`/healthz`), damit Portainer den Startzustand direkt als healthy oder unhealthy anzeigen kann.
 Die OpenWebUI-URL-Felder werden als vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten validiert, bevor sie in `workbench.env` geschrieben werden.
 Eine optional gesetzte `PORTAINER_URL` wird als vollständige `http`- oder `https`-URL ohne eingebettete Zugangsdaten validiert und nur in `workbench.env` gespeichert. Sie dient dem hostseitigen Setup-Doctor für Reachability-Prüfungen und wird nicht als Token oder Secret behandelt.
-Wenn der OpenWebUI-Admin-Token als Docker-/Portainer-Secret oder Bind-Datei gemountet wird, kann der Assistent einen Hostpfad abfragen und ihn read-only in den Workbench-Container einhängen. Dann setzt er `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` auf den Docker-/Portainer-sichtbaren Hostpfad und `OPENWEBUI_ADMIN_TOKEN_FILE` standardmäßig auf `/run/secrets/openwebui-admin-token`. Der Assistent liest oder schreibt keine Token-Dateiinhalte. Wenn der Hostpfad nur auf dem Docker-/Portainer-Host existiert und vom ausführenden Windows-System nicht lesbar ist, prüfe die Datei administrativ und starte den Assistenten mit `-AllowUnverifiedSecretFilePath`.
+Wenn der OpenWebUI-Admin-Token als Docker-/Portainer-Secret oder Bind-Datei gemountet wird, kann der Assistent einen Hostpfad abfragen und ihn read-only in den Workbench-Container einhängen. Dann setzt er `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` auf den Docker-/Portainer-sichtbaren Hostpfad und `OPENWEBUI_ADMIN_TOKEN_FILE` standardmäßig auf `/run/secrets/openwebui-admin-token`. Der Assistent liest oder schreibt keine Token-Dateiinhalte. Wenn der Hostpfad nur auf dem Docker-/Portainer-Host existiert und vom ausführenden Windows-System nicht lesbar ist, prüfe die Datei administrativ und starte den Assistenten mit `-AllowUnverifiedSecretFilePath`. Für eine Windows-seitige Preflight-Prüfung der generierten Env-Datei nutze entsprechend `python scripts/check_workbench_setup.py --allow-unverified-secret-file-path`; lokal lesbare Token-Dateipfade werden dabei als Datei geprüft, aber nicht ausgelesen.
 Wenn Workbench und OpenWebUI in ein bereits vorhandenes gemeinsames Docker-Netz sollen, etwa für eine bestehende OpenWebUI-, Reverse-Proxy- oder Portainer-Umgebung, im Assistenten den vorhandenen Netzwerknamen angeben und das externe Netzwerk bestätigen. Dann erzeugt der Stack das Netzwerk nicht selbst, sondern bindet beide Services über `external: true` an `WORKBENCH_DOCKER_NETWORK`. Ohne diese Auswahl legt der generierte Stack ein eigenes Bridge-Netz mit diesem Namen an.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:
