@@ -46,6 +46,7 @@ Für lokale Docker-Compose-Starts ohne direkte Secret-Werte in `.env` können di
 ```powershell
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.workbench-password-file.yml up -d --build
 docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.openwebui-admin-token-file.yml up -d --build workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml -f Deployment/docker-compose.workbench-password-file.yml -f Deployment/docker-compose.openwebui-admin-token-file.yml up -d --build workbench
 ```
 
 Bei Nutzung beider Dateien müssen in `.env` die jeweiligen Host- und Containerpfade gesetzt sein: `WORKBENCH_AUTH_PASSWORD_HOST_FILE` plus `WORKBENCH_AUTH_PASSWORD_FILE` beziehungsweise `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` plus `OPENWEBUI_ADMIN_TOKEN_FILE`.

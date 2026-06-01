@@ -153,6 +153,24 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
         )
         steps.append(
             CommandStep(
+                "Docker compose combined secret-file config",
+                [
+                    *docker,
+                    "compose",
+                    "-f",
+                    "Deployment/docker-compose.workbench.yml",
+                    "-f",
+                    "Deployment/docker-compose.workbench-password-file.yml",
+                    "-f",
+                    "Deployment/docker-compose.openwebui-admin-token-file.yml",
+                    "config",
+                ],
+                env=compose_auth_env,
+                requires_docker=True,
+            )
+        )
+        steps.append(
+            CommandStep(
                 "Docker compose top.secret workbench config",
                 [
                     *docker,
