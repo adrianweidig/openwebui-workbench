@@ -260,6 +260,27 @@ def check_openwebui_urls(env_path: Path) -> CheckResult:
     )
 
 
+def check_optional_service_urls(env_path: Path) -> CheckResult:
+    try:
+        values = init_workbench_env.env_values(env_path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        return CheckResult("fail", "Optional service URLs", str(exc), "Check file permissions.")
+
+    raw_portainer_url = values.get("PORTAINER_URL", "").strip()
+    if not raw_portainer_url:
+        return CheckResult("ok", "Optional service URLs", "No optional service URLs configured.")
+    parsed, error = _env_url(values, "PORTAINER_URL", "")
+    if error:
+        return CheckResult(
+            "fail",
+            "Optional service URLs",
+            error,
+            "Use a full http:// or https:// Portainer URL without credentials, or leave PORTAINER_URL empty.",
+        )
+    assert parsed is not None
+    return CheckResult("ok", "Optional service URLs", f"PORTAINER_URL={_display_url(parsed)}.")
+
+
 def _env_bool(values: dict[str, str], key: str, default: str) -> tuple[str | None, str | None]:
     raw = values.get(key, "").strip() or default
     normalized = raw.lower()
@@ -752,6 +773,7 @@ def evaluate_setup(
     if env_path.exists():
         results.append(check_env_ports(env_path))
         results.append(check_openwebui_urls(env_path))
+        results.append(check_optional_service_urls(env_path))
         results.append(check_boolean_values(env_path))
         results.append(check_numeric_values(env_path))
         results.append(check_automation_actions(env_path))

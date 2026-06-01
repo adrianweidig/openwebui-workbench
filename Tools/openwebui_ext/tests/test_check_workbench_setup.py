@@ -282,6 +282,49 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("must not include credentials", rendered)
             self.assertNotIn("secret", rendered)
 
+    def test_optional_portainer_url_is_validated_without_runtime_probe(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "PORTAINER_URL=https://portainer.local:9443\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Optional service URLs"], "ok")
+            self.assertIn("PORTAINER_URL=https://portainer.local:9443", rendered)
+
+    def test_optional_portainer_url_rejects_credentials_without_printing_secret(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
+            env_file.write_text(
+                "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
+                "PORTAINER_URL=https://admin:secret@portainer.local\n",
+                encoding="utf-8",
+            )
+
+            results = check_workbench_setup.evaluate_setup(
+                template,
+                env_file,
+                compose_file,
+                lookup_docker=False,
+            )
+            rendered = check_workbench_setup.render_results(results)
+
+            levels = {result.title: result.level for result in results}
+            self.assertEqual(levels["Optional service URLs"], "fail")
+            self.assertIn("PORTAINER_URL must not include credentials", rendered)
+            self.assertNotIn("secret", rendered)
+
     def test_invalid_boolean_value_fails_before_runtime_start(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
@@ -625,7 +668,7 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             rendered = check_workbench_setup.render_results(results)
 
             self.assertIn("https://portainer-from-cli.local/api/status", rendered)
-            self.assertNotIn("portainer-from-env", rendered)
+            self.assertIn("PORTAINER_URL=https://portainer-from-env.local", rendered)
 
     def test_runtime_probe_failure_can_be_required_for_acceptance(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
