@@ -44,7 +44,7 @@ python scripts/check_workbench_setup.py --probe-runtime --portainer-url https://
 python scripts/check_workbench_setup.py --probe-runtime --require-runtime --portainer-url https://portainer.top.secret
 ```
 
-Der Probe ruft keine Admin-APIs mit Token auf. OpenWebUI wird über `OPENWEBUI_PUBLIC_URL` geprüft, Portainer über `--portainer-url` oder `PORTAINER_URL` in der lokalen `.env`; der CLI-Wert hat Vorrang. HTTP 401/403 zählt als erreichbar, weil damit der Dienst antwortet und Auth verlangt.
+Der Probe ruft keine Admin-APIs mit Token auf. OpenWebUI wird über `OPENWEBUI_PUBLIC_URL` geprüft, Portainer über `--portainer-url` oder `PORTAINER_URL` in der lokalen `.env`; der CLI-Wert hat Vorrang. HTTP 401/403 zählt als erreichbar, weil damit der Dienst antwortet und Auth verlangt. Der Portainer-Wizard kann `PORTAINER_URL` direkt in die generierte `workbench.env` schreiben, damit derselbe Wert für spätere Setup-Doctor-Abnahmen verfügbar ist.
 
 Die Compose-Datei enthält Healthchecks für OpenWebUI (`/health`) und Workbench (`/healthz`). Der Workbench-Healthcheck nutzt keine Auth-Daten und gibt nur einen minimalen Status zurück.
 Die Workbench-Dashboard-Automation läuft standardmäßig alle 30 Minuten mit der nicht-mutierenden Aktion `check`. In Portainer kann der Administrator dies über `WORKBENCH_AUTOMATION_ENABLED`, `WORKBENCH_AUTOMATION_INTERVAL_MINUTES`, `WORKBENCH_AUTOMATION_ACTIONS` und `WORKBENCH_AUTOMATION_RUN_ON_START` anpassen. Schreibende Aktionen wie `generate`, `import-dry-run` oder `import-openwebui` sind nicht Teil des sicheren Defaults und sollten nur nach bewusster Admin-Entscheidung ergänzt werden.
@@ -121,6 +121,7 @@ Der Assistent fragt ab:
 
 - ob OpenWebUI im Stack mitgestartet oder eine vorhandene Instanz genutzt wird
 - die interne und öffentliche OpenWebUI-URL
+- optional die Portainer-URL für spätere Runtime-Probes ohne Token
 - den Docker-/Portainer-sichtbaren Repository-Pfad
 - den Docker-Netzwerknamen und ob ein vorhandenes externes Netzwerk genutzt werden soll
 - optional den Root-CA-Pfad
@@ -133,6 +134,7 @@ Ausgabe:
 
 `Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss.
 Die generierte Workbench-Service-Definition verlangt `WORKBENCH_AUTH_PASSWORD`; wenn der Wert im Assistenten leer bleibt, muss er vor dem Stack-Start in Portainer gesetzt werden.
+Eine optional gesetzte `PORTAINER_URL` wird als vollständige `http`- oder `https`-URL ohne eingebettete Zugangsdaten validiert und nur in `workbench.env` gespeichert. Sie dient dem hostseitigen Setup-Doctor für Reachability-Prüfungen und wird nicht als Token oder Secret behandelt.
 Wenn Workbench und OpenWebUI in ein bereits vorhandenes gemeinsames Docker-Netz sollen, etwa für eine bestehende OpenWebUI-, Reverse-Proxy- oder Portainer-Umgebung, im Assistenten den vorhandenen Netzwerknamen angeben und das externe Netzwerk bestätigen. Dann erzeugt der Stack das Netzwerk nicht selbst, sondern bindet beide Services über `external: true` an `WORKBENCH_DOCKER_NETWORK`. Ohne diese Auswahl legt der generierte Stack ein eigenes Bridge-Netz mit diesem Namen an.
 
 Wenn der lokale `top.secret`-Edge-Proxy aktiv ist:

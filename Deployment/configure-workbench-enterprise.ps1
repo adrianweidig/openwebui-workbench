@@ -3,6 +3,7 @@ param(
     [string]$OpenWebUIMode = "",
     [string]$OpenWebUIBaseUrl = "",
     [string]$OpenWebUIPublicUrl = "",
+    [string]$PortainerUrl = "",
     [string]$WorkspaceHostPath = "",
     [string]$RootCaPath = "",
     [string]$WorkbenchImage = "ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest",
@@ -89,6 +90,28 @@ function Test-RootCaFile {
     return $resolved.Path
 }
 
+function Test-WorkbenchUrl {
+    param(
+        [string]$Name,
+        [string]$Value
+    )
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return ""
+    }
+    $trimmed = $Value.Trim()
+    $uri = $null
+    if (-not [System.Uri]::TryCreate($trimmed, [System.UriKind]::Absolute, [ref]$uri)) {
+        throw "$Name muss eine vollständige http- oder https-URL sein."
+    }
+    if ($uri.Scheme -notin @("http", "https") -or [string]::IsNullOrWhiteSpace($uri.Host)) {
+        throw "$Name muss eine vollständige http- oder https-URL sein."
+    }
+    if (-not [string]::IsNullOrEmpty($uri.UserInfo)) {
+        throw "$Name darf keine eingebetteten Zugangsdaten enthalten."
+    }
+    return $trimmed.TrimEnd("/")
+}
+
 function Write-TextFile {
     param(
         [string]$PathValue,
@@ -147,6 +170,8 @@ else {
     $OpenWebUIPublicUrl = Read-WorkbenchValue -Prompt "Browser-URL für OpenWebUI" -Default $(if ($OpenWebUIPublicUrl) { $OpenWebUIPublicUrl } else { $OpenWebUIBaseUrl }) -Required
 }
 
+$PortainerUrl = Read-WorkbenchValue -Prompt "Optionale Portainer-URL für Runtime-Probes" -Default $PortainerUrl
+$PortainerUrl = Test-WorkbenchUrl -Name "PORTAINER_URL" -Value $PortainerUrl
 $RootCaPath = Read-WorkbenchValue -Prompt "Optionaler Host-Pfad zur Root-CA im PEM-Format" -Default $RootCaPath
 $RootCaPath = Test-RootCaFile -PathValue $RootCaPath -AllowUnverified:$AllowUnverifiedRootCaPath
 
@@ -176,6 +201,7 @@ $envLines = @(
     "WORKBENCH_LOCALE=de",
     "OPENWEBUI_BASE_URL=$OpenWebUIBaseUrl",
     "OPENWEBUI_PUBLIC_URL=$OpenWebUIPublicUrl",
+    "PORTAINER_URL=$PortainerUrl",
     "OPENWEBUI_TLS_VERIFY=true",
     "OPENWEBUI_ADMIN_TOKEN=$adminToken"
 )
