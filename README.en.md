@@ -152,7 +152,7 @@ Then open:
 - Workbench: `http://localhost:8088`
 - Optional local `top.secret` edge route: `https://workbench.top.secret`
 
-For Portainer installations, [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) can generate a stack Compose file that can be pasted into Portainer. The wizard also asks for the Docker network name and can attach Workbench plus the optional bundled OpenWebUI service to an existing external network without creating that network itself.
+For Portainer installations, [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) can generate a stack Compose file that can be pasted into Portainer. The wizard also asks for the Docker network name and optional Portainer URL for later runtime probes, and can attach Workbench plus the optional bundled OpenWebUI service to an existing external network without creating that network itself.
 
 The Workbench mounts this repository as `/workspace`, edits model Markdown under `Modelle/einzelmodelle/`, tool sources under `Tools/openwebui_ext/tools/`, and skill Markdown under `Tools/openwebui_ext/skills/`. It can generate dist artifacts, run import dry-runs, and sync to the OpenWebUI API when `OPENWEBUI_ADMIN_TOKEN` is set. The dashboard also runs the non-mutating `check` action every 30 minutes by default; mutating automatic actions are active only after explicit environment configuration.
 
