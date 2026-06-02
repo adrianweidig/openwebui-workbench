@@ -703,9 +703,20 @@ function actionDisabledReason(action) {
 function renderActionReadiness() {
   document.querySelectorAll("[data-action]").forEach((button) => {
     const reason = actionDisabledReason(button.dataset.action);
+    let reasonNode = button.querySelector(".action-disabled-reason");
+    if (!reasonNode) {
+      reasonNode = document.createElement("span");
+      reasonNode.className = "action-disabled-reason";
+      reasonNode.id = `action-disabled-${button.dataset.action}`;
+      button.append(reasonNode);
+    }
+    reasonNode.textContent = reason;
+    reasonNode.hidden = !reason;
     button.disabled = Boolean(reason);
     button.classList.toggle("disabled", Boolean(reason));
     button.setAttribute("aria-disabled", String(Boolean(reason)));
+    if (reason) button.setAttribute("aria-describedby", reasonNode.id);
+    else button.removeAttribute("aria-describedby");
     button.title = reason;
   });
 }

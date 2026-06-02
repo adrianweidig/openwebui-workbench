@@ -166,6 +166,15 @@ class DashboardStaticAssetsTests(unittest.TestCase):
             with self.subTest(message_key=message_key):
                 self.assertIn(f't("{message_key}"', app_js)
 
+    def test_disabled_action_reasons_are_visible_and_accessible(self) -> None:
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+        styles = (STATIC_ROOT / "styles.css").read_text(encoding="utf-8")
+
+        self.assertIn("action-disabled-reason", app_js)
+        self.assertIn('button.setAttribute("aria-describedby", reasonNode.id)', app_js)
+        self.assertIn('t("sync.disabled.tokenMissing")', app_js)
+        self.assertIn(".action-card.disabled .action-disabled-reason", styles)
+
     def test_repository_pipeline_semantics_are_visible(self) -> None:
         index_html = (STATIC_ROOT / "index.html").read_text(encoding="utf-8")
         app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")

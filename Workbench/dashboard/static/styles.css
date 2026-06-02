@@ -718,6 +718,18 @@ textarea:read-only:not(:disabled) {
   line-height: 1.45;
 }
 
+.action-disabled-reason {
+  display: none;
+  margin-top: 4px;
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.action-card.disabled .action-disabled-reason {
+  display: block;
+}
+
 .log-pane {
   padding: 0;
 }
