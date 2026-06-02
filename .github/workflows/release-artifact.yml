@@ -78,7 +78,7 @@ jobs:
           sha256sum "release-artifacts/${archive_name}" "release-artifacts/RELEASE_NOTES.md" > release-artifacts/SHA256SUMS.txt
 
       - name: Upload snapshot artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.package.outputs.artifact_name }}
           path: release-artifacts/
