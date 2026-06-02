@@ -43,7 +43,7 @@ Das Repository veröffentlicht versionierte Handover-Stände über GitHub Releas
 
 ## Automatisches Snapshot-Artefakt
 
-Bei jedem Push auf `main` erstellt `.github/workflows/release-artifact.yml` ein Actions-Artefakt aus dem aktuellen Commit. Der Workflow nutzt `git archive`, enthält keine `.git`-Daten und erzeugt:
+Bei jedem Push auf `main` und bei Pull Requests gegen `main` erstellt `.github/workflows/release-artifact.yml` ein Actions-Artefakt aus dem aktuellen Commit. Der Workflow nutzt `git archive`, enthält keine `.git`-Daten und erzeugt:
 
 - ein ZIP mit Root-Verzeichnis aus Projektname, Branch und Kurz-SHA,
 - `RELEASE_NOTES.md` mit Repository, Branch, Commit, Event, Actor, UTC-Zeit und Commitliste,
@@ -52,6 +52,8 @@ Bei jedem Push auf `main` erstellt `.github/workflows/release-artifact.yml` ein 
 Branch-Namen werden für ZIP-Root und Actions-Artefaktnamen auf einen sicheren Slug normalisiert. Das verhindert ungültige Artefaktnamen oder verschachtelte Pfade, wenn der Workflow manuell auf einem Branch mit `/` oder anderen Sonderzeichen gestartet wird.
 
 Dieses Actions-Artefakt ist ein reproduzierbarer Snapshot für Prüfung und Handover. Es erstellt keine Tags und keine GitHub Releases. Die Veröffentlichung als GitHub Release bleibt eine bewusste Maintainer-Aktion.
+
+Der Pull-Request-Trigger ist ein Preflight für Änderungen am Release-Artefakt-Workflow selbst, zum Beispiel Dependabot-Updates von `actions/upload-artifact`. Major-Upgrades bleiben trotzdem manuell zu prüfen und werden nicht allein durch einen grünen PR-Preflight automatisch gemergt.
 
 ## Ablauf
 
