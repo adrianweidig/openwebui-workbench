@@ -71,6 +71,16 @@ class DashboardStaticAssetsTests(unittest.TestCase):
                 missing = sorted(keys - set(messages))
                 self.assertEqual(missing, [])
 
+    def test_locale_files_have_matching_message_keys(self) -> None:
+        locale_messages = {
+            locale: json.loads((STATIC_ROOT / "locales" / f"{locale}.json").read_text(encoding="utf-8"))
+            for locale in ("de", "en")
+        }
+        expected_keys = set(locale_messages["de"])
+
+        self.assertEqual(sorted(expected_keys - set(locale_messages["en"])), [])
+        self.assertEqual(sorted(set(locale_messages["en"]) - expected_keys), [])
+
     def test_navigation_panels_match_javascript_allowlist(self) -> None:
         collector = collect_index()
         app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
