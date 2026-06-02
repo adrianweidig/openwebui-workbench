@@ -320,6 +320,24 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(automation["actions"], ["check"])
         self.assertEqual(automation["status"], "configured")
 
+    def test_artifact_status_classifies_required_and_optional_handover_files(self) -> None:
+        required_file = self.root / "Modelle" / "dist" / "openwebui-models-import.json"
+        optional_file = self.root / "Tools" / "dist" / "openwebui-tools-import.json"
+        required_file.parent.mkdir(parents=True)
+        optional_file.parent.mkdir(parents=True)
+        required_file.write_text("[]\n", encoding="utf-8")
+        optional_file.write_text("[]\n", encoding="utf-8")
+
+        artifacts = self.state.artifact_status()
+        required = [item for item in artifacts if item["required"]]
+        optional = [item for item in artifacts if not item["required"]]
+
+        self.assertEqual(len(required), 7)
+        self.assertEqual(len(optional), 1)
+        self.assertEqual(optional[0]["kind"], "optional_network_tools")
+        self.assertTrue(optional[0]["path"].endswith("Tools/dist/openwebui-tools-import.json"))
+        self.assertTrue(next(item for item in artifacts if item["kind"] == "model_import")["exists"])
+
     def test_automation_scheduler_manual_run_starts_configured_actions(self) -> None:
         state = WorkbenchState(
             WorkbenchConfig(

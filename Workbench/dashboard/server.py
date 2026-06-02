@@ -451,20 +451,22 @@ class WorkbenchState:
 
     def artifact_status(self) -> list[dict[str, Any]]:
         candidates = [
-            self.dist_root / "openwebui-models-import.json",
-            self.dist_root / "openwebui-registration-plan.json",
-            self.dist_root / "openwebui-model-params-summary.json",
-            self.dist_root / "openwebui-offline-artifacts.zip",
-            self.tools_dist_root / "openwebui-tools-import.json",
-            self.tools_dist_root / "openwebui-tools-offline-import.json",
-            self.tools_dist_root / "openwebui-functions-import.json",
-            self.tools_dist_root / "openwebui-tools-skills-offline.zip",
+            (self.dist_root / "openwebui-models-import.json", "model_import", True),
+            (self.dist_root / "openwebui-registration-plan.json", "registration_plan", True),
+            (self.dist_root / "openwebui-model-params-summary.json", "parameter_summary", True),
+            (self.dist_root / "openwebui-offline-artifacts.zip", "handover_zip", True),
+            (self.tools_dist_root / "openwebui-tools-offline-import.json", "offline_tool_import", True),
+            (self.tools_dist_root / "openwebui-functions-import.json", "function_import", True),
+            (self.tools_dist_root / "openwebui-tools-skills-offline.zip", "tools_skills_zip", True),
+            (self.tools_dist_root / "openwebui-tools-import.json", "optional_network_tools", False),
         ]
         items: list[dict[str, Any]] = []
-        for path in candidates:
+        for path, kind, required in candidates:
             items.append(
                 {
                     "path": rel(path),
+                    "kind": kind,
+                    "required": required,
                     "exists": path.exists(),
                     "mtime": format_mtime(path) if path.exists() else None,
                     "bytes": path.stat().st_size if path.exists() else 0,

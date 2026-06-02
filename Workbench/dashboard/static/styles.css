@@ -233,8 +233,18 @@ nav {
 }
 
 .summary-grid small {
+  display: block;
   color: var(--muted);
   font-size: 12px;
+}
+
+.summary-grid em {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.3;
 }
 
 .panel {
@@ -1029,7 +1039,7 @@ textarea:focus-visible {
 .topbar {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   align-items: center;
   margin-bottom: 16px;
@@ -1069,16 +1079,27 @@ textarea:focus-visible {
 }
 
 .summary-grid {
-  grid-template-columns: repeat(3, 96px);
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(128px, 1fr));
+  min-width: 0;
 }
 
 .summary-grid div {
+  display: grid;
+  min-height: 92px;
+  align-content: center;
+  gap: 4px;
   border-color: rgba(56, 189, 248, 0.25);
   background: var(--surface-3);
 }
 
 .summary-grid span {
   color: var(--accent);
+}
+
+.summary-grid em {
+  max-width: 160px;
+  justify-self: center;
 }
 
 .signal-strip {
@@ -1408,8 +1429,27 @@ textarea,
   align-items: center;
 }
 
+.artifact-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.artifact-title-row strong {
+  flex-basis: 100%;
+}
+
 .artifact-state {
   justify-self: end;
+}
+
+.artifact-item.optional {
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.06), var(--surface-2));
+}
+
+.artifact-item.missing {
+  border-color: rgba(251, 191, 36, 0.38);
 }
 
 .empty-state {
@@ -1429,6 +1469,7 @@ textarea,
 
   .summary-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    min-width: 0;
   }
 
   .signal-strip {

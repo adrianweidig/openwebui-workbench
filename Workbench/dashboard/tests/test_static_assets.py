@@ -156,6 +156,38 @@ class DashboardStaticAssetsTests(unittest.TestCase):
             with self.subTest(message_key=message_key):
                 self.assertIn(f't("{message_key}"', app_js)
 
+    def test_repository_pipeline_semantics_are_visible(self) -> None:
+        index_html = (STATIC_ROOT / "index.html").read_text(encoding="utf-8")
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+        messages = json.loads((STATIC_ROOT / "locales" / "de.json").read_text(encoding="utf-8"))
+
+        self.assertIn('data-i18n="hero.title">Repository-Workbench für OpenWebUI', index_html)
+        self.assertNotIn("OpenWebUI zentral verwalten", index_html)
+        for workflow_key in ("workflow.verify", "workflow.compare", "workflow.snapshot"):
+            with self.subTest(workflow_key=workflow_key):
+                self.assertIn(workflow_key, index_html)
+                self.assertIn(workflow_key, messages)
+        for app_symbol in (
+            "function artifactStats",
+            "function artifactLevel",
+            "function artifactDetailText",
+            "function workbenchModelCount",
+            "function modelDisplayDescriptionWithCapability",
+        ):
+            with self.subTest(app_symbol=app_symbol):
+                self.assertIn(app_symbol, app_js)
+        for message_key in (
+            "artifacts.requiredExisting",
+            "artifacts.optionalExisting",
+            "summary.sourceDetail",
+            "summary.targetMissing",
+            "summary.targetRemoteOnly",
+            "resources.emptyJupyter",
+            "models.offlineKnowledge",
+        ):
+            with self.subTest(message_key=message_key):
+                self.assertIn(message_key, messages)
+
 
 if __name__ == "__main__":
     unittest.main()

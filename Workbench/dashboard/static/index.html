@@ -26,10 +26,13 @@
         <div class="sidebar-guide" aria-label="Workflow" data-i18n-aria-label="workflow.aria">
           <small data-i18n="workflow.title">Workflow</small>
           <ol>
-            <li data-i18n="workflow.source">Quelle prüfen</li>
-            <li data-i18n="workflow.build">Artefakte bauen</li>
-            <li data-i18n="workflow.dryRun">Dry-Run starten</li>
-            <li data-i18n="workflow.sync">Sync ausführen</li>
+            <li data-i18n="workflow.source">Quellen bearbeiten</li>
+            <li data-i18n="workflow.verify">Workspace verifizieren</li>
+            <li data-i18n="workflow.build">Dist-Artefakte bauen</li>
+            <li data-i18n="workflow.dryRun">Import-Dry-Run</li>
+            <li data-i18n="workflow.sync">OpenWebUI synchronisieren</li>
+            <li data-i18n="workflow.compare">Zielstatus vergleichen</li>
+            <li data-i18n="workflow.snapshot">Snapshot aktualisieren</li>
           </ol>
         </div>
         <div class="status-box">
@@ -44,9 +47,9 @@
       <main class="main">
         <header class="topbar">
           <div class="hero-copy">
-            <span class="eyebrow" data-i18n="hero.eyebrow">Repository Control Center</span>
-            <h2 data-i18n="hero.title">OpenWebUI zentral verwalten</h2>
-            <p data-i18n="hero.body">Modelltexte und HTML-Beispiele bearbeiten, Dist-Artefakte erzeugen und Importläufe kontrolliert auslösen.</p>
+            <span class="eyebrow" data-i18n="hero.eyebrow">Repository-Quelle für OpenWebUI</span>
+            <h2 data-i18n="hero.title">Repository-Workbench für OpenWebUI</h2>
+            <p data-i18n="hero.body">Modellpakete, Tools, Skills und Dist-Artefakte kuratieren, prüfen und kontrolliert synchronisieren.</p>
           </div>
           <div class="topbar-actions">
             <select id="locale-select" class="ghost locale-select" aria-label="Sprache" data-i18n-aria-label="language.select">
@@ -57,25 +60,25 @@
             <button id="theme-toggle" class="ghost theme-toggle" type="button" aria-pressed="true">Dark</button>
           </div>
           <div class="summary-grid" aria-label="Repository Kennzahlen" data-i18n-aria-label="summary.aria">
-            <div><span id="count-models">0</span><small data-i18n="summary.models">Modelle</small></div>
-            <div><span id="count-tools">0</span><small data-i18n="summary.tools">Tools</small></div>
-            <div><span id="count-skills">0</span><small data-i18n="summary.skills">Skills</small></div>
+            <div><span id="count-models">...</span><small data-i18n="summary.source">Repository-Quelle</small><em id="summary-source-detail" data-i18n="repo.loading">Repository wird geladen</em></div>
+            <div><span id="count-tools">...</span><small data-i18n="summary.dist">Dist-Artefakte</small><em id="summary-dist-detail" data-i18n="repo.loading">Repository wird geladen</em></div>
+            <div><span id="count-skills">...</span><small data-i18n="summary.target">OpenWebUI-Ziel</small><em id="summary-target-detail" data-i18n="repo.loading">Repository wird geladen</em></div>
           </div>
         </header>
 
         <section class="signal-strip" aria-label="Statusübersicht" data-i18n-aria-label="signals.aria">
           <div class="signal-card">
-            <small data-i18n="signals.api">API-Ziel</small>
+            <small data-i18n="signals.target">OpenWebUI-Ziel</small>
             <strong id="signal-api" data-i18n="signals.checking">Wird geprüft</strong>
             <span id="signal-api-detail">-</span>
           </div>
           <div class="signal-card">
-            <small data-i18n="signals.dashboard">Dashboard</small>
-            <strong id="signal-auth" data-i18n="signals.authUnknown">Auth unbekannt</strong>
+            <small data-i18n="signals.verify">Verify</small>
+            <strong id="signal-auth" data-i18n="signals.checking">Wird geprüft</strong>
             <span id="signal-auth-detail">-</span>
           </div>
           <div class="signal-card">
-            <small data-i18n="signals.editing">Bearbeitung</small>
+            <small data-i18n="signals.source">Repository-Quelle</small>
             <strong id="signal-write">-</strong>
             <span id="signal-config">-</span>
           </div>
@@ -199,35 +202,35 @@
             <section>
               <h3 data-i18n="sync.title">Synchronisierung</h3>
               <div class="action-grid">
+                <button class="action-card" data-action="check">
+                  <small data-i18n="sync.check.step">2 · Verify</small>
+                  <strong data-i18n="sync.check.title">Workspace verifizieren</strong>
+                  <span data-i18n="sync.check.body">Syntax, Generator, Import-Dry-Run, JSON und Unit-Tests prüfen.</span>
+                </button>
                 <button class="action-card" data-action="generate">
-                  <small data-i18n="sync.generate.step">1 · Build</small>
+                  <small data-i18n="sync.generate.step">3 · Build</small>
                   <strong data-i18n="sync.generate.title">Artefakte neu erzeugen</strong>
                   <span data-i18n="sync.generate.body">Registries, Modellprofile und ZIPs aus dem aktuellen Modellstand bauen.</span>
                 </button>
                 <button class="action-card" data-action="import-dry-run">
-                  <small data-i18n="sync.dryRun.step">2 · Safe Check</small>
+                  <small data-i18n="sync.dryRun.step">4 · Dry-Run</small>
                   <strong data-i18n="sync.dryRun.title">Import prüfen</strong>
                   <span data-i18n="sync.dryRun.body">OpenWebUI-Payload lokal validieren, ohne die Zielinstanz zu verändern.</span>
                 </button>
                 <button class="action-card" data-action="import-openwebui">
-                  <small data-i18n="sync.api.step">3 · API Sync</small>
+                  <small data-i18n="sync.api.step">5 · API Sync</small>
                   <strong data-i18n="sync.api.title">Zu OpenWebUI synchronisieren</strong>
                   <span data-i18n="sync.api.body">Tools, Filter, Skills, Knowledge und Modelle über die API importieren.</span>
                 </button>
                 <button class="action-card" data-action="sync-status">
-                  <small data-i18n="sync.status.step">4 · Vergleich</small>
+                  <small data-i18n="sync.status.step">6 · Vergleich</small>
                   <strong data-i18n="sync.status.title">Modellstatus vergleichen</strong>
                   <span data-i18n="sync.status.body">Workbench- und OpenWebUI-Modelle lesen und Unterschiede ohne Schreibzugriff anzeigen.</span>
                 </button>
                 <button class="action-card" data-action="pull-openwebui">
-                  <small data-i18n="sync.pull.step">5 · Snapshot</small>
+                  <small data-i18n="sync.pull.step">7 · Snapshot</small>
                   <strong data-i18n="sync.pull.title">OpenWebUI-Snapshot aktualisieren</strong>
                   <span data-i18n="sync.pull.body">Remote-Modelle lokal als prüfbaren Snapshot sichtbar machen, ohne Workbench-Modelle zu überschreiben.</span>
-                </button>
-                <button class="action-card" data-action="check">
-                  <small data-i18n="sync.check.step">QA</small>
-                  <strong data-i18n="sync.check.title">Workspace verifizieren</strong>
-                  <span data-i18n="sync.check.body">Syntax, Generator, Import-Dry-Run, JSON und Unit-Tests prüfen.</span>
                 </button>
               </div>
             </section>

@@ -411,16 +411,112 @@ function automationLevel(automation) {
   return "ok";
 }
 
+function artifactStats(artifacts) {
+  const required = artifacts.filter((item) => item.required !== false);
+  const optional = artifacts.filter((item) => item.required === false);
+  return {
+    total: artifacts.length,
+    existing: artifacts.filter((item) => item.exists).length,
+    bytes: artifacts.reduce((total, item) => total + (item.bytes || 0), 0),
+    requiredTotal: required.length,
+    requiredExisting: required.filter((item) => item.exists).length,
+    optionalTotal: optional.length,
+    optionalExisting: optional.filter((item) => item.exists).length,
+    missingRequired: required.filter((item) => !item.exists),
+    missingOptional: optional.filter((item) => !item.exists),
+  };
+}
+
+function artifactLevel(stats) {
+  if (stats.missingRequired.length) return "danger";
+  if (!stats.requiredTotal) return "warn";
+  return "ok";
+}
+
+function artifactMainText(stats) {
+  return t("artifacts.requiredExisting", {
+    existing: formatNumber(stats.requiredExisting),
+    total: formatNumber(stats.requiredTotal),
+  });
+}
+
+function artifactDetailText(stats) {
+  if (stats.missingRequired.length) {
+    return t("artifacts.requiredMissing", { count: formatNumber(stats.missingRequired.length) });
+  }
+  const optionalText = stats.optionalTotal
+    ? t("artifacts.optionalExisting", {
+        existing: formatNumber(stats.optionalExisting),
+        total: formatNumber(stats.optionalTotal),
+      })
+    : t("artifacts.optionalNone");
+  return `${optionalText} · ${t("artifacts.handover", { bytes: formatBytes(stats.bytes) })}`;
+}
+
+function workbenchModelCount(status) {
+  return Math.max(0, Number(status.counts.models || 0) - modelSyncCount(status.model_sync, "remote_only"));
+}
+
+function sourceDetailText(status) {
+  const mode = status.write_enabled ? t("signals.writeEnabled") : t("signals.readOnly");
+  return t("summary.sourceDetail", {
+    models: formatNumber(workbenchModelCount(status)),
+    tools: formatNumber(status.counts.tools || 0),
+    skills: formatNumber(status.counts.skills || 0),
+    mode,
+  });
+}
+
+function verifyStatusText(status) {
+  const automation = status.automation || {};
+  const actions = automation.actions || [];
+  if (automation.enabled && actions.includes("check")) return t("signals.verifyAutomated");
+  return t("signals.verifyManual");
+}
+
+function verifyDetailText(status) {
+  const automation = status.automation || {};
+  const actions = automation.actions || [];
+  if (automation.enabled && actions.includes("check")) return automationDetailText(automation);
+  return t("signals.verifyDetail");
+}
+
+function verifyLevel(status) {
+  const automation = status.automation || {};
+  return automation.enabled && (automation.actions || []).includes("check") ? automationLevel(automation) : "warn";
+}
+
+function targetMainText(status) {
+  const modelSync = status.model_sync || {};
+  if (!modelSync.exists) return t("summary.targetMissing");
+  const conflicts = modelSyncCount(modelSync, "conflict");
+  if (conflicts) return t("summary.targetConflicts", { count: formatNumber(conflicts) });
+  return t("summary.targetRemoteOnly", { count: formatNumber(modelSyncCount(modelSync, "remote_only")) });
+}
+
+function tokenTlsDetail(status) {
+  const token = status.openwebui.admin_token_configured ? t("config.tokenSet") : t("config.tokenMissing");
+  const tls = status.openwebui.tls_verify ? t("config.tlsVerified") : t("config.tlsOff");
+  return `${token} · ${tls}`;
+}
+
+function artifactKindLabel(item) {
+  return t(`artifacts.kind.${item.kind || "unknown"}`);
+}
+
 function renderStatus() {
   const status = state.status;
   if (!status) return;
   const artifacts = status.artifacts || [];
-  const existingArtifacts = artifacts.filter((item) => item.exists).length;
-  const artifactBytes = artifacts.reduce((total, item) => total + (item.bytes || 0), 0);
+  const stats = artifactStats(artifacts);
+  const localModels = workbenchModelCount(status);
   setText("repo-root", displayRepoPath(status.root));
-  setText("count-models", formatNumber(status.counts.models));
-  setText("count-tools", formatNumber(status.counts.tools));
-  setText("count-skills", formatNumber(status.counts.skills));
+  setText("count-models", formatNumber(localModels));
+  setText("summary-source-detail", t("summary.sourceShort", { tools: formatNumber(status.counts.tools || 0), skills: formatNumber(status.counts.skills || 0) }));
+  setText("count-tools", `${formatNumber(stats.requiredExisting)}/${formatNumber(stats.requiredTotal)}`);
+  setText("summary-dist-detail", artifactDetailText(stats));
+  setText("count-skills", targetMainText(status));
+  setText("summary-target-detail", modelSyncDetail(status.model_sync || {}));
   setText("openwebui-url", status.openwebui.public_url);
   setText("openwebui-status", status.openwebui.reachable.ok ? t("status.openwebuiReachable") : t("status.openwebuiUnreachable"));
   el("open-openwebui").href = status.openwebui.public_url;
@@ -435,44 +531,52 @@ function renderStatus() {
     ? status.openwebui.base_url
     : status.openwebui.reachable.error || status.openwebui.base_url;
   setText("signal-api", status.openwebui.reachable.ok ? t("signals.connected") : t("signals.unreachable"));
-  setText("signal-api-detail", openwebuiReachabilityDetail);
-  setText("signal-auth", status.dashboard?.auth_enabled ? t("signals.authEnabled") : t("signals.localMode"));
-  setText("signal-auth-detail", status.dashboard?.auth_enabled ? t("signals.allRoutesProtected") : t("signals.authEnvMissing"));
-  setText("signal-write", status.write_enabled ? t("signals.writeEnabled") : t("signals.readOnly"));
-  setText("signal-config", status.config.local_config_exists ? t("signals.localConfig") : t("signals.exampleConfig"));
+  setText("signal-api-detail", `${openwebuiReachabilityDetail} · ${tokenTlsDetail(status)}`);
+  setText("signal-auth", verifyStatusText(status));
+  setText("signal-auth-detail", verifyDetailText(status));
+  setText("signal-write", t("signals.sourceModels", { count: formatNumber(localModels) }));
+  setText("signal-config", sourceDetailText(status));
   setText("signal-automation", automationStatusText(status.automation));
   setText("signal-automation-detail", automationDetailText(status.automation));
-  setText("signal-artifacts", t("artifacts.existing", { existing: existingArtifacts, total: artifacts.length }));
-  setText("signal-artifacts-detail", t("artifacts.handover", { bytes: formatBytes(artifactBytes) }));
+  setText("signal-artifacts", artifactMainText(stats));
+  setText("signal-artifacts-detail", artifactDetailText(stats));
   setSignalState("signal-api", status.openwebui.reachable.ok ? "ok" : "danger");
-  setSignalState("signal-auth", status.dashboard?.auth_enabled ? "ok" : "warn");
-  setSignalState("signal-write", status.write_enabled ? "ok" : "warn");
+  setSignalState("signal-auth", verifyLevel(status));
+  setSignalState("signal-write", localModels ? "ok" : "warn");
   setSignalState("signal-automation", automationLevel(status.automation));
-  setSignalState("signal-artifacts", existingArtifacts === artifacts.length ? "ok" : "warn");
-  renderSetupChecks(status, existingArtifacts, artifacts.length);
+  setSignalState("signal-artifacts", artifactLevel(stats));
+  renderSetupChecks(status, stats);
   renderActionReadiness();
   updateEditorWriteControls();
+  renderArtifactList(artifacts);
+}
 
+function renderArtifactList(artifacts) {
   const artifactList = el("artifact-list");
   artifactList.replaceChildren();
   artifacts.forEach((item) => {
     const row = document.createElement("div");
     row.className = "artifact-item";
+    row.classList.toggle("missing", !item.exists);
+    row.classList.toggle("optional", item.required === false);
     const title = document.createElement("strong");
     title.textContent = item.path;
+    const titleRow = document.createElement("div");
+    titleRow.className = "artifact-title-row";
+    titleRow.append(title, makeChip(artifactKindLabel(item), "accent"), makeChip(item.required === false ? t("artifacts.optional") : t("artifacts.required"), item.required === false ? "" : "ok"));
     const meta = document.createElement("span");
     meta.textContent = item.exists ? `${formatNumber(item.bytes)} ${t("unit.bytes")} · ${formatDateTime(item.mtime)}` : t("state.missing");
     const stateChip = document.createElement("span");
     stateChip.className = `chip artifact-state ${item.exists ? "ok" : "warn"}`;
-    stateChip.textContent = item.exists ? formatBytes(item.bytes) : t("state.missing");
+    stateChip.textContent = item.exists ? t("artifacts.present") : t("state.missing");
     const text = document.createElement("div");
-    text.append(title, meta);
+    text.append(titleRow, meta);
     row.append(text, stateChip);
     artifactList.append(row);
   });
 }
 
-function setupChecks(status, existingArtifacts, artifactTotal) {
+function setupChecks(status, stats) {
   const syncReady = Boolean(status.openwebui.admin_token_configured || status.config.local_config_exists);
   const automation = status.automation || {};
   const modelSync = status.model_sync || {};
@@ -500,9 +604,9 @@ function setupChecks(status, existingArtifacts, artifactTotal) {
       detail: modelSyncDetail(modelSync),
     },
     {
-      level: existingArtifacts === artifactTotal ? "ok" : "warn",
-      title: existingArtifacts === artifactTotal ? t("setup.artifactsReady") : t("setup.artifactsMissing"),
-      detail: t("artifacts.existing", { existing: existingArtifacts, total: artifactTotal }),
+      level: artifactLevel(stats),
+      title: stats.missingRequired.length ? t("setup.artifactsMissing") : t("setup.artifactsReady"),
+      detail: artifactDetailText(stats),
     },
     {
       level: status.write_enabled ? "ok" : "warn",
@@ -551,8 +655,8 @@ function modelSyncDetail(modelSync) {
   });
 }
 
-function renderSetupChecks(status, existingArtifacts, artifactTotal) {
-  const checks = setupChecks(status, existingArtifacts, artifactTotal);
+function renderSetupChecks(status, stats) {
+  const checks = setupChecks(status, stats);
   const blockers = checks.filter((item) => item.level === "danger").length;
   const warnings = checks.filter((item) => item.level === "warn").length;
   setText(
@@ -695,12 +799,23 @@ function modelDisplayDescription(model) {
   return localizedProduct(model).description || model.description || model.id;
 }
 
+function modelCapabilityNote(model) {
+  if (model?.id === "internetwissen") return t("models.offlineKnowledge");
+  return "";
+}
+
+function modelDisplayDescriptionWithCapability(model) {
+  const description = modelDisplayDescription(model);
+  const note = modelCapabilityNote(model);
+  return note ? `${description} · ${note}` : description;
+}
+
 function visibleModels() {
   const query = el("model-search").value.trim().toLocaleLowerCase(state.locale);
   if (!query) return state.models;
   return state.models.filter((model) => {
     const product = localizedProduct(model);
-    return `${model.id} ${model.name} ${model.description} ${product.name || ""} ${product.description || ""}`.toLocaleLowerCase(state.locale).includes(query);
+    return `${model.id} ${model.name} ${model.description} ${product.name || ""} ${product.description || ""} ${modelCapabilityNote(model)}`.toLocaleLowerCase(state.locale).includes(query);
   });
 }
 
@@ -718,7 +833,8 @@ function renderResources() {
   const resources = visibleResources();
   setText("resource-filter-state", t("resources.count", { visible: formatNumber(resources.length), total: formatNumber(state.resources.length) }));
   if (!resources.length) {
-    renderEmpty(list, t("resources.empty"));
+    const query = el("resource-search").value.trim().toLocaleLowerCase(state.locale);
+    renderEmpty(list, query.includes("jupyter") ? t("resources.emptyJupyter") : t("resources.empty"));
     return;
   }
   resources.forEach((resource) => {
@@ -769,10 +885,12 @@ function renderModels() {
         makeChip(t("models.filesCount", { existing: model.files.filter((file) => file.exists).length, total: model.files.length }), "ok"),
       );
     }
+    const capabilityNote = modelCapabilityNote(model);
+    if (capabilityNote) meta.append(makeChip(capabilityNote, "ok"));
     if (model.sync_status && !["identical", "remote_only"].includes(model.sync_status)) meta.append(makeChip(t(`sync.status.${model.sync_status}`), "warn"));
     if (model.tags?.[0]) meta.append(makeChip(model.tags[0]));
     const sub = document.createElement("span");
-    sub.textContent = modelDisplayDescription(model);
+    sub.textContent = modelDisplayDescriptionWithCapability(model);
     button.append(title, meta, sub);
     button.addEventListener("click", () => selectModel(model.id));
     list.append(button);
@@ -922,7 +1040,7 @@ async function selectModel(modelId) {
   state.selectedModel = model;
   state.selectedFile = model.files.find((file) => file.name === DEFAULT_MODEL_FILE)?.name || model.files[0]?.name || DEFAULT_MODEL_FILE;
   setText("model-title", modelDisplayName(model));
-  setText("model-description", modelDisplayDescription(model));
+  setText("model-description", modelDisplayDescriptionWithCapability(model));
   renderModels();
   renderFileTabs();
   if (model.remote_only || !model.files.length) {
