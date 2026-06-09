@@ -1,0 +1,30 @@
+trigger:
+  - main
+
+pool:
+  name: SelfHostedAdaAgent
+
+steps:
+  - script: |
+      set -euo pipefail
+      gprbuild -P default.gpr
+    displayName: Build Ada production units
+
+  - script: |
+      set -euo pipefail
+      gprbuild -P tests.gpr
+    displayName: Build AUnit tests
+
+  - script: |
+      set -euo pipefail
+      mkdir -p test-results
+      ./obj/tests/test_runner | tee test-results/aunit-output.txt
+    displayName: Run AUnit tests
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish AUnit text report
+    condition: succeededOrFailed()
+    inputs:
+      PathtoPublish: test-results
+      ArtifactName: ada-aunit-results
+      publishLocation: Container

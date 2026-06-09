@@ -1,0 +1,33 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: Release
+  testProject: tests/TestStack.Decisions.Tests/TestStack.Decisions.Tests.csproj
+
+steps:
+  - task: UseDotNet@2
+    displayName: Install .NET SDK
+    inputs:
+      packageType: sdk
+      version: 8.x
+
+  - script: dotnet restore $(testProject)
+    displayName: Restore dependencies
+
+  - script: dotnet build $(testProject) --configuration $(buildConfiguration) --no-restore
+    displayName: Build decision matrix tests
+
+  - script: dotnet test $(testProject) --configuration $(buildConfiguration) --no-build --logger trx --results-directory $(Agent.TempDirectory)/TestResults
+    displayName: Run decision matrix tests
+
+  - task: PublishTestResults@2
+    displayName: Publish TRX test results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: VSTest
+      testResultsFiles: $(Agent.TempDirectory)/TestResults/*.trx
+      failTaskOnFailedTests: true

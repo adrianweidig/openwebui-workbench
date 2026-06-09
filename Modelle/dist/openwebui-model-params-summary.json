@@ -2498,6 +2498,153 @@
       ]
     },
     {
+      "id": "istqb-testfallgenerator",
+      "name": "ISTQB-Testfallgenerator",
+      "product_i18n_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "it",
+        "ja",
+        "nl",
+        "pl",
+        "pt-BR",
+        "tr",
+        "zh-Hans"
+      ],
+      "product_locale_files": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "temperature": 0.2,
+      "top_p": 0.8,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_markdown_formatting_enabled": true,
+      "has_systemprompt_mainprompt_fachwissen": false,
+      "has_short_bootloader_systemprompt": true,
+      "has_high_reasoning_profile": false,
+      "has_custom_gpt_quality_profile": false,
+      "has_vision_profile": false,
+      "has_explicit_tool_call_playbook": false,
+      "has_openwebui_builtin_and_addon_policy": false,
+      "system_prompt_chars": 1152,
+      "has_tool_force_profile": false,
+      "primary_tool_ids": [
+        "ask_user",
+        "json_csv_text_validator",
+        "offline_artifact_workbench",
+        "llm_council"
+      ],
+      "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/istqb-testfallgenerator/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 15568
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/istqb-testfallgenerator/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 17739
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/istqb-testfallgenerator/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 69322
+        },
+        "beispiele/istqb-testfallgenerator-beispiele.md": {
+          "path": "Modelle/einzelmodelle/istqb-testfallgenerator/beispiele/istqb-testfallgenerator-beispiele.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 69322
+        },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1041
+        },
+        "i18n/de.md": {
+          "path": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/de.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1178
+        },
+        "i18n/en.md": {
+          "path": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/en.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1071
+        }
+      },
+      "vision_enabled": true,
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "ask_user",
+        "json_csv_text_validator",
+        "offline_artifact_workbench",
+        "llm_council"
+      ],
+      "meta_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
+      "meta_recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ]
+    },
+    {
       "id": "it-helpdesk-diagnose",
       "name": "IT-Helpdesk-Diagnose",
       "product_i18n_locales": [
@@ -4803,6 +4950,598 @@
         "code-review-deep",
         "repository-maintenance",
         "data-cleaning-analysis"
+      ]
+    },
+    {
+      "id": "testprogrammierung",
+      "name": "Testprogrammierung",
+      "product_i18n_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "it",
+        "ja",
+        "nl",
+        "pl",
+        "pt-BR",
+        "tr",
+        "zh-Hans"
+      ],
+      "product_locale_files": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "temperature": 0.15,
+      "top_p": 0.8,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_markdown_formatting_enabled": true,
+      "has_systemprompt_mainprompt_fachwissen": false,
+      "has_short_bootloader_systemprompt": true,
+      "has_high_reasoning_profile": false,
+      "has_custom_gpt_quality_profile": false,
+      "has_vision_profile": false,
+      "has_explicit_tool_call_playbook": false,
+      "has_openwebui_builtin_and_addon_policy": false,
+      "system_prompt_chars": 1147,
+      "has_tool_force_profile": false,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "recommended_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 14892
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 25633
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 988
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/azure-pipelines-playwright.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/azure-pipelines-playwright.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1827
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/run-local-playwright.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/run-local-playwright.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 730
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 823
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Pages/LoginPage.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Pages/LoginPage.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1174
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Support/TestSettings.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Support/TestSettings.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1032
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Tests/LoginValidationTests.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Tests/LoginValidationTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2702
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/azure-pipelines-selenium.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/azure-pipelines-selenium.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1601
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/run-local-selenium.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/run-local-selenium.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 724
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Pages/HomePage.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Pages/HomePage.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1251
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/SeleniumAutomation.Xunit.Tests.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/SeleniumAutomation.Xunit.Tests.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1060
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/ArtifactWriter.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/ArtifactWriter.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 735
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/SeleniumTestSettings.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/SeleniumTestSettings.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 913
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WaitExtensions.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WaitExtensions.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 908
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WebDriverFactory.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WebDriverFactory.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 957
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Tests/HomeInteractionTests.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Tests/HomeInteractionTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1146
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/azure-pipelines-mstest.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/azure-pipelines-mstest.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1208
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/run-local-mstest.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/run-local-mstest.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 498
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/src/DiscountEngine/DiscountCalculator.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/src/DiscountEngine/DiscountCalculator.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1161
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/src/DiscountEngine/DiscountEngine.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/src/DiscountEngine/DiscountEngine.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 242
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountCalculatorTests.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountCalculatorTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2295
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountEngine.Tests.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountEngine.Tests.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 872
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/TestData/DiscountScenario.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/TestData/DiscountScenario.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 245
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/azure-pipelines-dotnet-api.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/azure-pipelines-dotnet-api.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1056
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/run-local-api.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/run-local-api.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 617
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/ApiContract.Xunit.Tests.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/ApiContract.Xunit.Tests.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 920
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Models/TodoItem.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Models/TodoItem.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 279
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiClientFixture.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiClientFixture.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1039
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiTestSettings.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiTestSettings.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 540
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/HealthEndpointTests.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/HealthEndpointTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 654
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/TodoApiContractTests.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/TodoApiContractTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1393
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/azure-pipelines-ada-aunit.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/azure-pipelines-ada-aunit.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 670
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/default.gpr": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/default.gpr",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 209
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/run-local-aunit.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/run-local-aunit.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 303
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.adb": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.adb",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 465
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.ads": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.ads",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 254
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.adb": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.adb",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 458
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.ads": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.ads",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 137
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.adb": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.adb",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1943
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.ads": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.ads",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 309
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/test_runner.adb": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/test_runner.adb",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 506
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 329
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/azure-pipelines-gnattest.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/azure-pipelines-gnattest.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 658
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/default.gpr": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/default.gpr",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 439
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/scripts/generate_gnattest_harness.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/scripts/generate_gnattest_harness.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 475
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/scripts/run_generated_gnattest_driver.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/scripts/run_generated_gnattest_driver.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 533
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/src/bounded_counter.adb": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/src/bounded_counter.adb",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 903
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/src/bounded_counter.ads": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/src/bounded_counter.ads",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 642
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/azure-pipelines-playwright-checkout.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/azure-pipelines-playwright-checkout.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1300
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/run-local-checkout.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/run-local-checkout.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 917
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/CheckoutAcceptance.Playwright.Tests.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/CheckoutAcceptance.Playwright.Tests.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 587
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Pages/CartPage.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Pages/CartPage.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1441
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Support/CheckoutSettings.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Support/CheckoutSettings.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 597
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Tests/CheckoutAcceptanceTests.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Tests/CheckoutAcceptanceTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1443
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/azure-pipelines-decision-matrix.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/azure-pipelines-decision-matrix.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 960
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/run-local-decision-matrix.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/run-local-decision-matrix.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 523
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/src/TestStack.Decisions/FrameworkDecisionMatrix.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/src/TestStack.Decisions/FrameworkDecisionMatrix.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 3184
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/src/TestStack.Decisions/TestStack.Decisions.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/src/TestStack.Decisions/TestStack.Decisions.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 242
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/FrameworkDecisionMatrixTests.cs": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/FrameworkDecisionMatrixTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1192
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/TestStack.Decisions.Tests.csproj": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/TestStack.Decisions.Tests.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 806
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/azure-pipelines-python-playwright.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/azure-pipelines-python-playwright.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1048
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/pages/contact_form_page.py": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/pages/contact_form_page.py",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1320
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/pytest.ini": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/pytest.ini",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 144
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/requirements.txt": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/requirements.txt",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 39
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/run-local-python-playwright.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/run-local-python-playwright.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 544
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/conftest.py": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/conftest.py",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 226
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/test_contact_form.py": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/test_contact_form.py",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 835
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/azure-pipelines-java-selenium.yml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/azure-pipelines-java-selenium.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1197
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/pom.xml": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/pom.xml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2027
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/run-local-java-selenium.sh": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/run-local-java-selenium.sh",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 420
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/HomePageTest.java": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/HomePageTest.java",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1178
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/pages/HomePage.java": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/pages/HomePage.java",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1456
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/ArtifactWriter.java": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/ArtifactWriter.java",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 985
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/TestSettings.java": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/TestSettings.java",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 650
+        },
+        "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/WebDriverFactory.java": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/WebDriverFactory.java",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 911
+        },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 931
+        },
+        "i18n/de.md": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/i18n/de.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1158
+        },
+        "i18n/en.md": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/i18n/en.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1039
+        }
+      },
+      "vision_enabled": true,
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "meta_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "meta_recommended_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
       ]
     },
     {

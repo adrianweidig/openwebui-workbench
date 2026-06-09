@@ -1,0 +1,53 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: Release
+  testProject: src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj
+  # Store appBaseUrl as a pipeline variable or variable-group entry; do not commit environment-specific URLs if they are sensitive.
+  APP_BASE_URL: $(appBaseUrl)
+
+steps:
+  - task: UseDotNet@2
+    displayName: Install .NET SDK
+    inputs:
+      packageType: sdk
+      version: 8.x
+
+  - script: dotnet restore $(testProject)
+    displayName: Restore dependencies
+
+  - script: dotnet build $(testProject) --configuration $(buildConfiguration) --no-restore
+    displayName: Build tests
+
+  - script: pwsh src/LoginAutomation.Playwright.Tests/bin/$(buildConfiguration)/net8.0/playwright.ps1 install --with-deps
+    displayName: Install Playwright browsers
+
+  - script: dotnet test $(testProject) --configuration $(buildConfiguration) --no-build --logger trx --results-directory $(Agent.TempDirectory)/TestResults
+    displayName: Run Playwright tests
+    env:
+      APP_BASE_URL: $(APP_BASE_URL)
+      HEADLESS: "1"
+
+  - task: PublishTestResults@2
+    displayName: Publish TRX test results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: VSTest
+      testResultsFiles: $(Agent.TempDirectory)/TestResults/*.trx
+      failTaskOnFailedTests: true
+
+  - script: mkdir -p src/LoginAutomation.Playwright.Tests/bin/$(buildConfiguration)/net8.0/artifacts
+    displayName: Ensure artifact directory exists
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish failure artifacts
+    condition: succeededOrFailed()
+    inputs:
+      targetPath: src/LoginAutomation.Playwright.Tests/bin/$(buildConfiguration)/net8.0/artifacts
+      artifact: playwright-artifacts
+      publishLocation: pipeline

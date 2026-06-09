@@ -1,0 +1,26 @@
+trigger:
+  - main
+
+pool:
+  name: SelfHostedAdaAgent
+
+steps:
+  - script: |
+      set -euo pipefail
+      chmod +x scripts/*.sh
+      ./scripts/generate_gnattest_harness.sh
+    displayName: Generate and build GNATtest harness
+
+  - script: |
+      set -euo pipefail
+      mkdir -p test-results
+      ./scripts/run_generated_gnattest_driver.sh | tee test-results/gnattest-output.txt
+    displayName: Run generated GNATtest drivers
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish GNATtest output
+    condition: succeededOrFailed()
+    inputs:
+      PathtoPublish: test-results
+      ArtifactName: ada-gnattest-results
+      publishLocation: Container

@@ -822,6 +822,50 @@
       }
     },
     {
+      "id": "istqb-testfallgenerator",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "ISTQB-Testfallgenerator",
+        "en": "ISTQB Test Case Generator",
+        "es": "Generador de casos de prueba ISTQB",
+        "fr": "Générateur de cas de test ISTQB",
+        "pt-BR": "Gerador de casos de teste ISTQB",
+        "it": "Generatore di casi di test ISTQB",
+        "nl": "ISTQB-testcasegenerator",
+        "pl": "Generator przypadków testowych ISTQB",
+        "tr": "ISTQB test senaryosu oluşturucu",
+        "ja": "ISTQB テストケース生成",
+        "zh-Hans": "ISTQB 测试用例生成器"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/de.md",
+        "en": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/en.md",
+        "es": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/istqb-testfallgenerator/i18n/zh-Hans.md"
+      }
+    },
+    {
       "id": "it-helpdesk-diagnose",
       "default_locale": "de",
       "fallback_locale": "en",
@@ -1479,6 +1523,50 @@
         "tr": "Modelle/einzelmodelle/testfall-generierung/i18n/tr.md",
         "ja": "Modelle/einzelmodelle/testfall-generierung/i18n/ja.md",
         "zh-Hans": "Modelle/einzelmodelle/testfall-generierung/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "testprogrammierung",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Testprogrammierung",
+        "en": "Test Programming",
+        "es": "Programación de pruebas",
+        "fr": "Programmation de tests",
+        "pt-BR": "Programação de testes",
+        "it": "Programmazione dei test",
+        "nl": "Testprogrammering",
+        "pl": "Programowanie testów",
+        "tr": "Test programlama",
+        "ja": "テストプログラミング",
+        "zh-Hans": "测试编程"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/testprogrammierung/i18n/de.md",
+        "en": "Modelle/einzelmodelle/testprogrammierung/i18n/en.md",
+        "es": "Modelle/einzelmodelle/testprogrammierung/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/testprogrammierung/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/testprogrammierung/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/testprogrammierung/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/testprogrammierung/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/testprogrammierung/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/testprogrammierung/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/testprogrammierung/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/testprogrammierung/i18n/zh-Hans.md"
       }
     },
     {

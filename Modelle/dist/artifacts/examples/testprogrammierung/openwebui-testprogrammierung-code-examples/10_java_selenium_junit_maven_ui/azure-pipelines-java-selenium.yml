@@ -1,0 +1,46 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  TEST_ARTIFACT_DIR: $(Agent.TempDirectory)/java-selenium-artifacts
+
+steps:
+  - task: JavaToolInstaller@0
+    displayName: Use JDK 21
+    inputs:
+      versionSpec: "21"
+      jdkArchitectureOption: x64
+      jdkSourceOption: PreInstalled
+
+  - script: google-chrome --version || true
+    displayName: Show Chrome version on agent
+
+  - script: mvn -B test
+    displayName: Run Java Selenium JUnit tests
+    env:
+      APP_BASE_URL: $(appBaseUrl)
+      HEADLESS: "1"
+      TEST_ARTIFACT_DIR: $(TEST_ARTIFACT_DIR)
+
+  - task: PublishTestResults@2
+    displayName: Publish Surefire JUnit XML results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: target/surefire-reports/TEST-*.xml
+      failTaskOnFailedTests: true
+
+  - script: mkdir -p $(TEST_ARTIFACT_DIR)
+    displayName: Ensure artifact directory exists
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Selenium screenshots
+    condition: succeededOrFailed()
+    inputs:
+      targetPath: $(TEST_ARTIFACT_DIR)
+      artifact: java-selenium-artifacts
+      publishLocation: pipeline
