@@ -4,7 +4,7 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 
 ## Compose-Varianten
 
-- `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können.
+- `docker-compose.workbench.yml`: Standardstart für OpenWebUI plus Workbench-Dashboard. Das Repository wird als `/workspace` in den Workbench-Container gemountet, damit Modell-Markdown-Dateien, Dist-Artefakte und Sync-Aktionen zentral verwaltet werden können. Das Workbench-Image enthält zusätzlich einen gebündelten Workspace-Snapshot inklusive `istqb-testfallgenerator`, `testprogrammierung` und generierten Dist-Artefakten; wenn `/workspace` beim Erststart noch keinen Modell-Workspace enthält, wird dieser Snapshot initialisiert.
 - `docker-compose.shared-targets.yml`: Workbench-only-Start für eine bestehende gemeinsame WSL-/Portainer-Runtime. Diese Variante erstellt keinen OpenWebUI-, RAGFlow- oder Seafile-Container, sondern hängt die Workbench an `WORKBENCH_SHARED_DOCKER_NETWORK` und nutzt die vorhandenen Docker-DNS-Namen.
 - `docker-compose.workbench-password-file.yml`: optionaler Override, der `WORKBENCH_AUTH_PASSWORD_HOST_FILE` read-only nach `WORKBENCH_AUTH_PASSWORD_FILE` in den Workbench-Container mountet.
 - `docker-compose.openwebui-admin-token-file.yml`: optionaler Override, der `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` read-only nach `OPENWEBUI_ADMIN_TOKEN_FILE` in den Workbench-Container mountet.

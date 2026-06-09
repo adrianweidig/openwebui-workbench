@@ -4,6 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/workspace:/app \
     WORKBENCH_ROOT=/workspace \
+    WORKBENCH_BUNDLED_WORKSPACE=/opt/openwebui-workbench/workspace \
     WORKBENCH_HOST=0.0.0.0 \
     WORKBENCH_PORT=8088
 
@@ -13,6 +14,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+COPY . /opt/openwebui-workbench/workspace
 COPY Workbench /app/Workbench
 COPY Deployment/workbench-entrypoint.sh /usr/local/bin/workbench-entrypoint
 
