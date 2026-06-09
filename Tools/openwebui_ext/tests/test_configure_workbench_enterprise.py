@@ -44,6 +44,15 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
         self.assertIn('"    name: `${WORKBENCH_DOCKER_NETWORK}"', script)
         self.assertIn('"    name: `${WORKBENCH_DOCKER_NETWORK:-openwebui-workbench_workbench}"', script)
 
+    def test_generated_portainer_stack_supports_bundled_workspace_volume(self) -> None:
+        script = WIZARD.read_text(encoding="utf-8")
+
+        self.assertIn('[ValidateSet("", "bundled", "bind")]', script)
+        self.assertIn("WORKBENCH_WORKSPACE_MODE=$WorkbenchWorkspaceMode", script)
+        self.assertIn("      - workbench-workspace:/workspace", script)
+        self.assertIn("      - workbench-workspace:/app/backend/data/openwebui-workbench:ro", script)
+        self.assertIn("  workbench-workspace:", script)
+
     def test_remote_root_ca_paths_require_explicit_opt_in(self) -> None:
         script = WIZARD.read_text(encoding="utf-8")
 
@@ -159,7 +168,42 @@ class ConfigureWorkbenchEnterpriseTests(unittest.TestCase):
 
         self.assertIn("http://127.0.0.1:8080/health", compose)
         self.assertIn("http://127.0.0.1:8088/healthz", compose)
+        self.assertIn("workbench-workspace:/workspace", compose)
+        self.assertIn("workbench-workspace:/app/backend/data/openwebui-workbench:ro", compose)
+        self.assertNotIn("source: ${WORKBENCH_WORKSPACE_HOST_PATH}", compose)
         self.assertGreaterEqual(compose.count("    healthcheck:"), 2)
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
+    def test_bind_workspace_mode_keeps_host_repository_mounts(self) -> None:
+        assert POWERSHELL is not None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subprocess.run(
+                [
+                    POWERSHELL,
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(WIZARD),
+                    "-NonInteractive",
+                    "-WorkbenchWorkspaceMode",
+                    "bind",
+                    "-OutputDir",
+                    tmpdir,
+                ],
+                check=True,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            env_text = (Path(tmpdir) / "workbench.env").read_text(encoding="utf-8")
+            compose = (Path(tmpdir) / "portainer-compose.yml").read_text(encoding="utf-8")
+
+        self.assertIn("WORKBENCH_WORKSPACE_MODE=bind", env_text)
+        self.assertIn("WORKBENCH_WORKSPACE_HOST_PATH=", env_text)
+        self.assertIn("source: ${WORKBENCH_WORKSPACE_HOST_PATH}", compose)
+        self.assertIn("source: ${WORKBENCH_WORKSPACE_HOST_PATH}/Modelle/dist", compose)
+        self.assertNotIn("workbench-workspace:/workspace", compose)
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is required for wizard generation smoke")
     def test_unverified_remote_root_ca_path_is_written_when_explicitly_allowed(self) -> None:

@@ -17,7 +17,7 @@ from urllib.request import Request, urlopen
 
 try:
     from scripts import init_workbench_env
-except ModuleNotFoundError:  # pragma: no cover - direct script execution from scripts/
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - direct script execution from scripts/
     import init_workbench_env  # type: ignore
 
 
@@ -71,6 +71,8 @@ ENV_OVERRIDE_KEYS = (
         "WORKBENCH_AUTH_PASSWORD_HOST_FILE",
         "WORKBENCH_ENTERPRISE_CA_HOST_FILE",
         "WORKBENCH_LOCALE",
+        "WORKBENCH_WORKSPACE_HOST_PATH",
+        "WORKBENCH_WORKSPACE_MODE",
     }
 )
 DOCKER_PROBE_TIMEOUT_SECONDS = 20
@@ -427,6 +429,32 @@ def check_automation_actions(env_path: Path) -> CheckResult:
             f"Use comma-separated values from: {', '.join(sorted(AUTOMATION_ACTIONS))}.",
         )
     return CheckResult("ok", "Automation config", f"WORKBENCH_AUTOMATION_ACTIONS={', '.join(dict.fromkeys(actions))}.")
+
+
+def check_workbench_workspace_mode(env_path: Path) -> CheckResult:
+    try:
+        values = env_values_with_process_overrides(env_path)
+    except OSError as exc:
+        return CheckResult("fail", "Workbench workspace mode", str(exc), "Check file permissions.")
+
+    mode = values.get("WORKBENCH_WORKSPACE_MODE", "").strip() or "bundled"
+    if mode not in {"bundled", "bind"}:
+        return CheckResult(
+            "fail",
+            "Workbench workspace mode",
+            f"WORKBENCH_WORKSPACE_MODE={mode} is not supported.",
+            "Use bundled for an image-seeded Docker volume or bind for an existing host repository mount.",
+        )
+    if mode == "bind" and not values.get("WORKBENCH_WORKSPACE_HOST_PATH", "").strip():
+        return CheckResult(
+            "fail",
+            "Workbench workspace mode",
+            "WORKBENCH_WORKSPACE_MODE=bind requires WORKBENCH_WORKSPACE_HOST_PATH.",
+            "Set WORKBENCH_WORKSPACE_HOST_PATH to the Docker/Portainer-visible repository path or use bundled mode.",
+        )
+    if mode == "bind":
+        return CheckResult("ok", "Workbench workspace mode", "Using bind-mounted host repository workspace.")
+    return CheckResult("ok", "Workbench workspace mode", "Using bundled image workspace seeded into a Docker volume.")
 
 
 def _env_path(raw: str, env_path: Path) -> Path:
@@ -966,6 +994,7 @@ def evaluate_setup(
         results.append(check_boolean_values(env_path))
         results.append(check_numeric_values(env_path))
         results.append(check_automation_actions(env_path))
+        results.append(check_workbench_workspace_mode(env_path))
         results.append(
             check_file_references(
                 env_path,

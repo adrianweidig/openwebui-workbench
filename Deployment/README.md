@@ -178,7 +178,8 @@ Der Assistent fragt ab:
 - ob OpenWebUI im Stack mitgestartet oder eine vorhandene Instanz genutzt wird
 - die interne und öffentliche OpenWebUI-URL
 - optional die Portainer-URL für spätere Runtime-Probes ohne Token
-- den Docker-/Portainer-sichtbaren Repository-Pfad
+- ob der Workbench-Workspace aus dem gebündelten Image in ein Docker-Volume initialisiert wird oder ein vorhandenes Host-Repository per Bind-Mount genutzt wird
+- im Bind-Mount-Modus den Docker-/Portainer-sichtbaren Repository-Pfad
 - den Docker-Netzwerknamen und ob ein vorhandenes externes Netzwerk genutzt werden soll
 - optional den Root-CA-Pfad
 - Dashboard-Login, optionalen Hostpfad zu einer Workbench-Passwortdatei, optionalen OpenWebUI-Admin-Token und optionalen Hostpfad zu einer Token-Datei
@@ -188,7 +189,7 @@ Ausgabe:
 - `Deployment/generated/portainer-compose.yml`
 - `Deployment/generated/workbench.env`
 
-`Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss. Die lokalen Override-Dateien `docker-compose.workbench-password-file.yml` und `docker-compose.openwebui-admin-token-file.yml` sind für den normalen Docker-Compose-Pfad gedacht; der Portainer-Wizard erzeugt die entsprechenden Mounts direkt in seiner Stack-Datei.
+`Deployment/generated/` ist ignoriert. Die generierte Compose-Datei kann in Portainer eingefügt werden; die Werte aus `workbench.env` gehören in die Stack-Umgebung. Pfade müssen so angegeben sein, wie der Docker-Host oder Portainer-Agent sie sieht, nicht zwingend wie Windows sie anzeigt. Für Portainer nutzt der Assistent standardmäßig das veröffentlichte Image `ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest`, weil Portainer nicht aus deinem lokalen Repository-Kontext bauen muss. Standardmäßig setzt der Assistent `WORKBENCH_WORKSPACE_MODE=bundled`: Die Workbench nutzt dann ein benanntes Docker-Volume und der Container initialisiert `/workspace` beim ersten Start aus dem im Image enthaltenen Workspace-Snapshot inklusive `istqb-testfallgenerator`, `testprogrammierung` und `Modelle/dist/`. Für direkte Bearbeitung eines vorhandenen Repositories `-WorkbenchWorkspaceMode bind` wählen; dann erzeugt der Assistent wie bisher einen Bind-Mount über `WORKBENCH_WORKSPACE_HOST_PATH`. Die lokalen Override-Dateien `docker-compose.workbench-password-file.yml` und `docker-compose.openwebui-admin-token-file.yml` sind für den normalen Docker-Compose-Pfad gedacht; der Portainer-Wizard erzeugt die entsprechenden Mounts direkt in seiner Stack-Datei.
 Die generierte Workbench-Service-Definition setzt `WORKBENCH_REQUIRE_AUTH=true` und akzeptiert entweder `WORKBENCH_AUTH_PASSWORD` oder eine gemountete `WORKBENCH_AUTH_PASSWORD_FILE`. Wenn das Passwort im Assistenten leer bleibt und keine Passwortdatei gemountet wird, muss einer dieser Werte vor dem Stack-Start in Portainer gesetzt werden.
 Die generierte Portainer-Compose-Datei enthält Healthchecks für die gebündelte OpenWebUI-Instanz (`/health`) und das Workbench-Dashboard (`/healthz`), damit Portainer den Startzustand direkt als healthy oder unhealthy anzeigen kann.
 Die OpenWebUI-URL-Felder werden als vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten validiert, bevor sie in `workbench.env` geschrieben werden.

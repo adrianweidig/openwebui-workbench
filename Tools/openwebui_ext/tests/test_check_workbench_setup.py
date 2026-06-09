@@ -101,6 +101,26 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
         self.assertIn("wsl.exe is available", result.detail)
         self.assertIn("WSL", result.detail)
 
+    def test_bundled_workbench_workspace_mode_allows_empty_host_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            env_file = Path(temp_dir) / ".env"
+            env_file.write_text("WORKBENCH_WORKSPACE_MODE=bundled\nWORKBENCH_WORKSPACE_HOST_PATH=\n", encoding="utf-8")
+
+            result = check_workbench_setup.check_workbench_workspace_mode(env_file)
+
+        self.assertEqual(result.level, "ok")
+        self.assertIn("bundled image workspace", result.detail)
+
+    def test_bind_workbench_workspace_mode_requires_host_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            env_file = Path(temp_dir) / ".env"
+            env_file.write_text("WORKBENCH_WORKSPACE_MODE=bind\nWORKBENCH_WORKSPACE_HOST_PATH=\n", encoding="utf-8")
+
+            result = check_workbench_setup.check_workbench_workspace_mode(env_file)
+
+        self.assertEqual(result.level, "fail")
+        self.assertIn("requires WORKBENCH_WORKSPACE_HOST_PATH", result.detail)
+
     def test_custom_docker_command_is_reported_without_path_lookup(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
