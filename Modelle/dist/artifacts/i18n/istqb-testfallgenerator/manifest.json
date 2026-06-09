@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "istqb-testfallgenerator",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "ISTQB-Testfallgenerator",
+    "en": "ISTQB Test Case Generator",
+    "es": "Generador de casos de prueba ISTQB",
+    "fr": "Générateur de cas de test ISTQB",
+    "pt-BR": "Gerador de casos de teste ISTQB",
+    "it": "Generatore di casi di test ISTQB",
+    "nl": "ISTQB-testcasegenerator",
+    "pl": "Generator przypadków testowych ISTQB",
+    "tr": "ISTQB test senaryosu oluşturucu",
+    "ja": "ISTQB テストケース生成",
+    "zh-Hans": "ISTQB 测试用例生成器"
+  }
+}

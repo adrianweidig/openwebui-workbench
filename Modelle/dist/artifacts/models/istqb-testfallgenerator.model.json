@@ -1,0 +1,238 @@
+[
+  {
+    "id": "istqb-testfallgenerator",
+    "name": "ISTQB-Testfallgenerator",
+    "base_model_id": "coder",
+    "meta": {
+      "description": "Erzeugt professionelle, textuelle Testfälle nach ISTQB-orientierter Struktur aus Anforderungen, User Stories, Akzeptanzkriterien, Fehlermeldungen, Prozessbeschreibungen oder Problembeschreibungen. Das Modell liefert ausdrücklich keinen Code, keine Skripte und keine Automatisierungsimplementierungen.",
+      "capabilities": {
+        "vision": true,
+        "file_upload": true,
+        "file_context": true,
+        "web_search": false,
+        "image_generation": false,
+        "code_interpreter": false,
+        "usage": true,
+        "citations": true,
+        "status_updates": true,
+        "builtin_tools": true,
+        "terminal": false
+      },
+      "suggestion_prompts": [
+        {
+          "content": "Erstelle ISTQB-orientierte Testfälle für diese User Story: ..."
+        },
+        {
+          "content": "Leite aus diesen Akzeptanzkriterien positive, negative und Grenzfalltests ab."
+        },
+        {
+          "content": "Prüfe diese Anforderung auf Testbarkeit und erstelle konkrete Testfälle."
+        },
+        {
+          "content": "Erstelle manuelle Testfälle für diesen Bugfix, inklusive Regressionstests."
+        },
+        {
+          "content": "Formuliere Testfälle für Rollen- und Berechtigungsverhalten."
+        },
+        {
+          "content": "Erzeuge eine Testfallanalyse mit Annahmen, offenen Punkten und Review-Checkliste."
+        }
+      ],
+      "tags": [
+        {
+          "name": "offline"
+        },
+        {
+          "name": "openwebui"
+        },
+        {
+          "name": "aufgabenmodell"
+        },
+        {
+          "name": "testing"
+        },
+        {
+          "name": "qa"
+        },
+        {
+          "name": "istqb"
+        },
+        {
+          "name": "testfälle"
+        },
+        {
+          "name": "akzeptanzkriterien"
+        },
+        {
+          "name": "manual-testing"
+        },
+        {
+          "name": "no-code"
+        }
+      ],
+      "sourcePackage": "istqb-testfallgenerator",
+      "sourcePackageVersion": "1.0.0",
+      "sourceBaseModelAssumption": "mistral-medium",
+      "import_notes": [
+        "OpenWebUI-Version und Referenzexport wurden nicht bereitgestellt.",
+        "Feldnamen und Importfähigkeit der model.json müssen gegen einen realen Export der Zielinstanz geprüft werden.",
+        "Knowledge-, Tool- und Skill-IDs sind leer, weil keine realen IDs genannt wurden.",
+        "Die Paketdatei fachwissen.md ist nicht automatisch identisch mit einer OpenWebUI Knowledge Base; sie muss bei Bedarf separat angebunden werden."
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "ISTQB-Testfallgenerator",
+          "description": "Dieses Produktprofil beschreibt das Modell ISTQB-Testfallgenerator für die deutschsprachige Standardnutzung und für mehrsprachige OpenWebUI-Workflows.",
+          "suggestion": "Nutze ISTQB-Testfallgenerator auf Deutsch und beachte vorhandene Fachbegriffe.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "ISTQB Test Case Generator",
+          "description": "This product profile describes the ISTQB Test Case Generator model for English usage and multilingual OpenWebUI workflows.",
+          "suggestion": "Use ISTQB Test Case Generator in English and preserve existing technical terms.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Generador de casos de prueba ISTQB",
+          "description": "Este perfil describe el modelo Generador de casos de prueba ISTQB para uso en español y flujos multilingües de OpenWebUI.",
+          "suggestion": "Usa Generador de casos de prueba ISTQB en español y conserva la terminología técnica existente.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Générateur de cas de test ISTQB",
+          "description": "Ce profil décrit le modèle Générateur de cas de test ISTQB pour l'usage en français et les workflows OpenWebUI multilingues.",
+          "suggestion": "Utilise Générateur de cas de test ISTQB en français et conserve les termes techniques existants.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Gerador de casos de teste ISTQB",
+          "description": "Este perfil descreve o modelo Gerador de casos de teste ISTQB para uso em português do Brasil e fluxos multilíngues no OpenWebUI.",
+          "suggestion": "Use Gerador de casos de teste ISTQB em português do Brasil e preserve os termos técnicos existentes.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Generatore di casi di test ISTQB",
+          "description": "Questo profilo descrive il modello Generatore di casi di test ISTQB per l'uso in italiano e per workflow OpenWebUI multilingue.",
+          "suggestion": "Usa Generatore di casi di test ISTQB in italiano e conserva la terminologia tecnica esistente.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "ISTQB-testcasegenerator",
+          "description": "Dit profiel beschrijft het model ISTQB-testcasegenerator voor Nederlands gebruik en meertalige OpenWebUI-workflows.",
+          "suggestion": "Gebruik ISTQB-testcasegenerator in het Nederlands en behoud bestaande technische termen.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Generator przypadków testowych ISTQB",
+          "description": "Ten profil opisuje model Generator przypadków testowych ISTQB do użycia po polsku i w wielojęzycznych przepływach OpenWebUI.",
+          "suggestion": "Użyj Generator przypadków testowych ISTQB po polsku i zachowaj istniejące terminy techniczne.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "ISTQB test senaryosu oluşturucu",
+          "description": "Bu profil, ISTQB test senaryosu oluşturucu modelini Türkçe kullanım ve çok dilli OpenWebUI iş akışları için açıklar.",
+          "suggestion": "ISTQB test senaryosu oluşturucu modelini Türkçe kullan ve mevcut teknik terimleri koru.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "ISTQB テストケース生成",
+          "description": "このプロファイルは、日本語利用と多言語 OpenWebUI ワークフロー向けの ISTQB テストケース生成 モデルを説明します。",
+          "suggestion": "ISTQB テストケース生成 を日本語で使い、既存の技術用語を保持してください。",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "ISTQB 测试用例生成器",
+          "description": "此配置文件说明 ISTQB 测试用例生成器 模型在简体中文和多语言 OpenWebUI 工作流中的用法。",
+          "suggestion": "用简体中文使用 ISTQB 测试用例生成器，并保留现有技术术语。",
+          "profile": "i18n/zh-Hans.md"
+        }
+      },
+      "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBjaGVja2xpc3QgaWNvbjwvdGl0bGU+CiAgPGRlc2MgaWQ9ImRlc2MiPlNpbXBsZSBjaGVja2xpc3Qgb24gYSB3aGl0ZSBiYWNrZ3JvdW5kLjwvZGVzYz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZiIvPgogIDxyZWN0IHg9IjY0IiB5PSI2NCIgd2lkdGg9IjM4NCIgaGVpZ2h0PSIzODQiIHJ4PSI0OCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE2Ii8+CiAgPHBhdGggZD0iTTE1NiAxNzJsMjQgMjQgNDgtNTZNMTU2IDI1NmwyNCAyNCA0OC01Nk0xNTYgMzQwbDI0IDI0IDQ4LTU2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0yNzAgMTc2aDkwTTI3MCAyNjBoOTBNMjcwIDM0NGg5MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjE4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==",
+      "toolIds": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "filterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "defaultFilterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "primaryToolIds": [
+        "ask_user",
+        "json_csv_text_validator",
+        "offline_artifact_workbench",
+        "llm_council"
+      ],
+      "skillIds": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
+      "recommendedSkillIds": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
+      "requiredKnowledgeFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ]
+    },
+    "params": {
+      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `istqb-testfallgenerator`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "temperature": 0.2,
+      "top_p": 0.8,
+      "stop": [],
+      "function_calling": "native"
+    }
+  }
+]

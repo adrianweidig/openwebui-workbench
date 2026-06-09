@@ -157,6 +157,7 @@ MODEL_TEMPERATURES = {
     "email-kommunikationsassistenz": 0.7,
     "informationsextraktion": 0.0,
     "internetwissen": 0.25,
+    "istqb-testfallgenerator": 0.2,
     "it-helpdesk-diagnose": 0.25,
     "json-csv-log-analyse": 0.15,
     "meeting-protokoll-auswertung": 0.35,
@@ -172,6 +173,7 @@ MODEL_TEMPERATURES = {
     "support-ticket-vorbereitung": 0.35,
     "tabellen-csv-datenanalyse": 0.15,
     "testfall-generierung": 0.3,
+    "testprogrammierung": 0.15,
     "übersetzung-lokalisierung": 0.35,
 }
 TOOL_FORCE_PROFILES = {
@@ -255,6 +257,11 @@ TOOL_FORCE_PROFILES = {
         "skills": ["research-grounding", "offline-use-case-router", "redundant-fallback-tooling", "secure-tool-usage"],
         "focus": "Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen, Recherchepläne und Wissensstrukturierung ohne behauptete Live-Webprüfung absichern.",
     },
+    "istqb-testfallgenerator": {
+        "tools": ["ask_user", "json_csv_text_validator", "offline_artifact_workbench", "llm_council"],
+        "skills": ["data-cleaning-analysis", "research-grounding", "secure-tool-usage"],
+        "focus": "Anforderungen, User Stories, Akzeptanzkriterien und fachliche Testartefakte strukturiert prüfen; keine Code- oder Automatisierungsimplementierung erzeugen.",
+    },
     "it-helpdesk-diagnose": {
         "tools": ["ask_user", "docker_compose_triage", "json_csv_text_validator", "repo_tree_analyzer"],
         "skills": ["docker-openwebui-troubleshooting", "secure-tool-usage", "offline-use-case-router"],
@@ -330,6 +337,11 @@ TOOL_FORCE_PROFILES = {
         "skills": ["code-review-deep", "repository-maintenance", "data-cleaning-analysis"],
         "focus": "Anforderungen, Codepfade, Testdaten und erwartete Ergebnisse mit lokalen Prüfpfaden absichern.",
     },
+    "testprogrammierung": {
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "parallel_task_planner", "llm_council"],
+        "skills": ["repository-maintenance", "code-review-deep", "secure-tool-usage", "offline-artifact-production"],
+        "focus": "Testcode, Framework-Auswahl, lokale Ausführung, CI/CD-Beispiele und Wartbarkeit mit bereitgestellten Projekt- oder Beispielpfaden prüfen.",
+    },
     "übersetzung-lokalisierung": {
         "tools": ["json_csv_text_validator", "offline_artifact_workbench"],
         "skills": ["research-grounding", "data-cleaning-analysis", "offline-artifact-production"],
@@ -391,7 +403,9 @@ def write_text(path: Path, text: str) -> None:
 
 def stable_text_bytes(path: Path) -> bytes:
     data = path.read_bytes()
-    if path.suffix.lower() in {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}:
+    text_suffixes = {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}
+    text_filenames = {".env", ".env.example"}
+    if path.suffix.lower() in text_suffixes or path.name.lower() in text_filenames:
         return data.replace(b"\r\n", b"\n")
     return data
 

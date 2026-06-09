@@ -35,4 +35,6 @@
 | Custom GPT n8n Workflow Architect | n8n Workflow Architect | `n8n-workflow-architect` | optional |
 | Custom GPT OpenWebUI Model Builder | OpenWebUI Model Builder | `openwebui-model-builder` | optional |
 | Custom Model Mistral Vision Workbench | Mistral Vision Workbench | `mistral-vision-workbench` | required |
+| Codex-Ablage: `istqb_testfallgenerator_modelpaket` | ISTQB-Testfallgenerator | `istqb-testfallgenerator` | optional_disabled |
+| Codex-Ablage: `openwebui-testprogrammierung` | Testprogrammierung | `testprogrammierung` | enabled |
 | `26_bewerbungsunterlagen-optimierung.md` | nicht erzeugt | n/a | Datei fehlt, nur im Index genannt |

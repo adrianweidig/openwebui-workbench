@@ -1,0 +1,15 @@
+project Default is
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-gnat2022", "-gnata", "-gnatwa");
+   end Compiler;
+
+   package GNATtest is
+      for Tests_Dir use "gnattest/tests";
+      for Harness_Dir use "gnattest/harness";
+      for Skeletons_Default use "fail";
+      for GNATtest_Switches use ("--separate-drivers=unit");
+   end GNATtest;
+end Default;

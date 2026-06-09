@@ -1,0 +1,41 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: Use Python
+    inputs:
+      versionSpec: "3.13"
+
+  - script: |
+      python -m pip install --upgrade pip
+      python -m pip install -r requirements.txt
+    displayName: Install Python test dependencies
+
+  - script: python -m playwright install --with-deps chromium
+    displayName: Install Playwright Chromium browser
+
+  - script: pytest
+    displayName: Run pytest Playwright tests
+    env:
+      APP_BASE_URL: $(appBaseUrl)
+      CONTACT_TEST_EMAIL: $(contactTestEmail)
+
+  - task: PublishTestResults@2
+    displayName: Publish JUnit test results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: test-results/junit.xml
+      failTaskOnFailedTests: true
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Playwright artifacts
+    condition: succeededOrFailed()
+    inputs:
+      targetPath: test-results
+      artifact: python-playwright-results
+      publishLocation: pipeline

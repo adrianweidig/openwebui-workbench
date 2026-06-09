@@ -229,6 +229,22 @@
       "artifact_tool_mode": "recommended",
       "vision_mode": "required_when_image_input_is_available",
       "path": "models/mistral-vision-workbench/model.json"
+    },
+    {
+      "id": "istqb-testfallgenerator",
+      "name": "ISTQB-Testfallgenerator",
+      "source_problem_file": "Codex - Ablage: istqb_testfallgenerator_modelpaket",
+      "base_model_id": "coder",
+      "jupyter_tool_mode": "optional_disabled",
+      "path": "models/istqb-testfallgenerator/model.json"
+    },
+    {
+      "id": "testprogrammierung",
+      "name": "Testprogrammierung",
+      "source_problem_file": "Codex - Ablage: openwebui-testprogrammierung",
+      "base_model_id": "coder",
+      "jupyter_tool_mode": "enabled",
+      "path": "models/testprogrammierung/model.json"
     }
   ],
   "notes": [

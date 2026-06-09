@@ -1,0 +1,54 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: Release
+  testProject: src/SeleniumAutomation.Xunit.Tests/SeleniumAutomation.Xunit.Tests.csproj
+  APP_BASE_URL: $(appBaseUrl)
+  TEST_ARTIFACT_DIR: $(Agent.TempDirectory)/selenium-artifacts
+
+steps:
+  - task: UseDotNet@2
+    displayName: Install .NET SDK
+    inputs:
+      packageType: sdk
+      version: 8.x
+
+  - script: google-chrome --version || true
+    displayName: Show Chrome version on agent
+
+  - script: dotnet restore $(testProject)
+    displayName: Restore dependencies
+
+  - script: dotnet build $(testProject) --configuration $(buildConfiguration) --no-restore
+    displayName: Build tests
+
+  - script: dotnet test $(testProject) --configuration $(buildConfiguration) --no-build --logger trx --results-directory $(Agent.TempDirectory)/TestResults
+    displayName: Run Selenium xUnit tests
+    env:
+      APP_BASE_URL: $(APP_BASE_URL)
+      HEADLESS: "1"
+      TEST_ARTIFACT_DIR: $(TEST_ARTIFACT_DIR)
+
+  - task: PublishTestResults@2
+    displayName: Publish TRX test results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: VSTest
+      testResultsFiles: $(Agent.TempDirectory)/TestResults/*.trx
+      failTaskOnFailedTests: true
+
+  - script: mkdir -p $(TEST_ARTIFACT_DIR)
+    displayName: Ensure artifact directory exists
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish screenshots
+    condition: succeededOrFailed()
+    inputs:
+      targetPath: $(TEST_ARTIFACT_DIR)
+      artifact: selenium-artifacts
+      publishLocation: pipeline

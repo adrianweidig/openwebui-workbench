@@ -136,7 +136,9 @@
     "testfall-generierung": "generic-checklist",
     "übersetzung-lokalisierung": "generic-translate",
     "promptforge": "generic-workflow",
-    "allgemein": "generic-chat"
+    "allgemein": "generic-chat",
+    "istqb-testfallgenerator": "generic-checklist",
+    "testprogrammierung": "generic-code"
   },
   "usage_note": "OpenWebUI-Modelle nutzen meta.profile_image_url. Diese SVGs oder PNGs können per GUI als Profilbild gesetzt oder in eine OpenWebUI-statisch erreichbare Ablage kopiert und dann als URL referenziert werden."
 }
