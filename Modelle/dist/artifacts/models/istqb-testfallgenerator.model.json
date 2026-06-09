@@ -72,7 +72,7 @@
       ],
       "sourcePackage": "istqb-testfallgenerator",
       "sourcePackageVersion": "1.0.0",
-      "sourceBaseModelAssumption": "mistral-medium",
+      "sourceBaseModelAssumption": "coder",
       "import_notes": [
         "OpenWebUI-Version und Referenzexport wurden nicht bereitgestellt.",
         "Feldnamen und Importfähigkeit der model.json müssen gegen einen realen Export der Zielinstanz geprüft werden.",

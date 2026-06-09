@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Local execution example:
-#   APP_BASE_URL=https://your-test-app.example ./run-local-playwright.sh
+#   APP_BASE_URL=http://localhost:8080 ./run-local-playwright.sh
 # The test project writes TRX results to TestResults and captures screenshots on failure.
 
 PROJECT="src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj"

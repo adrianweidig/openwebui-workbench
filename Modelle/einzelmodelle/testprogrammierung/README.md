@@ -17,7 +17,7 @@ Enthaltene Dateien:
 
 ## Annahmen
 
-- Basismodell: `mistral-medium`, da kein anderes Basismodell genannt wurde.
+- Basismodell: `coder`.
 - OpenWebUI-Version: nicht angegeben.
 - Referenzexport: nicht angegeben.
 - Knowledge Bases: keine konkreten OpenWebUI-Knowledge-IDs genannt.

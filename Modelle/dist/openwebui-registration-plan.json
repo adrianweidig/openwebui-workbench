@@ -1832,7 +1832,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/run-local-playwright.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 730
+        "bytes": 722
       },
       "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj",
@@ -1868,7 +1868,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/run-local-selenium.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 724
+        "bytes": 716
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Pages/HomePage.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Pages/HomePage.cs",
@@ -1940,7 +1940,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountCalculatorTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 2295
+        "bytes": 2259
       },
       "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountEngine.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountEngine.Tests.csproj",
@@ -1964,7 +1964,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/run-local-api.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 617
+        "bytes": 614
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/ApiContract.Xunit.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/ApiContract.Xunit.Tests.csproj",
@@ -1994,13 +1994,13 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/HealthEndpointTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 654
+        "bytes": 693
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/TodoApiContractTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/TodoApiContractTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1393
+        "bytes": 1584
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/azure-pipelines-ada-aunit.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/azure-pipelines-ada-aunit.yml",
@@ -2114,7 +2114,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/run-local-checkout.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 917
+        "bytes": 909
       },
       "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/CheckoutAcceptance.Playwright.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/CheckoutAcceptance.Playwright.Tests.csproj",
@@ -2204,7 +2204,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/run-local-python-playwright.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 544
+        "bytes": 536
       },
       "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/conftest.py": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/conftest.py",
@@ -2234,7 +2234,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/run-local-java-selenium.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 420
+        "bytes": 412
       },
       "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/HomePageTest.java": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/HomePageTest.java",

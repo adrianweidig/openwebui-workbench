@@ -19,12 +19,15 @@ public sealed class TodoApiContractTests : IClassFixture<ApiClientFixture>
     [Fact]
     public async Task GetTodoById_ReturnsExpectedContractShape()
     {
-        using var response = await _fixture.Client.GetAsync("/api/todos/42");
+        using var response = await _fixture.Client.GetAsync("/api/todos/42", TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        await using var responseStream = await response.Content.ReadAsStreamAsync();
-        var todo = await JsonSerializer.DeserializeAsync<TodoItem>(responseStream, JsonOptions);
+        await using var responseStream = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+        var todo = await JsonSerializer.DeserializeAsync<TodoItem>(
+            responseStream,
+            JsonOptions,
+            TestContext.Current.CancellationToken);
 
         Assert.NotNull(todo);
         Assert.Equal(42, todo!.Id);
@@ -34,7 +37,7 @@ public sealed class TodoApiContractTests : IClassFixture<ApiClientFixture>
     [Fact]
     public async Task GetUnknownTodo_ReturnsNotFoundWithoutServerError()
     {
-        using var response = await _fixture.Client.GetAsync("/api/todos/999999");
+        using var response = await _fixture.Client.GetAsync("/api/todos/999999", TestContext.Current.CancellationToken);
 
         // The exact error body may vary, but the API must not turn a valid unknown ID into a 5xx defect.
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

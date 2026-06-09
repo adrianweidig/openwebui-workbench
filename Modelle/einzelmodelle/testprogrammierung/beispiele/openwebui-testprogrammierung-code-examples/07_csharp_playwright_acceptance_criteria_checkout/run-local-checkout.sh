@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Local execution example:
-#   APP_BASE_URL=https://your-test-app.example CHECKOUT_PRODUCT_SKU=SKU-123 EXPIRED_VOUCHER_CODE=EXPIRED ./run-local-checkout.sh
+#   APP_BASE_URL=http://localhost:8080 CHECKOUT_PRODUCT_SKU=SKU-123 EXPIRED_VOUCHER_CODE=EXPIRED ./run-local-checkout.sh
 # Test data is environment-driven so the same test can run locally and in CI.
 
 PROJECT="src/CheckoutAcceptance.Playwright.Tests/CheckoutAcceptance.Playwright.Tests.csproj"
