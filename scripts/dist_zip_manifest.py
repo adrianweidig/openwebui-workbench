@@ -4,6 +4,7 @@ import zipfile
 from pathlib import Path
 
 TEXT_SUFFIXES = {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}
+TEXT_FILENAMES = {".env", ".env.example"}
 
 
 def relative_name(root: Path, path: Path) -> str:
@@ -12,7 +13,7 @@ def relative_name(root: Path, path: Path) -> str:
 
 def stable_source_bytes(path: Path) -> bytes:
     data = path.read_bytes()
-    if path.suffix.lower() in TEXT_SUFFIXES:
+    if path.suffix.lower() in TEXT_SUFFIXES or path.name.lower() in TEXT_FILENAMES:
         return data.replace(b"\r\n", b"\n")
     return data
 

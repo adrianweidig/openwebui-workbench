@@ -403,7 +403,9 @@ def write_text(path: Path, text: str) -> None:
 
 def stable_text_bytes(path: Path) -> bytes:
     data = path.read_bytes()
-    if path.suffix.lower() in {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}:
+    text_suffixes = {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}
+    text_filenames = {".env", ".env.example"}
+    if path.suffix.lower() in text_suffixes or path.name.lower() in text_filenames:
         return data.replace(b"\r\n", b"\n")
     return data
 
