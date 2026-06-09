@@ -18,7 +18,7 @@ Das Modell erzeugt ausdrücklich keinen Code, keine Skripte und keine Automatisi
 
 ## Annahmen
 
-- Basismodell: `mistral-medium`, da kein anderes Basismodell angegeben wurde.
+- Basismodell: `coder`.
 - OpenWebUI-Version: nicht angegeben.
 - Referenzexport: nicht bereitgestellt.
 - Die Datei `model.json` ist daher eine bestmögliche, strukturierte Konfiguration und muss gegen einen realen Export der Zielinstanz geprüft werden.

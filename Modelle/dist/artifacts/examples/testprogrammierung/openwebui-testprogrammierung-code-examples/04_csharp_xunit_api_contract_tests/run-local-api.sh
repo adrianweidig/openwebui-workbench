@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Local execution example:
-#   API_BASE_URL=https://api-test.example ./run-local-api.sh
+#   API_BASE_URL=http://localhost:8080 ./run-local-api.sh
 # API_BEARER_TOKEN is optional and must be supplied through the environment when the API requires authentication.
 
 PROJECT="src/ApiContract.Xunit.Tests/ApiContract.Xunit.Tests.csproj"

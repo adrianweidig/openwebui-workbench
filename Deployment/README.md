@@ -12,6 +12,7 @@ Dieses Verzeichnis enthält lokale Vorlagen für einen offline nutzbaren OpenWeb
 - `docker-compose.shared-targets-enterprise-ca.yml`: optionaler CA-Override für `docker-compose.shared-targets.yml`. Diese Variante mountet die Root-CA nur in den Workbench-Container und erzeugt keine OpenWebUI-, RAGFlow- oder Seafile-Services.
 - `docker-compose.top-secret.yml`: optionaler lokaler Override, der den Workbench-Container zusätzlich an das bestehende `top.secret`-Edge-Netz hängt und dort als `workbench` sowie `workbench.top.secret` verfügbar macht.
 - `docker-compose.openwebui-offline.example.yml`: portable Offline-Beispielvorlage mit repo-relativen Mounts, named volumes und optional überschreibbaren OpenWebUI-/Jupyter-Images.
+- `workbench.torvs-bw.env.example`: secretfreies Overlay für die produktive Übergabe mit OpenWebUI unter `https://lexi.torvs.bw`, RAGFlow unter `https://rag.torvs.bw` und Seafile unter `https://seafile.torvs.bw`.
 
 Start der neuen Workbench-Umgebung:
 

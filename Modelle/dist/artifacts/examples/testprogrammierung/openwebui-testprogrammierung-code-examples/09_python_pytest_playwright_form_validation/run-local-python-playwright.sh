@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Local execution example:
-#   APP_BASE_URL=https://your-test-app.example ./run-local-python-playwright.sh
+#   APP_BASE_URL=http://localhost:8080 ./run-local-python-playwright.sh
 # The pytest configuration emits JUnit XML and keeps Playwright traces/videos on failure.
 
 : "${APP_BASE_URL:=https://example.test}"

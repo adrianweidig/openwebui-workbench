@@ -102,7 +102,7 @@
       ],
       "sourcePackage": "openwebui-testprogrammierung",
       "sourcePackageVersion": "1.0.0",
-      "sourceBaseModelAssumption": "mistral-medium",
+      "sourceBaseModelAssumption": "coder",
       "import_notes": [
         "Keine OpenWebUI-Zielversion und kein Referenzexport angegeben.",
         "Feldnamen und Importfähigkeit müssen gegen einen realen Export der Zielinstanz geprüft werden.",

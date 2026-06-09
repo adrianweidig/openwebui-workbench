@@ -18,8 +18,8 @@ public sealed class DiscountCalculatorTests
         }
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(SupportedDiscountScenarios), DynamicDataSourceType.Property)]
+    [TestMethod]
+    [DynamicData(nameof(SupportedDiscountScenarios))]
     public void CalculateNetAmount_ForSupportedScenario_ReturnsExpectedAmount(DiscountScenario scenario)
     {
         var calculator = new DiscountCalculator();

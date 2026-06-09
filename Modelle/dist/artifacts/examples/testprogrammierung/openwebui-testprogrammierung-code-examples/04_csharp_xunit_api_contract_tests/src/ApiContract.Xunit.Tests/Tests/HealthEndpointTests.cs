@@ -16,7 +16,7 @@ public sealed class HealthEndpointTests : IClassFixture<ApiClientFixture>
     [Fact]
     public async Task GetHealth_ReturnsSuccessAndJsonContentType()
     {
-        using var response = await _fixture.Client.GetAsync("/health");
+        using var response = await _fixture.Client.GetAsync("/health", TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);

@@ -1832,31 +1832,31 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/run-local-playwright.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 730
+        "bytes": 722
       },
       "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/LoginAutomation.Playwright.Tests.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 823
+        "bytes": 843
       },
       "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Pages/LoginPage.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Pages/LoginPage.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1174
+        "bytes": 1208
       },
       "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Support/TestSettings.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Support/TestSettings.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1032
+        "bytes": 1054
       },
       "beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Tests/LoginValidationTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/01_csharp_playwright_nunit_login_validation/src/LoginAutomation.Playwright.Tests/Tests/LoginValidationTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 2702
+        "bytes": 2777
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/azure-pipelines-selenium.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/azure-pipelines-selenium.yml",
@@ -1868,49 +1868,49 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/run-local-selenium.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 724
+        "bytes": 716
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Pages/HomePage.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Pages/HomePage.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1251
+        "bytes": 1290
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/SeleniumAutomation.Xunit.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/SeleniumAutomation.Xunit.Tests.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 1060
+        "bytes": 1084
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/ArtifactWriter.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/ArtifactWriter.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 735
+        "bytes": 756
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/SeleniumTestSettings.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/SeleniumTestSettings.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 913
+        "bytes": 931
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WaitExtensions.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WaitExtensions.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 908
+        "bytes": 937
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WebDriverFactory.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Support/WebDriverFactory.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 957
+        "bytes": 987
       },
       "beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Tests/HomeInteractionTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/02_csharp_selenium_xunit_headless_ui/src/SeleniumAutomation.Xunit.Tests/Tests/HomeInteractionTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1146
+        "bytes": 1188
       },
       "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/azure-pipelines-mstest.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/azure-pipelines-mstest.yml",
@@ -1928,31 +1928,31 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/src/DiscountEngine/DiscountCalculator.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1161
+        "bytes": 1196
       },
       "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/src/DiscountEngine/DiscountEngine.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/src/DiscountEngine/DiscountEngine.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 242
+        "bytes": 250
       },
       "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountCalculatorTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountCalculatorTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 2295
+        "bytes": 2307
       },
       "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountEngine.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/DiscountEngine.Tests.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 872
+        "bytes": 895
       },
       "beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/TestData/DiscountScenario.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/03_csharp_mstest_unit_domain_logic/tests/DiscountEngine.Tests/TestData/DiscountScenario.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 245
+        "bytes": 255
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/azure-pipelines-dotnet-api.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/azure-pipelines-dotnet-api.yml",
@@ -1964,43 +1964,43 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/run-local-api.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 617
+        "bytes": 614
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/ApiContract.Xunit.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/ApiContract.Xunit.Tests.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 920
+        "bytes": 942
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Models/TodoItem.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Models/TodoItem.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 279
+        "bytes": 287
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiClientFixture.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiClientFixture.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1039
+        "bytes": 1072
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiTestSettings.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Support/ApiTestSettings.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 540
+        "bytes": 555
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/HealthEndpointTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/HealthEndpointTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 654
+        "bytes": 716
       },
       "beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/TodoApiContractTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/04_csharp_xunit_api_contract_tests/src/ApiContract.Xunit.Tests/Tests/TodoApiContractTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1393
+        "bytes": 1622
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/azure-pipelines-ada-aunit.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/azure-pipelines-ada-aunit.yml",
@@ -2012,7 +2012,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/default.gpr",
         "exists": true,
         "non_empty": true,
-        "bytes": 209
+        "bytes": 217
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/run-local-aunit.sh": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/run-local-aunit.sh",
@@ -2024,49 +2024,49 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.adb",
         "exists": true,
         "non_empty": true,
-        "bytes": 465
+        "bytes": 485
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.ads": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.ads",
         "exists": true,
         "non_empty": true,
-        "bytes": 254
+        "bytes": 261
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.adb": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.adb",
         "exists": true,
         "non_empty": true,
-        "bytes": 458
+        "bytes": 470
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.ads": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.ads",
         "exists": true,
         "non_empty": true,
-        "bytes": 137
+        "bytes": 142
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.adb": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.adb",
         "exists": true,
         "non_empty": true,
-        "bytes": 1943
+        "bytes": 1993
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.ads": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.ads",
         "exists": true,
         "non_empty": true,
-        "bytes": 309
+        "bytes": 318
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/test_runner.adb": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/test_runner.adb",
         "exists": true,
         "non_empty": true,
-        "bytes": 506
+        "bytes": 524
       },
       "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr",
         "exists": true,
         "non_empty": true,
-        "bytes": 329
+        "bytes": 342
       },
       "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/azure-pipelines-gnattest.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/azure-pipelines-gnattest.yml",
@@ -2078,7 +2078,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/default.gpr",
         "exists": true,
         "non_empty": true,
-        "bytes": 439
+        "bytes": 454
       },
       "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/scripts/generate_gnattest_harness.sh": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/scripts/generate_gnattest_harness.sh",
@@ -2096,13 +2096,13 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/src/bounded_counter.adb",
         "exists": true,
         "non_empty": true,
-        "bytes": 903
+        "bytes": 942
       },
       "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/src/bounded_counter.ads": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/src/bounded_counter.ads",
         "exists": true,
         "non_empty": true,
-        "bytes": 642
+        "bytes": 664
       },
       "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/azure-pipelines-playwright-checkout.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/azure-pipelines-playwright-checkout.yml",
@@ -2114,31 +2114,31 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/run-local-checkout.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 917
+        "bytes": 909
       },
       "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/CheckoutAcceptance.Playwright.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/CheckoutAcceptance.Playwright.Tests.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 587
+        "bytes": 603
       },
       "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Pages/CartPage.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Pages/CartPage.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1441
+        "bytes": 1485
       },
       "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Support/CheckoutSettings.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Support/CheckoutSettings.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 597
+        "bytes": 611
       },
       "beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Tests/CheckoutAcceptanceTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/07_csharp_playwright_acceptance_criteria_checkout/src/CheckoutAcceptance.Playwright.Tests/Tests/CheckoutAcceptanceTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1443
+        "bytes": 1483
       },
       "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/azure-pipelines-decision-matrix.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/azure-pipelines-decision-matrix.yml",
@@ -2156,25 +2156,25 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/src/TestStack.Decisions/FrameworkDecisionMatrix.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 3184
+        "bytes": 3247
       },
       "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/src/TestStack.Decisions/TestStack.Decisions.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/src/TestStack.Decisions/TestStack.Decisions.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 242
+        "bytes": 250
       },
       "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/FrameworkDecisionMatrixTests.cs": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/FrameworkDecisionMatrixTests.cs",
         "exists": true,
         "non_empty": true,
-        "bytes": 1192
+        "bytes": 1226
       },
       "beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/TestStack.Decisions.Tests.csproj": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/08_csharp_test_stack_decision_matrix/tests/TestStack.Decisions.Tests/TestStack.Decisions.Tests.csproj",
         "exists": true,
         "non_empty": true,
-        "bytes": 806
+        "bytes": 828
       },
       "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/azure-pipelines-python-playwright.yml": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/azure-pipelines-python-playwright.yml",
@@ -2192,7 +2192,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/pytest.ini",
         "exists": true,
         "non_empty": true,
-        "bytes": 144
+        "bytes": 147
       },
       "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/requirements.txt": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/requirements.txt",
@@ -2204,7 +2204,7 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/run-local-python-playwright.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 544
+        "bytes": 536
       },
       "beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/conftest.py": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/09_python_pytest_playwright_form_validation/tests/conftest.py",
@@ -2228,43 +2228,43 @@
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/pom.xml",
         "exists": true,
         "non_empty": true,
-        "bytes": 2027
+        "bytes": 2092
       },
       "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/run-local-java-selenium.sh": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/run-local-java-selenium.sh",
         "exists": true,
         "non_empty": true,
-        "bytes": 420
+        "bytes": 412
       },
       "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/HomePageTest.java": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/HomePageTest.java",
         "exists": true,
         "non_empty": true,
-        "bytes": 1178
+        "bytes": 1214
       },
       "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/pages/HomePage.java": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/pages/HomePage.java",
         "exists": true,
         "non_empty": true,
-        "bytes": 1456
+        "bytes": 1493
       },
       "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/ArtifactWriter.java": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/ArtifactWriter.java",
         "exists": true,
         "non_empty": true,
-        "bytes": 985
+        "bytes": 1013
       },
       "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/TestSettings.java": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/TestSettings.java",
         "exists": true,
         "non_empty": true,
-        "bytes": 650
+        "bytes": 664
       },
       "beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/WebDriverFactory.java": {
         "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/10_java_selenium_junit_maven_ui/src/test/java/com/example/ui/support/WebDriverFactory.java",
         "exists": true,
         "non_empty": true,
-        "bytes": 911
+        "bytes": 940
       },
       "i18n/manifest.json": {
         "path": "Modelle/einzelmodelle/testprogrammierung/i18n/manifest.json",

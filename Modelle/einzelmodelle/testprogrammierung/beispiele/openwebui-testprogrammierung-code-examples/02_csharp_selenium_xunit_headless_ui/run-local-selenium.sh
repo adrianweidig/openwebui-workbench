@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Local execution example:
-#   APP_BASE_URL=https://your-test-app.example HEADLESS=1 ./run-local-selenium.sh
+#   APP_BASE_URL=http://localhost:8080 HEADLESS=1 ./run-local-selenium.sh
 # Selenium Manager resolves the browser driver; Chrome must be installed locally or on the build agent.
 
 PROJECT="src/SeleniumAutomation.Xunit.Tests/SeleniumAutomation.Xunit.Tests.csproj"
