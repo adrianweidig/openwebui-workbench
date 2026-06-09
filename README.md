@@ -175,7 +175,7 @@ Danach:
 - Workbench: `http://localhost:8088`
 - Optional mit lokalem `top.secret`-Edge-Proxy: `https://workbench.top.secret`
 
-Für Portainer-Installationen kann [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) eine einfügbare Stack-Compose-Datei erzeugen. Der Assistent fragt auch den Docker-Netzwerknamen und optional die Portainer-URL für spätere Runtime-Probes ab und kann die Workbench an ein vorhandenes externes Netzwerk binden, ohne dieses Netzwerk neu anzulegen.
+Für Portainer-Installationen kann [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) eine einfügbare Stack-Compose-Datei erzeugen. Der Assistent nutzt standardmäßig `WORKBENCH_WORKSPACE_MODE=bundled`, initialisiert `/workspace` aus dem im Workbench-Image enthaltenen Workspace-Snapshot und bringt dadurch `istqb-testfallgenerator`, `testprogrammierung` und die `Modelle/dist/`-Importartefakte direkt bei der Installation mit. Für ein vorhandenes Host-Repository kann `-WorkbenchWorkspaceMode bind` gesetzt werden. Der Assistent fragt auch den Docker-Netzwerknamen und optional die Portainer-URL für spätere Runtime-Probes ab und kann die Workbench an ein vorhandenes externes Netzwerk binden, ohne dieses Netzwerk neu anzulegen.
 
 Wenn OpenWebUI, RAGFlow und Seafile bereits als gemeinsame Zielcontainer laufen, ist [`Deployment/docker-compose.shared-targets.yml`](Deployment/docker-compose.shared-targets.yml) der vorgesehene WSL-/Portainer-Start. Diese Variante startet nur die Workbench, nutzt `WORKBENCH_SHARED_DOCKER_NETWORK` und dupliziert keine Zielcontainer:
 

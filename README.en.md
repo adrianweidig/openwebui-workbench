@@ -162,7 +162,7 @@ Then open:
 - Workbench: `http://localhost:8088`
 - Optional local `top.secret` edge route: `https://workbench.top.secret`
 
-For Portainer installations, [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) can generate a stack Compose file that can be pasted into Portainer. The wizard also asks for the Docker network name and optional Portainer URL for later runtime probes, and can attach Workbench to an existing external network without creating that network itself.
+For Portainer installations, [`Deployment/configure-workbench-enterprise.ps1`](Deployment/configure-workbench-enterprise.ps1) can generate a stack Compose file that can be pasted into Portainer. By default the wizard uses `WORKBENCH_WORKSPACE_MODE=bundled`, initializes `/workspace` from the workspace snapshot bundled into the Workbench image, and therefore installs `istqb-testfallgenerator`, `testprogrammierung`, and the generated `Modelle/dist/` import artifacts with the Workbench itself. Use `-WorkbenchWorkspaceMode bind` when an existing host repository should be mounted instead. The wizard also asks for the Docker network name and optional Portainer URL for later runtime probes, and can attach Workbench to an existing external network without creating that network itself.
 
 When OpenWebUI, RAGFlow, and Seafile already run as shared target containers, [`Deployment/docker-compose.shared-targets.yml`](Deployment/docker-compose.shared-targets.yml) is the intended WSL/Portainer start path. It starts only the Workbench, uses `WORKBENCH_SHARED_DOCKER_NETWORK`, and does not duplicate target containers:
 
