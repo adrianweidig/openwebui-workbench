@@ -1,8 +1,18 @@
 #!/usr/bin/env sh
 set -eu
 
+BUNDLED_WORKSPACE="${WORKBENCH_BUNDLED_WORKSPACE:-/opt/openwebui-workbench/workspace}"
+WORKBENCH_ROOT_DIR="${WORKBENCH_ROOT:-/workspace}"
 SYSTEM_CA_BUNDLE="${WORKBENCH_SYSTEM_CA_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}"
 CA_SOURCE="${WORKBENCH_CA_BUNDLE:-}"
+
+if [ -d "$BUNDLED_WORKSPACE/Modelle/einzelmodelle/istqb-testfallgenerator" ] \
+  && [ -d "$BUNDLED_WORKSPACE/Modelle/einzelmodelle/testprogrammierung" ] \
+  && [ ! -d "$WORKBENCH_ROOT_DIR/Modelle/einzelmodelle" ]; then
+  mkdir -p "$WORKBENCH_ROOT_DIR"
+  cp -a "$BUNDLED_WORKSPACE/." "$WORKBENCH_ROOT_DIR/"
+  echo "Initialized Workbench workspace from bundled image content." >&2
+fi
 
 if [ -n "$CA_SOURCE" ]; then
   if [ ! -f "$CA_SOURCE" ]; then
