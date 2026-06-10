@@ -83,6 +83,8 @@ MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
 PRIMARY_MODEL_I18N_FILES = ("manifest.json", "de.md", "en.md")
 MODEL_BOOTLOADER_EXTRA_RULES = {
+    "eggplant-flaui-skriptmigration": "Spezialregel: Migriere nur nach NUnit/FlaUI UIA3 oder UIA2/OpenCvSharp/Verify.NUnit; keine Koordinatenklicks, xUnit, MSTest, ImageSharp, WinAppDriver oder Playwright-Desktop.",
+    "flaui-testassistent": "Spezialregel: Nutze NUnit/FlaUI UIA3 oder UIA2/OpenCvSharp/Verify.NUnit; ersetze Koordinatenklicks durch UIA-Suche und liefere Waits, Assertions und Failure-Artefakte.",
     "n8n-workflow-architect": "n8n-Spezialregel: Ohne konkret bereitgestellten API-Endpunkt erzeugst du keine URL-Felder, keine HTTP-Request-Nodes und keine externen Domains; nutze Manual Trigger, Set/Code und Audit-Ausgabe.",
 }
 SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
@@ -155,6 +157,8 @@ MODEL_TEMPERATURES = {
     "dokumentenvergleich": 0.15,
     "dokumentenzusammenfassung": 0.25,
     "email-kommunikationsassistenz": 0.7,
+    "eggplant-flaui-skriptmigration": 0.1,
+    "flaui-testassistent": 0.15,
     "informationsextraktion": 0.0,
     "internetwissen": 0.25,
     "istqb-testfallgenerator": 0.2,
@@ -246,6 +250,16 @@ TOOL_FORCE_PROFILES = {
         "tools": ["json_csv_text_validator", "offline_artifact_workbench"],
         "skills": ["secure-tool-usage", "offline-artifact-production", "research-grounding"],
         "focus": "Strukturierte Kontaktdaten, Vorlagen und Anhänge lokal prüfen; sensible Inhalte minimieren.",
+    },
+    "eggplant-flaui-skriptmigration": {
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "parallel_task_planner", "llm_council"],
+        "skills": ["flaui-eggplant-desktop-ui-testing", "repository-maintenance", "code-review-deep", "secure-tool-usage", "offline-artifact-production"],
+        "focus": "Eggplant-/SenseTalk-Skripte inventarisieren, fachlich klassifizieren und zielstack-konform in FlaUI/NUnit/OpenCV-Artefakte inklusive VisualTrack, Akzeptanzkriterien und Azure-DevOps-Server-Hinweisen migrieren.",
+    },
+    "flaui-testassistent": {
+        "tools": ["repo_tree_analyzer", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "parallel_task_planner", "llm_council"],
+        "skills": ["flaui-eggplant-desktop-ui-testing", "repository-maintenance", "code-review-deep", "secure-tool-usage", "offline-artifact-production"],
+        "focus": "FlaUI-/NUnit-Desktop-UI-Tests analysieren, generieren, reviewen, diagnostizieren und mit UIA2/UIA3, VisualTrack, Failure-Artefakten und Azure-DevOps-Server-Pipelinepfaden absichern.",
     },
     "informationsextraktion": {
         "tools": ["json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench"],
@@ -403,7 +417,32 @@ def write_text(path: Path, text: str) -> None:
 
 def stable_text_bytes(path: Path) -> bytes:
     data = path.read_bytes()
-    text_suffixes = {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}
+    text_suffixes = {
+        ".adb",
+        ".ads",
+        ".cs",
+        ".csproj",
+        ".csv",
+        ".example",
+        ".gpr",
+        ".htm",
+        ".html",
+        ".ini",
+        ".java",
+        ".json",
+        ".md",
+        ".props",
+        ".ps1",
+        ".py",
+        ".script",
+        ".sh",
+        ".svg",
+        ".targets",
+        ".txt",
+        ".xml",
+        ".yaml",
+        ".yml",
+    }
     text_filenames = {".env", ".env.example"}
     if path.suffix.lower() in text_suffixes or path.name.lower() in text_filenames:
         return data.replace(b"\r\n", b"\n")

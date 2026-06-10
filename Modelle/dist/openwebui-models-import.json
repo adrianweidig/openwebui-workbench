@@ -2831,6 +2831,270 @@
     }
   },
   {
+    "id": "eggplant-flaui-skriptmigration",
+    "name": "Eggplant-FlaUI-Skriptmigration",
+    "base_model_id": "coder",
+    "meta": {
+      "description": "Spezialisiertes OpenWebUI-Aufgabenmodell für die Analyse, Klassifizierung und Migration von Eggplant-/SenseTalk-Skripten in robuste FlaUI-/NUnit-/OpenCV-Zielartefakte für lokale Desktop-UI-Testautomation.",
+      "capabilities": {
+        "vision": true,
+        "file_upload": true,
+        "file_context": true,
+        "web_search": false,
+        "image_generation": false,
+        "code_interpreter": true,
+        "usage": true,
+        "citations": true,
+        "status_updates": true,
+        "builtin_tools": true,
+        "terminal": false
+      },
+      "suggestion_prompts": [
+        {
+          "content": "Migriere dieses Eggplant-Skript nach FlaUI/NUnit und liefere Inventarisierung, Mapping, Zielcode und Akzeptanzkriterien."
+        },
+        {
+          "content": "Klassifiziere diese Eggplant-Suite in UIA3, UIA2, gemischt oder VisualTrack und erstelle eine Migrationswellenplanung."
+        },
+        {
+          "content": "Wandle diesen Eggplant-Bildvergleich in eine FlaUI + OpenCvSharp VisualTrack-Prüfung um."
+        },
+        {
+          "content": "Erzeuge aus diesen Eggplant-Skripten ein migration-inventory.csv und Ziel-Dateipfade."
+        },
+        {
+          "content": "Prüfe den migrierten C#-Test gegen die harten Zielstack-Regeln."
+        }
+      ],
+      "tags": [
+        {
+          "name": "offline"
+        },
+        {
+          "name": "openwebui"
+        },
+        {
+          "name": "aufgabenmodell"
+        },
+        {
+          "name": "flaui"
+        },
+        {
+          "name": "nunit"
+        },
+        {
+          "name": "csharp"
+        },
+        {
+          "name": "desktop-ui-tests"
+        },
+        {
+          "name": "eggplant-migration"
+        }
+      ],
+      "sourcePackage": "openwebui-flaui-zwei-aufgabenpakete/paket-1-eggplant-flaui-skriptmigration",
+      "sourcePackageVersion": "1.0.0",
+      "sourceBaseModelAssumption": "coder",
+      "targetStack": [
+        "NUnit",
+        "FlaUI.UIA3",
+        "FlaUI.UIA2",
+        "OpenCvSharp4.Windows",
+        "Verify.NUnit",
+        "Serilog",
+        "Azure DevOps Server"
+      ],
+      "excludedStack": [
+        "xUnit",
+        "MSTest",
+        "ImageSharp",
+        "WinAppDriver",
+        "Playwright for Desktop",
+        "coordinate clicks"
+      ],
+      "knowledgeSources": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md",
+        "beispiele/",
+        "beispiele/knowledge/eggplant-zu-flaui-migrationsleitfaden-visual-track.md",
+        "beispiele/source/manifest.json",
+        "beispiele/source/prompt_suggestions.md",
+        "beispiele/source/model.json",
+        "beispiele/source/SHA256SUMS.txt"
+      ],
+      "import_notes": [
+        "Die gelieferten Paketdaten wurden in die Workbench-Struktur überführt: examples/ wurde zu beispiele/ und model.json wurde als OpenWebUI-Modellarray gespeichert.",
+        "Alle Dateien werden lokal und UTF-8-kodiert verwaltet; Websuche und Image-Generation bleiben deaktiviert.",
+        "Reale Knowledge-, Tool- und Skill-IDs werden durch den Workbench-Generator gesetzt und nicht aus den Quellpaketen erfunden.",
+        "Der Standard-Basismodellname ist absichtlich coder."
+      ],
+      "defaultFeatureIds": [
+        "code_interpreter"
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "Eggplant-FlaUI-Skriptmigration",
+          "description": "Dieses Produktprofil beschreibt das Modell Eggplant-FlaUI-Skriptmigration für die deutschsprachige Standardnutzung und für mehrsprachige OpenWebUI-Workflows.",
+          "suggestion": "Nutze Eggplant-FlaUI-Skriptmigration auf Deutsch und beachte vorhandene Fachbegriffe.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "Eggplant-to-FlaUI Script Migration",
+          "description": "This product profile describes the Eggplant-to-FlaUI Script Migration model for English usage and multilingual OpenWebUI workflows.",
+          "suggestion": "Use Eggplant-to-FlaUI Script Migration in English and preserve existing technical terms.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Migración de scripts de Eggplant a FlaUI",
+          "description": "Este perfil describe el modelo Migración de scripts de Eggplant a FlaUI para uso en español y flujos multilingües de OpenWebUI.",
+          "suggestion": "Usa Migración de scripts de Eggplant a FlaUI en español y conserva la terminología técnica existente.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Migration de scripts Eggplant vers FlaUI",
+          "description": "Ce profil décrit le modèle Migration de scripts Eggplant vers FlaUI pour l'usage en français et les workflows OpenWebUI multilingues.",
+          "suggestion": "Utilise Migration de scripts Eggplant vers FlaUI en français et conserve les termes techniques existants.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Migração de scripts Eggplant para FlaUI",
+          "description": "Este perfil descreve o modelo Migração de scripts Eggplant para FlaUI para uso em português do Brasil e fluxos multilíngues no OpenWebUI.",
+          "suggestion": "Use Migração de scripts Eggplant para FlaUI em português do Brasil e preserve os termos técnicos existentes.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Migrazione di script Eggplant a FlaUI",
+          "description": "Questo profilo descrive il modello Migrazione di script Eggplant a FlaUI per l'uso in italiano e per workflow OpenWebUI multilingue.",
+          "suggestion": "Usa Migrazione di script Eggplant a FlaUI in italiano e conserva la terminologia tecnica esistente.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "Eggplant-naar-FlaUI scriptmigratie",
+          "description": "Dit profiel beschrijft het model Eggplant-naar-FlaUI scriptmigratie voor Nederlands gebruik en meertalige OpenWebUI-workflows.",
+          "suggestion": "Gebruik Eggplant-naar-FlaUI scriptmigratie in het Nederlands en behoud bestaande technische termen.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Migracja skryptów Eggplant do FlaUI",
+          "description": "Ten profil opisuje model Migracja skryptów Eggplant do FlaUI do użycia po polsku i w wielojęzycznych przepływach OpenWebUI.",
+          "suggestion": "Użyj Migracja skryptów Eggplant do FlaUI po polsku i zachowaj istniejące terminy techniczne.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "Eggplant'tan FlaUI'ye betik geçişi",
+          "description": "Bu profil, Eggplant'tan FlaUI'ye betik geçişi modelini Türkçe kullanım ve çok dilli OpenWebUI iş akışları için açıklar.",
+          "suggestion": "Eggplant'tan FlaUI'ye betik geçişi modelini Türkçe kullan ve mevcut teknik terimleri koru.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "Eggplant から FlaUI へのスクリプト移行",
+          "description": "このプロファイルは、日本語利用と多言語 OpenWebUI ワークフロー向けの Eggplant から FlaUI へのスクリプト移行 モデルを説明します。",
+          "suggestion": "Eggplant から FlaUI へのスクリプト移行 を日本語で使い、既存の技術用語を保持してください。",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "Eggplant 到 FlaUI 脚本迁移",
+          "description": "此配置文件说明 Eggplant 到 FlaUI 脚本迁移 模型在简体中文和多语言 OpenWebUI 工作流中的用法。",
+          "suggestion": "用简体中文使用 Eggplant 到 FlaUI 脚本迁移，并保留现有技术术语。",
+          "profile": "i18n/zh-Hans.md"
+        }
+      },
+      "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyB3b3JrZmxvdyBpY29uPC90aXRsZT4KICA8ZGVzYyBpZD0iZGVzYyI+U2ltcGxlIGNvbm5lY3RlZCB3b3JrZmxvdyBub2RlcyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cGF0aCBkPSJNMTc4IDE3OGgxNTZNMjU2IDE3OHYxNTZNMTc4IDMzNGgxNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMTc4IiBjeT0iMTc4IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMzM0IiBjeT0iMTc4IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMTc4IiBjeT0iMzM0IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMzM0IiBjeT0iMzM0IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+Cjwvc3ZnPgo=",
+      "toolIds": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "filterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "defaultFilterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "primaryToolIds": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "skillIds": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "recommendedSkillIds": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "requiredKnowledgeFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ]
+    },
+    "params": {
+      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `eggplant-flaui-skriptmigration`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nSpezialregel: Migriere nur nach NUnit/FlaUI UIA3 oder UIA2/OpenCvSharp/Verify.NUnit; keine Koordinatenklicks, xUnit, MSTest, ImageSharp, WinAppDriver oder Playwright-Desktop.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "temperature": 0.1,
+      "top_p": 0.8,
+      "stop": [],
+      "function_calling": "native"
+    }
+  },
+  {
     "id": "email-kommunikationsassistenz",
     "name": "E-Mail- und Kommunikationsassistenz",
     "base_model_id": "coder",
@@ -3042,6 +3306,270 @@
       "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `email-kommunikationsassistenz`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
       "temperature": 0.7,
       "top_p": 0.95,
+      "stop": [],
+      "function_calling": "native"
+    }
+  },
+  {
+    "id": "flaui-testassistent",
+    "name": "FlaUI-Testassistent",
+    "base_model_id": "coder",
+    "meta": {
+      "description": "Spezialisiertes OpenWebUI-Aufgabenmodell für professionelle FlaUI-/NUnit-Desktop-UI-Testarbeit, inklusive Analyse, Generierung, Review, Fehlerdiagnose, VisualTrack-Artefakten und Azure-DevOps-Server-Pipeline-Hinweisen.",
+      "capabilities": {
+        "vision": true,
+        "file_upload": true,
+        "file_context": true,
+        "web_search": false,
+        "image_generation": false,
+        "code_interpreter": true,
+        "usage": true,
+        "citations": true,
+        "status_updates": true,
+        "builtin_tools": true,
+        "terminal": false
+      },
+      "suggestion_prompts": [
+        {
+          "content": "Analysiere diese FlaUI/NUnit-Testdatei auf Stabilität, Wartbarkeit und Zielstack-Konformität."
+        },
+        {
+          "content": "Erzeuge einen neuen UIA3-WPF-Test mit Screen-Object, Failure-Artefakten und NUnit-Assertions."
+        },
+        {
+          "content": "Erzeuge einen UIA2-WinForms-Test für diesen Legacy-Dialog und nenne benötigte AccessibleNames."
+        },
+        {
+          "content": "Diagnostiziere diesen fehlgeschlagenen UI-Test anhand von Screenshot, UIA-Dump, Log und TRX."
+        },
+        {
+          "content": "Reviewe diesen VisualTrack-Test inklusive OpenCV-Metriken und Artefaktlogik."
+        }
+      ],
+      "tags": [
+        {
+          "name": "offline"
+        },
+        {
+          "name": "openwebui"
+        },
+        {
+          "name": "aufgabenmodell"
+        },
+        {
+          "name": "flaui"
+        },
+        {
+          "name": "nunit"
+        },
+        {
+          "name": "csharp"
+        },
+        {
+          "name": "desktop-ui-tests"
+        },
+        {
+          "name": "flaui-test-assistant"
+        }
+      ],
+      "sourcePackage": "openwebui-flaui-zwei-aufgabenpakete/paket-2-flaui-testassistent",
+      "sourcePackageVersion": "1.0.0",
+      "sourceBaseModelAssumption": "coder",
+      "targetStack": [
+        "NUnit",
+        "FlaUI.UIA3",
+        "FlaUI.UIA2",
+        "OpenCvSharp4.Windows",
+        "Verify.NUnit",
+        "Serilog",
+        "Azure DevOps Server"
+      ],
+      "excludedStack": [
+        "xUnit",
+        "MSTest",
+        "ImageSharp",
+        "WinAppDriver",
+        "Playwright for Desktop",
+        "coordinate clicks"
+      ],
+      "knowledgeSources": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md",
+        "beispiele/",
+        "beispiele/knowledge/eggplant-zu-flaui-migrationsleitfaden-visual-track.md",
+        "beispiele/source/manifest.json",
+        "beispiele/source/prompt_suggestions.md",
+        "beispiele/source/model.json",
+        "beispiele/source/SHA256SUMS.txt"
+      ],
+      "import_notes": [
+        "Die gelieferten Paketdaten wurden in die Workbench-Struktur überführt: examples/ wurde zu beispiele/ und model.json wurde als OpenWebUI-Modellarray gespeichert.",
+        "Alle Dateien werden lokal und UTF-8-kodiert verwaltet; Websuche und Image-Generation bleiben deaktiviert.",
+        "Reale Knowledge-, Tool- und Skill-IDs werden durch den Workbench-Generator gesetzt und nicht aus den Quellpaketen erfunden.",
+        "Der Standard-Basismodellname ist absichtlich coder."
+      ],
+      "defaultFeatureIds": [
+        "code_interpreter"
+      ],
+      "defaultLocale": "de",
+      "fallbackLocale": "en",
+      "supportedLocales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "productLocaleFiles": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "productI18n": {
+        "de": {
+          "name": "FlaUI-Testassistent",
+          "description": "Dieses Produktprofil beschreibt das Modell FlaUI-Testassistent für die deutschsprachige Standardnutzung und für mehrsprachige OpenWebUI-Workflows.",
+          "suggestion": "Nutze FlaUI-Testassistent auf Deutsch und beachte vorhandene Fachbegriffe.",
+          "profile": "i18n/de.md"
+        },
+        "en": {
+          "name": "FlaUI Test Assistant",
+          "description": "This product profile describes the FlaUI Test Assistant model for English usage and multilingual OpenWebUI workflows.",
+          "suggestion": "Use FlaUI Test Assistant in English and preserve existing technical terms.",
+          "profile": "i18n/en.md"
+        },
+        "es": {
+          "name": "Asistente de pruebas FlaUI",
+          "description": "Este perfil describe el modelo Asistente de pruebas FlaUI para uso en español y flujos multilingües de OpenWebUI.",
+          "suggestion": "Usa Asistente de pruebas FlaUI en español y conserva la terminología técnica existente.",
+          "profile": "i18n/es.md"
+        },
+        "fr": {
+          "name": "Assistant de tests FlaUI",
+          "description": "Ce profil décrit le modèle Assistant de tests FlaUI pour l'usage en français et les workflows OpenWebUI multilingues.",
+          "suggestion": "Utilise Assistant de tests FlaUI en français et conserve les termes techniques existants.",
+          "profile": "i18n/fr.md"
+        },
+        "pt-BR": {
+          "name": "Assistente de testes FlaUI",
+          "description": "Este perfil descreve o modelo Assistente de testes FlaUI para uso em português do Brasil e fluxos multilíngues no OpenWebUI.",
+          "suggestion": "Use Assistente de testes FlaUI em português do Brasil e preserve os termos técnicos existentes.",
+          "profile": "i18n/pt-BR.md"
+        },
+        "it": {
+          "name": "Assistente test FlaUI",
+          "description": "Questo profilo descrive il modello Assistente test FlaUI per l'uso in italiano e per workflow OpenWebUI multilingue.",
+          "suggestion": "Usa Assistente test FlaUI in italiano e conserva la terminologia tecnica esistente.",
+          "profile": "i18n/it.md"
+        },
+        "nl": {
+          "name": "FlaUI-testassistent",
+          "description": "Dit profiel beschrijft het model FlaUI-testassistent voor Nederlands gebruik en meertalige OpenWebUI-workflows.",
+          "suggestion": "Gebruik FlaUI-testassistent in het Nederlands en behoud bestaande technische termen.",
+          "profile": "i18n/nl.md"
+        },
+        "pl": {
+          "name": "Asystent testów FlaUI",
+          "description": "Ten profil opisuje model Asystent testów FlaUI do użycia po polsku i w wielojęzycznych przepływach OpenWebUI.",
+          "suggestion": "Użyj Asystent testów FlaUI po polsku i zachowaj istniejące terminy techniczne.",
+          "profile": "i18n/pl.md"
+        },
+        "tr": {
+          "name": "FlaUI test asistanı",
+          "description": "Bu profil, FlaUI test asistanı modelini Türkçe kullanım ve çok dilli OpenWebUI iş akışları için açıklar.",
+          "suggestion": "FlaUI test asistanı modelini Türkçe kullan ve mevcut teknik terimleri koru.",
+          "profile": "i18n/tr.md"
+        },
+        "ja": {
+          "name": "FlaUI テストアシスタント",
+          "description": "このプロファイルは、日本語利用と多言語 OpenWebUI ワークフロー向けの FlaUI テストアシスタント モデルを説明します。",
+          "suggestion": "FlaUI テストアシスタント を日本語で使い、既存の技術用語を保持してください。",
+          "profile": "i18n/ja.md"
+        },
+        "zh-Hans": {
+          "name": "FlaUI 测试助手",
+          "description": "此配置文件说明 FlaUI 测试助手 模型在简体中文和多语言 OpenWebUI 工作流中的用法。",
+          "suggestion": "用简体中文使用 FlaUI 测试助手，并保留现有技术术语。",
+          "profile": "i18n/zh-Hans.md"
+        }
+      },
+      "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyBjb2RlIGljb248L3RpdGxlPgogIDxkZXNjIGlkPSJkZXNjIj5TaW1wbGUgY29kZSBicmFja2V0cyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cGF0aCBkPSJNMjA2IDE4NGwtNzQgNzIgNzQgNzJNMzA2IDE4NGw3NCA3Mi03NCA3Mk0yNzggMTY2bC00NCAxODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
+      "toolIds": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "filterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "defaultFilterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "primaryToolIds": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "skillIds": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "recommendedSkillIds": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "requiredKnowledgeFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ]
+    },
+    "params": {
+      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `flaui-testassistent`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nSpezialregel: Nutze NUnit/FlaUI UIA3 oder UIA2/OpenCvSharp/Verify.NUnit; ersetze Koordinatenklicks durch UIA-Suche und liefere Waits, Assertions und Failure-Artefakte.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
+      "temperature": 0.15,
+      "top_p": 0.8,
       "stop": [],
       "function_calling": "native"
     }

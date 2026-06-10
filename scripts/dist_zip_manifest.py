@@ -3,7 +3,32 @@ from __future__ import annotations
 import zipfile
 from pathlib import Path
 
-TEXT_SUFFIXES = {".py", ".md", ".json", ".txt", ".svg", ".yml", ".yaml", ".html", ".htm"}
+TEXT_SUFFIXES = {
+    ".adb",
+    ".ads",
+    ".cs",
+    ".csproj",
+    ".csv",
+    ".example",
+    ".gpr",
+    ".htm",
+    ".html",
+    ".ini",
+    ".java",
+    ".json",
+    ".md",
+    ".props",
+    ".ps1",
+    ".py",
+    ".script",
+    ".sh",
+    ".svg",
+    ".targets",
+    ".txt",
+    ".xml",
+    ".yaml",
+    ".yml",
+}
 TEXT_FILENAMES = {".env", ".env.example"}
 
 

@@ -2007,6 +2007,409 @@
       ]
     },
     {
+      "id": "eggplant-flaui-skriptmigration",
+      "name": "Eggplant-FlaUI-Skriptmigration",
+      "product_i18n_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "it",
+        "ja",
+        "nl",
+        "pl",
+        "pt-BR",
+        "tr",
+        "zh-Hans"
+      ],
+      "product_locale_files": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "temperature": 0.1,
+      "top_p": 0.8,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_markdown_formatting_enabled": true,
+      "has_systemprompt_mainprompt_fachwissen": false,
+      "has_short_bootloader_systemprompt": true,
+      "has_high_reasoning_profile": false,
+      "has_custom_gpt_quality_profile": false,
+      "has_vision_profile": false,
+      "has_explicit_tool_call_playbook": false,
+      "has_openwebui_builtin_and_addon_policy": false,
+      "system_prompt_chars": 1335,
+      "has_tool_force_profile": false,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "recommended_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 6647
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 7066
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5685
+        },
+        "beispiele/eggplant/aircraft_track_line_visual.script": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/eggplant/aircraft_track_line_visual.script",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 914
+        },
+        "beispiele/eggplant/mixed_workflow_with_visual_check.script": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/eggplant/mixed_workflow_with_visual_check.script",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 676
+        },
+        "beispiele/eggplant/winforms_legacy_order_dialog.script": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/eggplant/winforms_legacy_order_dialog.script",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 622
+        },
+        "beispiele/eggplant/wpf_login_customer_save.script": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/eggplant/wpf_login_customer_save.script",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 924
+        },
+        "beispiele/generated-csharp/Directory.Build.props": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Directory.Build.props",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 543
+        },
+        "beispiele/generated-csharp/Directory.Packages.props": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Directory.Packages.props",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1385
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Configuration/ConfigurationLoader.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Configuration/ConfigurationLoader.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1475
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Configuration/TestConfiguration.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Configuration/TestConfiguration.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 443
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Diagnostics/ArtifactPaths.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Diagnostics/ArtifactPaths.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1185
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Diagnostics/UiaTreeDumper.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Diagnostics/UiaTreeDumper.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1152
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/AppLauncher.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/AppLauncher.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1441
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/FailureArtifactCollector.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/FailureArtifactCollector.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1278
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/TestEnvironmentGuard.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/TestEnvironmentGuard.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 843
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/Waiter.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Infrastructure/Waiter.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 866
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Product.UiTests.Shared.csproj": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Product.UiTests.Shared.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 700
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Screens/AircraftMapScreen.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Screens/AircraftMapScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2236
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Screens/CustomerScreen.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Screens/CustomerScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1897
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Screens/LoginScreen.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Screens/LoginScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1273
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Screens/OrderDialogScreen.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Screens/OrderDialogScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1811
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Visual/TrackLineAnalysisResult.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Visual/TrackLineAnalysisResult.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 632
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Visual/TrackLineDeviationAnalyzer.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Visual/TrackLineDeviationAnalyzer.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5320
+        },
+        "beispiele/generated-csharp/Product.UiTests.Shared/Visual/TrackRouteDefinition.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Shared/Visual/TrackRouteDefinition.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 936
+        },
+        "beispiele/generated-csharp/Product.UiTests.Uia2/AssemblyInfo.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Uia2/AssemblyInfo.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 88
+        },
+        "beispiele/generated-csharp/Product.UiTests.Uia2/Product.UiTests.Uia2.csproj": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Uia2/Product.UiTests.Uia2.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 511
+        },
+        "beispiele/generated-csharp/Product.UiTests.Uia2/WinForms/LegacyOrderDialogMigrationTests.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Uia2/WinForms/LegacyOrderDialogMigrationTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1590
+        },
+        "beispiele/generated-csharp/Product.UiTests.Uia3/AssemblyInfo.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Uia3/AssemblyInfo.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 88
+        },
+        "beispiele/generated-csharp/Product.UiTests.Uia3/Product.UiTests.Uia3.csproj": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Uia3/Product.UiTests.Uia3.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 511
+        },
+        "beispiele/generated-csharp/Product.UiTests.Uia3/VisualTrack/AircraftTrackLineMigrationTests.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Uia3/VisualTrack/AircraftTrackLineMigrationTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2896
+        },
+        "beispiele/generated-csharp/Product.UiTests.Uia3/Wpf/CustomerWorkflowTests.cs": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Product.UiTests.Uia3/Wpf/CustomerWorkflowTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1915
+        },
+        "beispiele/knowledge/eggplant-zu-flaui-migrationsleitfaden-visual-track.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/knowledge/eggplant-zu-flaui-migrationsleitfaden-visual-track.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 83785
+        },
+        "beispiele/migration-inventory.csv": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/migration-inventory.csv",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 997
+        },
+        "beispiele/migration-output/WPF_Login_Customer_Save.migration.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/migration-output/WPF_Login_Customer_Save.migration.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1252
+        },
+        "beispiele/pipeline/azure-pipelines.visual-track-snippet.yml": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/pipeline/azure-pipelines.visual-track-snippet.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2514
+        },
+        "beispiele/README.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/README.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 482
+        },
+        "beispiele/recherche/eggplant-flaui-realitaetsnahes-migrationsbeispiel.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/recherche/eggplant-flaui-realitaetsnahes-migrationsbeispiel.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 8866
+        },
+        "beispiele/source/manifest.json": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/source/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 3268
+        },
+        "beispiele/source/model.json": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/source/model.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 6755
+        },
+        "beispiele/source/prompt_suggestions.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/source/prompt_suggestions.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 715
+        },
+        "beispiele/source/SHA256SUMS.txt": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/source/SHA256SUMS.txt",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5636
+        },
+        "beispiele/test-assets/Calibration/display-profile-FHD_100DPI.json": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/test-assets/Calibration/display-profile-FHD_100DPI.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 187
+        },
+        "beispiele/test-assets/TrackRoutes/TRACK_ROUTE_001.json": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/test-assets/TrackRoutes/TRACK_ROUTE_001.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 572
+        },
+        "beispiele/test-assets/TrackRoutes/TRACK_ROUTE_002.json": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/test-assets/TrackRoutes/TRACK_ROUTE_002.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 616
+        },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1130
+        },
+        "i18n/de.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/de.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1206
+        },
+        "i18n/en.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/en.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1105
+        }
+      },
+      "vision_enabled": true,
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "meta_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "meta_recommended_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ]
+    },
+    {
       "id": "email-kommunikationsassistenz",
       "name": "E-Mail- und Kommunikationsassistenz",
       "product_i18n_locales": [
@@ -2147,6 +2550,457 @@
         "secure-tool-usage",
         "offline-artifact-production",
         "research-grounding"
+      ]
+    },
+    {
+      "id": "flaui-testassistent",
+      "name": "FlaUI-Testassistent",
+      "product_i18n_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "it",
+        "ja",
+        "nl",
+        "pl",
+        "pt-BR",
+        "tr",
+        "zh-Hans"
+      ],
+      "product_locale_files": [
+        "i18n/de.md",
+        "i18n/en.md",
+        "i18n/es.md",
+        "i18n/fr.md",
+        "i18n/pt-BR.md",
+        "i18n/it.md",
+        "i18n/nl.md",
+        "i18n/pl.md",
+        "i18n/tr.md",
+        "i18n/ja.md",
+        "i18n/zh-Hans.md"
+      ],
+      "temperature": 0.15,
+      "top_p": 0.8,
+      "function_calling": "native",
+      "runtime_param_keys": [
+        "function_calling",
+        "stop",
+        "system",
+        "temperature",
+        "top_p"
+      ],
+      "has_markdown_formatting_enabled": true,
+      "has_systemprompt_mainprompt_fachwissen": false,
+      "has_short_bootloader_systemprompt": true,
+      "has_high_reasoning_profile": false,
+      "has_custom_gpt_quality_profile": false,
+      "has_vision_profile": false,
+      "has_explicit_tool_call_playbook": false,
+      "has_openwebui_builtin_and_addon_policy": false,
+      "system_prompt_chars": 1317,
+      "has_tool_force_profile": false,
+      "primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "recommended_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "required_knowledge_files": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "beispielergebnis.md"
+      ],
+      "knowledge_files": {
+        "mainprompt.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/mainprompt.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5887
+        },
+        "fachwissen.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/fachwissen.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 7738
+        },
+        "beispielergebnis.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispielergebnis.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4956
+        },
+        "beispiele/artifacts/sample-uia-dump.xml": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/artifacts/sample-uia-dump.xml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 632
+        },
+        "beispiele/artifacts/track-analysis.sample.json": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/artifacts/track-analysis.sample.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 357
+        },
+        "beispiele/checklists/flaui-test-analysis-checklist.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/checklists/flaui-test-analysis-checklist.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 616
+        },
+        "beispiele/csharp/Directory.Build.props": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Directory.Build.props",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 543
+        },
+        "beispiele/csharp/Directory.Packages.props": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Directory.Packages.props",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1385
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Configuration/ConfigurationLoader.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Configuration/ConfigurationLoader.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1475
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Configuration/TestConfiguration.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Configuration/TestConfiguration.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 443
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Diagnostics/ArtifactPaths.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Diagnostics/ArtifactPaths.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1185
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Diagnostics/ScreenshotService.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Diagnostics/ScreenshotService.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 706
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Diagnostics/UiaTreeDumper.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Diagnostics/UiaTreeDumper.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1152
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Infrastructure/AppLauncher.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Infrastructure/AppLauncher.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1441
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Infrastructure/FailureArtifactCollector.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Infrastructure/FailureArtifactCollector.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1278
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Infrastructure/TestEnvironmentGuard.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Infrastructure/TestEnvironmentGuard.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 843
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Infrastructure/Waiter.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Infrastructure/Waiter.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 866
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Infrastructure/WindowFinder.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Infrastructure/WindowFinder.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 892
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Product.UiTests.Shared.csproj": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Product.UiTests.Shared.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 700
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Screens/AircraftMapScreen.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Screens/AircraftMapScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2236
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Screens/CustomerScreen.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Screens/CustomerScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1897
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Screens/LoginScreen.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Screens/LoginScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1273
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Screens/OrderDialogScreen.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Screens/OrderDialogScreen.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1811
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Screens/ScreenBase.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Screens/ScreenBase.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 686
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Visual/TrackLineAnalysisResult.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Visual/TrackLineAnalysisResult.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 632
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Visual/TrackLineDeviationAnalyzer.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Visual/TrackLineDeviationAnalyzer.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5320
+        },
+        "beispiele/csharp/Product.UiTests.Shared/Visual/TrackRouteDefinition.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Shared/Visual/TrackRouteDefinition.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 936
+        },
+        "beispiele/csharp/Product.UiTests.Uia2/AssemblyInfo.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia2/AssemblyInfo.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 88
+        },
+        "beispiele/csharp/Product.UiTests.Uia2/Product.UiTests.Uia2.csproj": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia2/Product.UiTests.Uia2.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 511
+        },
+        "beispiele/csharp/Product.UiTests.Uia2/Smoke/LegacyShellSmokeTests.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia2/Smoke/LegacyShellSmokeTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1340
+        },
+        "beispiele/csharp/Product.UiTests.Uia2/WinForms/LegacyOrderDialogMigrationTests.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia2/WinForms/LegacyOrderDialogMigrationTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1590
+        },
+        "beispiele/csharp/Product.UiTests.Uia3/AssemblyInfo.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia3/AssemblyInfo.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 88
+        },
+        "beispiele/csharp/Product.UiTests.Uia3/Product.UiTests.Uia3.csproj": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia3/Product.UiTests.Uia3.csproj",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 511
+        },
+        "beispiele/csharp/Product.UiTests.Uia3/Smoke/MainWindowSmokeTests.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia3/Smoke/MainWindowSmokeTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1435
+        },
+        "beispiele/csharp/Product.UiTests.Uia3/VisualTrack/AircraftTrackLineMigrationTests.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia3/VisualTrack/AircraftTrackLineMigrationTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2896
+        },
+        "beispiele/csharp/Product.UiTests.Uia3/VisualTrack/SyntheticTrackLineAnalyzerTests.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia3/VisualTrack/SyntheticTrackLineAnalyzerTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 4062
+        },
+        "beispiele/csharp/Product.UiTests.Uia3/Wpf/CustomerWorkflowTests.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/csharp/Product.UiTests.Uia3/Wpf/CustomerWorkflowTests.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1915
+        },
+        "beispiele/knowledge/eggplant-zu-flaui-migrationsleitfaden-visual-track.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/knowledge/eggplant-zu-flaui-migrationsleitfaden-visual-track.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 83785
+        },
+        "beispiele/legacy-eggplant-reference/aircraft_track_line_visual.script": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/legacy-eggplant-reference/aircraft_track_line_visual.script",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 914
+        },
+        "beispiele/legacy-eggplant-reference/winforms_legacy_order_dialog.script": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/legacy-eggplant-reference/winforms_legacy_order_dialog.script",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 622
+        },
+        "beispiele/legacy-eggplant-reference/wpf_login_customer_save.script": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/legacy-eggplant-reference/wpf_login_customer_save.script",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 924
+        },
+        "beispiele/pipeline/azure-pipelines.yml": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/pipeline/azure-pipelines.yml",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 2514
+        },
+        "beispiele/README.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/README.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 546
+        },
+        "beispiele/recherche/flaui-produktionsnahes-review-und-generierungsbeispiel.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/recherche/flaui-produktionsnahes-review-und-generierungsbeispiel.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 7820
+        },
+        "beispiele/review-input/FlakyCoordinateClickTest.cs": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/review-input/FlakyCoordinateClickTest.cs",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 542
+        },
+        "beispiele/review-output/flaky-coordinate-click-review.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/review-output/flaky-coordinate-click-review.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1046
+        },
+        "beispiele/source/manifest.json": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/source/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 3605
+        },
+        "beispiele/source/model.json": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/source/model.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 6687
+        },
+        "beispiele/source/prompt_suggestions.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/source/prompt_suggestions.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 615
+        },
+        "beispiele/source/SHA256SUMS.txt": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/source/SHA256SUMS.txt",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 6456
+        },
+        "beispiele/test-assets/Calibration/display-profile-FHD_100DPI.json": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/test-assets/Calibration/display-profile-FHD_100DPI.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 187
+        },
+        "beispiele/test-assets/TrackRoutes/TRACK_ROUTE_001.json": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/test-assets/TrackRoutes/TRACK_ROUTE_001.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 572
+        },
+        "beispiele/test-assets/TrackRoutes/TRACK_ROUTE_002.json": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/beispiele/test-assets/TrackRoutes/TRACK_ROUTE_002.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 616
+        },
+        "i18n/manifest.json": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/i18n/manifest.json",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 958
+        },
+        "i18n/de.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/i18n/de.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1162
+        },
+        "i18n/en.md": {
+          "path": "Modelle/einzelmodelle/flaui-testassistent/i18n/en.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 1052
+        }
+      },
+      "vision_enabled": true,
+      "has_embedded_svg_icon": true,
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "meta_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "meta_recommended_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
       ]
     },
     {

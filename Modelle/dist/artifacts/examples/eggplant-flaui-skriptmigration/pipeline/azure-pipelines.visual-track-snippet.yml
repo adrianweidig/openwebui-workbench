@@ -1,0 +1,69 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+variables:
+  buildConfiguration: 'Release'
+  solution: 'Product.sln'
+  artifactRoot: '$(Build.ArtifactStagingDirectory)\ui-test-artifacts'
+  testResultsRoot: '$(Build.ArtifactStagingDirectory)\test-results'
+  ContinuousIntegrationBuild: 'true'
+
+stages:
+  - stage: Build
+    displayName: 'Build AUT and UI tests'
+    jobs:
+      - job: Build_AUT
+        pool:
+          name: WIN-BUILD
+        steps:
+          - checkout: self
+            clean: true
+          - powershell: dotnet restore $(solution) --configfile NuGet.config --locked-mode
+            displayName: 'Restore locked NuGet packages'
+          - powershell: dotnet build $(solution) --configuration $(buildConfiguration) --no-restore
+            displayName: 'Build solution'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'build-output'
+              publishLocation: 'Container'
+
+  - stage: VisualTrack
+    displayName: 'VisualTrack UIA3/OpenCV'
+    dependsOn: Build
+    jobs:
+      - job: VisualTrack_TrackLine
+        pool:
+          name: WIN-UI-DESKTOP
+          demands:
+            - VisualTrack -equals true
+            - DisplayProfile -equals FHD_100DPI
+        steps:
+          - checkout: self
+            clean: true
+          - powershell: |
+              dotnet test tests\Product.UiTests.Uia3\Product.UiTests.Uia3.csproj `
+                --configuration $(buildConfiguration) `
+                --filter "FullyQualifiedName~VisualTrack" `
+                --logger "trx;LogFileName=visualtrack.trx" `
+                --results-directory "$(testResultsRoot)"
+            env:
+              UI_TEST_ArtifactRoot: '$(artifactRoot)'
+              UI_TEST_ScenarioRoot: '$(Build.SourcesDirectory)\tests\Product.UiTests.TestAssets'
+              UI_TEST_CalibrationRoot: '$(Build.SourcesDirectory)\tests\Product.UiTests.TestAssets\Calibration'
+            displayName: 'Run VisualTrack tests'
+          - task: PublishTestResults@2
+            condition: always()
+            inputs:
+              testResultsFormat: 'VSTest'
+              testResultsFiles: '$(testResultsRoot)\*.trx'
+              failTaskOnFailedTests: true
+          - task: PublishBuildArtifacts@1
+            condition: always()
+            inputs:
+              PathtoPublish: '$(artifactRoot)'
+              ArtifactName: 'ui-artifacts-visual-track'
+              publishLocation: 'Container'

@@ -118,6 +118,8 @@
     "dokumentenvergleich": "generic-document",
     "dokumentenzusammenfassung": "generic-document",
     "email-kommunikationsassistenz": "generic-chat",
+    "eggplant-flaui-skriptmigration": "generic-workflow",
+    "flaui-testassistent": "generic-code",
     "informationsextraktion": "generic-search",
     "internetwissen": "generic-search",
     "it-helpdesk-diagnose": "generic-tools",

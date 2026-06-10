@@ -1,0 +1,45 @@
+{
+  "schema": "openwebui-workbench-model-i18n/v1",
+  "model_id": "flaui-testassistent",
+  "default_locale": "de",
+  "fallback_locale": "en",
+  "supported_locales": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "pt-BR",
+    "it",
+    "nl",
+    "pl",
+    "tr",
+    "ja",
+    "zh-Hans"
+  ],
+  "files": {
+    "de": "de.md",
+    "en": "en.md",
+    "es": "es.md",
+    "fr": "fr.md",
+    "pt-BR": "pt-BR.md",
+    "it": "it.md",
+    "nl": "nl.md",
+    "pl": "pl.md",
+    "tr": "tr.md",
+    "ja": "ja.md",
+    "zh-Hans": "zh-Hans.md"
+  },
+  "names": {
+    "de": "FlaUI-Testassistent",
+    "en": "FlaUI Test Assistant",
+    "es": "Asistente de pruebas FlaUI",
+    "fr": "Assistant de tests FlaUI",
+    "pt-BR": "Assistente de testes FlaUI",
+    "it": "Assistente test FlaUI",
+    "nl": "FlaUI-testassistent",
+    "pl": "Asystent testów FlaUI",
+    "tr": "FlaUI test asistanı",
+    "ja": "FlaUI テストアシスタント",
+    "zh-Hans": "FlaUI 测试助手"
+  }
+}

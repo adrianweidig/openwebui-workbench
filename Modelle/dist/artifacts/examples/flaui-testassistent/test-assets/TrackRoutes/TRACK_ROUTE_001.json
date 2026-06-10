@@ -1,0 +1,33 @@
+{
+  "ScenarioId": "TRACK_ROUTE_001",
+  "UiBackend": "UIA3",
+  "MapAutomationId": "AircraftMapCanvas",
+  "SimulationTimeUtc": "2026-06-10T12:00:00Z",
+  "DisplayProfile": "FHD_100DPI",
+  "ZoomLevel": "Z08",
+  "NauticalMilesPerPixel": 2.5,
+  "AllowedDeviationNm": 5.0,
+  "CoverageThreshold": 0.9,
+  "AllowedBrokenSegments": 0,
+  "MinTrackPixels": 20,
+  "TrackColorHsvLower": [
+    20,
+    80,
+    80
+  ],
+  "TrackColorHsvUpper": [
+    45,
+    255,
+    255
+  ],
+  "ExpectedRoute": [
+    {
+      "X": 120,
+      "Y": 430
+    },
+    {
+      "X": 520,
+      "Y": 220
+    }
+  ]
+}

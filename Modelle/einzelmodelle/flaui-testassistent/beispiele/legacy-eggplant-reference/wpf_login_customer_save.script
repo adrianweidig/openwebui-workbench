@@ -1,0 +1,29 @@
+-- beispiele/eggplant/wpf_login_customer_save.script
+-- Zweck: typischer WPF-Dialog-/Workflowtest als Ausgangspunkt für Migration nach FlaUI.UIA3.
+-- Dieses Beispiel ist bewusst repräsentativ und verwendet keine produktiven Daten.
+
+params customerId: "CUST-4711", customerName: "Musterkunde GmbH"
+
+put "C:\Program Files\Product\Product.exe" into autPath
+launchApp autPath
+waitFor 10, "ProductMainWindow"
+
+Click "Login.UserNameField"
+TypeText "test.operator"
+Click "Login.PasswordField"
+TypeText "not-a-real-password"
+Click "Login.SubmitButton"
+
+WaitFor 20, "Dashboard.CustomerSearchBox"
+Click "Dashboard.CustomerSearchBox"
+TypeText customerId
+Click "Dashboard.SearchButton"
+
+WaitFor 10, "Customer.DetailView"
+Click "Customer.NameTextBox"
+TypeText customerName
+Click "Customer.SaveButton"
+
+WaitFor 10, "Customer.SaveSuccessToast"
+CaptureScreen "artifacts/customer-save-success.png"
+AssertExists "Customer.SaveSuccessToast"

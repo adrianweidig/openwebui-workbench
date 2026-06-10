@@ -1,0 +1,13 @@
+{
+  "TrackDetected": true,
+  "CoverageRatio": 0.973,
+  "MaxDeviationPx": 1.2,
+  "MeanDeviationPx": 0.31,
+  "P95DeviationPx": 0.9,
+  "MaxDeviationNm": 3.0,
+  "BrokenSegments": 0,
+  "ActualTrackPixels": 822,
+  "MaskPath": "opencv/track-mask.png",
+  "ExpectedMaskPath": "opencv/expected-route-mask.png",
+  "OverlayPath": "opencv/track-deviation-overlay.png"
+}
