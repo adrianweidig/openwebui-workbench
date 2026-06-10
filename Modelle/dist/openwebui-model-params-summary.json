@@ -97,6 +97,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1138,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "air_gapped_jupyter_python",
         "ask_user",
@@ -122,6 +124,37 @@
         "web_search_and_crawl"
       ],
       "recommended_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "github_repo_inspector",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "mediawiki_legacy_crawler",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "openui_generative_ui",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "safe_http_fetcher",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4",
+        "web_search_and_crawl"
+      ],
+      "attached_skill_ids": [
         "offline-use-case-router",
         "redundant-fallback-tooling",
         "native-tool-calling-rollout",
@@ -179,30 +212,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "github_repo_inspector",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "mediawiki_legacy_crawler",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "openui_generative_ui",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "safe_http_fetcher",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4",
-        "web_search_and_crawl"
-      ],
       "meta_primary_tool_ids": [
         "air_gapped_jupyter_python",
         "ask_user",
@@ -291,6 +300,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1159,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -300,6 +311,30 @@
         "llm_council"
       ],
       "recommended_skill_ids": [
+        "prompt-to-tool-workflow",
+        "model-tool-skill-overlays",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "prompt-to-tool-workflow",
         "model-tool-skill-overlays",
         "offline-artifact-production"
@@ -355,25 +390,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -442,12 +458,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "openapi_schema_inspector",
         "json_csv_text_validator",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "api-integration-debugging",
+        "safe-mcp-openapi-import",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "api-integration-debugging",
         "safe-mcp-openapi-import",
         "secure-tool-usage"
@@ -503,25 +545,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "openapi_schema_inspector",
         "json_csv_text_validator",
@@ -587,6 +610,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1147,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -594,6 +619,30 @@
         "visuals_toolkit_v4"
       ],
       "recommended_skill_ids": [
+        "repository-maintenance",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "repository-maintenance",
         "offline-artifact-production",
         "secure-tool-usage"
@@ -649,25 +698,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -734,6 +764,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -741,6 +773,30 @@
         "llm_council"
       ],
       "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "code-review-deep",
         "repository-maintenance",
         "secure-tool-usage"
@@ -796,25 +852,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -881,6 +918,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -888,6 +927,30 @@
         "llm_council"
       ],
       "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "code-review-deep",
         "repository-maintenance",
         "secure-tool-usage"
@@ -943,25 +1006,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -1028,6 +1072,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1144,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -1035,6 +1081,30 @@
         "sub_agent"
       ],
       "recommended_skill_ids": [
+        "repository-maintenance",
+        "secure-tool-usage",
+        "openwebui-tool-authoring"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "repository-maintenance",
         "secure-tool-usage",
         "openwebui-tool-authoring"
@@ -1090,25 +1160,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -1175,6 +1226,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "repo_tree_analyzer",
@@ -1182,6 +1235,30 @@
         "llm_council"
       ],
       "recommended_skill_ids": [
+        "research-grounding",
+        "secure-tool-usage",
+        "redundant-fallback-tooling"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "research-grounding",
         "secure-tool-usage",
         "redundant-fallback-tooling"
@@ -1237,25 +1314,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "repo_tree_analyzer",
@@ -1322,6 +1380,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -1331,6 +1391,30 @@
         "parallel_tools"
       ],
       "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "repository-maintenance",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "docker-openwebui-troubleshooting",
         "repository-maintenance",
         "secure-tool-usage"
@@ -1386,25 +1470,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -1473,12 +1538,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1146,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "research-grounding",
         "data-cleaning-analysis",
         "offline-artifact-production"
@@ -1534,25 +1625,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -1618,6 +1690,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1150,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "offline_artifact_workbench",
         "inline_visuals_toolkit_v3",
@@ -1625,6 +1699,30 @@
         "json_csv_text_validator"
       ],
       "recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "offline-artifact-production",
         "visual-toolkit-v3-offline",
         "secure-tool-usage"
@@ -1680,25 +1778,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "offline_artifact_workbench",
         "inline_visuals_toolkit_v3",
@@ -1765,12 +1844,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1148,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "data-cleaning-analysis",
         "research-grounding",
         "offline-artifact-production"
@@ -1826,25 +1931,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -1910,12 +1996,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "research-grounding",
         "offline-artifact-production",
         "secure-tool-usage"
@@ -1971,25 +2083,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -2037,9 +2130,8 @@
       ],
       "temperature": 0.1,
       "top_p": 0.8,
-      "function_calling": "native",
+      "function_calling": null,
       "runtime_param_keys": [
-        "function_calling",
         "stop",
         "system",
         "temperature",
@@ -2053,8 +2145,29 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 1335,
+      "system_prompt_chars": 1256,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": true,
+      "local_coder_profile": {
+        "mode": "lightweight_cpu_chat",
+        "base_model_id": "coder",
+        "availableToolIds": [
+          "repo_tree_analyzer",
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench",
+          "parallel_task_planner",
+          "llm_council"
+        ],
+        "availableSkillIds": [
+          "flaui-eggplant-desktop-ui-testing",
+          "repository-maintenance",
+          "code-review-deep",
+          "secure-tool-usage",
+          "offline-artifact-production"
+        ],
+        "reason": "CPU-lokales coder-Backend: Tools, Filter und Skills bleiben im Workbench-Paket, werden dem Chatmodell aber nicht automatisch pro Antwort angehängt."
+      },
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -2070,6 +2183,8 @@
         "secure-tool-usage",
         "offline-artifact-production"
       ],
+      "assigned_tool_ids": [],
+      "attached_skill_ids": [],
       "required_knowledge_files": [
         "mainprompt.md",
         "fachwissen.md",
@@ -2365,38 +2480,11 @@
           "bytes": 1105
         }
       },
-      "vision_enabled": true,
+      "vision_enabled": false,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "repo_tree_analyzer",
-        "json_csv_text_validator",
-        "air_gapped_jupyter_python",
-        "offline_artifact_workbench",
-        "parallel_task_planner",
-        "llm_council"
-      ],
-      "meta_primary_tool_ids": [
-        "repo_tree_analyzer",
-        "json_csv_text_validator",
-        "air_gapped_jupyter_python",
-        "offline_artifact_workbench",
-        "parallel_task_planner",
-        "llm_council"
-      ],
-      "meta_skill_ids": [
-        "flaui-eggplant-desktop-ui-testing",
-        "repository-maintenance",
-        "code-review-deep",
-        "secure-tool-usage",
-        "offline-artifact-production"
-      ],
-      "meta_recommended_skill_ids": [
-        "flaui-eggplant-desktop-ui-testing",
-        "repository-maintenance",
-        "code-review-deep",
-        "secure-tool-usage",
-        "offline-artifact-production"
-      ]
+      "meta_primary_tool_ids": [],
+      "meta_skill_ids": [],
+      "meta_recommended_skill_ids": []
     },
     {
       "id": "email-kommunikationsassistenz",
@@ -2447,11 +2535,37 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "secure-tool-usage",
+        "offline-artifact-production",
+        "research-grounding"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "secure-tool-usage",
         "offline-artifact-production",
         "research-grounding"
@@ -2507,25 +2621,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
@@ -2572,9 +2667,8 @@
       ],
       "temperature": 0.15,
       "top_p": 0.8,
-      "function_calling": "native",
+      "function_calling": null,
       "runtime_param_keys": [
-        "function_calling",
         "stop",
         "system",
         "temperature",
@@ -2588,8 +2682,29 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 1317,
+      "system_prompt_chars": 1306,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": true,
+      "local_coder_profile": {
+        "mode": "lightweight_cpu_chat",
+        "base_model_id": "coder",
+        "availableToolIds": [
+          "repo_tree_analyzer",
+          "json_csv_text_validator",
+          "air_gapped_jupyter_python",
+          "offline_artifact_workbench",
+          "parallel_task_planner",
+          "llm_council"
+        ],
+        "availableSkillIds": [
+          "flaui-eggplant-desktop-ui-testing",
+          "repository-maintenance",
+          "code-review-deep",
+          "secure-tool-usage",
+          "offline-artifact-production"
+        ],
+        "reason": "CPU-lokales coder-Backend: Tools, Filter und Skills bleiben im Workbench-Paket, werden dem Chatmodell aber nicht automatisch pro Antwort angehängt."
+      },
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -2605,6 +2720,8 @@
         "secure-tool-usage",
         "offline-artifact-production"
       ],
+      "assigned_tool_ids": [],
+      "attached_skill_ids": [],
       "required_knowledge_files": [
         "mainprompt.md",
         "fachwissen.md",
@@ -2948,38 +3065,11 @@
           "bytes": 1052
         }
       },
-      "vision_enabled": true,
+      "vision_enabled": false,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "repo_tree_analyzer",
-        "json_csv_text_validator",
-        "air_gapped_jupyter_python",
-        "offline_artifact_workbench",
-        "parallel_task_planner",
-        "llm_council"
-      ],
-      "meta_primary_tool_ids": [
-        "repo_tree_analyzer",
-        "json_csv_text_validator",
-        "air_gapped_jupyter_python",
-        "offline_artifact_workbench",
-        "parallel_task_planner",
-        "llm_council"
-      ],
-      "meta_skill_ids": [
-        "flaui-eggplant-desktop-ui-testing",
-        "repository-maintenance",
-        "code-review-deep",
-        "secure-tool-usage",
-        "offline-artifact-production"
-      ],
-      "meta_recommended_skill_ids": [
-        "flaui-eggplant-desktop-ui-testing",
-        "repository-maintenance",
-        "code-review-deep",
-        "secure-tool-usage",
-        "offline-artifact-production"
-      ]
+      "meta_primary_tool_ids": [],
+      "meta_skill_ids": [],
+      "meta_recommended_skill_ids": []
     },
     {
       "id": "informationsextraktion",
@@ -3030,12 +3120,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1155,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "data-cleaning-analysis",
         "research-grounding",
         "secure-tool-usage"
@@ -3091,25 +3207,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -3175,6 +3272,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1143,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3184,6 +3283,20 @@
         "inline_visuals_toolkit_v3"
       ],
       "recommended_skill_ids": [
+        "research-grounding",
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "ask_user",
+        "json_csv_text_validator",
+        "repo_tree_analyzer",
+        "parallel_task_planner",
+        "offline_artifact_workbench",
+        "inline_visuals_toolkit_v3"
+      ],
+      "attached_skill_ids": [
         "research-grounding",
         "offline-use-case-router",
         "redundant-fallback-tooling",
@@ -3300,14 +3413,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "ask_user",
-        "json_csv_text_validator",
-        "repo_tree_analyzer",
-        "parallel_task_planner",
-        "offline_artifact_workbench",
-        "inline_visuals_toolkit_v3"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3378,6 +3483,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3385,6 +3492,30 @@
         "llm_council"
       ],
       "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "research-grounding",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "data-cleaning-analysis",
         "research-grounding",
         "secure-tool-usage"
@@ -3440,25 +3571,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3525,6 +3637,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1149,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -3532,6 +3646,30 @@
         "repo_tree_analyzer"
       ],
       "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-use-case-router"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "docker-openwebui-troubleshooting",
         "secure-tool-usage",
         "offline-use-case-router"
@@ -3587,25 +3725,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -3672,6 +3791,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1153,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -3679,6 +3800,30 @@
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "data-cleaning-analysis",
         "docker-openwebui-troubleshooting",
         "secure-tool-usage"
@@ -3734,25 +3879,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -3819,12 +3945,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1157,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench",
         "air_gapped_jupyter_python"
       ],
       "recommended_skill_ids": [
+        "research-grounding",
+        "offline-artifact-production",
+        "data-cleaning-analysis"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "research-grounding",
         "offline-artifact-production",
         "data-cleaning-analysis"
@@ -3880,25 +4032,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench",
@@ -3964,6 +4097,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1153,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -3981,6 +4116,32 @@
         "llm_council"
       ],
       "recommended_skill_ids": [
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production",
+        "data-cleaning-analysis",
+        "parallel-tools-subagents",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "visual-toolkit-v3-offline",
         "offline-artifact-production",
         "data-cleaning-analysis",
@@ -4044,25 +4205,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -4143,6 +4285,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1350,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4152,6 +4296,31 @@
         "tool_skill_overlay_planner"
       ],
       "recommended_skill_ids": [
+        "safe-mcp-openapi-import",
+        "api-integration-debugging",
+        "secure-tool-usage",
+        "offline-use-case-router"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "safe-mcp-openapi-import",
         "api-integration-debugging",
         "secure-tool-usage",
@@ -4208,25 +4377,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4297,6 +4447,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4316,6 +4468,32 @@
         "comfyui_workflow_inspector"
       ],
       "recommended_skill_ids": [
+        "offline-use-case-router",
+        "redundant-fallback-tooling",
+        "native-tool-calling-rollout",
+        "parallel-tools-subagents",
+        "visual-toolkit-v3-offline"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "offline-use-case-router",
         "redundant-fallback-tooling",
         "native-tool-calling-rollout",
@@ -4373,25 +4551,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4474,6 +4633,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -4484,6 +4645,32 @@
         "openapi_schema_inspector"
       ],
       "recommended_skill_ids": [
+        "openwebui-tool-authoring",
+        "prompt-to-tool-workflow",
+        "model-tool-skill-overlays",
+        "secure-tool-usage",
+        "native-tool-calling-rollout"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "openwebui-tool-authoring",
         "prompt-to-tool-workflow",
         "model-tool-skill-overlays",
@@ -4541,25 +4728,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -4633,6 +4801,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -4642,6 +4812,31 @@
         "markdown_skill_builder"
       ],
       "recommended_skill_ids": [
+        "prompt-to-tool-workflow",
+        "secure-tool-usage",
+        "model-tool-skill-overlays",
+        "native-tool-calling-rollout"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "prompt-to-tool-workflow",
         "secure-tool-usage",
         "model-tool-skill-overlays",
@@ -4698,25 +4893,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -4787,6 +4963,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1159,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "parallel_task_planner",
         "parallel_tools",
@@ -4797,6 +4975,31 @@
         "tool_skill_overlay_planner"
       ],
       "recommended_skill_ids": [
+        "parallel-tools-subagents",
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "model-tool-skill-overlays"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "parallel-tools-subagents",
         "offline-artifact-production",
         "visual-toolkit-v3-offline",
@@ -4853,25 +5056,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "parallel_task_planner",
         "parallel_tools",
@@ -4943,6 +5127,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1156,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -4952,6 +5138,30 @@
         "json_csv_text_validator"
       ],
       "recommended_skill_ids": [
+        "offline-artifact-production",
+        "visual-toolkit-v3-offline",
+        "offline-creative-media-workflows"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "offline-artifact-production",
         "visual-toolkit-v3-offline",
         "offline-creative-media-workflows"
@@ -5013,25 +5223,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -5100,12 +5291,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
         "json_csv_text_validator"
       ],
       "recommended_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "repository-maintenance",
         "code-review-deep",
         "secure-tool-usage"
@@ -5161,25 +5378,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -5245,6 +5443,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1162,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -5253,6 +5453,30 @@
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "data-cleaning-analysis",
         "visual-toolkit-v3-offline",
         "offline-artifact-production"
@@ -5308,25 +5532,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -5394,12 +5599,38 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1156,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "docker_compose_triage",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "docker-openwebui-troubleshooting",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "docker-openwebui-troubleshooting",
         "secure-tool-usage",
         "offline-artifact-production"
@@ -5455,25 +5686,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "docker_compose_triage",
@@ -5539,6 +5751,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -5546,6 +5760,30 @@
         "inline_visuals_toolkit_v3"
       ],
       "recommended_skill_ids": [
+        "data-cleaning-analysis",
+        "visual-toolkit-v3-offline",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "data-cleaning-analysis",
         "visual-toolkit-v3-offline",
         "offline-artifact-production"
@@ -5601,25 +5839,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -5686,6 +5905,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1149,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -5693,6 +5914,30 @@
         "parallel_tools"
       ],
       "recommended_skill_ids": [
+        "code-review-deep",
+        "repository-maintenance",
+        "data-cleaning-analysis"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "code-review-deep",
         "repository-maintenance",
         "data-cleaning-analysis"
@@ -5748,25 +5993,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -5833,6 +6059,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1147,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -5842,6 +6070,31 @@
         "llm_council"
       ],
       "recommended_skill_ids": [
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "repository-maintenance",
         "code-review-deep",
         "secure-tool-usage",
@@ -6336,25 +6589,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -6425,11 +6659,37 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
+      "is_local_coder_lightweight_profile": false,
+      "local_coder_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
       ],
       "recommended_skill_ids": [
+        "research-grounding",
+        "data-cleaning-analysis",
+        "offline-artifact-production"
+      ],
+      "assigned_tool_ids": [
+        "air_gapped_jupyter_python",
+        "ask_user",
+        "comfyui_workflow_inspector",
+        "docker_compose_triage",
+        "inline_visuals_toolkit_v3",
+        "json_csv_text_validator",
+        "llm_council",
+        "markdown_skill_builder",
+        "offline_artifact_workbench",
+        "openapi_schema_inspector",
+        "parallel_task_planner",
+        "parallel_tools",
+        "repo_tree_analyzer",
+        "sub_agent",
+        "subagent_orchestrator",
+        "tool_skill_overlay_planner",
+        "visuals_toolkit_v4"
+      ],
+      "attached_skill_ids": [
         "research-grounding",
         "data-cleaning-analysis",
         "offline-artifact-production"
@@ -6485,25 +6745,6 @@
       },
       "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "assigned_tool_ids": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
-      ],
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"

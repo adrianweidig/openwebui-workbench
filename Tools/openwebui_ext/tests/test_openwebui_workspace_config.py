@@ -27,6 +27,9 @@ MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
     "report-dashboard-vorbereitung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
     "tabellen-csv-datenanalyse": ["mainprompt.md", "fachwissen.md", "beispielergebnis.py"],
 }
+LOCAL_CODER_LIGHTWEIGHT_MODEL_IDS = {"eggplant-flaui-skriptmigration", "flaui-testassistent"}
+
+
 def required_knowledge_files(model_id: str) -> list[str]:
     return MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES.get(model_id, REQUIRED_KNOWLEDGE_FILES)
 
@@ -71,6 +74,7 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 meta = model.get("meta", {})
                 params = model.get("params", {})
                 system = params.get("system", "")
+                is_lightweight_local_coder = model_id in LOCAL_CODER_LIGHTWEIGHT_MODEL_IDS
 
                 self.assertIn("Bearbeite Nutzeraufgaben direkt", system)
                 self.assertIn("Erfinde keine Fakten", system)
@@ -81,13 +85,31 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
                 for phrase in knowledge_phrases(model_id):
                     self.assertIn(phrase, system)
                 self.assertEqual(meta.get("requiredKnowledgeFiles"), required_knowledge_files(model_id))
-                self.assertTrue(meta.get("capabilities", {}).get("vision"))
-                self.assertGreater(len(meta.get("primaryToolIds", [])), 0)
-                self.assertGreater(len(meta.get("skillIds", [])), 0)
-                self.assertGreater(len(meta.get("recommendedSkillIds", [])), 0)
-                self.assertEqual(meta.get("skillIds"), meta.get("recommendedSkillIds"))
-                self.assertTrue(set(meta["skillIds"]).issubset(skill_ids))
-                self.assertTrue(set(meta["recommendedSkillIds"]).issubset(skill_ids))
+                if is_lightweight_local_coder:
+                    self.assertNotIn("function_calling", params)
+                    self.assertFalse(meta.get("capabilities", {}).get("builtin_tools"))
+                    self.assertFalse(meta.get("capabilities", {}).get("vision"))
+                    self.assertFalse(meta.get("capabilities", {}).get("code_interpreter"))
+                    self.assertEqual(meta.get("toolIds"), [])
+                    self.assertEqual(meta.get("filterIds"), [])
+                    self.assertEqual(meta.get("defaultFilterIds"), [])
+                    self.assertEqual(meta.get("primaryToolIds"), [])
+                    self.assertEqual(meta.get("skillIds"), [])
+                    self.assertEqual(meta.get("recommendedSkillIds"), [])
+                    local_profile = meta.get("localCoderProfile", {})
+                    self.assertEqual(local_profile.get("mode"), "lightweight_cpu_chat")
+                    self.assertEqual(local_profile.get("base_model_id"), "coder")
+                    self.assertGreater(len(local_profile.get("availableToolIds", [])), 0)
+                    self.assertGreater(len(local_profile.get("availableSkillIds", [])), 0)
+                    self.assertTrue(set(local_profile["availableSkillIds"]).issubset(skill_ids))
+                else:
+                    self.assertTrue(meta.get("capabilities", {}).get("vision"))
+                    self.assertGreater(len(meta.get("primaryToolIds", [])), 0)
+                    self.assertGreater(len(meta.get("skillIds", [])), 0)
+                    self.assertGreater(len(meta.get("recommendedSkillIds", [])), 0)
+                    self.assertEqual(meta.get("skillIds"), meta.get("recommendedSkillIds"))
+                    self.assertTrue(set(meta["skillIds"]).issubset(skill_ids))
+                    self.assertTrue(set(meta["recommendedSkillIds"]).issubset(skill_ids))
                 self.assertTrue((model_file.parent / "beispiele").exists())
                 self.assertGreater(len(list((model_file.parent / "beispiele").glob("*"))), 0)
 
@@ -137,7 +159,15 @@ class OpenWebUIWorkspaceConfigTests(unittest.TestCase):
         for model in summary.get("models", []):
             with self.subTest(model=model.get("id")):
                 self.assertTrue(model.get("has_short_bootloader_systemprompt"))
-                self.assertTrue(model.get("vision_enabled"))
+                if model.get("id") in LOCAL_CODER_LIGHTWEIGHT_MODEL_IDS:
+                    self.assertTrue(model.get("is_local_coder_lightweight_profile"))
+                    self.assertFalse(model.get("vision_enabled"))
+                    self.assertEqual(model.get("function_calling"), None)
+                    self.assertEqual(model.get("assigned_tool_ids"), [])
+                    self.assertEqual(model.get("attached_skill_ids"), [])
+                    self.assertEqual(model.get("local_coder_profile", {}).get("mode"), "lightweight_cpu_chat")
+                else:
+                    self.assertTrue(model.get("vision_enabled"))
                 self.assertLess(model.get("system_prompt_chars", 999999), 1400)
                 self.assertEqual(model.get("required_knowledge_files"), required_knowledge_files(str(model.get("id"))))
                 for info in model.get("knowledge_files", {}).values():
