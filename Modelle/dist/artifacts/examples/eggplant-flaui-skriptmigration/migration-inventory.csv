@@ -1,0 +1,5 @@
+EggplantSuite,EggplantTestName,BusinessFlow,SurfaceTechnology,PrimaryReplacement,AutomationIdsAvailable,VisualValidationRequired,TrackLineRequired,TestDataRequired,MigrationWave,AcceptanceCriteria
+WPF_Customers,wpf_login_customer_save,Login und Kunden speichern,WPF,UIA3,ja,nein,nein,ja,2,"Login erfolgreich; Kunde gefunden; SaveSuccessToast erscheint; keine Koordinatenklicks"
+Legacy_Orders,winforms_legacy_order_dialog,Legacy-Auftrag suchen und schließen,WinForms,UIA2,teilweise,nein,nein,ja,3,"OrderDialog öffnet; StatusLabel=Freigegeben; Dialog schließt"
+Visual_Aircraft,aircraft_track_line_visual,Flugzeugspur fachlich prüfen,Canvas/Map,VisualTrack,ja,ja,ja,ja,4,"TrackDetected=true; CoverageRatio>=0.90; MaxDeviationNm<=allowedDeviationNm; track-analysis.json und Overlay vorhanden"
+Mixed_Monitoring,mixed_workflow_with_visual_check,WPF Monitoring mit Karten-ROI,gemischt,UIA3+VisualTrack,ja,ja,ja,ja,4,"Navigation per UIA3; Karten-ROI per BoundingRectangle; fachliche Abweichung in NM"

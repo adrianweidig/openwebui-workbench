@@ -1,0 +1,24 @@
+-- beispiele/eggplant/aircraft_track_line_visual.script
+-- Zweck: kritischer Visual-Track-Test aus Eggplant, der nach FlaUI + OpenCvSharp migriert wird.
+-- Die Bedienung wird in FlaUI über TestHooks durchgeführt; die fachliche Linienprüfung erfolgt in OpenCV.
+
+params scenarioId: "TRACK_ROUTE_001", simTimeUtc: "2026-06-10T12:00:00Z"
+
+launchApp "C:\Program Files\Product\Product.exe"
+waitFor 20, "ProductMainWindow"
+
+Click "TestHooks.ScenarioIdTextBox"
+TypeText scenarioId
+Click "TestHooks.SimulationTimeTextBox"
+TypeText simTimeUtc
+Click "TestHooks.MapZoomTextBox"
+TypeText "Z08"
+Click "TestHooks.LoadScenarioButton"
+Click "TestHooks.RenderFrameButton"
+
+WaitFor 5, "AircraftMapCanvas"
+CaptureScreen "artifacts/track-route-001-fullscreen.png"
+
+-- Legacy-Assertion: Bildabgleich / visuelle Linie.
+-- Ziel-Assertion: OpenCV-Maske + erwartete Route + MaxDeviationNm.
+AssertImagePresent "TrackLineExpectedRoute001"

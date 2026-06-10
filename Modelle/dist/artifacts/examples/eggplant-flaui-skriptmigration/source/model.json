@@ -1,0 +1,139 @@
+{
+  "id": "eggplant-flaui-skriptmigration",
+  "name": "Eggplant-FlaUI-Skriptmigration",
+  "base_model_id": "coder",
+  "description": "Migriert bereitgestellte Eggplant-/SenseTalk-Skripte in den definierten FlaUI/NUnit/OpenCV/Azure-DevOps-Server-Zielstack inklusive Analyse, Klassifizierung, C#-Zielcode und Akzeptanzkriterien.",
+  "tags": [
+    "flaui",
+    "nunit",
+    "csharp",
+    "desktop-ui-tests",
+    "openwebui",
+    "eggplant-migration"
+  ],
+  "params": {
+    "temperature": 0.1,
+    "top_p": 0.8,
+    "top_k": 30,
+    "max_tokens": 8192,
+    "frequency_penalty": 0.0,
+    "presence_penalty": 0.0,
+    "seed": 42,
+    "stop_sequences": []
+  },
+  "system": "# Systemprompt\n\n    Du bist das OpenWebUI-Aufgabenmodell „Eggplant-FlaUI-Skriptmigration“.\n\n    Deine vollständige Arbeitslogik, Rollenbeschreibung, Ablaufsteuerung, Qualitätsregeln, Ausgabeformate und Grenzen befinden sich in `mainprompt.md`.\n\n    Lies und befolge `mainprompt.md` als primäre Ausführungsanweisung. `mainprompt.md` verweist auf `fachwissen.md`, welches das relevante Fachwissen, Begriffe, Prüflogiken, Beispiele, Entscheidungstabellen und domänenspezifische Regeln enthält.\n\n    ## Priorität der Anweisungen\n\n    1. Systemprompt\n    2. `mainprompt.md`\n    3. `fachwissen.md`\n    4. Paketbeispiele unter `examples/`\n    5. Hochgeladene Nutzerdateien\n    6. Allgemeines Modellwissen\n\n    ## Grundregeln\n\n    - Basismodell und Aufgabenmodell sind strikt getrennt. Das Basismodell dieses Pakets ist `coder`.\n    - Arbeite mit dem Zielstack: NUnit, FlaUI.UIA3 für WPF, FlaUI.UIA2 für WinForms, OpenCvSharp4.Windows für VisualTrack, Verify.NUnit, Serilog, Azure DevOps Server und Build-Artefakte.\n    - Verwende keine xUnit-, MSTest-, ImageSharp-, WinAppDriver- oder Playwright-für-Desktop-Zielarchitektur.\n    - Verwende keine Koordinatenklicks für normale Standardcontrols.\n    - Erzeuge keine Secrets, Tokens, Passwörter, internen URLs oder erfundenen Tool-/Knowledge-IDs.\n    - Kennzeichne Annahmen und trenne Dokumentinhalt, Analyse, Bewertung und Empfehlung.\n    - Nutze hochgeladene Dateien und Paketbeispiele bevorzugt vor allgemeinem Modellwissen.\n    - Nutze Web Search nicht standardmäßig; dieses Modell ist für interne/offline-nahe Arbeit ausgelegt.\n\n    ## Spezifische Kurzregeln\n\n    - Migriere bereitgestellte Eggplant-/SenseTalk-Skripte in Zielartefakte für FlaUI/NUnit/OpenCV.\n- Liefere immer Business Intent, Klassifizierung, Mapping, Ziel-Dateien, C#-Code, Akzeptanzkriterien und offene Punkte.\n- Für Track-/Map-/Canvas-Prüfungen verwende VisualTrack mit OpenCvSharp und fachlichen Metriken.\n\n    Wenn Dateien, Knowledge Bases oder Tools nicht verfügbar sind, arbeite transparent mit dem vorhandenen Kontext weiter und nenne kurz, welche Informationen fehlen.\n",
+  "prompt_suggestions": [
+    "Migriere dieses Eggplant-Skript nach FlaUI/NUnit und liefere Inventarisierung, Mapping, Zielcode und Akzeptanzkriterien.",
+    "Klassifiziere diese Eggplant-Suite in UIA3, UIA2, gemischt oder VisualTrack und erstelle eine Migrationswellenplanung.",
+    "Wandle diesen Eggplant-Bildvergleich in eine FlaUI + OpenCvSharp VisualTrack-Prüfung um.",
+    "Erzeuge aus diesen Eggplant-Skripten ein migration-inventory.csv und Ziel-Dateipfade.",
+    "Prüfe den migrierten C#-Test gegen die harten Zielstack-Regeln."
+  ],
+  "knowledge": [
+    {
+      "name": "fachwissen.md",
+      "type": "package_file",
+      "path": "fachwissen.md",
+      "id": null,
+      "notes": "Domänenspezifische Wissensbasis dieses Modellpakets; keine OpenWebUI-Knowledge-ID erfunden."
+    },
+    {
+      "name": "Eggplant-FlaUI-Migrationsleitfaden VisualTrack",
+      "type": "package_file",
+      "path": "knowledge/eggplant-zu-flaui-migrationsleitfaden-visual-track.md",
+      "id": null,
+      "notes": "Mitgelieferte Offline-Knowledge-Referenz aus dem Nutzeranhang."
+    },
+    {
+      "name": "Offline-Beispiele",
+      "type": "package_directory",
+      "path": "examples/",
+      "id": null,
+      "notes": "C#-, Eggplant-, JSON-, YAML- und Reviewbeispiele."
+    }
+  ],
+  "tools": [],
+  "skills": [],
+  "capabilities": {
+    "vision": true,
+    "file_upload": true,
+    "file_context": true,
+    "web_search": false,
+    "image_generation": false,
+    "code_interpreter": true,
+    "usage": true,
+    "citations": true,
+    "status_updates": true,
+    "builtin_tools": true
+  },
+  "default_features": {
+    "vision": false,
+    "file_upload": true,
+    "file_context": true,
+    "web_search": false,
+    "image_generation": false,
+    "code_interpreter": true,
+    "citations": true,
+    "status_updates": true
+  },
+  "builtin_tools": {
+    "file_context": {
+      "enabled": true,
+      "default": true,
+      "purpose": "Analyse hochgeladener Eggplant-, C#-, YAML-, JSON-, TRX-, Log- und UIA-Dump-Dateien."
+    },
+    "code_interpreter": {
+      "enabled": true,
+      "default": true,
+      "purpose": "Strukturierte Analyse, Validierung, CSV/JSON-Aufbereitung und Paketierung."
+    },
+    "vision": {
+      "enabled": true,
+      "default": false,
+      "purpose": "Optionale Analyse von Screenshots, UIA-Ansichten und VisualTrack-Overlays."
+    },
+    "web_search": {
+      "enabled": false,
+      "default": false,
+      "purpose": "Nicht standardmäßig; internes/offline-nahes Zielpaket."
+    }
+  },
+  "access_control": {
+    "mode": "internal",
+    "recommended_visibility": "project_or_qa_team",
+    "notes": "Kein öffentlicher Zugriff empfohlen; keine sensiblen Identitäten eingetragen."
+  },
+  "safety": {
+    "no_secrets": true,
+    "human_review_required_for_generated_code": true,
+    "no_productive_changes_without_approval": true,
+    "no_coordinate_clicks_for_standard_controls": true,
+    "no_unreviewed_ai_generated_tests_as_release_gate": true
+  },
+  "metadata": {
+    "created_utc": "2026-06-10T20:28:33+00:00",
+    "package_version": "1.0.0",
+    "base_model_note": "Das Aufgabenmodell nutzt als Basismodell die vom Nutzer vorgegebene Modell-ID `coder`.",
+    "openwebui_schema_note": "Keine konkrete OpenWebUI-Version und kein Referenzexport wurden bereitgestellt. Feldnamen und Importfähigkeit der model.json sind gegen einen Export der Zielinstanz zu prüfen.",
+    "target_stack": [
+      "NUnit",
+      "FlaUI.UIA3 for WPF",
+      "FlaUI.UIA2 for WinForms",
+      "OpenCvSharp4.Windows for VisualTrack",
+      "Verify.NUnit",
+      "Serilog",
+      "Azure DevOps Server",
+      "PublishTestResults@2/TRX",
+      "PublishBuildArtifacts@1"
+    ],
+    "excluded_stack": [
+      "xUnit",
+      "MSTest",
+      "ImageSharp",
+      "WinAppDriver",
+      "Playwright for Desktop",
+      "PublishPipelineArtifact@1 for Azure DevOps Server",
+      "coordinate clicks for standard controls"
+    ]
+  }
+}

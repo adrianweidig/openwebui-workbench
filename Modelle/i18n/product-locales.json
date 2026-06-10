@@ -690,6 +690,50 @@
       }
     },
     {
+      "id": "eggplant-flaui-skriptmigration",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "Eggplant-FlaUI-Skriptmigration",
+        "en": "Eggplant-to-FlaUI Script Migration",
+        "es": "Migración de scripts de Eggplant a FlaUI",
+        "fr": "Migration de scripts Eggplant vers FlaUI",
+        "pt-BR": "Migração de scripts Eggplant para FlaUI",
+        "it": "Migrazione di script Eggplant a FlaUI",
+        "nl": "Eggplant-naar-FlaUI scriptmigratie",
+        "pl": "Migracja skryptów Eggplant do FlaUI",
+        "tr": "Eggplant'tan FlaUI'ye betik geçişi",
+        "ja": "Eggplant から FlaUI へのスクリプト移行",
+        "zh-Hans": "Eggplant 到 FlaUI 脚本迁移"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/de.md",
+        "en": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/en.md",
+        "es": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/i18n/zh-Hans.md"
+      }
+    },
+    {
       "id": "email-kommunikationsassistenz",
       "default_locale": "de",
       "fallback_locale": "en",
@@ -731,6 +775,50 @@
         "tr": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/tr.md",
         "ja": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/ja.md",
         "zh-Hans": "Modelle/einzelmodelle/email-kommunikationsassistenz/i18n/zh-Hans.md"
+      }
+    },
+    {
+      "id": "flaui-testassistent",
+      "default_locale": "de",
+      "fallback_locale": "en",
+      "supported_locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "pt-BR",
+        "it",
+        "nl",
+        "pl",
+        "tr",
+        "ja",
+        "zh-Hans"
+      ],
+      "names": {
+        "de": "FlaUI-Testassistent",
+        "en": "FlaUI Test Assistant",
+        "es": "Asistente de pruebas FlaUI",
+        "fr": "Assistant de tests FlaUI",
+        "pt-BR": "Assistente de testes FlaUI",
+        "it": "Assistente test FlaUI",
+        "nl": "FlaUI-testassistent",
+        "pl": "Asystent testów FlaUI",
+        "tr": "FlaUI test asistanı",
+        "ja": "FlaUI テストアシスタント",
+        "zh-Hans": "FlaUI 测试助手"
+      },
+      "files": {
+        "de": "Modelle/einzelmodelle/flaui-testassistent/i18n/de.md",
+        "en": "Modelle/einzelmodelle/flaui-testassistent/i18n/en.md",
+        "es": "Modelle/einzelmodelle/flaui-testassistent/i18n/es.md",
+        "fr": "Modelle/einzelmodelle/flaui-testassistent/i18n/fr.md",
+        "pt-BR": "Modelle/einzelmodelle/flaui-testassistent/i18n/pt-BR.md",
+        "it": "Modelle/einzelmodelle/flaui-testassistent/i18n/it.md",
+        "nl": "Modelle/einzelmodelle/flaui-testassistent/i18n/nl.md",
+        "pl": "Modelle/einzelmodelle/flaui-testassistent/i18n/pl.md",
+        "tr": "Modelle/einzelmodelle/flaui-testassistent/i18n/tr.md",
+        "ja": "Modelle/einzelmodelle/flaui-testassistent/i18n/ja.md",
+        "zh-Hans": "Modelle/einzelmodelle/flaui-testassistent/i18n/zh-Hans.md"
       }
     },
     {

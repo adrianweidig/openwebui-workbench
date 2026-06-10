@@ -1,0 +1,20 @@
+-- beispiele/eggplant/mixed_workflow_with_visual_check.script
+-- Zweck: gemischter Workflow: WPF-Navigation + Canvas-Auswertung.
+-- Migration: UIA3 für Navigation, VisualTrack nur für Canvas-/Map-ROI.
+
+params scenarioId: "TRACK_ROUTE_002"
+
+launchApp "C:\Program Files\Product\Product.exe"
+waitFor 20, "ProductMainWindow"
+
+Click "Navigation.MonitoringButton"
+Click "Monitoring.AircraftMapTab"
+
+Click "TestHooks.ScenarioIdTextBox"
+TypeText scenarioId
+Click "TestHooks.LoadScenarioButton"
+Click "TestHooks.RenderFrameButton"
+
+CaptureScreen "artifacts/mixed-track-002.png"
+AssertImagePresent "TrackLineExpectedRoute002"
+AssertText "Monitoring.StatusText", "Simulation pausiert"

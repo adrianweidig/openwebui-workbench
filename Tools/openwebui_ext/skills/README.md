@@ -26,3 +26,4 @@ In OpenWebUI `Workspace > Skills > Import` öffnen und die gewünschte `.md`-Dat
 - `offline-use-case-router.md`
 - `safe-mcp-openapi-import.md`
 - `native-tool-calling-rollout.md`
+- `flaui-eggplant-desktop-ui-testing.md`

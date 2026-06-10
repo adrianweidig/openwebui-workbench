@@ -1,0 +1,20 @@
+-- beispiele/eggplant/winforms_legacy_order_dialog.script
+-- Zweck: WinForms-Dialogtest als Ausgangspunkt für Migration nach FlaUI.UIA2.
+-- Erwartete Migration: Product.UiTests.Uia2/WinForms/LegacyOrderDialogMigrationTests.cs
+
+params orderNumber: "ORD-2026-00042"
+
+launchApp "C:\Program Files\Product\Product.Legacy.exe"
+waitFor 15, "LegacyShell"
+
+Click "Menu.Orders"
+Click "Orders.OpenByNumber"
+TypeText orderNumber
+Click "Orders.Search"
+
+WaitFor 10, "OrderDialog"
+AssertExists "OrderDialog.CustomerName"
+AssertText "OrderDialog.StatusLabel", "Freigegeben"
+
+Click "OrderDialog.CloseButton"
+AssertNotExists "OrderDialog"

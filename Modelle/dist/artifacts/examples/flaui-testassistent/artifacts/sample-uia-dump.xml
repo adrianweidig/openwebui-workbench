@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Element Depth="0" Name="Product" AutomationId="ProductMainWindow" ControlType="Window" ClassName="HwndWrapper">
+  <Element Depth="1" Name="Benutzername" AutomationId="Login.UserNameField" ControlType="Edit" ClassName="TextBox" />
+  <Element Depth="1" Name="Passwort" AutomationId="Login.PasswordField" ControlType="Edit" ClassName="PasswordBox" />
+  <Element Depth="1" Name="Anmelden" AutomationId="Login.SubmitButton" ControlType="Button" ClassName="Button" />
+  <Element Depth="1" Name="Karte" AutomationId="AircraftMapCanvas" ControlType="Pane" ClassName="AircraftMapCanvas" />
+</Element>
