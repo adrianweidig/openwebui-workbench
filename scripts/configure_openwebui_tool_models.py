@@ -1220,6 +1220,8 @@ def tool_ids_for_model(model_id: str, offline_tool_ids: List[str], all_tool_ids:
         return list(all_tool_ids)
     if model_id == "internetwissen":
         return list(TOOL_FORCE_PROFILES[model_id]["tools"])
+    if model_id in {"eggplant-flaui-skriptmigration", "flaui-testassistent"}:
+        return list(TOOL_FORCE_PROFILES[model_id]["tools"])
     return list(offline_tool_ids)
 
 

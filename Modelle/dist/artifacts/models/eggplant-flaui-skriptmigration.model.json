@@ -199,23 +199,12 @@
       },
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyB3b3JrZmxvdyBpY29uPC90aXRsZT4KICA8ZGVzYyBpZD0iZGVzYyI+U2ltcGxlIGNvbm5lY3RlZCB3b3JrZmxvdyBub2RlcyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cGF0aCBkPSJNMTc4IDE3OGgxNTZNMjU2IDE3OHYxNTZNMTc4IDMzNGgxNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMTc4IiBjeT0iMTc4IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMzM0IiBjeT0iMTc4IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMTc4IiBjeT0iMzM0IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMzM0IiBjeT0iMzM0IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+Cjwvc3ZnPgo=",
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
         "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
       ],
       "filterIds": [
         "auto_tool_selector",
