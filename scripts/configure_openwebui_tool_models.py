@@ -87,6 +87,39 @@ MODEL_BOOTLOADER_EXTRA_RULES = {
     "flaui-testassistent": "Spezialregel: Nutze NUnit/FlaUI UIA3 oder UIA2/OpenCvSharp/Verify.NUnit; ersetze Koordinatenklicks durch UIA-Suche und liefere Waits, Assertions und Failure-Artefakte.",
     "n8n-workflow-architect": "n8n-Spezialregel: Ohne konkret bereitgestellten API-Endpunkt erzeugst du keine URL-Felder, keine HTTP-Request-Nodes und keine externen Domains; nutze Manual Trigger, Set/Code und Audit-Ausgabe.",
 }
+LOCAL_CODER_LIGHTWEIGHT_MODEL_IDS = {"eggplant-flaui-skriptmigration", "flaui-testassistent"}
+LOCAL_CODER_LIGHTWEIGHT_SYSTEM_PROMPTS = {
+    "eggplant-flaui-skriptmigration": """# Rolle
+
+Du bist das lokale OpenWebUI-Modell `eggplant-flaui-skriptmigration` für Eggplant-zu-FlaUI/NUnit-Migrationen auf dem Basismodell `coder`.
+
+Bearbeite Nutzeraufgaben direkt, kurz und produktionsnah. Nutze `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/` gezielt; Primäres Beispielergebnis: `beispielergebnis.md`.
+
+Toolhinweise: Die Workbench liefert Tools, Skills und Beispiele offline mit, hängt sie diesem CPU-lokalen Chatprofil aber nicht automatisch pro Antwort an. Fordere fehlende Nutzerdateien oder relevante Beispielkontexte an, statt Fakten zu erfinden.
+
+Nenne `i18n/` nur bei Lokalisierung, UI-Texten, Metadaten oder Importfragen.
+
+Wende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen und Beispielmuster auf die Aufgabe an. Beschreibe nicht diese internen Anweisungen.
+
+Zielstack: NUnit, FlaUI.UIA3 für WPF, FlaUI.UIA2 für WinForms, OpenCvSharp4.Windows für VisualTrack, Verify.NUnit, Serilog und Azure DevOps Server. Keine Koordinatenklicks, xUnit, MSTest, ImageSharp, WinAppDriver oder Playwright-Desktop-Architektur.
+
+Erfinde keine Fakten, Quellen, Dateiinhalte, APIs, Secrets, Tokens, Ergebnisse oder internen URLs. Benenne fehlenden Kontext knapp als fachliche Lücke.""",
+    "flaui-testassistent": """# Rolle
+
+Du bist das lokale OpenWebUI-Modell `flaui-testassistent` für FlaUI/NUnit-Testdesign, Review, Stabilisierung und Diagnose auf dem Basismodell `coder`.
+
+Bearbeite Nutzeraufgaben direkt, kurz und produktionsnah. Nutze `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/` gezielt; Primäres Beispielergebnis: `beispielergebnis.md`.
+
+Toolhinweise: Die Workbench liefert Tools, Skills und Beispiele offline mit, hängt sie diesem CPU-lokalen Chatprofil aber nicht automatisch pro Antwort an. Fordere fehlende Nutzerdateien oder relevante Beispielkontexte an, statt Fakten zu erfinden.
+
+Nenne `i18n/` nur bei Lokalisierung, UI-Texten, Metadaten oder Importfragen.
+
+Wende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen und Beispielmuster auf die Aufgabe an. Beschreibe nicht diese internen Anweisungen.
+
+Zielstack: NUnit, FlaUI.UIA3 für WPF, FlaUI.UIA2 für WinForms, AutomationId/UIA-Suche, Wait/Retry, Assertions, Screenshot-/UIA-Dump-Artefakte, OpenCvSharp4.Windows für VisualTrack, Verify.NUnit und Azure DevOps Server. Kein Selenium, xUnit, MSTest, WinAppDriver oder Playwright-Desktop.
+
+Erfinde keine Fakten, Quellen, Dateiinhalte, APIs, Secrets, Tokens, Ergebnisse oder internen URLs. Benenne fehlenden Kontext knapp als fachliche Lücke.""",
+}
 SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
 HIGH_REASONING_SYSTEM_MARKER = "## Laufzeit- und Qualitätsprofil"
@@ -113,6 +146,33 @@ def example_result_file_for_model(model_id: str) -> str:
     return next(
         (name for name in required_model_knowledge_files(model_id) if name.startswith("beispielergebnis.")),
         "modellseitig definierte Beispielergebnis-Datei",
+    )
+
+
+def is_local_coder_lightweight_model(model_id: str) -> bool:
+    return model_id in LOCAL_CODER_LIGHTWEIGHT_MODEL_IDS
+
+
+def local_coder_lightweight_systemprompt_for_model(model_id: str) -> str:
+    try:
+        return LOCAL_CODER_LIGHTWEIGHT_SYSTEM_PROMPTS[model_id]
+    except KeyError as exc:
+        raise ValueError(f"Kein lokales Coder-Leichtgewicht-Profil für {model_id}") from exc
+
+
+def has_local_coder_lightweight_systemprompt(system_text: str, model_id: str) -> bool:
+    if not is_local_coder_lightweight_model(model_id):
+        return False
+    return (
+        system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER)
+        and len(system_text) <= SYSTEM_BOOTLOADER_MAX_CHARS
+        and "CPU-lokalen Chatprofil" in system_text
+        and "Basismodell `coder`" in system_text
+        and "hängt sie diesem CPU-lokalen Chatprofil aber nicht automatisch pro Antwort an" in system_text
+        and all(name in system_text for name in required_model_knowledge_files(model_id))
+        and "`beispiele/`" in system_text
+        and "`i18n/`" in system_text
+        and "Erfinde keine Fakten" in system_text
     )
 
 
@@ -1132,6 +1192,8 @@ def managed_system_profile_for_model(model_id: str) -> str:
 
 
 def systemprompt_source_for_model(model_id: str) -> str:
+    if is_local_coder_lightweight_model(model_id):
+        return local_coder_lightweight_systemprompt_for_model(model_id)
     knowledge_files = formatted_required_model_knowledge_files(model_id)
     example_file = example_result_file_for_model(model_id)
     extra_rule = MODEL_BOOTLOADER_EXTRA_RULES.get(model_id, "")
@@ -1197,7 +1259,8 @@ def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
     params["temperature"] = temperature
     params["top_p"] = top_p_for_temperature(temperature)
     params["stop"] = []
-    params["function_calling"] = FUNCTION_CALLING_NATIVE
+    if not is_local_coder_lightweight_model(model_id):
+        params["function_calling"] = FUNCTION_CALLING_NATIVE
 
 
 def icon_data_uri_for_model(model_id: str) -> str:
@@ -1246,30 +1309,59 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
 
     model_id = str(model.get("id", ""))
     profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
+    is_lightweight_local_coder = is_local_coder_lightweight_model(model_id)
     meta["profile_image_url"] = icon_data_uri_for_model(model_id)
-    meta["toolIds"] = tool_ids_for_model(model_id, offline_tool_ids, all_tool_ids)
-    meta["filterIds"] = merge_unique(filter_ids, meta.get("filterIds"))
-    meta["defaultFilterIds"] = merge_unique(filter_ids, meta.get("defaultFilterIds"))
-    meta["primaryToolIds"] = list(profile["tools"])
-    meta["skillIds"] = list(profile["skills"])
-    meta["recommendedSkillIds"] = list(profile["skills"])
+    if is_lightweight_local_coder:
+        meta["toolIds"] = []
+        meta["filterIds"] = []
+        meta["defaultFilterIds"] = []
+        meta["primaryToolIds"] = []
+        meta["skillIds"] = []
+        meta["recommendedSkillIds"] = []
+        meta["localCoderProfile"] = {
+            "mode": "lightweight_cpu_chat",
+            "base_model_id": "coder",
+            "availableToolIds": list(profile["tools"]),
+            "availableSkillIds": list(profile["skills"]),
+            "reason": "CPU-lokales coder-Backend: Tools, Filter und Skills bleiben im Workbench-Paket, werden dem Chatmodell aber nicht automatisch pro Antwort angehängt.",
+        }
+    else:
+        meta.pop("localCoderProfile", None)
+        meta["toolIds"] = tool_ids_for_model(model_id, offline_tool_ids, all_tool_ids)
+        meta["filterIds"] = merge_unique(filter_ids, meta.get("filterIds"))
+        meta["defaultFilterIds"] = merge_unique(filter_ids, meta.get("defaultFilterIds"))
+        meta["primaryToolIds"] = list(profile["tools"])
+        meta["skillIds"] = list(profile["skills"])
+        meta["recommendedSkillIds"] = list(profile["skills"])
     meta["requiredKnowledgeFiles"] = list(required_model_knowledge_files(model_id))
     meta["defaultLocale"] = "de"
     meta["fallbackLocale"] = "en"
     meta["supportedLocales"] = list(SUPPORTED_PRODUCT_LOCALES)
     meta["productLocaleFiles"] = [f"{MODEL_I18N_DIR_NAME}/{locale}.md" for locale in SUPPORTED_PRODUCT_LOCALES]
     configure_runtime_params(model_id, params)
-    capabilities["builtin_tools"] = True
+    capabilities["builtin_tools"] = not is_lightweight_local_coder
     capabilities["file_context"] = bool(capabilities.get("file_context", True))
-    capabilities["vision"] = True
+    capabilities["vision"] = not is_lightweight_local_coder
     capabilities["file_upload"] = bool(capabilities.get("file_upload", True))
-    capabilities["code_interpreter"] = bool(capabilities.get("code_interpreter", True))
-    capabilities["status_updates"] = bool(capabilities.get("status_updates", True))
+    capabilities["code_interpreter"] = False if is_lightweight_local_coder else bool(capabilities.get("code_interpreter", True))
+    capabilities["status_updates"] = False if is_lightweight_local_coder else bool(capabilities.get("status_updates", True))
     capabilities["usage"] = bool(capabilities.get("usage", True))
-    if capabilities["code_interpreter"]:
+    if is_lightweight_local_coder:
+        features = meta.get("defaultFeatureIds", [])
+        if isinstance(features, list):
+            cleaned_features = [feature for feature in features if feature != "code_interpreter"]
+            if cleaned_features:
+                meta["defaultFeatureIds"] = cleaned_features
+            else:
+                meta.pop("defaultFeatureIds", None)
+    elif capabilities["code_interpreter"]:
         features = meta.setdefault("defaultFeatureIds", [])
         if isinstance(features, list) and "code_interpreter" not in features:
             features.append("code_interpreter")
+    else:
+        features = meta.get("defaultFeatureIds")
+        if isinstance(features, list) and not features:
+            meta.pop("defaultFeatureIds", None)
     return model
 
 
@@ -1420,8 +1512,12 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "has_tool_force_profile": TOOL_FORCE_SYSTEM_MARKER in str(model.get("params", {}).get("system", ""))
                 if isinstance(model.get("params"), dict)
                 else False,
+                "is_local_coder_lightweight_profile": is_local_coder_lightweight_model(str(model.get("id"))),
+                "local_coder_profile": model.get("meta", {}).get("localCoderProfile", {}) if isinstance(model.get("meta"), dict) else {},
                 "primary_tool_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("tools", []),
                 "recommended_skill_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("skills", []),
+                "assigned_tool_ids": model.get("meta", {}).get("toolIds", []) if isinstance(model.get("meta"), dict) else [],
+                "attached_skill_ids": model.get("meta", {}).get("skillIds", []) if isinstance(model.get("meta"), dict) else [],
                 "required_knowledge_files": required_model_knowledge_files(str(model.get("id"))),
                 "knowledge_files": model_knowledge_status(str(model.get("id"))),
                 "vision_enabled": bool(
@@ -1432,7 +1528,6 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "has_embedded_svg_icon": str(model.get("meta", {}).get("profile_image_url", "")).startswith("data:image/svg+xml;base64,")
                 if isinstance(model.get("meta"), dict)
                 else False,
-                "assigned_tool_ids": model.get("meta", {}).get("toolIds", []) if isinstance(model.get("meta"), dict) else [],
                 "meta_primary_tool_ids": model.get("meta", {}).get("primaryToolIds", []) if isinstance(model.get("meta"), dict) else [],
                 "meta_skill_ids": model.get("meta", {}).get("skillIds", []) if isinstance(model.get("meta"), dict) else [],
                 "meta_recommended_skill_ids": model.get("meta", {}).get("recommendedSkillIds", []) if isinstance(model.get("meta"), dict) else [],
@@ -1584,8 +1679,10 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
         "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
         "tool_force_policy": {
-            "behavior": "Every chat model keeps primaryToolIds, skillIds and recommendedSkillIds in metadata. OpenWebUI uses meta.skillIds for real model-attached Skills; recommendedSkillIds stays as an audit-friendly mirror.",
+            "behavior": "Standard chat models keep primaryToolIds, skillIds and recommendedSkillIds in metadata. OpenWebUI uses meta.skillIds for real model-attached Skills; recommendedSkillIds stays as an audit-friendly mirror.",
             "model_profiles": TOOL_FORCE_PROFILES,
+            "local_coder_lightweight_model_ids": sorted(LOCAL_CODER_LIGHTWEIGHT_MODEL_IDS),
+            "local_coder_behavior": "The FlaUI/Eggplant production models run on the local coder backend with no automatically attached tools, filters, skills or native function calling. Their available Workbench tool/skill profiles remain documented in meta.localCoderProfile and the full examples stay in the offline package.",
         },
         "tool_call_playbook_policy": {
             "target_model_runtime": "local Mistral Medium 128B",
@@ -1613,6 +1710,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "temperature_by_model": MODEL_TEMPERATURES,
         },
         "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE},
+        "local_coder_model_params_recommendation": {
+            "model_ids": sorted(LOCAL_CODER_LIGHTWEIGHT_MODEL_IDS),
+            "function_calling": "omitted",
+            "reason": "Avoids slow native tool orchestration on CPU-local coder backends while preserving offline examples and package knowledge.",
+        },
         "verified_model_fields_used": [
             "meta.toolIds",
             "meta.filterIds",
@@ -1674,11 +1776,15 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         tool_ids = meta.get("toolIds", [])
         filter_ids = meta.get("filterIds", [])
         default_filter_ids = meta.get("defaultFilterIds", [])
+        is_lightweight_local_coder = is_local_coder_lightweight_model(model_id)
         if is_non_chat_model(model):
             if tool_ids or filter_ids or default_filter_ids or params.get("function_calling"):
                 issues.append(f"Non-Chat-Modell {model_id} hat Tool-/Filter-/Function-Calling-Konfiguration")
             continue
-        if params.get("function_calling") != FUNCTION_CALLING_NATIVE:
+        if is_lightweight_local_coder:
+            if params.get("function_calling"):
+                issues.append(f"Chat-Modell {model_id} setzt function_calling trotz lokalem Coder-Leichtgewicht-Profil")
+        elif params.get("function_calling") != FUNCTION_CALLING_NATIVE:
             issues.append(f"Chat-Modell {model_id} hat function_calling nicht auf native")
         profile_image_url = str(meta.get("profile_image_url", ""))
         if not profile_image_url.startswith("data:image/svg+xml;base64,"):
@@ -1700,6 +1806,8 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             issues.append(f"Chat-Modell {model_id} hat keinen kurzen Bootloader-Systemprompt ({len(system_text)} Zeichen)")
         if not has_short_bootloader_systemprompt(system_text, model_id):
             issues.append(f"Chat-Modell {model_id} hat keinen vollständigen Bootloader-Systemprompt")
+        if is_lightweight_local_coder and not has_local_coder_lightweight_systemprompt(system_text, model_id):
+            issues.append(f"Chat-Modell {model_id} hat kein vollständiges lokales Coder-Leichtgewicht-Systemprofil")
         for required_phrase in [
             *required_model_knowledge_files(model_id),
             "beispiele/",
@@ -1713,21 +1821,38 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             if required_phrase not in system_text:
                 issues.append(f"Chat-Modell {model_id} fehlt Bootloader-Kriterium: {required_phrase}")
         missing_profile_tools = sorted(set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(tool_ids))
-        if missing_profile_tools:
-            issues.append(f"Chat-Modell {model_id} nennt Tool-Pflichtprofil mit nicht zugewiesenen Tools: {', '.join(missing_profile_tools)}")
         profile_skills = set(TOOL_FORCE_PROFILES.get(model_id, {}).get("skills", []))
         missing_skill_files = sorted(profile_skills - valid_skill_ids)
         if missing_skill_files:
             issues.append(f"Chat-Modell {model_id} nennt Skill-Profil ohne lokale Skill-Datei: {', '.join(missing_skill_files)}")
         meta_primary_tools = meta.get("primaryToolIds", [])
-        if not isinstance(meta_primary_tools, list) or set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(meta_primary_tools):
-            issues.append(f"Chat-Modell {model_id} hat meta.primaryToolIds nicht passend zum Tool-Profil")
         meta_skills = meta.get("recommendedSkillIds", [])
-        if not isinstance(meta_skills, list) or profile_skills - set(meta_skills):
-            issues.append(f"Chat-Modell {model_id} hat meta.recommendedSkillIds nicht passend zum Skill-Profil")
         bound_skills = meta.get("skillIds", [])
-        if not isinstance(bound_skills, list) or profile_skills - set(bound_skills):
-            issues.append(f"Chat-Modell {model_id} hat meta.skillIds nicht passend zum Skill-Profil")
+        if is_lightweight_local_coder:
+            local_profile = meta.get("localCoderProfile", {})
+            if tool_ids or filter_ids or default_filter_ids or meta_primary_tools or meta_skills or bound_skills:
+                issues.append(f"Chat-Modell {model_id} hängt trotz lokalem Coder-Leichtgewicht-Profil Tools, Filter oder Skills automatisch an")
+            if not isinstance(local_profile, dict) or local_profile.get("mode") != "lightweight_cpu_chat":
+                issues.append(f"Chat-Modell {model_id} dokumentiert kein lokales Coder-Leichtgewicht-Profil")
+                local_profile = {}
+            expected_profile_tools = list(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", []))
+            expected_profile_skills = list(TOOL_FORCE_PROFILES.get(model_id, {}).get("skills", []))
+            if local_profile.get("availableToolIds") != expected_profile_tools:
+                issues.append(f"Chat-Modell {model_id} dokumentiert nicht alle verfügbaren Workbench-Tools im lokalen Coder-Profil")
+            if local_profile.get("availableSkillIds") != expected_profile_skills:
+                issues.append(f"Chat-Modell {model_id} dokumentiert nicht alle verfügbaren Workbench-Skills im lokalen Coder-Profil")
+            missing_local_profile_tools = sorted(set(expected_profile_tools) - valid_tool_ids)
+            if missing_local_profile_tools:
+                issues.append(f"Chat-Modell {model_id} dokumentiert unbekannte Workbench-Tools: {', '.join(missing_local_profile_tools)}")
+        else:
+            if missing_profile_tools:
+                issues.append(f"Chat-Modell {model_id} nennt Tool-Pflichtprofil mit nicht zugewiesenen Tools: {', '.join(missing_profile_tools)}")
+            if not isinstance(meta_primary_tools, list) or set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(meta_primary_tools):
+                issues.append(f"Chat-Modell {model_id} hat meta.primaryToolIds nicht passend zum Tool-Profil")
+            if not isinstance(meta_skills, list) or profile_skills - set(meta_skills):
+                issues.append(f"Chat-Modell {model_id} hat meta.recommendedSkillIds nicht passend zum Skill-Profil")
+            if not isinstance(bound_skills, list) or profile_skills - set(bound_skills):
+                issues.append(f"Chat-Modell {model_id} hat meta.skillIds nicht passend zum Skill-Profil")
         required_knowledge = meta.get("requiredKnowledgeFiles", [])
         if required_knowledge != required_model_knowledge_files(model_id):
             issues.append(f"Chat-Modell {model_id} hat meta.requiredKnowledgeFiles nicht vollständig")
@@ -1773,11 +1898,22 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
                 issues.append(f"Chat-Modell {model_id} hat leere Knowledge-Datei {rel(path)}")
         if not model_example_files(model_id):
             issues.append(f"Chat-Modell {model_id} hat kein nutzbares Beispielartefakt unter {rel(SINGLE_MODELS / model_id / MODEL_EXAMPLES_DIR_NAME)}")
-        if caps.get("builtin_tools") is not True:
-            issues.append(f"Chat-Modell {model_id} hat builtin_tools nicht aktiv")
-        if caps.get("vision") is not True:
-            issues.append(f"Chat-Modell {model_id} hat Vision nicht aktiv")
-        if not isinstance(tool_ids, list) or not tool_ids:
+        if is_lightweight_local_coder:
+            if caps.get("builtin_tools") is not False:
+                issues.append(f"Chat-Modell {model_id} hat builtin_tools trotz lokalem Coder-Leichtgewicht-Profil aktiv")
+            if caps.get("vision") is not False:
+                issues.append(f"Chat-Modell {model_id} hat Vision trotz nicht-visuellem lokalem coder-Backend aktiv")
+            if caps.get("code_interpreter") is not False:
+                issues.append(f"Chat-Modell {model_id} hat Code Interpreter trotz lokalem Coder-Leichtgewicht-Profil aktiv")
+        else:
+            if caps.get("builtin_tools") is not True:
+                issues.append(f"Chat-Modell {model_id} hat builtin_tools nicht aktiv")
+            if caps.get("vision") is not True:
+                issues.append(f"Chat-Modell {model_id} hat Vision nicht aktiv")
+        if is_lightweight_local_coder:
+            if not isinstance(tool_ids, list) or tool_ids:
+                issues.append(f"Chat-Modell {model_id} hat keine leere toolIds-Liste für das lokale Coder-Leichtgewicht-Profil")
+        elif not isinstance(tool_ids, list) or not tool_ids:
             issues.append(f"Chat-Modell {model_id} hat keine toolIds")
         else:
             if model_id != "allgemein":
@@ -1788,7 +1924,7 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             missing = sorted(set(tool_ids) - valid_tool_ids)
             if missing:
                 issues.append(f"Chat-Modell {model_id} referenziert unbekannte Tools: {', '.join(missing)}")
-        if valid_filter_ids:
+        if valid_filter_ids and not is_lightweight_local_coder:
             if not isinstance(filter_ids, list) or not valid_filter_ids.issubset(set(filter_ids)):
                 issues.append(f"Chat-Modell {model_id} hat nicht alle Pflichtfilter in filterIds")
             if not isinstance(default_filter_ids, list) or not valid_filter_ids.issubset(set(default_filter_ids)):

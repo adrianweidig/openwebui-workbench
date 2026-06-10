@@ -2964,7 +2964,7 @@
   "generic_icon_manifest": "Modelle/dist/artifacts/icons/openwebui-generic-icons.json",
   "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
   "tool_force_policy": {
-    "behavior": "Every chat model keeps primaryToolIds, skillIds and recommendedSkillIds in metadata. OpenWebUI uses meta.skillIds for real model-attached Skills; recommendedSkillIds stays as an audit-friendly mirror.",
+    "behavior": "Standard chat models keep primaryToolIds, skillIds and recommendedSkillIds in metadata. OpenWebUI uses meta.skillIds for real model-attached Skills; recommendedSkillIds stays as an audit-friendly mirror.",
     "model_profiles": {
       "allgemein": {
         "tools": [
@@ -3540,7 +3540,12 @@
         ],
         "focus": "Terminologielisten, Tabellen, Glossare und zielsprachliche Handover-Artefakte prüfen."
       }
-    }
+    },
+    "local_coder_lightweight_model_ids": [
+      "eggplant-flaui-skriptmigration",
+      "flaui-testassistent"
+    ],
+    "local_coder_behavior": "The FlaUI/Eggplant production models run on the local coder backend with no automatically attached tools, filters, skills or native function calling. Their available Workbench tool/skill profiles remain documented in meta.localCoderProfile and the full examples stay in the offline package."
   },
   "tool_call_playbook_policy": {
     "target_model_runtime": "local Mistral Medium 128B",
@@ -3619,6 +3624,14 @@
   },
   "global_model_params_recommendation": {
     "function_calling": "native"
+  },
+  "local_coder_model_params_recommendation": {
+    "model_ids": [
+      "eggplant-flaui-skriptmigration",
+      "flaui-testassistent"
+    ],
+    "function_calling": "omitted",
+    "reason": "Avoids slow native tool orchestration on CPU-local coder backends while preserving offline examples and package knowledge."
   },
   "verified_model_fields_used": [
     "meta.toolIds",
