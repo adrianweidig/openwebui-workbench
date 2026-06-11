@@ -3541,11 +3541,11 @@
         "focus": "Terminologielisten, Tabellen, Glossare und zielsprachliche Handover-Artefakte prüfen."
       }
     },
-    "local_coder_lightweight_model_ids": [
+    "cloud_coder_production_model_ids": [
       "eggplant-flaui-skriptmigration",
       "flaui-testassistent"
     ],
-    "local_coder_behavior": "The FlaUI/Eggplant production models run on the local coder backend with no automatically attached tools, filters, skills or native function calling. Their available Workbench tool/skill profiles remain documented in meta.localCoderProfile and the full examples stay in the offline package."
+    "cloud_coder_behavior": "The FlaUI/Eggplant production models use the coder route as a high-performance cloud coder target, with model-attached tools, filters, skills and native function calling enabled. The recommended backend is Mistral Medium 3.5 128B via LiteLLM."
   },
   "tool_call_playbook_policy": {
     "target_model_runtime": "local Mistral Medium 128B",
@@ -3625,13 +3625,15 @@
   "global_model_params_recommendation": {
     "function_calling": "native"
   },
-  "local_coder_model_params_recommendation": {
+  "cloud_coder_model_params_recommendation": {
     "model_ids": [
       "eggplant-flaui-skriptmigration",
       "flaui-testassistent"
     ],
-    "function_calling": "omitted",
-    "reason": "Avoids slow native tool orchestration on CPU-local coder backends while preserving offline examples and package knowledge."
+    "function_calling": "native",
+    "recommended_litellm_model": "mistral/mistral-medium-3-5",
+    "recommended_openrouter_model": "openrouter/mistralai/mistral-medium-3-5",
+    "reason": "Production tests and target deployment use a high-performance cloud coder route; do not validate these models against small CPU-local Ollama fallbacks."
   },
   "verified_model_fields_used": [
     "meta.toolIds",

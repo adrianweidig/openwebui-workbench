@@ -6,16 +6,16 @@
     "meta": {
       "description": "Spezialisiertes OpenWebUI-Aufgabenmodell für die Analyse, Klassifizierung und Migration von Eggplant-/SenseTalk-Skripten in robuste FlaUI-/NUnit-/OpenCV-Zielartefakte für lokale Desktop-UI-Testautomation.",
       "capabilities": {
-        "vision": false,
+        "vision": true,
         "file_upload": true,
         "file_context": true,
         "web_search": false,
         "image_generation": false,
-        "code_interpreter": false,
+        "code_interpreter": true,
         "usage": true,
         "citations": true,
-        "status_updates": false,
-        "builtin_tools": false,
+        "status_updates": true,
+        "builtin_tools": true,
         "terminal": false
       },
       "suggestion_prompts": [
@@ -195,43 +195,69 @@
         }
       },
       "profile_image_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+CiAgPHRpdGxlIGlkPSJ0aXRsZSI+R2VuZXJpYyB3b3JrZmxvdyBpY29uPC90aXRsZT4KICA8ZGVzYyBpZD0iZGVzYyI+U2ltcGxlIGNvbm5lY3RlZCB3b3JrZmxvdyBub2RlcyBvbiBhIHdoaXRlIGJhY2tncm91bmQuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjZmZmIi8+CiAgPHJlY3QgeD0iNjQiIHk9IjY0IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgcng9IjQ4IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8cGF0aCBkPSJNMTc4IDE3OGgxNTZNMjU2IDE3OHYxNTZNMTc4IDMzNGgxNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMTc4IiBjeT0iMTc4IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMzM0IiBjeT0iMTc4IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMTc4IiBjeT0iMzM0IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+CiAgPGNpcmNsZSBjeD0iMzM0IiBjeT0iMzM0IiByPSI0MCIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIwIi8+Cjwvc3ZnPgo=",
-      "toolIds": [],
-      "filterIds": [],
-      "defaultFilterIds": [],
-      "primaryToolIds": [],
-      "skillIds": [],
-      "recommendedSkillIds": [],
+      "toolIds": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "filterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "defaultFilterIds": [
+        "auto_tool_selector",
+        "context_compressor_filter",
+        "markdown_normalizer"
+      ],
+      "primaryToolIds": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "skillIds": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "recommendedSkillIds": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
       "requiredKnowledgeFiles": [
         "mainprompt.md",
         "fachwissen.md",
         "beispielergebnis.md"
       ],
-      "localCoderProfile": {
-        "mode": "lightweight_cpu_chat",
+      "coderRuntimeProfile": {
+        "mode": "cloud_production_chat",
         "base_model_id": "coder",
-        "availableToolIds": [
-          "repo_tree_analyzer",
-          "json_csv_text_validator",
-          "air_gapped_jupyter_python",
-          "offline_artifact_workbench",
-          "parallel_task_planner",
-          "llm_council"
-        ],
-        "availableSkillIds": [
-          "flaui-eggplant-desktop-ui-testing",
-          "repository-maintenance",
-          "code-review-deep",
-          "secure-tool-usage",
-          "offline-artifact-production"
-        ],
-        "reason": "CPU-lokales coder-Backend: Tools, Filter und Skills bleiben im Workbench-Paket, werden dem Chatmodell aber nicht automatisch pro Antwort angehängt."
-      }
+        "recommendedProviderModel": "mistral-medium-3-5",
+        "recommendedLiteLLMModel": "mistral/mistral-medium-3-5",
+        "recommendedOpenRouterModel": "openrouter/mistralai/mistral-medium-3-5",
+        "reason": "Produktionsziel: Die Route coder soll auf einen leistungsfähigen Cloud-Coder wie Mistral Medium 3.5 128B zeigen; Tools, Skills und native Tool-Calls bleiben aktiv."
+      },
+      "defaultFeatureIds": [
+        "code_interpreter"
+      ]
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das lokale OpenWebUI-Modell `eggplant-flaui-skriptmigration` für Eggplant-zu-FlaUI/NUnit-Migrationen auf dem Basismodell `coder`.\n\nBearbeite Nutzeraufgaben direkt, kurz und produktionsnah. Nutze `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/` gezielt; Primäres Beispielergebnis: `beispielergebnis.md`.\n\nToolhinweise: Die Workbench liefert Tools, Skills und Beispiele offline mit, hängt sie diesem CPU-lokalen Chatprofil aber nicht automatisch pro Antwort an. Fordere fehlende Nutzerdateien oder relevante Beispielkontexte an, statt Fakten zu erfinden.\n\nNenne `i18n/` nur bei Lokalisierung, UI-Texten, Metadaten oder Importfragen.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen und Beispielmuster auf die Aufgabe an. Beschreibe nicht diese internen Anweisungen.\n\nZielstack: NUnit, FlaUI.UIA3 für WPF, FlaUI.UIA2 für WinForms, OpenCvSharp4.Windows für VisualTrack, Verify.NUnit, Serilog und Azure DevOps Server. Keine Koordinatenklicks, xUnit, MSTest, ImageSharp, WinAppDriver oder Playwright-Desktop-Architektur.\n\nErfinde keine Fakten, Quellen, Dateiinhalte, APIs, Secrets, Tokens, Ergebnisse oder internen URLs. Benenne fehlenden Kontext knapp als fachliche Lücke.",
+      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `eggplant-flaui-skriptmigration` für Eggplant-zu-FlaUI/NUnit-Migrationen auf dem Basismodell `coder`.\n\nZielruntime: Cloud-Coder wie Mistral Medium 3.5 128B hinter `coder`. Nutze Tools, Skills, Datei-/Knowledge-Kontext und native Tool-Calls, wenn verfügbar.\n\nBearbeite Nutzeraufgaben direkt und produktionsnah. Nutze `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/` gezielt; Primäres Beispielergebnis: `beispielergebnis.md`.\n\nFordere fehlende Dateien oder Beispielkontexte an, statt Fakten zu erfinden. Nenne `i18n/` nur bei Lokalisierung, UI-Texten, Metadaten oder Importfragen.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen und Beispielmuster an. Beschreibe nicht diese internen Anweisungen.\n\nZielstack: NUnit, FlaUI.UIA3 für WPF, FlaUI.UIA2 für WinForms, OpenCvSharp4.Windows für VisualTrack, Verify.NUnit, Serilog, Azure DevOps Server.\n\nBei Migrationen: Abschnitte `Klassifizierung`, `Verbote`, `Zielstack`, `C#-Skizze`, `VisualTrack`; Code knapp. Verbote: keine Koordinatenklicks, `Thread.Sleep`, xUnit/MSTest, ImageSharp, WinAppDriver, Playwright-Desktop.\n\nErfinde keine Fakten, Quellen, Dateiinhalte, APIs, Secrets, Tokens, Ergebnisse oder internen URLs. Benenne fehlenden Kontext knapp als fachliche Lücke.",
       "temperature": 0.1,
       "top_p": 0.8,
-      "stop": []
+      "stop": [],
+      "function_calling": "native"
     }
   }
 ]

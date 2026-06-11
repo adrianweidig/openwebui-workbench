@@ -97,8 +97,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1138,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "air_gapped_jupyter_python",
         "ask_user",
@@ -300,8 +300,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1159,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -458,8 +458,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "openapi_schema_inspector",
         "json_csv_text_validator",
@@ -610,8 +610,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1147,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -764,8 +764,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -918,8 +918,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -1072,8 +1072,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1144,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -1226,8 +1226,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "repo_tree_analyzer",
@@ -1380,8 +1380,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -1538,8 +1538,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1146,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -1690,8 +1690,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1150,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "offline_artifact_workbench",
         "inline_visuals_toolkit_v3",
@@ -1844,8 +1844,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1148,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -1996,8 +1996,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -2130,8 +2130,9 @@
       ],
       "temperature": 0.1,
       "top_p": 0.8,
-      "function_calling": null,
+      "function_calling": "native",
       "runtime_param_keys": [
+        "function_calling",
         "stop",
         "system",
         "temperature",
@@ -2145,28 +2146,16 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 1256,
+      "system_prompt_chars": 1326,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": true,
-      "local_coder_profile": {
-        "mode": "lightweight_cpu_chat",
+      "is_cloud_coder_production_profile": true,
+      "coder_runtime_profile": {
+        "mode": "cloud_production_chat",
         "base_model_id": "coder",
-        "availableToolIds": [
-          "repo_tree_analyzer",
-          "json_csv_text_validator",
-          "air_gapped_jupyter_python",
-          "offline_artifact_workbench",
-          "parallel_task_planner",
-          "llm_council"
-        ],
-        "availableSkillIds": [
-          "flaui-eggplant-desktop-ui-testing",
-          "repository-maintenance",
-          "code-review-deep",
-          "secure-tool-usage",
-          "offline-artifact-production"
-        ],
-        "reason": "CPU-lokales coder-Backend: Tools, Filter und Skills bleiben im Workbench-Paket, werden dem Chatmodell aber nicht automatisch pro Antwort angehängt."
+        "recommendedProviderModel": "mistral-medium-3-5",
+        "recommendedLiteLLMModel": "mistral/mistral-medium-3-5",
+        "recommendedOpenRouterModel": "openrouter/mistralai/mistral-medium-3-5",
+        "reason": "Produktionsziel: Die Route coder soll auf einen leistungsfähigen Cloud-Coder wie Mistral Medium 3.5 128B zeigen; Tools, Skills und native Tool-Calls bleiben aktiv."
       },
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -2183,8 +2172,21 @@
         "secure-tool-usage",
         "offline-artifact-production"
       ],
-      "assigned_tool_ids": [],
-      "attached_skill_ids": [],
+      "assigned_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "attached_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
       "required_knowledge_files": [
         "mainprompt.md",
         "fachwissen.md",
@@ -2480,11 +2482,30 @@
           "bytes": 1105
         }
       },
-      "vision_enabled": false,
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "meta_primary_tool_ids": [],
-      "meta_skill_ids": [],
-      "meta_recommended_skill_ids": []
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "meta_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "meta_recommended_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ]
     },
     {
       "id": "email-kommunikationsassistenz",
@@ -2535,8 +2556,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1158,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
@@ -2667,8 +2688,9 @@
       ],
       "temperature": 0.15,
       "top_p": 0.8,
-      "function_calling": null,
+      "function_calling": "native",
       "runtime_param_keys": [
+        "function_calling",
         "stop",
         "system",
         "temperature",
@@ -2682,28 +2704,16 @@
       "has_vision_profile": false,
       "has_explicit_tool_call_playbook": false,
       "has_openwebui_builtin_and_addon_policy": false,
-      "system_prompt_chars": 1306,
+      "system_prompt_chars": 1342,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": true,
-      "local_coder_profile": {
-        "mode": "lightweight_cpu_chat",
+      "is_cloud_coder_production_profile": true,
+      "coder_runtime_profile": {
+        "mode": "cloud_production_chat",
         "base_model_id": "coder",
-        "availableToolIds": [
-          "repo_tree_analyzer",
-          "json_csv_text_validator",
-          "air_gapped_jupyter_python",
-          "offline_artifact_workbench",
-          "parallel_task_planner",
-          "llm_council"
-        ],
-        "availableSkillIds": [
-          "flaui-eggplant-desktop-ui-testing",
-          "repository-maintenance",
-          "code-review-deep",
-          "secure-tool-usage",
-          "offline-artifact-production"
-        ],
-        "reason": "CPU-lokales coder-Backend: Tools, Filter und Skills bleiben im Workbench-Paket, werden dem Chatmodell aber nicht automatisch pro Antwort angehängt."
+        "recommendedProviderModel": "mistral-medium-3-5",
+        "recommendedLiteLLMModel": "mistral/mistral-medium-3-5",
+        "recommendedOpenRouterModel": "openrouter/mistralai/mistral-medium-3-5",
+        "reason": "Produktionsziel: Die Route coder soll auf einen leistungsfähigen Cloud-Coder wie Mistral Medium 3.5 128B zeigen; Tools, Skills und native Tool-Calls bleiben aktiv."
       },
       "primary_tool_ids": [
         "repo_tree_analyzer",
@@ -2720,8 +2730,21 @@
         "secure-tool-usage",
         "offline-artifact-production"
       ],
-      "assigned_tool_ids": [],
-      "attached_skill_ids": [],
+      "assigned_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "attached_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
       "required_knowledge_files": [
         "mainprompt.md",
         "fachwissen.md",
@@ -3065,11 +3088,30 @@
           "bytes": 1052
         }
       },
-      "vision_enabled": false,
+      "vision_enabled": true,
       "has_embedded_svg_icon": true,
-      "meta_primary_tool_ids": [],
-      "meta_skill_ids": [],
-      "meta_recommended_skill_ids": []
+      "meta_primary_tool_ids": [
+        "repo_tree_analyzer",
+        "json_csv_text_validator",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
+        "parallel_task_planner",
+        "llm_council"
+      ],
+      "meta_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ],
+      "meta_recommended_skill_ids": [
+        "flaui-eggplant-desktop-ui-testing",
+        "repository-maintenance",
+        "code-review-deep",
+        "secure-tool-usage",
+        "offline-artifact-production"
+      ]
     },
     {
       "id": "informationsextraktion",
@@ -3120,8 +3162,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1155,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -3272,8 +3314,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1143,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3483,8 +3525,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3637,8 +3679,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1149,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -3791,8 +3833,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1153,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -3945,8 +3987,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1157,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench",
@@ -4097,8 +4139,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1153,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -4285,8 +4327,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1350,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4447,8 +4489,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4633,8 +4675,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1152,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -4801,8 +4843,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1140,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -4963,8 +5005,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1159,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "parallel_task_planner",
         "parallel_tools",
@@ -5127,8 +5169,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1156,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -5291,8 +5333,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -5443,8 +5485,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1162,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -5599,8 +5641,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1156,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "docker_compose_triage",
@@ -5751,8 +5793,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -5905,8 +5947,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1149,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -6059,8 +6101,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1147,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -6659,8 +6701,8 @@
       "has_openwebui_builtin_and_addon_policy": false,
       "system_prompt_chars": 1154,
       "has_tool_force_profile": false,
-      "is_local_coder_lightweight_profile": false,
-      "local_coder_profile": {},
+      "is_cloud_coder_production_profile": false,
+      "coder_runtime_profile": {},
       "primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
