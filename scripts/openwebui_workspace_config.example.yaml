@@ -99,4 +99,4 @@ import:
   # Functions/Filters are enabled and set global by the importer.
   public_read: true
   skip_knowledge: false
-  include_optional_network_tools: true
+  include_optional_network_tools: false

@@ -573,8 +573,8 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         or ""
     ).strip()
     include_optional = args.include_optional_network_tools or as_bool(
-        first_config_value(config, ["import.include_optional_network_tools"], True),
-        True,
+        first_config_value(config, ["import.include_optional_network_tools"], False),
+        False,
     )
     # Workspace imports are intentionally shared by default: imported tools,
     # skills, model knowledge and model profiles must be visible to all
@@ -1545,7 +1545,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",
-        help="Also import optional network-capable tools. This is the default unless import.include_optional_network_tools is false in the YAML config.",
+        help="Also import optional network-capable tools. Offline defaults exclude them unless import.include_optional_network_tools is true in the YAML config.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Validate payload files and print counts without calling OpenWebUI.")
     parser.add_argument("--auth-check", action="store_true", help="Only probe OpenWebUI reachability and API-key authentication, then exit.")

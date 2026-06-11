@@ -104,24 +104,19 @@
         "ask_user",
         "comfyui_workflow_inspector",
         "docker_compose_triage",
-        "github_repo_inspector",
         "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
         "llm_council",
         "markdown_skill_builder",
-        "mediawiki_legacy_crawler",
         "offline_artifact_workbench",
         "openapi_schema_inspector",
-        "openui_generative_ui",
         "parallel_task_planner",
         "parallel_tools",
         "repo_tree_analyzer",
-        "safe_http_fetcher",
         "sub_agent",
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
-        "visuals_toolkit_v4",
-        "web_search_and_crawl"
+        "visuals_toolkit_v4"
       ],
       "recommended_skill_ids": [
         "offline-use-case-router",
@@ -135,24 +130,19 @@
         "ask_user",
         "comfyui_workflow_inspector",
         "docker_compose_triage",
-        "github_repo_inspector",
         "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
         "llm_council",
         "markdown_skill_builder",
-        "mediawiki_legacy_crawler",
         "offline_artifact_workbench",
         "openapi_schema_inspector",
-        "openui_generative_ui",
         "parallel_task_planner",
         "parallel_tools",
         "repo_tree_analyzer",
-        "safe_http_fetcher",
         "sub_agent",
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
-        "visuals_toolkit_v4",
-        "web_search_and_crawl"
+        "visuals_toolkit_v4"
       ],
       "attached_skill_ids": [
         "offline-use-case-router",
@@ -211,30 +201,25 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "air_gapped_jupyter_python",
         "ask_user",
         "comfyui_workflow_inspector",
         "docker_compose_triage",
-        "github_repo_inspector",
         "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
         "llm_council",
         "markdown_skill_builder",
-        "mediawiki_legacy_crawler",
         "offline_artifact_workbench",
         "openapi_schema_inspector",
-        "openui_generative_ui",
         "parallel_task_planner",
         "parallel_tools",
         "repo_tree_analyzer",
-        "safe_http_fetcher",
         "sub_agent",
         "subagent_orchestrator",
         "tool_skill_overlay_planner",
-        "visuals_toolkit_v4",
-        "web_search_and_crawl"
+        "visuals_toolkit_v4"
       ],
       "meta_skill_ids": [
         "offline-use-case-router",
@@ -389,7 +374,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -544,7 +529,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "openapi_schema_inspector",
         "json_csv_text_validator",
@@ -697,7 +682,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -851,7 +836,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -1005,7 +990,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -1159,7 +1144,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -1313,7 +1298,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "repo_tree_analyzer",
@@ -1469,7 +1454,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -1624,7 +1609,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -1777,7 +1762,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "offline_artifact_workbench",
         "inline_visuals_toolkit_v3",
@@ -1930,7 +1915,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -2082,7 +2067,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -2483,7 +2468,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -2641,7 +2626,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"
@@ -3089,7 +3074,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -3248,7 +3233,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -3454,7 +3439,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3612,7 +3597,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -3766,7 +3751,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "docker_compose_triage",
@@ -3920,7 +3905,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -4073,7 +4058,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench",
@@ -4246,7 +4231,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -4418,7 +4403,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4592,7 +4577,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "json_csv_text_validator",
@@ -4769,7 +4754,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -4934,7 +4919,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "tool_skill_overlay_planner",
@@ -5097,7 +5082,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "parallel_task_planner",
         "parallel_tools",
@@ -5264,7 +5249,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "ask_user",
         "offline_artifact_workbench",
@@ -5419,7 +5404,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "air_gapped_jupyter_python",
@@ -5573,7 +5558,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -5727,7 +5712,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "docker_compose_triage",
@@ -5880,7 +5865,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "air_gapped_jupyter_python",
@@ -6034,7 +6019,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -6630,7 +6615,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "repo_tree_analyzer",
         "json_csv_text_validator",
@@ -6786,7 +6771,7 @@
         }
       },
       "vision_enabled": true,
-      "has_embedded_svg_icon": true,
+      "has_embedded_png_icon": true,
       "meta_primary_tool_ids": [
         "json_csv_text_validator",
         "offline_artifact_workbench"

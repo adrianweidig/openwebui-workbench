@@ -244,9 +244,9 @@ MODEL_TEMPERATURES = {
 }
 TOOL_FORCE_PROFILES = {
     "allgemein": {
-        "tools": ["air_gapped_jupyter_python", "ask_user", "comfyui_workflow_inspector", "docker_compose_triage", "github_repo_inspector", "inline_visuals_toolkit_v3", "json_csv_text_validator", "llm_council", "markdown_skill_builder", "mediawiki_legacy_crawler", "offline_artifact_workbench", "openapi_schema_inspector", "openui_generative_ui", "parallel_task_planner", "parallel_tools", "repo_tree_analyzer", "safe_http_fetcher", "sub_agent", "subagent_orchestrator", "tool_skill_overlay_planner", "visuals_toolkit_v4", "web_search_and_crawl"],
+        "tools": ["air_gapped_jupyter_python", "ask_user", "comfyui_workflow_inspector", "docker_compose_triage", "inline_visuals_toolkit_v3", "json_csv_text_validator", "llm_council", "markdown_skill_builder", "offline_artifact_workbench", "openapi_schema_inspector", "parallel_task_planner", "parallel_tools", "repo_tree_analyzer", "sub_agent", "subagent_orchestrator", "tool_skill_overlay_planner", "visuals_toolkit_v4"],
         "skills": ["offline-use-case-router", "redundant-fallback-tooling", "native-tool-calling-rollout", "parallel-tools-subagents", "secure-tool-usage"],
-        "focus": "Freie oder gemischte Nutzerprobleme mit dem Basismodell `coder` bearbeiten, passende Spezialmodelle empfehlen und alle importierbaren Tools sowie alle Standardfilter fallbezogen aktiv nutzen.",
+        "focus": "Freie oder gemischte Nutzerprobleme mit dem Basismodell `coder` bearbeiten, passende Spezialmodelle empfehlen und die offlinefähigen Standardtools sowie alle Standardfilter fallbezogen aktiv nutzen.",
     },
     "anforderungsanalyse-lastenheft": {
         "tools": ["ask_user", "offline_artifact_workbench", "tool_skill_overlay_planner", "json_csv_text_validator", "parallel_task_planner", "llm_council"],
@@ -1272,16 +1272,16 @@ def icon_data_uri_for_model(model_id: str) -> str:
     icons = manifest.get("icons", []) if isinstance(manifest, dict) else []
     for icon in icons:
         if isinstance(icon, dict) and icon.get("id") == icon_id:
-            icon_path = ROOT / str(icon.get("path", ""))
-            if icon_path.exists() and icon_path.suffix.lower() == ".svg":
-                encoded = base64.b64encode(stable_text_bytes(icon_path)).decode("ascii")
-                return f"data:image/svg+xml;base64,{encoded}"
+            icon_path = ROOT / str(icon.get("png_path") or icon.get("path", ""))
+            if icon_path.exists() and icon_path.suffix.lower() == ".png":
+                encoded = base64.b64encode(icon_path.read_bytes()).decode("ascii")
+                return f"data:image/png;base64,{encoded}"
     return "/static/favicon.png"
 
 
 def tool_ids_for_model(model_id: str, offline_tool_ids: List[str], all_tool_ids: List[str]) -> List[str]:
     if model_id == "allgemein":
-        return list(all_tool_ids)
+        return list(offline_tool_ids)
     if model_id == "internetwissen":
         return list(TOOL_FORCE_PROFILES[model_id]["tools"])
     if model_id in {"eggplant-flaui-skriptmigration", "flaui-testassistent"}:
@@ -1513,7 +1513,7 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                     if isinstance(model.get("meta"), dict) and isinstance(model.get("meta", {}).get("capabilities"), dict)
                     else False
                 ),
-                "has_embedded_svg_icon": str(model.get("meta", {}).get("profile_image_url", "")).startswith("data:image/svg+xml;base64,")
+                "has_embedded_png_icon": str(model.get("meta", {}).get("profile_image_url", "")).startswith("data:image/png;base64,")
                 if isinstance(model.get("meta"), dict)
                 else False,
                 "meta_primary_tool_ids": model.get("meta", {}).get("primaryToolIds", []) if isinstance(model.get("meta"), dict) else [],
@@ -1665,7 +1665,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "model_import_file": rel(MODEL_IMPORT),
         "model_params_summary_file": rel(MODEL_PARAMS_SUMMARY),
         "generic_icon_manifest": rel(MODEL_ICON_ARTIFACTS / "openwebui-generic-icons.json"),
-        "model_icon_policy": "profile_image_url uses embedded SVG data URIs generated from Modelle/icons/openwebui-generic-icons.json so the all-in-one model import can attach icons without a static file mount.",
+        "model_icon_policy": "profile_image_url uses embedded PNG data URIs generated from Modelle/icons/openwebui-generic-icons.json so OpenWebUI can serve profile images offline via /model/profile/image without external URLs or static mounts.",
         "tool_force_policy": {
             "behavior": "Standard chat models keep primaryToolIds, skillIds and recommendedSkillIds in metadata. OpenWebUI uses meta.skillIds for real model-attached Skills; recommendedSkillIds stays as an audit-friendly mirror.",
             "model_profiles": TOOL_FORCE_PROFILES,
@@ -1730,10 +1730,10 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         ],
         "builtin_tool_note": "OpenWebUI Built-in Tool categories are version-dependent. This project safely enables meta.capabilities.builtin_tools and params.function_calling=native, and the model prompts explicitly prefer standard OpenWebUI capabilities such as file/knowledge context, citations, status updates, code interpreter and native tool calls when the instance exposes them.",
         "skill_note": "OpenWebUI binds model-attached Skills through meta.skillIds. Skills are imported and published before models, then each chat model receives the profile-specific skillIds list so OpenWebUI can inject the lightweight Skill manifest and expose the view_skill builtin for lazy loading.",
-        "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to specialized models. The Allgemein fallback model intentionally receives every importable tool so mixed or uncategorized requests can use the full repository toolbox when the target instance permits it.",
+        "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to any model by default. Optional network tools can still be imported explicitly for connected target instances.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
         "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, the model-specific example result file, files under beispiele/ and the primary product-i18n files manifest.json, de.md and en.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
-        "icon_note": "Generic black-on-white SVG profile icons are shipped under Modelle/dist/artifacts/icons and can be assigned manually or referenced through meta.profile_image_url when copied to a static OpenWebUI path.",
+        "icon_note": "Generic black-on-white PNG/SVG profile icons are shipped under Modelle/dist/artifacts/icons. Model profiles embed PNG data URIs in meta.profile_image_url because current OpenWebUI rejects SVG data URIs for profile images.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
         "tool_mode": CHAT_MODEL_TOOL_MODE,
@@ -1774,8 +1774,8 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         if params.get("function_calling") != FUNCTION_CALLING_NATIVE:
             issues.append(f"Chat-Modell {model_id} hat function_calling nicht auf native")
         profile_image_url = str(meta.get("profile_image_url", ""))
-        if not profile_image_url.startswith("data:image/svg+xml;base64,"):
-            issues.append(f"Chat-Modell {model_id} hat kein eingebettetes SVG-Icon in meta.profile_image_url")
+        if not profile_image_url.startswith("data:image/png;base64,"):
+            issues.append(f"Chat-Modell {model_id} hat kein eingebettetes PNG-Icon in meta.profile_image_url")
         unsupported_params = sorted(set(params) - SUPPORTED_MISTRAL_RUNTIME_PARAMS)
         if unsupported_params:
             issues.append(f"Chat-Modell {model_id} setzt nicht freigegebene Runtime-Parameter: {', '.join(unsupported_params)}")
