@@ -1313,7 +1313,12 @@ def knowledge_file_count(client: OpenWebUIClient, knowledge_id: str) -> int:
             if isinstance(result, list):
                 return len(result)
             if isinstance(result, dict):
-                files = result.get("files") or result.get("items")
+                total = result.get("total")
+                if isinstance(total, int):
+                    return total
+                files = result.get("files")
+                if files is None:
+                    files = result.get("items")
                 if isinstance(files, list):
                     return len(files)
         except RuntimeError as exc:
@@ -1346,8 +1351,9 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
     for file_path in files:
         uploaded = client.upload_file(file_path, process=True)
         file_refs.append({"file_id": uploaded["id"]})
+    add_response: Any | None = None
     try:
-        client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
+        add_response = client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
     except RuntimeError as exc:
         if not is_not_found_error(exc):
             raise
@@ -1364,6 +1370,13 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
         missing_file_ids = [item["file_id"] for item in file_refs if item["file_id"] not in linked_file_ids]
         if missing_file_ids:
             raise RuntimeError(f"Knowledge import did not link all files for {name}: {missing_file_ids}")
+    linked_count = knowledge_file_count(client, knowledge_id)
+    if linked_count < len(files):
+        warnings = add_response.get("warnings") if isinstance(add_response, dict) else None
+        warning_text = f" Warnings: {warnings}" if warnings else ""
+        raise RuntimeError(
+            f"Knowledge import linked only {linked_count}/{len(files)} files for {name}.{warning_text}"
+        )
     return KnowledgeUpsertResult({"id": knowledge_id, "name": name}, changed=True)
 
 
