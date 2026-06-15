@@ -60,32 +60,21 @@
         "code_interpreter"
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "air_gapped_jupyter_python",
+        "docker_compose_triage",
+        "offline_artifact_workbench"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -98,11 +87,6 @@
         "data-cleaning-analysis",
         "docker-openwebui-troubleshooting",
         "secure-tool-usage"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.json"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -204,14 +188,77 @@
         "data-cleaning-analysis",
         "docker-openwebui-troubleshooting",
         "secure-tool-usage"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.json"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.json",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "beispiele/json-csv-log-analyse-goldstandard-briefing.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.json",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "c48363f16c322e2d2a76b185071d93e138dd401b0be0e591ee7f0d10c0b915b1",
+            "chars": 839,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `json-csv-log-analyse`. Analysiere strukturierte Daten mit Parsingstatus, Datenqualität, Befunden und lokalen Checks. Nutze `fachwissen.md`, `beispielergebnis.json` und `beispiele/json-csv-log-analyse-goldstandard-briefing.md`.\n\n# Arbeitsmodus\n\n- Parsingstatus zuerst.\n- Befunde mit Feld, Beispiel oder Logstelle belegen.\n- Keine sensiblen Rohdaten unnötig wiederholen.\n- Externe Validatoren nicht voraussetzen.\n- Wenn JSON verlangt ist, valides JSON ohne freie Prosa liefern.\n\n# Rückfragenlogik\n\nHöchstens drei Rückfragen:\n\n1. Was ist das erwartete Schema oder Zielformat?\n2. Darf ein lokaler Parser/Code-Interpreter verwendet werden?\n3. Sind Rohdaten statt Screenshot verfügbar?\n\n# Standardausgabe\n\n```json\n{\n  \"parse_status\": {},\n  \"findings\": [],\n  \"safe_commands\": [],\n  \"limits\": []\n}\n```"
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "57d0e1cd1b5bcd0dc726a6616a221ab623fd02f0d42f16a895514ca9b8f4d776",
+            "chars": 4018,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell analysiert JSON, CSV, Logs und strukturierte Textdaten. Es prüft Parsing, Schema, Datenqualität, Fehlerhäufungen, Auffälligkeiten und reproduzierbare lokale Checks.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell für:\n\n- JSON-Validierung,\n- CSV-Kopfzeilen- und Datenqualitätsprüfung,\n- Logmuster und Fehlerhäufigkeiten,\n- Vergleich strukturierter Dateien,\n- Parser-Diagnose,\n- kompakte technische Befunde.\n\n# Typische Nutzeranliegen\n\n- „Warum schlägt dieser JSON-Import fehl?“\n- „Analysiere diesen Logauszug.“\n- „Prüfe CSV-Spalten und Datenqualität.“\n- „Gib mir einen strukturierten Befund als JSON.“\n\n# Eingaben, die das Modell erwarten kann\n\nJSON, JSON Lines, CSV, TSV, Logauszüge, Stacktraces, Parserfehler, Schemaerwartungen, Screenshot-Logs oder Datenbeispiele.\n\n# Fachliche Grundlagen\n\nAnalyse strukturierter Daten braucht zuerst Parsingstatus:\n\n- Datei lesbar?\n- Encoding erkennbar?\n- Trennzeichen und Quote-Regeln plausibel?\n- JSON syntaktisch valide?\n- Pflichtfelder vorhanden?\n- Datentypen konsistent?\n- Ausreißer, fehlende Werte und Duplikate?\n- Fehlerlinien und Beispiele?\n\n# Bewährte Arbeitsweise\n\n1. Eingabeformat erkennen.\n2. Parsingstatus und Grenzen nennen.\n3. Schema oder Kopfzeile prüfen.\n4. Auffälligkeiten mit Beispielen belegen.\n5. Keine sensiblen Rohdaten unnötig wiederholen.\n6. sichere lokale Prüfkommandos nennen.\n7. Ergebnis als JSON oder Markdown liefern, je nach Nutzerwunsch.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| valides JSON verlangt | nur JSON ausgeben |\n| CSV ohne Rohdaten | um Rohtext statt Screenshot bitten |\n| Log mit Secrets | Werte maskieren |\n| Parserfehler | minimale Repro und betroffene Stelle nennen |\n| große Datei | Stichprobe, Schema und lokale Kommandos vorschlagen |\n\n# Ausgabeformate\n\nPrimär für maschinenlesbare Befunde:\n\n```text\nbeispielergebnis.json\n```\n\nAlternativen: Markdown-Report, CSV-Fehlerliste, JSON Lines.\n\n# Geeignete Beispielergebnis-Formate\n\n`beispielergebnis.json` ist sinnvoll, weil Befunde, Parsingstatus, Findings und Checks strukturiert weiterverwendbar sind.\n\n# Qualitätskriterien\n\n- Parsingstatus ist explizit.\n- Befunde haben Beleg oder Beispiel.\n- Keine vollständige Ausgabe sensibler Rohdaten.\n- Lokale Checks sind nicht destruktiv.\n- JSON-Ausgaben sind valide.\n- Annahmen zu Encoding, Delimiter oder Zeitzone sind markiert.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| Analyse ohne Parsingstatus | Parsing zuerst |\n| Screenshot als exakt behandeln | Rohdaten anfordern |\n| alle Logs kopieren | nur relevante Zeilen mit Maskierung |\n| Ursache ohne Beleg | Finding und Hypothese trennen |\n| externe Validatoren voraussetzen | lokale Standardbibliothek oder vorhandene Tools nutzen |\n\n# Umgang mit fehlenden Informationen\n\nFehlen Rohdaten, kann das Modell nur sichtbare Muster beschreiben und muss Genauigkeitsgrenzen nennen.\n\n# Umgang mit widersprüchlichen Informationen\n\nWidersprüche zwischen Schema und Datei werden als Datenqualitätsfinding ausgegeben, inklusive Feld, beobachtetem Wert und erwarteter Regel.\n\n# Grenzen des Modells\n\n- Keine vollständige Analyse großer Dateien ohne Zugriff.\n- Keine Garantie auf Encoding-Erkennung bei Screenshots.\n- Keine Websuche oder externe API-Validierung.\n\n# Sicherheits- und Datenschutzregeln\n\nSecrets maskieren. Keine privaten Rohlogs vollständig ausgeben. Keine produktiven Lösch-, Reset- oder Migrationsbefehle vorschlagen.\n\n# Offline-Nutzung\n\nNutze lokale Parser, Standardbibliothek, bereitgestellte Schemas und kleine Stichproben. Externe Services sind nicht Voraussetzung.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Format erkannt?\n2. Parsingstatus genannt?\n3. Findings belegt?\n4. Sensible Daten minimiert?\n5. Checks lokal und sicher?\n\n# Gute Beispiele\n\n```json\n{\"parse_status\": {\"csv_header_valid\": false}, \"findings\": [{\"field\": \"ticket_id\", \"issue\": \"missing\"}]}\n```\n\n# Schlechte Beispiele\n\n```md\nDer Import ist kaputt, weil die Datei falsch ist.\n```\n\nProblem: kein Parsingstatus, kein Feld, kein Beleg."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.json",
+            "filename": "Golden_Example.json",
+            "sha256": "06343ddd6a7cad694e1ba8d6b59d37401bfc3ba7edd8e5cef8c8eca0df80896a",
+            "chars": 4656,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "{\n  \"schema_version\": \"1.0\",\n  \"model_id\": \"json-csv-log-analyse\",\n  \"title\": \"Golden Example für JSON-, CSV- und Loganalyse\",\n  \"description\": \"Referenzbeispiel für strukturierte Analyse mit Parsingstatus, belegten Befunden, sicheren lokalen Checks und klaren Grenzen.\",\n  \"input\": {\n    \"user_request\": \"Analysiere den Importfehler. Gib das Ergebnis als valides JSON aus. Keine sensiblen Rohdaten vollständig wiederholen.\",\n    \"files\": [\n      {\n        \"name\": \"openwebui-upload.log\",\n        \"type\": \"log\",\n        \"content\": \"2026-02-18 09:14:01 INFO upload.start file=tickets.csv user_id=u-2841\\n2026-02-18 09:14:01 INFO parser.detect delimiter=comma encoding=utf-8-sig\\n2026-02-18 09:14:02 ERROR importer.failed exception=KeyError field=ticket_id route=/api/import/tickets status=500\\n2026-02-18 09:14:02 DEBUG traceback=KeyError: 'ticket_id'\\n2026-02-18 09:14:02 INFO upload.end result=failed duration_ms=812\"\n      },\n      {\n        \"name\": \"tickets.csv\",\n        \"type\": \"csv\",\n        \"content\": \"ticketId,status,created_at,priority\\n10017,open,2026-02-17T10:12:00,P2\\n10018,closed,2026-02-17T11:05:00,P3\\n10019,open,2026-02-17T12:44:00,P1\"\n      }\n    ],\n    \"expected_schema\": {\n      \"required_csv_fields\": [\n        \"ticket_id\",\n        \"status\",\n        \"created_at\",\n        \"priority\"\n      ]\n    }\n  },\n  \"expected_output\": {\n    \"schema_version\": \"1.0\",\n    \"input_profile\": {\n      \"files\": [\n        \"openwebui-upload.log\",\n        \"tickets.csv\"\n      ],\n      \"assumptions\": [\n        \"Logzeitpunkte sind lokal und nicht zeitzonennormalisiert\",\n        \"CSV-Encoding wurde aus dem Log als utf-8-sig übernommen\",\n        \"Das erwartete Importschema fordert die Spalte ticket_id\"\n      ]\n    },\n    \"parse_status\": {\n      \"json_valid\": null,\n      \"csv_header_valid\": false,\n      \"csv_rows_read\": 3,\n      \"log_lines_read\": 5,\n      \"delimiter\": \",\",\n      \"encoding\": \"utf-8-sig\"\n    },\n    \"findings\": [\n      {\n        \"severity\": \"P1\",\n        \"title\": \"CSV-Pflichtspalte `ticket_id` fehlt\",\n        \"evidence\": \"tickets.csv Kopfzeile enthält `ticketId`, aber das erwartete Schema fordert `ticket_id`\",\n        \"impact\": \"Der Importer greift auf ein nicht vorhandenes Feld zu und bricht mit KeyError ab\",\n        \"next_check\": \"CSV-Kopfzeile gegen Importschema prüfen oder Mapping von `ticketId` auf `ticket_id` ergänzen\"\n      },\n      {\n        \"severity\": \"P1\",\n        \"title\": \"Importfehler wird als HTTP 500 statt als Validierungsfehler behandelt\",\n        \"evidence\": \"openwebui-upload.log zeigt `status=500` zusammen mit `exception=KeyError field=ticket_id`\",\n        \"impact\": \"Nutzer erhalten einen Serverfehler, obwohl die Ursache ein validierbarer Schemafehler in der Eingabedatei ist\",\n        \"next_check\": \"Vor der fachlichen Verarbeitung eine Header-Validierung mit strukturierter Fehlerantwort ausführen\"\n      },\n      {\n        \"severity\": \"P2\",\n        \"title\": \"Fehlerantwort enthält offenbar keine strukturierte Feldliste\",\n        \"evidence\": \"Log enthält nur `KeyError: 'ticket_id'` und keine validierte Liste fehlender Pflichtfelder\",\n        \"impact\": \"Support und Nutzer können die Datei schwerer korrigieren, weil der konkrete Schemaabgleich nicht ausgegeben wird\",\n        \"next_check\": \"Negativen Importtest für fehlende Pflichtspalte `ticket_id` ergänzen\"\n      }\n    ],\n    \"safe_commands\": [\n      \"python - <<'PY'\\nimport csv\\nwith open('tickets.csv', encoding='utf-8-sig', newline='') as f:\\n    reader = csv.reader(f)\\n    print(next(reader))\\nPY\",\n      \"python - <<'PY'\\nimport csv\\nrequired = {'ticket_id', 'status', 'created_at', 'priority'}\\nwith open('tickets.csv', encoding='utf-8-sig', newline='') as f:\\n    header = next(csv.reader(f))\\nmissing = sorted(required - set(header))\\nextra = sorted(set(header) - required)\\nprint({'missing': missing, 'extra': extra})\\nPY\",\n      \"python - <<'PY'\\nfrom collections import Counter\\nwith open('openwebui-upload.log', encoding='utf-8') as f:\\n    levels = Counter(line.split()[2] for line in f if len(line.split()) >= 3)\\nprint(dict(levels))\\nPY\"\n    ],\n    \"limits\": [\n      \"Keine personenbezogenen CSV-Zeilen vollständig wiederholt\",\n      \"Keine Ursache behauptet, die nicht aus Log, CSV-Kopfzeile oder erwartetem Schema ableitbar ist\",\n      \"JSON-Inhalt wurde nicht analysiert, weil keine JSON-Eingabedatei vorhanden ist\"\n    ]\n  },\n  \"quality_checks\": [\n    \"Parsingstatus steht vor den Befunden im erwarteten Antwortobjekt\",\n    \"Jeder Befund enthält Evidenz, Auswirkung und nächsten Prüfschritt\",\n    \"Sichere lokale Kommandos verwenden nur lesende Operationen\",\n    \"Die erwartete Ausgabe ist valides JSON ohne freie Prosa\"\n  ]\n}"
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `json-csv-log-analyse`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.json`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.json`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.15,
-      "top_p": 0.8,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `json-csv-log-analyse` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.json` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.json` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.\n\nBei Codeaufgaben orientiere Implementierung, Tests, Fehlerbehandlung, Struktur und Robustheit an `Golden_Example.json`.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

@@ -44,16 +44,19 @@ TOOLS_REGISTRY = TOOLS_DIR / "dist" / "openwebui-tool-registry.json"
 FUNCTION_REGISTRY = TOOLS_DIR / "dist" / "openwebui-function-registry.json"
 SKILLS_DIR = OPENWEBUI_EXT / "skills"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
-REQUIRED_MODEL_KNOWLEDGE_FILES = ("mainprompt.md", "fachwissen.md", "beispielergebnis.md")
-MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
-    "api-schnittstellenentwurf": ("mainprompt.md", "fachwissen.md", "beispielergebnis.yaml"),
-    "codegenerierung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.py"),
-    "informationsextraktion": ("mainprompt.md", "fachwissen.md", "beispielergebnis.json"),
-    "json-csv-log-analyse": ("mainprompt.md", "fachwissen.md", "beispielergebnis.json"),
-    "n8n-workflow-architect": ("mainprompt.md", "fachwissen.md", "beispielergebnis.json"),
-    "präsentationserstellung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.html"),
-    "report-dashboard-vorbereitung": ("mainprompt.md", "fachwissen.md", "beispielergebnis.html"),
-    "tabellen-csv-datenanalyse": ("mainprompt.md", "fachwissen.md", "beispielergebnis.py"),
+WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA = "workbench-file-context/v1"
+WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID = "workbench_required_file_context_filter"
+REQUIRED_FILE_CONTEXT_CACHE = ROOT / "Artefakte" / "temp" / "openwebui_required_file_context_uploads.json"
+LEGACY_EXAMPLE_RESULT_FILE = "beispielergebnis.md"
+MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES = {
+    "api-schnittstellenentwurf": "beispielergebnis.yaml",
+    "codegenerierung": "beispielergebnis.py",
+    "informationsextraktion": "beispielergebnis.json",
+    "json-csv-log-analyse": "beispielergebnis.json",
+    "n8n-workflow-architect": "beispielergebnis.json",
+    "präsentationserstellung": "beispielergebnis.html",
+    "report-dashboard-vorbereitung": "beispielergebnis.html",
+    "tabellen-csv-datenanalyse": "beispielergebnis.py",
 }
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
@@ -135,6 +138,8 @@ class ModelLoadResult:
     models: list[dict[str, Any]]
     knowledge_updated: int = 0
     knowledge_skipped: int = 0
+    required_files_uploaded: int = 0
+    required_files_reused: int = 0
 
 
 class OpenWebUIClient:
@@ -276,6 +281,30 @@ class OpenWebUIClient:
         except HTTPError as exc:
             raw = exc.read().decode("utf-8", errors="replace")
             raise RuntimeError(f"Upload failed for {path}: HTTP {exc.code}: {raw[:1000]}") from exc
+
+    def file_process_status(self, file_id: str) -> dict[str, Any]:
+        return self.request("GET", f"/api/v1/files/{file_id}/process/status")
+
+    def wait_for_file_processing(self, file_id: str, timeout_seconds: int = 180) -> str:
+        deadline = time.time() + max(1, timeout_seconds)
+        last_status = "unknown"
+        while time.time() < deadline:
+            try:
+                status_payload = self.file_process_status(file_id)
+            except RuntimeError as exc:
+                if is_not_found_error(exc):
+                    return "unknown"
+                raise
+            if isinstance(status_payload, dict):
+                raw_status = status_payload.get("status") or status_payload.get("state") or status_payload.get("result")
+                if raw_status:
+                    last_status = str(raw_status)
+                if last_status.lower() in {"completed", "complete", "processed", "success", "done"}:
+                    return "completed"
+                if last_status.lower() in {"failed", "error"}:
+                    raise RuntimeError(f"OpenWebUI file processing failed for {file_id}: {status_payload}")
+            time.sleep(2)
+        return last_status
 
 
 def normalize_openwebui_base_url(base_url: str) -> str:
@@ -582,6 +611,28 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
     # but no longer disables public workspace publication.
     public_read = True
     skip_knowledge = args.skip_knowledge or as_bool(first_config_value(config, ["import.skip_knowledge"], False))
+    model_file_context = {
+        "enabled": as_bool(first_config_value(config, ["model_file_context.enabled"], True), True),
+        "upload_required_files": as_bool(first_config_value(config, ["model_file_context.upload_required_files"], True), True),
+        "poll_processing_status": as_bool(first_config_value(config, ["model_file_context.poll_processing_status"], True), True),
+        "processing_timeout_seconds": as_int(
+            first_config_value(config, ["model_file_context.processing_timeout_seconds"], 180),
+            180,
+        ),
+        "attach_uploaded_files_to_model_meta": as_bool(
+            first_config_value(config, ["model_file_context.attach_uploaded_files_to_model_meta"], True),
+            True,
+        ),
+        "required_context_filter_id": str(
+            first_config_value(
+                config,
+                ["model_file_context.required_context_filter_id"],
+                WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID,
+            )
+            or WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID
+        ),
+        "knowledge_examples_only": as_bool(first_config_value(config, ["model_file_context.knowledge_examples_only"], True), True),
+    }
     jupyter = {
         "OPENWEBUI_JUPYTER_URL": (
             args.jupyter_url
@@ -739,6 +790,7 @@ def resolve_runtime_config(args: argparse.Namespace) -> dict[str, Any]:
         "environment": environment,
         "tool_valves": explicit_tool_valves,
         "function_valves": explicit_function_valves,
+        "model_file_context": model_file_context,
     }
 
 
@@ -1053,12 +1105,32 @@ def skill_files() -> list[Path]:
     return [path for path in sorted(SKILLS_DIR.glob("*.md")) if path.name.upper() != "README.MD"]
 
 
-def required_model_knowledge_file_names(model_id: str) -> tuple[str, ...]:
-    return MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES.get(model_id, REQUIRED_MODEL_KNOWLEDGE_FILES)
+def legacy_example_result_file_name(model_id: str) -> str:
+    return MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES.get(model_id, LEGACY_EXAMPLE_RESULT_FILE)
 
 
-def required_model_knowledge_files(model_dir: Path) -> list[Path]:
-    files = [model_dir / name for name in required_model_knowledge_file_names(model_dir.name)]
+def required_file_context_entries(model: dict[str, Any]) -> list[dict[str, Any]]:
+    meta = model.get("meta") if isinstance(model.get("meta"), dict) else {}
+    file_context = meta.get("workbenchFileContext") if isinstance(meta, dict) else {}
+    if not isinstance(file_context, dict) or file_context.get("schema") != WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA:
+        raise RuntimeError(f"Model {model.get('id')} has no valid meta.workbenchFileContext")
+    required = file_context.get("requiredFiles")
+    if not isinstance(required, list) or len(required) != 3:
+        raise RuntimeError(f"Model {model.get('id')} must define exactly three required file context files")
+    entries = [item for item in required if isinstance(item, dict)]
+    if len(entries) != 3:
+        raise RuntimeError(f"Model {model.get('id')} required file context entries must be objects")
+    return entries
+
+
+def required_file_context_files(model_dir: Path, model: dict[str, Any]) -> list[Path]:
+    files: list[Path] = []
+    for item in required_file_context_entries(model):
+        rel_path = str(item.get("path") or "").strip().replace("\\", "/")
+        if not rel_path or rel_path.startswith("../") or "/../" in rel_path:
+            raise RuntimeError(f"Unsafe required file context path for {model_dir.name}: {rel_path!r}")
+        path = model_dir / rel_path
+        files.append(path)
     missing = [path for path in files if not path.exists()]
     empty = [path for path in files if path.exists() and path.stat().st_size == 0]
     if missing or empty:
@@ -1067,7 +1139,11 @@ def required_model_knowledge_files(model_dir: Path) -> list[Path]:
             details.append("missing: " + ", ".join(str(path.relative_to(ROOT)) for path in missing))
         if empty:
             details.append("empty: " + ", ".join(str(path.relative_to(ROOT)) for path in empty))
-        raise RuntimeError(f"Model knowledge files are incomplete for {model_dir.name}: {'; '.join(details)}")
+        raise RuntimeError(f"Model required file context is incomplete for {model_dir.name}: {'; '.join(details)}")
+    for item, path in zip(required_file_context_entries(model), files):
+        digest = hashlib.sha256(path.read_text(encoding="utf-8").strip().encode("utf-8")).hexdigest()
+        if item.get("sha256") and item.get("sha256") != digest:
+            raise RuntimeError(f"Model required file context sha256 mismatch for {model_dir.name}/{path.name}")
     return files
 
 
@@ -1090,14 +1166,38 @@ def model_i18n_files(model_dir: Path) -> list[Path]:
 
 
 def model_knowledge_files(model_dir: Path) -> list[Path]:
-    files = required_model_knowledge_files(model_dir)
+    model_path = model_dir / "model.json"
+    model: dict[str, Any] = {}
+    if model_path.exists():
+        data = read_json(model_path)
+        if isinstance(data, list) and data and isinstance(data[0], dict):
+            model = data[0]
+    meta = model.get("meta") if isinstance(model.get("meta"), dict) else {}
+    configured = meta.get("exampleKnowledgeFiles") if isinstance(meta, dict) else None
+    if isinstance(configured, list):
+        files = []
+        for rel_path in configured:
+            clean = str(rel_path).strip().replace("\\", "/")
+            if not clean or clean.startswith("../") or "/../" in clean:
+                raise RuntimeError(f"Unsafe model knowledge path for {model_dir.name}: {clean!r}")
+            files.append(model_dir / clean)
+    else:
+        files = []
+        legacy = model_dir / legacy_example_result_file_name(model_dir.name)
+        if legacy.exists():
+            files.append(legacy)
+        files.extend(model_example_files(model_dir))
+        files.extend(model_i18n_files(model_dir))
     examples = model_example_files(model_dir)
     if not examples:
         raise RuntimeError(f"Model {model_dir.name} has no reusable example artifact under {model_dir / MODEL_EXAMPLES_DIR_NAME}")
     product_i18n = model_i18n_files(model_dir)
     if not product_i18n:
         raise RuntimeError(f"Model {model_dir.name} has no product i18n profiles under {model_dir / MODEL_I18N_DIR_NAME}")
-    return [*files, *examples, *product_i18n]
+    missing = [path for path in files if not path.exists()]
+    if missing:
+        raise RuntimeError(f"Model Knowledge files are incomplete for {model_dir.name}: missing {', '.join(str(path.relative_to(ROOT)) for path in missing)}")
+    return files
 
 
 def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
@@ -1110,6 +1210,7 @@ def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
         data = read_json(model_file)
         if not isinstance(data, list) or not data or not isinstance(data[0], dict):
             raise RuntimeError(f"{model_file.relative_to(ROOT)} is not an importable OpenWebUI model JSON array")
+        required_file_context_files(model_file.parent, data[0])
         model_knowledge_files(model_file.parent)
     return [
         ImportResult("tools", skipped=tool_count),
@@ -1120,6 +1221,7 @@ def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
         ImportResult("function_valves", skipped=len(configured_function_valves(runtime))),
         ImportResult("skills", skipped=len(skills)),
         ImportResult("skill_public_access", skipped=len(skills)),
+        ImportResult("model_required_file_context", skipped=len(model_files) * 3),
         ImportResult("model_knowledge_collections", skipped=len(model_files)),
         ImportResult("knowledge_public_access", skipped=0 if runtime.get("skip_knowledge") else len(model_files)),
         ImportResult("models", skipped=len(model_files)),
@@ -1306,6 +1408,25 @@ def knowledge_has_fingerprint(knowledge: dict[str, Any], fingerprint: str) -> bo
     return fingerprint in description
 
 
+def load_required_file_context_cache() -> dict[str, dict[str, Any]]:
+    if not REQUIRED_FILE_CONTEXT_CACHE.exists():
+        return {}
+    try:
+        data = read_json(REQUIRED_FILE_CONTEXT_CACHE)
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def write_required_file_context_cache(cache: dict[str, dict[str, Any]]) -> None:
+    REQUIRED_FILE_CONTEXT_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    REQUIRED_FILE_CONTEXT_CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def required_file_context_cache_key(model_id: str, rel_path: str, sha256: str) -> str:
+    return f"{model_id}|{rel_path}|{sha256}"
+
+
 def knowledge_file_count(client: OpenWebUIClient, knowledge_id: str) -> int:
     for path in (f"/api/v1/knowledge/{knowledge_id}/files", f"/api/knowledge/{knowledge_id}/files"):
         try:
@@ -1339,7 +1460,7 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/update", payload)
         if public:
             update_knowledge_access(client, knowledge_id, public=True)
-        if knowledge_has_fingerprint(knowledge, fingerprint) and knowledge_file_count(client, knowledge_id) >= len(files):
+        if knowledge_has_fingerprint(knowledge, fingerprint) and knowledge_file_count(client, knowledge_id) == len(files):
             return KnowledgeUpsertResult({"id": knowledge_id, "name": name}, changed=False)
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/reset")
     else:
@@ -1380,16 +1501,96 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
     return KnowledgeUpsertResult({"id": knowledge_id, "name": name}, changed=True)
 
 
-def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_knowledge: bool) -> ModelLoadResult:
+def upload_required_file_context(
+    client: OpenWebUIClient,
+    model_dir: Path,
+    model: dict[str, Any],
+    runtime: dict[str, Any],
+    cache: dict[str, dict[str, Any]],
+) -> tuple[list[dict[str, Any]], int, int]:
+    model_id = str(model.get("id"))
+    settings = runtime.get("model_file_context", {}) if isinstance(runtime.get("model_file_context"), dict) else {}
+    if not as_bool(settings.get("enabled"), True):
+        required_file_context_files(model_dir, model)
+        return [], 0, 0
+    required_entries = required_file_context_entries(model)
+    uploaded_files: list[dict[str, Any]] = []
+    uploaded = reused = 0
+    should_upload = as_bool(settings.get("upload_required_files"), True)
+    should_poll = as_bool(settings.get("poll_processing_status"), True)
+    timeout_seconds = as_int(settings.get("processing_timeout_seconds", 180), 180)
+    for entry in required_entries:
+        rel_path = str(entry.get("path") or "").strip().replace("\\", "/")
+        sha256 = str(entry.get("sha256") or "")
+        path = model_dir / rel_path
+        if not should_upload:
+            uploaded_files.append(
+                {
+                    "role": entry.get("role"),
+                    "path": rel_path,
+                    "filename": entry.get("filename") or path.name,
+                    "sha256": sha256,
+                    "status": "not_uploaded",
+                }
+            )
+            continue
+        key = required_file_context_cache_key(model_id, rel_path, sha256)
+        cached = cache.get(key) if isinstance(cache.get(key), dict) else None
+        if cached and cached.get("fileId"):
+            file_id = str(cached["fileId"])
+            status = str(cached.get("status") or "cached")
+            if should_poll:
+                status = client.wait_for_file_processing(file_id, timeout_seconds=timeout_seconds)
+            reused += 1
+        else:
+            response = client.upload_file(path, process=True)
+            file_id = str(response.get("id") or response.get("file_id") or "")
+            if not file_id:
+                raise RuntimeError(f"OpenWebUI did not return a file id for required file {path.relative_to(ROOT)}")
+            status = client.wait_for_file_processing(file_id, timeout_seconds=timeout_seconds) if should_poll else "uploaded"
+            uploaded += 1
+        record = {
+            "role": entry.get("role"),
+            "path": rel_path,
+            "filename": entry.get("filename") or path.name,
+            "fileId": file_id,
+            "sha256": sha256,
+            "status": status,
+        }
+        uploaded_files.append(record)
+        cache[key] = {**record, "modelId": model_id, "updatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    return uploaded_files, uploaded, reused
+
+
+def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_knowledge: bool, runtime: dict[str, Any]) -> ModelLoadResult:
     models: list[dict[str, Any]] = []
     knowledge_updated = 0
     knowledge_skipped = 0
+    required_files_uploaded = 0
+    required_files_reused = 0
+    file_context_cache = load_required_file_context_cache()
     for model_file in sorted(SINGLE_MODELS.glob("*/model.json")):
         data = read_json(model_file)
         if not isinstance(data, list) or not data:
             continue
         model = data[0]
         model_id = str(model.get("id"))
+        meta = model.setdefault("meta", {})
+        required_file_context_files(model_file.parent, model)
+        uploaded_files, uploaded_count, reused_count = upload_required_file_context(
+            client,
+            model_file.parent,
+            model,
+            runtime,
+            file_context_cache,
+        )
+        required_files_uploaded += uploaded_count
+        required_files_reused += reused_count
+        settings = runtime.get("model_file_context", {}) if isinstance(runtime.get("model_file_context"), dict) else {}
+        if uploaded_files and as_bool(settings.get("attach_uploaded_files_to_model_meta"), True):
+            workbench_file_context = meta.setdefault("workbenchFileContext", {})
+            if isinstance(workbench_file_context, dict):
+                workbench_file_context["uploadedFiles"] = uploaded_files
         if upload_knowledge:
             prompt_files = model_knowledge_files(model_file.parent)
             knowledge_result = upsert_knowledge_with_files(
@@ -1404,26 +1605,36 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
                 knowledge_updated += 1
             else:
                 knowledge_skipped += 1
-            meta = model.setdefault("meta", {})
             existing = [item for item in meta.get("knowledge", []) if isinstance(item, dict)]
             meta["knowledge"] = [item for item in existing if item.get("id") != knowledge["id"]]
             meta["knowledge"].append(knowledge)
         else:
-            required_model_knowledge_files(model_file.parent)
+            model_knowledge_files(model_file.parent)
         if public:
             model["access_grants"] = public_read_grants(public)
         models.append(model)
-    return ModelLoadResult(models, knowledge_updated=knowledge_updated, knowledge_skipped=knowledge_skipped)
+    write_required_file_context_cache(file_context_cache)
+    return ModelLoadResult(
+        models,
+        knowledge_updated=knowledge_updated,
+        knowledge_skipped=knowledge_skipped,
+        required_files_uploaded=required_files_uploaded,
+        required_files_reused=required_files_reused,
+    )
 
 
-def import_models(client: OpenWebUIClient, public: bool, upload_knowledge: bool) -> tuple[ImportResult, ModelLoadResult]:
-    loaded = load_models_with_knowledge(client, public=public, upload_knowledge=upload_knowledge)
+def import_models(client: OpenWebUIClient, public: bool, upload_knowledge: bool, runtime: dict[str, Any]) -> tuple[ImportResult, ModelLoadResult]:
+    loaded = load_models_with_knowledge(client, public=public, upload_knowledge=upload_knowledge, runtime=runtime)
     models = loaded.models
     if not models:
         return ImportResult("models", skipped=1), loaded
-    response = client.request("POST", "/api/v1/models/import", {"models": models})
-    if response is not True:
-        raise RuntimeError(f"Unexpected OpenWebUI model import response: {type(response).__name__}")
+    for model in models:
+        response = client.request("POST", "/api/v1/models/import", {"models": [model]})
+        if response is not True:
+            model_id = str(model.get("id") or "<unknown>")
+            raise RuntimeError(
+                f"Unexpected OpenWebUI model import response for {model_id}: {type(response).__name__}"
+            )
     verify_imported_models(client, models, expect_knowledge=upload_knowledge)
     if public:
         for model in models:
@@ -1436,6 +1647,8 @@ def verify_imported_models(client: OpenWebUIClient, models: list[dict[str, Any]]
     missing: list[str] = []
     incomplete_knowledge: list[str] = []
     incomplete_skills: list[str] = []
+    incomplete_required_context: list[str] = []
+    required_context_in_knowledge: list[str] = []
     for model in models:
         model_id = str(model.get("id"))
         try:
@@ -1446,6 +1659,33 @@ def verify_imported_models(client: OpenWebUIClient, models: list[dict[str, Any]]
         if not isinstance(imported, dict) or imported.get("id") != model_id:
             missing.append(model_id)
             continue
+        expected_meta = model.get("meta") if isinstance(model.get("meta"), dict) else {}
+        expected_context = expected_meta.get("workbenchFileContext") if isinstance(expected_meta.get("workbenchFileContext"), dict) else {}
+        expected_required = expected_context.get("requiredFiles") if isinstance(expected_context.get("requiredFiles"), list) else []
+        expected_uploaded = expected_context.get("uploadedFiles") if isinstance(expected_context.get("uploadedFiles"), list) else []
+        expected_file_ids = {
+            str(item.get("fileId") or item.get("file_id"))
+            for item in expected_uploaded
+            if isinstance(item, dict) and (item.get("fileId") or item.get("file_id"))
+        }
+        expected_required_names = {
+            str(item.get("filename") or item.get("path") or "").rsplit("/", 1)[-1]
+            for item in expected_required
+            if isinstance(item, dict)
+        }
+        expected_required_names = {name for name in expected_required_names if name}
+        if expected_required or expected_file_ids:
+            imported_meta = imported.get("meta") if isinstance(imported.get("meta"), dict) else {}
+            imported_context = imported_meta.get("workbenchFileContext") if isinstance(imported_meta.get("workbenchFileContext"), dict) else {}
+            imported_required = imported_context.get("requiredFiles") if isinstance(imported_context.get("requiredFiles"), list) else []
+            imported_uploaded = imported_context.get("uploadedFiles") if isinstance(imported_context.get("uploadedFiles"), list) else []
+            imported_file_ids = {
+                str(item.get("fileId") or item.get("file_id"))
+                for item in imported_uploaded
+                if isinstance(item, dict) and (item.get("fileId") or item.get("file_id"))
+            }
+            if len(imported_required) != 3 or (expected_file_ids and not expected_file_ids.issubset(imported_file_ids)):
+                incomplete_required_context.append(model_id)
         if expect_knowledge:
             expected_knowledge = [
                 item
@@ -1460,6 +1700,25 @@ def verify_imported_models(client: OpenWebUIClient, models: list[dict[str, Any]]
             imported_ids = {str(item.get("id")) for item in imported_knowledge}
             if expected_knowledge and any(str(item.get("id")) not in imported_ids for item in expected_knowledge):
                 incomplete_knowledge.append(model_id)
+            if expected_required_names:
+                for item in imported_knowledge:
+                    knowledge_id = str(item.get("id") or "")
+                    if not knowledge_id:
+                        continue
+                    knowledge_detail = client.request("GET", f"/api/v1/knowledge/{knowledge_id}")
+                    if not isinstance(knowledge_detail, dict):
+                        continue
+                    knowledge_files = knowledge_detail.get("files")
+                    if not isinstance(knowledge_files, list):
+                        continue
+                    file_names = {
+                        str(file_item.get("filename") or file_item.get("name") or file_item.get("path") or "").rsplit("/", 1)[-1]
+                        for file_item in knowledge_files
+                        if isinstance(file_item, dict)
+                    }
+                    if expected_required_names.intersection(file_names):
+                        required_context_in_knowledge.append(model_id)
+                        break
         expected_skill_ids = [
             str(item)
             for item in (model.get("meta") or {}).get("skillIds", [])
@@ -1478,6 +1737,16 @@ def verify_imported_models(client: OpenWebUIClient, models: list[dict[str, Any]]
         raise RuntimeError(
             "OpenWebUI model import did not persist Knowledge links for models: "
             + ", ".join(sorted(incomplete_knowledge))
+        )
+    if incomplete_required_context:
+        raise RuntimeError(
+            "OpenWebUI model import did not persist required file context links for models: "
+            + ", ".join(sorted(incomplete_required_context))
+        )
+    if required_context_in_knowledge:
+        raise RuntimeError(
+            "OpenWebUI model import linked required file context files through Knowledge/RAG for models: "
+            + ", ".join(sorted(required_context_in_knowledge))
         )
     if incomplete_skills:
         raise RuntimeError(
@@ -1513,6 +1782,7 @@ def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> in
         client,
         public=bool(runtime["public_read"]),
         upload_knowledge=not bool(runtime["skip_knowledge"]),
+        runtime=runtime,
     )
     results = [
         tool_import,
@@ -1523,6 +1793,11 @@ def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> in
         function_valves,
         skill_import,
         ImportResult("skill_public_access", updated=len(skills)),
+        ImportResult(
+            "model_required_file_context",
+            created=model_load.required_files_uploaded,
+            skipped=model_load.required_files_reused,
+        ),
         ImportResult(
             "model_knowledge_collections",
             updated=0 if runtime["skip_knowledge"] else model_load.knowledge_updated,
@@ -1554,7 +1829,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--ca-file", default=None, help="CA bundle file for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--ca-path", default=None, help="Directory with trusted CA certificates for a private OpenWebUI HTTPS endpoint.")
     parser.add_argument("--public-read", action="store_true", help="Compatibility flag; public read is enforced for workspace imports.")
-    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload mainprompt.md, fachwissen.md, model-specific example result files, beispiele/ and primary i18n files as Knowledge.")
+    parser.add_argument("--skip-knowledge", action="store_true", help="Do not upload example/legacy/i18n files as model Knowledge. Required file context files are still uploaded when model_file_context.upload_required_files is enabled.")
     parser.add_argument(
         "--include-optional-network-tools",
         action="store_true",

@@ -2,6 +2,13 @@
 
 Importierbare OpenWebUI-Filter-Functions für modellübergreifende Middleware.
 
+## workbench_required_file_context_filter.py
+
+Injiziert pro Workbench-Modell die drei Pflichtdateien `mainprompt.md`,
+`fachwissen.md` und `Golden_Example.<ext>` als geschützten
+Full-Context-Systemblock und hängt ihre OpenWebUI-File-IDs an den Request an.
+Beispiele bleiben Knowledge/RAG und werden nicht pauschal injiziert.
+
 ## context_compressor_filter.py
 
 Zählt vor jedem Modellaufruf die geschätzten Chat-Kontexttokens. Sobald der

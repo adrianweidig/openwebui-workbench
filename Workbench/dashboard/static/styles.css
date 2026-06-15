@@ -319,6 +319,45 @@ textarea:focus {
   padding: 8px;
 }
 
+.model-bulk-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.model-bulk-actions label {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.model-bulk-actions button {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+}
+
+.model-row-item {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.model-row-item .model-select {
+  width: 16px;
+  height: 16px;
+  margin: 15px 0 0 2px;
+  accent-color: var(--accent);
+}
+
 .model-row,
 .resource-row {
   display: block;
@@ -695,6 +734,40 @@ textarea:read-only:not(:disabled) {
   display: grid;
   gap: 12px;
   margin-top: 16px;
+}
+
+.sync-settings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.sync-settings label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.sync-settings select {
+  min-width: 0;
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 10px;
+}
+
+.sync-setting-state {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .action-card {
@@ -1308,6 +1381,15 @@ textarea:focus-visible {
 
 .model-list {
   padding: 10px;
+}
+
+.model-bulk-actions {
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 10px;
+}
+
+.model-bulk-actions button {
+  grid-column: 1 / -1;
 }
 
 .model-row,

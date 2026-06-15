@@ -1,20 +1,66 @@
 # Beispielergebnis: Testprogrammierung
 
-Dieses Beispielartefakt verweist auf die mitgelieferten, lauffähig strukturierten Testprogrammierungsbeispiele. Die Detailartefakte liegen unter `beispiele/openwebui-testprogrammierung-code-examples/` und decken C#, Ada, Python und Java ab.
+Dieses Goldstandard-Beispiel zeigt eine direkt nutzbare Offline-Antwort des Modells `testprogrammierung`. Es nutzt nur sichtbare Nutzerinformationen, markiert Annahmen und vermeidet erfundene Quellen, Zahlen oder Dateiinhalte.
 
-## Enthaltene Beispielgruppen
+## Nutzeranfrage
 
-- `01_csharp_playwright_nunit_login_validation`
-- `02_csharp_selenium_xunit_headless_ui`
-- `03_csharp_mstest_unit_domain_logic`
-- `04_csharp_xunit_api_contract_tests`
-- `05_ada_aunit_calculator`
-- `06_ada_gnattest_bounded_counter`
-- `07_csharp_playwright_acceptance_criteria_checkout`
-- `08_csharp_test_stack_decision_matrix`
-- `09_python_pytest_playwright_form_validation`
-- `10_java_selenium_junit_maven_ui`
+Ein Nutzer benötigt ein prüfbares Ergebnis für den Aufgabenbereich `Testprogrammierung` mit lokalem Kontext und optionalen Beispielen.
 
-## Nutzung
+## Gute Antwort
 
-Die Beispiele dienen als Format- und Strukturanker für Antworten mit Testcode, lokaler Ausführung und CI/CD-Hinweisen. Reale Projektpfade, Secrets, URLs und Zugangsdaten müssen immer aus dem Nutzerkontext stammen und dürfen nicht erfunden werden.
+### Kurzfazit
+
+Ich erstelle eine erste belastbare Fassung für diesen Auftrag: Das Modell `Testprogrammierung` soll lokale Nutzeraufträge strukturiert, quellenbewusst und ohne erfundene Fakten bearbeiten.
+
+Die Antwort bleibt offline nutzbar. Nicht bereitgestellte Fakten, aktuelle Versionen, Rechtsstände, Kennzahlen, Dateiinhalte oder Toolausgaben werden nicht ergänzt.
+
+### Annahmen
+
+- Die Sprache bleibt Deutsch.
+- Der Auftrag basiert auf den vom Nutzer bereitgestellten Stichpunkten, Dateien oder Screenshots.
+- Fehlende Pflichtinformationen werden als offen markiert statt erfunden.
+- Falls Bilder oder Screenshots fehlen, wird nur mit Text gearbeitet und Vision nicht vorgetäuscht.
+
+### Arbeitsprodukt
+
+| Abschnitt | Inhalt |
+|---|---|
+| Ziel | Das Modell `Testprogrammierung` soll lokale Nutzeraufträge strukturiert, quellenbewusst und ohne erfundene Fakten bearbeiten. |
+| Eingangsquellen | Nutzertext, bereitgestellte Dateien und sichtbare Bildinhalte; keine Live-Websuche |
+| Zielformat | `beispielergebnis.md`; ergänzendes Few-Shot-Material in `beispiele/testprogrammierung-goldstandard-briefing.md` |
+| Kernstruktur | Kurzfazit, verwendete Quellen, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+| Prüflogik | Das Ergebnis muss Quellen, Annahmen, offene Punkte, konkrete Arbeitsschritte und prüfbare Qualitätsgrenzen trennen. |
+| Offline-Grenze | Aktuelle externe Fakten werden als prüfpflichtig markiert |
+
+### Musterabschnitt für das Ergebnis
+
+#### Verwendete Informationen
+
+- Direkt aus der Anfrage übernommen: Ein Nutzer benötigt ein prüfbares Ergebnis für den Aufgabenbereich `Testprogrammierung` mit lokalem Kontext und optionalen Beispielen.
+- Sichtbare Zusatzquellen: nur berücksichtigen, wenn sie im Chat oder als Datei vorliegen.
+- Nicht belegt: externe Aktualität, nicht bereitgestellte Dateien, interne Kennzahlen und fremde Systeme.
+
+#### Ergebnisentwurf
+
+1. Den Auftrag in das passende Zielformat überführen.
+2. Belegte Inhalte und Annahmen getrennt darstellen.
+3. Risiken und offene Punkte so formulieren, dass ein Mensch sie prüfen kann.
+4. Mit einem konkreten nächsten Schritt schließen, der lokal ausführbar ist.
+
+### Vision- und Screenshot-Regel
+
+Nutze Vision nur für bereitgestellte Screenshots, UI-Zustände, Scans oder Diagramme und markiere unsichere visuelle Beobachtungen.
+
+### Qualitätscheck
+
+- Das Ergebnis muss Quellen, Annahmen, offene Punkte, konkrete Arbeitsschritte und prüfbare Qualitätsgrenzen trennen.
+- Keine erfundenen Quellen, Dateien, Kennzahlen oder Toolergebnisse.
+- Keine Secrets, produktiven Tokens oder personenbezogenen Beispieldaten.
+- Offline weiterverwendbar.
+
+## Warum dieses Beispiel gut ist
+
+- Es zeigt das gewünschte Arbeitsmuster ohne Platzhalter.
+- Es trennt belegte Informationen und Annahmen.
+- Es macht Offline-Grenzen explizit.
+- Es verweist auf das echte Beispielartefakt.

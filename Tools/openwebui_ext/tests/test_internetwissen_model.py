@@ -36,9 +36,12 @@ class InternetwissenModelContractTest(unittest.TestCase):
         self.assertFalse(tool_ids & FORBIDDEN_NETWORK_TOOLS)
         self.assertFalse(primary_tool_ids & FORBIDDEN_NETWORK_TOOLS)
 
-    def test_required_knowledge_files_exist(self) -> None:
-        for name in ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]:
+    def test_required_file_context_files_exist(self) -> None:
+        golden = sorted(MODEL_DIR.glob("Golden_Example.*"))
+        self.assertEqual(len(golden), 1)
+        for name in ["mainprompt.md", "fachwissen.md", golden[0].name]:
             self.assertTrue((MODEL_DIR / name).is_file(), name)
+        self.assertTrue((MODEL_DIR / "beispielergebnis.md").is_file())
 
     def test_examples_and_i18n_exist(self) -> None:
         examples = sorted((MODEL_DIR / "beispiele").glob("*.md"))

@@ -60,32 +60,21 @@
         "code_interpreter"
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
         "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench",
         "visuals_toolkit_v4"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -98,11 +87,6 @@
         "repository-maintenance",
         "offline-artifact-production",
         "secure-tool-usage"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.md"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -204,14 +188,77 @@
         "repository-maintenance",
         "offline-artifact-production",
         "secure-tool-usage"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.md"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.md",
+        "beispiele/code-dokumentation-goldstandard-briefing.md",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.md",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "d892d8364f6dfb662850474ed279895f90517a40fdb52518b5de5fc2897be100",
+            "chars": 997,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `code-dokumentation`. Erstelle wahre, wartbare Entwicklerdokumentation aus sichtbarem Code und lokalem Kontext. Nutze `fachwissen.md`, `beispielergebnis.md` und `beispiele/code-dokumentation-goldstandard-briefing.md`.\n\n# Arbeitsmodus\n\n- Dokumentiere nur belegte Funktionen, Schnittstellen und Grenzen.\n- Wähle bewusst zwischen Tutorial, How-to, Reference und Explanation.\n- Halte Codebeispiele klein, syntaktisch plausibel und offline nutzbar.\n- Erfinde keine Badges, Roadmaps, Supportkanäle, Benchmarks oder Lizenzangaben.\n- Kommentare sollen Warum, Invarianten und Grenzen erklären, nicht offensichtlichen Code wiederholen.\n\n# Rückfragenlogik\n\nStelle höchstens drei Rückfragen:\n\n1. Wer ist die Zielgruppe?\n2. Welcher Dokumenttyp wird benötigt?\n3. Welche Dateien oder Schnittstellen sind maßgeblich?\n\n# Standardausgabe\n\n```md\n## Überblick\n\n## Nutzung\n\n## Datenvertrag oder API\n\n## Konfiguration\n\n## Fehlerverhalten\n\n## Beispiele\n\n## Pflegehinweise\n```"
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "344804ab2f07636c2a113479baaea1f0ac1471b0f87071d5c8b7e341caee289b",
+            "chars": 5333,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell erstellt und verbessert Entwicklerdokumentation für Code, Module, APIs, Datenflüsse, Konfiguration und Betrieb. Es macht vorhandenes Verhalten verständlich, ohne nicht belegte Features zu erfinden.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell für:\n\n- README-Abschnitte,\n- Modul- und Architekturübersichten,\n- API- und CLI-Dokumentation,\n- Code-Kommentare und Docstrings,\n- Betriebs- und Troubleshooting-Hinweise,\n- Onboarding-Dokumente für Entwickler.\n\n# Typische Nutzeranliegen\n\n- „Dokumentiere dieses Modul.“\n- „Erstelle eine README aus dem Code.“\n- „Erkläre Datenfluss und Konfiguration.“\n- „Verbessere die Docstrings.“\n- „Schreibe ein Runbook für Entwickler.“\n\n# Eingaben, die das Modell erwarten kann\n\n- Code-Dateien,\n- bestehende README oder Docs,\n- Tests,\n- Konfigurationsdateien,\n- CLI-Ausgaben,\n- Architekturdiagramme oder Screenshots,\n- Nutzerbeschreibung von Zielgruppe und Dokumenttyp.\n\n# Fachliche Grundlagen\n\nGute technische Dokumentation trennt Dokumentarten:\n\n- Tutorial: lernorientierter Einstieg.\n- How-to: konkrete Aufgabe lösen.\n- Reference: präzise Beschreibung von API, CLI, Konfiguration.\n- Explanation: Hintergrund, Architektur, Trade-offs.\n\nCode-Dokumentation muss wahr, wartbar und zielgruppengerecht sein. Sie beschreibt nur vorhandene Funktionen oder klar markierte Annahmen.\n\nFür Codebeispiele gilt:\n\n- ausführbar oder klar als Ausschnitt markiert,\n- Sprache im Codeblock angeben,\n- keine Ellipsen als versteckte Logik,\n- keine nicht vorhandenen Imports,\n- keine produktiven Secrets,\n- lokale Projektkonventionen bevorzugen.\n\n# Bewährte Arbeitsweise\n\n1. Zielgruppe bestimmen: Nutzer, Entwickler, Betreiber, Reviewer.\n2. Dokumenttyp wählen: Einstieg, How-to, Reference, Erklärung.\n3. Quellen prüfen: Code, Tests, Konfig, vorhandene Docs.\n4. Datenvertrag und Nebenwirkungen dokumentieren.\n5. Beispiele minimal, korrekt und offline nutzbar halten.\n6. Pflegehinweise und Grenzen nennen.\n7. Nicht belegte Funktionen weglassen oder als offen markieren.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| öffentlicher Einstieg fehlt | README-Struktur vorschlagen |\n| API/CLI muss dokumentiert werden | Reference mit Parametern, Rückgaben, Fehlern |\n| Modul ist schwer verständlich | Erklärung mit Datenfluss und Verantwortlichkeiten |\n| Nutzer will Kommentare | nur Warum, Invarianten und nicht offensichtliche Grenzen kommentieren |\n| Fakten fehlen | offene Punkte nennen, keine Features erfinden |\n\n# Ausgabeformate\n\nStandard ist Markdown:\n\n```md\n## Überblick\n\n## Nutzung\n\n## Datenvertrag\n\n## Konfiguration\n\n## Fehlerverhalten\n\n## Beispiele\n\n## Pflegehinweise\n```\n\nAlternativen:\n\n- Docstrings,\n- README-Diff,\n- API-Reference,\n- Troubleshooting-Runbook.\n\n# Geeignete Beispielergebnis-Formate\n\n`beispielergebnis.md` ist passend. Bei generiertem HTML-Dokument kann zusätzlich `.html` sinnvoll sein, aber nur wenn der Nutzer ein Artefakt statt Markdown-Doku braucht.\n\n# Qualitätskriterien\n\n- Aussagen sind durch Code, Tests oder Nutzerkontext belegbar.\n- Beispiele sind syntaktisch plausibel.\n- Dokumenttyp ist klar.\n- Nutzer kann die nächste Aktion ausführen.\n- Wartungshinweise nennen, wann Doku angepasst werden muss.\n- Keine Fake-Badges, Roadmaps oder Supportkanäle.\n- Keine privaten Daten oder Secrets.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| Features erfinden | nur sichtbare Funktionen dokumentieren |\n| Referenz und Tutorial vermischen | Dokumenttyp trennen |\n| Codebeispiele mit Platzhaltern | echte, kleine Beispielwerte nutzen |\n| Kommentare wiederholen den Code | Warum und Grenzen erklären |\n| fehlende Fehlerfälle | Fehlerverhalten und Grenzen ergänzen |\n\n# Umgang mit fehlenden Informationen\n\nFehlende Informationen werden als Maintainer-Entscheidung oder offener Punkt formuliert, nicht als Platzhalter:\n\n```md\nOffen: Es liegt kein Lizenzhinweis vor; die README behauptet deshalb keine Open-Source-Lizenz.\n```\n\n# Umgang mit widersprüchlichen Informationen\n\nCode und Tests haben Vorrang vor veralteter Dokumentation. Abweichungen werden als Doku-Befund markiert.\n\n# Grenzen des Modells\n\n- Keine Garantie, alle Codepfade erkannt zu haben.\n- Keine Dokumentation nicht sichtbarer Features.\n- Keine Rechtsberatung zu Lizenz oder Compliance.\n- Keine Websuche im Offline-Betrieb.\n\n# Sicherheits- und Datenschutzregeln\n\n- Keine Secrets in Beispielen.\n- Beispiel-Domains nur als sichere, nicht produktive Werte verwenden.\n- Personenbezogene Daten anonymisieren.\n- Fehlerbeispiele dürfen keine produktiven Tokens oder internen URLs enthalten.\n\n# Offline-Nutzung\n\nDokumentation muss ohne externe Links verständlich bleiben. Externe Quellen können ergänzend genannt werden, dürfen aber keine Voraussetzung für Nutzung oder Beispielausführung sein.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Ist der Dokumenttyp klar?\n2. Sind Aussagen belegt?\n3. Sind Beispiele lauffähig oder klar als Ausschnitt markiert?\n4. Gibt es keine Platzhalter?\n5. Sind Konfiguration, Fehler und Grenzen beschrieben?\n6. Sind Secrets entfernt?\n\n# Gute Beispiele\n\n```md\n`src/importer.py` validiert CSV-Tickets vor der Persistenz. Gültige Zeilen werden normalisiert; ungültige Dateien brechen mit Zeile und Spalte ab.\n```\n\n# Schlechte Beispiele\n\n```md\nDieses Modul ist eine hochperformante Enterprise-Lösung.\n```\n\nProblem: werblich, unbelegt, nicht wartbar."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.md",
+            "filename": "Golden_Example.md",
+            "sha256": "6cd88a2dd6b34bae744c52e6f119efc480206ec2cb34f9340fa1e2091c4b98c8",
+            "chars": 8845,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "Golden Example: Entwicklerdokumentation für einen CSV-Ticketimport\nÜberblick\n\nsrc/importer.py stellt einen CSV-Import für Support-Tickets bereit. Das Modul liest Ticketdaten aus einer CSV-Datei, validiert die Struktur und Pflichtfelder, normalisiert gültige Datensätze und übergibt sie an den Repository-Layer. Ungültige Dateien werden vor der Persistenz abgelehnt.\n\nDiese Dokumentation beschreibt nur das sichtbare und fachlich belegte Verhalten aus dem bereitgestellten Kontext: CSV-Dateien, Pflichtfeldprüfung, verständliche Fehlermeldungen und nachvollziehbare Importprotokollierung. Nicht sichtbare Implementierungsdetails, Frameworks, Datenbanken, Queues, Performancewerte, Roadmaps oder Supportkanäle werden nicht ergänzt.\n\nDokumenttyp\n\nDiese Datei ist eine kombinierte Reference und How-to-Dokumentation für Entwickler und Betreiber:\n\nReference für Datenvertrag, Konfiguration und Fehlerverhalten.\n\nHow-to für lokale Nutzung und Tests.\n\nKeine Marketingbeschreibung und kein Architekturversprechen über nicht sichtbare Komponenten.\n\nVerantwortlichkeit des Moduls\n\nDas Importmodul ist für folgende Aufgaben zuständig:\n\nCSV-Datei öffnen und gemäß konfiguriertem Dialekt lesen.\n\nKopfzeile und Pflichtspalten prüfen.\n\nDatensätze feldweise validieren.\n\nValide Zeilen in eine interne Ticketstruktur überführen.\n\nImportergebnis und Fehler so melden, dass Fachanwender Korrekturen durchführen können.\n\nErfolgreiche und fehlgeschlagene Importversuche protokollierbar machen.\n\nNicht belegt und deshalb nicht dokumentiert als vorhandenes Verhalten:\n\nEchtzeit-Synchronisation mit dem Quellsystem.\n\nAutomatische Korrektur fachlich falscher Daten.\n\nVerarbeitung anderer Dateiformate als CSV.\n\nProduktive Authentifizierung, Rollenmodell oder UI-Workflow.\n\nKonkrete Datenbanktechnologie oder Queue-Mechanik.\n\nNutzung\n\nDer Import kann lokal als Modul ausgeführt werden, sofern das Projekt einen entsprechenden Einstiegspunkt bereitstellt:\n\nBash\npython -m app.importer tickets.csv --dry-run\n\n--dry-run steht für eine Vorprüfung ohne dauerhafte Übernahme. Falls dieser Schalter im sichtbaren Code nicht existiert, darf er nicht in die produktive README übernommen werden. In diesem Fall muss die Dokumentation an den tatsächlichen CLI-Einstieg angepasst werden.\n\nTypischer Ablauf\nCSV-Datei\n  -> Parser liest Kopfzeile und Zeilen\n  -> Strukturprüfung validiert Pflichtspalten\n  -> Feldprüfung validiert Werte\n  -> Normalisierung erzeugt Ticketdatensätze\n  -> Repository-Layer persistiert gültige Daten\n  -> Importprotokoll hält Ergebnis fest\n\nDer Ablauf ist so zu verstehen, dass ungültige Dateien vor der Persistenz abbrechen. Wenn die Implementierung Teilimporte unterstützt, muss die Dokumentation explizit beschreiben, welche Zeilen übernommen und welche verworfen werden.\n\nDatenvertrag\n\nDer konkrete Feldkatalog muss aus Code, Tests oder fachlich freigegebenen Beispieldateien abgeleitet werden. Für den beschriebenen Ticketimport ist folgende Struktur plausibel, aber vor produktiver Übernahme gegen die Implementierung zu prüfen:\n\nSpalte\tPflicht\tErwartung\tHinweise\nticket_id\tja\tstabile Ticketkennung aus dem Quellsystem\tDarf keine personenbezogenen Inhalte enthalten.\npriority\tja\tkontrollierter Wert wie critical, high, medium oder low\tErlaubte Werte müssen aus Code oder Tests bestätigt werden.\nsummary\tja\tkurzer Ticketbetreff\tMindest- und Maximallänge müssen aus der Implementierung kommen.\ncategory\toffen\tfachliche Kategorie\tNur dokumentieren, wenn im Code sichtbar.\nsla_due_at\toffen\tDatum im Format YYYY-MM-DD\tNur dokumentieren, wenn im Code sichtbar.\nValidierungsregeln\nRegel\tErwartetes Verhalten\nDatei ist nicht lesbar\tImport bricht mit verständlicher Fehlermeldung ab.\nKopfzeile fehlt\tImport bricht vor Persistenz ab.\nPflichtspalte fehlt\tFehlermeldung nennt die fehlende Spalte.\nPflichtwert fehlt\tFehlermeldung nennt Zeile und Feld, sofern eindeutig bestimmbar.\nWert liegt außerhalb erlaubter Werte\tFehlermeldung nennt das Feld und den ungültigen Wertebereich, ohne sensible Freitexte zu protokollieren.\nCSV-Struktur ist defekt\tImport bricht kontrolliert ab, ohne Stacktrace für Fachanwender.\nKonfiguration\n\nDie folgenden Konfigurationspunkte sind für einen CSV-Importer wartungsrelevant. Sie sollten aus Code oder Projektkonfiguration dokumentiert werden:\n\nKonfiguration\tZweck\tDokumentationsregel\nTrennzeichen\tUnterscheidet Komma, Semikolon oder andere Dialekte\tNur den tatsächlich unterstützten Dialekt nennen.\nEncoding\tZeichensatz der CSV-Datei\tKeine automatische Unterstützung behaupten, wenn nicht implementiert.\nPflichtspalten\tMindeststruktur für gültige Dateien\tMuss mit Tests und Datenvertrag übereinstimmen.\nerlaubte Werte\tValidierung von Priorität, Status oder Kategorie\tEnum-Werte aus Code oder Tests übernehmen.\nmaximale Dateigröße\tSchutz vor zu großen Dateien\tNur dokumentieren, wenn technisch umgesetzt.\nLogging-Level\tDetailgrad der Protokolle\tKeine sensiblen Ticketfreitexte in Logs aufnehmen.\nFehlerverhalten\n\nUngültige Dateien werden vor der Persistenz abgelehnt. Fehlermeldungen sollen die Korrektur ermöglichen, ohne interne Details oder sensible Inhalte offenzulegen.\n\nErwartete Fehlertypen\nFehlertyp\tBeispielhafte Ursache\tEmpfohlene Meldungsstruktur\ninvalid_csv\tDatei kann nicht als CSV gelesen werden\tDatei konnte nicht als CSV verarbeitet werden.\nmissing_required_column\tKopfzeile enthält eine Pflichtspalte nicht\tPflichtspalte fehlt: priority.\nmissing_required_value\tZeile enthält leeren Pflichtwert\tZeile 12: Pflichtwert für summary fehlt.\ninvalid_value\tFeld enthält nicht erlaubten Wert\tZeile 8: priority enthält keinen erlaubten Wert.\nduplicate_ticket\tTicketkennung kommt mehrfach vor\tTicketkennung kommt mehrfach vor.\n\nFehler für Fachanwender sollen keine Python-Tracebacks, SQL-Fehler, interne Pfade, Hostnamen, Tokens oder vollständige Freitexte aus Tickets enthalten.\n\nBeispiele\nGültige minimale CSV-Datei\ncsv\nticket_id,priority,summary\nTCK-1001,medium,Notebook startet nach Update nicht\nTCK-1002,high,VPN-Verbindung bricht regelmäßig ab\nUngültige CSV-Datei mit fehlender Pflichtspalte\ncsv\nticket_id,summary\nTCK-1001,Notebook startet nach Update nicht\n\nErwartetes Verhalten: Der Import bricht vor der Persistenz ab und meldet, dass die Pflichtspalte priority fehlt.\n\nUngültige CSV-Datei mit leerem Pflichtwert\ncsv\nticket_id,priority,summary\nTCK-1001,medium,\n\nErwartetes Verhalten: Der Import meldet eine fehlende oder ungültige summary in der betroffenen Zeile. Ob die gesamte Datei abgelehnt wird oder nur der Datensatz fehlschlägt, hängt von der implementierten Teilimportregel ab und muss dokumentiert werden.\n\nLokale Tests\n\nMindestens folgende Tests sollten vorhanden sein, wenn das Modul produktiv genutzt wird:\n\nTestfall\tErwartung\ngültige Datei mit allen Pflichtspalten\tImport oder Dry-Run ist erfolgreich.\nfehlende Pflichtspalte\tImport bricht vor Persistenz ab.\nleerer Pflichtwert\tFehler enthält Feld und Zeile.\nungültiger Enum-Wert\tFehler nennt erlaubte Werte oder fachlichen Grund.\ndefekte CSV-Struktur\tkontrollierter Fehler ohne ungefangenen Stacktrace.\nDatei mit sensiblen Freitexten\tLogs enthalten keine vollständigen sensiblen Inhalte.\nwiederholte Ticketkennung\tVerhalten ist definiert und getestet.\nBetriebs- und Pflegehinweise\n\nWenn neue CSV-Spalten produktiv werden, zuerst Datenvertrag und Tests aktualisieren, danach Parser und Dokumentation.\n\nWenn sich erlaubte Werte ändern, müssen Validierung, Fehlermeldungen und Beispiele synchron angepasst werden.\n\nWenn Teilimporte eingeführt werden, muss die Dokumentation klar beschreiben, ob fehlerfreie Zeilen trotz fehlerhafter Zeilen übernommen werden.\n\nWenn Logging erweitert wird, muss geprüft werden, ob personenbezogene oder vertrauliche Ticketinhalte unbeabsichtigt ausgegeben werden.\n\nWenn ein CLI-Einstieg, API-Endpunkt oder Hintergrundjob ergänzt wird, sollte diese Dokumentation nach Dokumenttyp getrennt erweitert werden: Nutzung, Datenvertrag, Konfiguration und Fehlerverhalten.\n\nOffene Punkte für Maintainer\n\nWelche Datei enthält den tatsächlichen CLI- oder Job-Einstieg?\n\nWelche Pflichtspalten sind im Code verbindlich implementiert?\n\nWelche CSV-Dialekte und Encodings werden tatsächlich unterstützt?\n\nGibt es eine Alles-oder-nichts-Regel oder Teilimportlogik?\n\nWo werden Importprotokolle gespeichert?\n\nWelche Fehlerklassen oder Rückgabewerte existieren im Code?\n\nWelche Tests gelten als Abnahme für den Import?\n\nAbnahmekriterien für diese Dokumentation\n\nDiese Dokumentation ist wartbar, wenn folgende Bedingungen erfüllt sind:\n\nJede beschriebene Funktion lässt sich auf sichtbaren Code, Tests oder freigegebenen Fachkontext zurückführen.\n\nBeispiele verletzen den beschriebenen Datenvertrag nicht.\n\nFehlende Informationen sind als offen markiert.\n\nKeine produktiven Secrets, internen URLs oder personenbezogenen Beispieldaten sind enthalten.\n\nFehlerverhalten, Konfiguration und Pflegehinweise sind konkret genug für lokale Weiterarbeit."
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `code-dokumentation`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.35,
-      "top_p": 0.9,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `code-dokumentation` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.md` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.md` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.\n\nBei Codeaufgaben orientiere Implementierung, Tests, Fehlerbehandlung, Struktur und Robustheit an `Golden_Example.md`.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

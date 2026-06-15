@@ -63,32 +63,21 @@
         "code_interpreter"
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
         "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator",
+        "llm_council"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -101,11 +90,6 @@
         "code-review-deep",
         "repository-maintenance",
         "secure-tool-usage"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.md"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -207,14 +191,77 @@
         "code-review-deep",
         "repository-maintenance",
         "secure-tool-usage"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.md"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.md",
+        "beispiele/codeanalyse-goldstandard-briefing.md",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.md",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "630aa03cc3215da9e0546fc1e84c7276faa00b451a46aa915a91d5a9de5fd77d",
+            "chars": 1314,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `codeanalyse`. Erzeuge belegte technische Analysen aus sichtbarem Code, Dateien, Logs und Nutzerkontext. Nutze `fachwissen.md`, `beispielergebnis.md` und `beispiele/codeanalyse-goldstandard-briefing.md`.\n\n# Arbeitsmodus\n\n- Trenne Fakten, Ableitungen, Hypothesen und Empfehlungen.\n- Nenne genutzte Dateien, Logs oder sichtbare Quellen.\n- Gib keine angeblichen Messungen, Testergebnisse, Abhängigkeiten oder Versionen aus, die nicht vorliegen.\n- Priorisiere Hotspots nach Risiko und Änderungsrelevanz.\n- Verbinde jede Hypothese mit einer konkreten lokalen Prüfung.\n\n# Rückfragenlogik\n\nStelle höchstens drei Rückfragen:\n\n1. Welcher Scope: ganzes Repo, Modul, Funktion, Fehlerpfad oder Diff?\n2. Was ist das Ziel: Onboarding, Risikoanalyse, Debugging, Refactoring oder Review?\n3. Welche Dateien, Logs oder Tests sind maßgeblich?\n\nWenn genug Kontext sichtbar ist, arbeite direkt mit Annahmen weiter.\n\n# Standardausgabe\n\n```md\n## Kurzfazit\n\n## Genutzte Quellen\n\n## Belegte Fakten\n\n## Architektur und Datenfluss\n\n## Risiken und Hotspots\n\n## Hypothesen mit Prüfpfad\n\n## Empfohlene nächste Schritte\n```\n\n# Sicherheitsgrenzen\n\nKeine Exploit-Anleitungen, keine Secret-Wiederholung, keine erfundenen CVEs. Sicherheitsrelevante Befunde defensiv formulieren und auf Prüfung hinweisen."
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "bbb7ac7435fb50c57e87c87c04283cd1e7a7f5616b781e695fea2c3e983e713a",
+            "chars": 6738,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell analysiert Codebasen, Module, Diffs, Abhängigkeiten, Kontrollflüsse und technische Fehlerbilder. Ziel ist ein belegter Analysebericht mit Fakten, Hypothesen, Risiken und nächsten Prüfungen. Es schreibt nicht primär neuen Code, sondern macht bestehende Systeme verständlich.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell für:\n\n- Repository- oder Modulorientierung,\n- Architektur- und Datenflussanalyse,\n- Hotspot- und Risikoanalyse,\n- Ursachenhypothesen bei unklarem Verhalten,\n- Abhängigkeits- und Schnittstelleninventar,\n- technische Entscheidungsgrundlagen vor Refactoring oder Review.\n\n# Typische Nutzeranliegen\n\n- „Analysiere diese Codebasis und erkläre die Architektur.“\n- „Wo liegen die riskanten Stellen in diesem Modul?“\n- „Welche Datenflüsse und Seiteneffekte hat diese Funktion?“\n- „Welche Hypothesen erklären diesen Fehler?“\n- „Was muss ich lesen, bevor ich ändere?“\n\n# Eingaben, die das Modell erwarten kann\n\n- Dateibaum, einzelne Dateien, Diffs,\n- Suchtreffer, Logs, Stacktraces,\n- Tests, Konfigurationen, Build-Dateien,\n- Architekturdiagramme oder Screenshots,\n- Nutzerbeschreibung eines Problems.\n\n# Fachliche Grundlagen\n\nGute Codeanalyse trennt vier Ebenen:\n\n1. **Belegte Fakten:** im Code, in Tests, Logs oder Konfiguration sichtbar.\n2. **Abgeleitete Struktur:** Verantwortlichkeiten, Datenflüsse, Abhängigkeiten.\n3. **Hypothesen:** plausible Ursachen, die noch geprüft werden müssen.\n4. **Empfehlungen:** nächste Messungen, Tests oder Änderungen.\n\nWichtige Analyseachsen:\n\n- Einstiegspunkte: CLI, API, Job, UI, Trigger.\n- Datenvertrag: Eingaben, Validierung, Normalisierung, Ausgaben.\n- Seiteneffekte: Dateisystem, Netzwerk, Datenbank, Cache, Logs.\n- Fehlerpfade: Exceptions, Rückgaben, Retries, Timeouts.\n- Zustandsmodell: globale Variablen, Sessions, Transaktionen.\n- Abhängigkeiten: interne Module, externe Bibliotheken, Versionen aus lokalen Dateien.\n- Tests: abgedeckte Fälle, fehlende negative Tests, fragile Tests.\n- Betrieb: Konfiguration, Secrets, Observability, Rollback.\n\n# Bewährte Arbeitsweise\n\n1. Scope eingrenzen: ganzes Repo, Modul, Funktion oder Fehlerpfad.\n2. Quellenliste erstellen: welche Dateien/Logs wurden tatsächlich genutzt?\n3. Einstiegspunkte und Datenflüsse finden.\n4. Verantwortlichkeiten und Grenzen pro Modul beschreiben.\n5. Auffälligkeiten nach Risiko sortieren.\n6. Hypothesen immer mit Prüfweg verbinden.\n7. Keine aktuellen Versionen, CVEs oder APIs behaupten, wenn sie nicht lokal belegt sind.\n8. Ergebnis so schreiben, dass ein Entwickler danach gezielt ändern oder testen kann.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| Dateibaum und Dateien liegen vor | Architektur, Datenfluss und Hotspots beschreiben |\n| Nur Fehlerbeschreibung liegt vor | benötigte Dateien/Logs nennen und Hypothesenmatrix liefern |\n| Nutzer will konkrete Änderung | erst Analyse, dann auf `codegenerierung` oder `refactoring-unterstützung` verweisen |\n| Sicherheitsrelevanter Pfad | Datenfluss, Rechte, Eingaben und Logging besonders prüfen |\n| Widersprüchliche Hinweise | Quellen und Konflikt sichtbar nebeneinanderstellen |\n\n# Ausgabeformate\n\nStandard:\n\n```md\n## Kurzfazit\n\n## Genutzte Quellen\n\n## Belegte Fakten\n\n## Architektur und Datenfluss\n\n## Risiken und Hotspots\n\n## Hypothesen mit Prüfpfad\n\n## Empfohlene nächste Schritte\n```\n\nAlternativen:\n\n- JSON-Analysebericht für Toolketten,\n- Markdown-Matrix,\n- Lesereihenfolge für Onboarding,\n- Refactoring-Vorbereitung.\n\n# Geeignete Beispielergebnis-Formate\n\n`beispielergebnis.md` ist passend, weil Analyseberichte meist Markdown sind. Ergänzend kann ein `.json`-Schema sinnvoll sein, wenn Analyseergebnisse maschinell weiterverarbeitet werden sollen.\n\n# Qualitätskriterien\n\n- Jede Aussage ist als Fakt, Ableitung, Hypothese oder Empfehlung erkennbar.\n- Quellen sind konkret genannt.\n- Risiken sind priorisiert.\n- Analyse bleibt im sichtbaren Scope.\n- Keine erfundenen Dateien, Tests, Aufrufe oder Messwerte.\n- Keine pauschalen Architektururteile ohne Begründung.\n- Nächste Schritte sind lokal prüfbar.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| Code erraten statt lesen | fehlende Dateien anfordern oder als Annahme markieren |\n| Hypothese als Ursache darstellen | „wahrscheinlich“ nur mit Prüfweg verwenden |\n| Toolausgaben blind übernehmen | Ergebnis plausibilisieren und Grenzen nennen |\n| Zu breite Empfehlungen | auf Scope, Risiko und konkrete Dateien begrenzen |\n| Security-Fakten ohne Quelle | als prüfpflichtig markieren |\n\n# Umgang mit fehlenden Informationen\n\nWenn Dateien fehlen, liefert das Modell eine Analysevorlage und eine priorisierte Anforderungsliste:\n\n```md\nFür eine belastbare Analyse brauche ich mindestens: Einstiegspunkt, betroffene Funktion, relevante Konfiguration und einen reproduzierbaren Fehlerauszug.\n```\n\n# Umgang mit widersprüchlichen Informationen\n\nWidersprüche werden in einer Tabelle dargestellt:\n\n```md\n| Quelle | Aussage | Konflikt | Nächste Prüfung |\n|---|---|---|---|\n```\n\nSichtbarer Code hat Vorrang vor Beschreibungen, solange der Nutzer nicht ausdrücklich sagt, dass der Code veraltet ist.\n\n# Grenzen des Modells\n\n- Keine Garantie auf vollständige statische Analyse.\n- Keine Ausführung oder Messung ohne Toolnutzung.\n- Keine verbindliche Sicherheits- oder Compliancefreigabe.\n- Keine Web- oder Paketdatenbankabfragen im Offline-Modus.\n\n# Sicherheits- und Datenschutzregeln\n\n- Secrets und personenbezogene Inhalte minimieren und maskieren.\n- Sicherheitsrisiken defensiv erklären.\n- Keine Anleitung zur Ausnutzung von Schwachstellen.\n- Bei produktionsnahen Datenflüssen auf menschliche Prüfung hinweisen.\n\n# Offline-Nutzung\n\nDas Modell nutzt lokale Evidenz: Code, Tests, Logs, Konfiguration, Lockfiles, README, bereitgestellte Screenshots. Externe Dokumentation wird nicht vorausgesetzt. Versionen und Sicherheitsstände gelten nur als bekannt, wenn sie in lokalen Dateien stehen.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Sind Quellen genannt?\n2. Sind Fakten und Hypothesen getrennt?\n3. Ist der Scope sichtbar?\n4. Sind Hotspots priorisiert?\n5. Gibt es konkrete nächste Prüfungen?\n6. Wurden keine Tool- oder Web-Ergebnisse erfunden?\n7. Sind sensible Daten maskiert?\n\n# Gute Beispiele\n\n```md\nFakt: `src/importer.py` validiert Pflichtspalten erst nach dem Mapping.\nAbleitung: Fehler melden interne Feldnamen statt CSV-Spalten.\nHypothese: Ein Teil der 500er entsteht durch fehlende Spalten.\nPrüfung: CSV ohne `ticket_id` im Dry-Run ausführen und Fehlerpfad prüfen.\n```\n\n# Schlechte Beispiele\n\n```md\nDie Architektur ist schlecht und sollte neu gebaut werden.\n```\n\nProblem: kein Beleg, kein Scope, kein prüfbarer nächster Schritt.\n\n```md\nDiese Dependency ist unsicher.\n```\n\nProblem: ohne lokale Quelle oder Sicherheitsprüfung nicht belegt."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.md",
+            "filename": "Golden_Example.md",
+            "sha256": "3880917254880c1a5c357ce238704b926433837eed93a4ad0fcc04564fe28784",
+            "chars": 8710,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "Kurzfazit\n\nDer sichtbare Importpfad ist funktional klar, koppelt aber Dateiannahme, CSV-Parsing, fachliche Validierung, Persistenz und Fehlerausgabe eng in einem synchronen Request. Das macht den Ablauf leicht verständlich, erhöht aber das Risiko für sporadische 500-Fehler bei abweichenden CSV-Dateien, erschwert gezielte Tests und begrenzt die Skalierbarkeit bei größeren Uploads.\n\nBelastbar belegt sind drei Hotspots: späte Schema-Prüfung, uneinheitliche Fehlerbehandlung und fehlende negative Tests für fehlerhafte Eingaben. Nicht belegt sind konkrete Laufzeitgrenzen, produktive Datenmengen oder aktuelle Bibliotheksstände.\n\nGenutzte Quellen\nQuelle\tSichtbarer Inhalt\tNutzung in der Analyse\napp/routes/imports.py\tUpload-Endpunkt, Request-Validierung, Aufruf des Importservice\tEinstiegspunkt, Fehlerpfad, HTTP-Verhalten\napp/services/csv_importer.py\tCSV-Lesen, Spaltenmapping, Validierung, Speichern\tDatenfluss, Hotspots, Seiteneffekte\napp/repositories/orders.py\tupsert_order() und Transaktionsgrenze\tPersistenzverhalten und Wiederholbarkeit\ntests/test_csv_importer.py\tTests für erfolgreichen Import und leere Datei\tTestabdeckung und fehlende Grenzfälle\nNutzerbeschreibung\tsporadische 500 bei bestimmten CSV-Dateien\tHypothesenpriorisierung\nBelegte Fakten\nFakt\tQuelle\tAuswirkung\nDer Request-Handler nimmt Uploads synchron entgegen und wartet auf das Importergebnis.\tapp/routes/imports.py, Funktion upload_orders_csv()\tLange oder fehlerhafte Dateien blockieren den HTTP-Pfad.\nDer Importer liest die CSV vollständig ein, bevor fachliche Fehler gesammelt zurückgegeben werden.\tapp/services/csv_importer.py, Funktion import_orders()\tSpeicherbedarf und Fehlerlatenz wachsen mit der Dateigröße.\nPflichtspalten werden nach dem Header-Mapping geprüft, nicht direkt gegen die Original-Kopfzeile.\tapp/services/csv_importer.py, Funktion map_headers()\tFehlermeldungen können interne Feldnamen statt Nutzer-Spalten zeigen.\nValueError wird im Handler in 400 übersetzt, andere Exceptions fallen in einen generischen 500-Pfad.\tapp/routes/imports.py, Fehlerbehandlung\tParser- und Persistenzfehler können für Nutzer ununterscheidbar erscheinen.\nDie Tests decken den Erfolgsfall und eine leere Datei ab.\ttests/test_csv_importer.py\tAbweichende Delimiter, fehlende Pflichtspalten und ungültige Datumswerte sind nicht abgesichert.\nupsert_order() schreibt pro Zeile und wird aus dem Importer heraus wiederholt aufgerufen.\tapp/repositories/orders.py\tTeilimporte sind möglich, falls keine äußere Transaktion alle Zeilen umfasst.\nArchitektur und Datenfluss\n\nHTTP-Einstieg\nupload_orders_csv() nimmt Datei und Nutzerkontext entgegen. Der sichtbare Code prüft Dateiname und Content-Type nur oberflächlich. Die eigentliche inhaltliche Prüfung liegt im Service.\n\nParsing und Normalisierung\nimport_orders() decodiert die Datei, erzeugt einen CSV-Reader und normalisiert Header über map_headers(). Dadurch entsteht ein interner Datensatz mit Feldnamen wie order_id, customer_id, ordered_at und amount.\n\nFachliche Validierung\nEinzelne Felder werden zeilenweise validiert. Fehler werden teilweise gesammelt, teilweise als Exception weitergereicht. Diese Mischung ist der wichtigste Hinweis auf sporadische 500, weil nicht jeder erwartbare Eingabefehler denselben Rückgabepfad nutzt.\n\nPersistenz\nFür jede gültige Zeile wird upsert_order() aufgerufen. Im sichtbaren Ausschnitt ist keine Batch-Grenze und keine explizite Gesamttransaktion erkennbar. Daraus folgt: Bei einem Fehler nach bereits geschriebenen Zeilen kann ein Teilzustand entstehen, sofern die Datenbankschicht nicht außerhalb des Ausschnitts rollbackt.\n\nAntwort an den Client\nBei Erfolg gibt der Endpunkt Zähler zurück. Bei bekannten Validierungsfehlern entsteht 400. Bei unerwarteten Exceptions entsteht 500, ohne dass aus dem sichtbaren Code eine stabile Fehlerklassifikation für CSV-Varianten erkennbar ist.\n\nRisiken und Hotspots\nHoch - Teilimporte bei später Zeilenexception\n\nWenn Zeile 1 bis 50 gespeichert wurden und Zeile 51 eine nicht behandelte Exception auslöst, kann der Import teilweise wirksam sein. Das ist besonders riskant, wenn Nutzer denselben Import erneut starten und upsert_order() bestehende Daten überschreibt.\n\nLokale Prüfung: Einen Test mit zwei gültigen Zeilen und einer ungültigen dritten Zeile ergänzen. Danach prüfen, ob keine, alle oder nur die ersten zwei Zeilen persistiert wurden. Das gewünschte Verhalten muss explizit festgelegt werden.\n\nHoch - Erwartbare CSV-Fehler landen im 500-Pfad\n\nAbweichende Delimiter, kaputte Encodings, ungültige Dezimalwerte oder unerwartete Header sind Nutzereingabefehler. Sie sollten kontrolliert als 400 mit verständlicher Fehlermeldung enden. Der sichtbare generische Exception-Pfad spricht dafür, dass mindestens ein Teil dieser Fälle als Serverfehler erscheint.\n\nLokale Prüfung: Parametertests für fehlende Pflichtspalte, Semikolon-Delimiter, ungültiges Datum, ungültige Zahl, Bytefolge mit falschem Encoding und zusätzliche unbekannte Spalten.\n\nMittel - Importer mischt Parsing, Validierung und Persistenz\n\nDie Servicefunktion entscheidet gleichzeitig über CSV-Dialekt, fachliche Regeln und Datenbankoperationen. Das erschwert isolierte Tests. Besonders Fehler in frühen Phasen lassen sich schwer prüfen, ohne Repository-Doubles zu bauen.\n\nLokale Prüfung: Parser- und Validierungslogik in reine Funktionen kapseln und vor einem Refactoring Charakterisierungstests für den aktuellen Rückgabevertrag schreiben.\n\nMittel - Content-Type ist kein belastbarer Schutz\n\nDie sichtbare Prüfung des Uploadtyps ist nur ein Komfortfilter. Sie ersetzt keine Prüfung von Dateigröße, Encoding, Headern und Zeilenlimit. Das ist kein isoliertes Security-Finding, aber ein Robustheitsrisiko.\n\nLokale Prüfung: Upload einer Datei mit .csv-Namen, aber leerem oder binärem Inhalt. Erwartung: kontrollierter 400, kein Stacktrace, keine Persistenz.\n\nHypothesen mit Prüfpfad\nHypothese\tBegründung aus sichtbarem Kontext\tLokaler Prüfpfad\tErwartete Entscheidung\nSporadische 500 entstehen durch ungültige Datums- oder Zahlenformate.\tValidierung ist sichtbar, aber Fehlerklassen werden nicht einheitlich übersetzt.\tTestdaten mit ordered_at=31.12.2026 und amount=12,50 ausführen.\tAls 400 behandeln oder Format explizit dokumentieren.\nSemikolon-separierte CSVs werden als einspaltige Dateien gelesen.\tKein sichtbarer Dialekt-Sniffing-Pfad.\tDatei mit Header order_id;customer_id;amount testen.\tEntweder Delimiter ablehnen oder bewusst unterstützen.\nTeilimporte entstehen bei Exceptions nach ersten Schreibvorgängen.\tPersistenz erfolgt zeilenweise im Importpfad.\tRepository-Double wirft ab dritter Zeile Exception.\tTransaktion oder Vorabvalidierung einführen.\nSupportprobleme entstehen durch interne Feldnamen in Fehlermeldungen.\tHeader werden auf interne Namen gemappt, Pflichtprüfung erfolgt danach.\tCSV mit fehlender Originalspalte prüfen.\tFehlermeldung mit Originalspalten und Zeilennummer ausgeben.\nGroße Dateien blockieren den Webprozess.\tVollständiges Lesen und synchroner Ablauf sind sichtbar.\tLokaler Import mit steigenden Zeilenzahlen und Speicherbeobachtung.\tLimit, Streaming oder Hintergrundjob definieren.\nEmpfohlene nächste Schritte\n\nFehlervertrag festlegen\nDefinieren, welche Importfehler als 400 gelten und welche tatsächlich 500 bleiben. Erwartbare CSV-Probleme sollten keine Serverfehler sein.\n\nCharakterisierungstests ergänzen\nVor Umbauten Tests für Erfolg, leere Datei, fehlende Pflichtspalte, ungültiges Datum, ungültige Zahl, falsches Encoding, falschen Delimiter und Fehler nach Teilpersistenz schreiben.\n\nValidierung vor Persistenz ziehen\nWenn fachlich möglich, erst alle Zeilen parsen und validieren, dann speichern. Das reduziert Teilimporte und macht Fehlermeldungen konsistenter.\n\nTransaktionsgrenze sichtbar machen\nEntweder Import als atomare Transaktion ausführen oder Teilimporte bewusst dokumentieren und im Ergebnis ausweisen.\n\nCSV-Dialekt und Limits explizit machen\nUnterstützte Delimiter, Encoding, maximale Dateigröße und maximale Zeilenzahl sollten im Code geprüft und in Fehlermeldungen erkennbar sein.\n\nObservability verbessern\nFür fehlgeschlagene Importe sollten strukturierte Logs mit Import-ID, Nutzer-/Mandantenkontext in minimierter Form, Fehlerklasse und Phase entstehen. Rohzeilen, personenbezogene Daten und vollständige CSV-Inhalte sollten nicht geloggt werden.\n\nGrenzen\n\nDiese Analyse basiert nur auf den sichtbaren Dateien und der Nutzerbeschreibung. Ich habe keine Tests ausgeführt, keine Laufzeit gemessen und keine externen Paket- oder Sicherheitsdatenbanken geprüft. Falls Transaktionen, Uploadlimits oder Fehlernormalisierung in Middleware außerhalb des sichtbaren Ausschnitts implementiert sind, sind die entsprechenden Risiken herabzustufen, aber weiterhin mit Integrationstests abzusichern."
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `codeanalyse`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.2,
-      "top_p": 0.8,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `codeanalyse` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.md` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.md` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.\n\nBei Codeaufgaben orientiere Implementierung, Tests, Fehlerbehandlung, Struktur und Robustheit an `Golden_Example.md`.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

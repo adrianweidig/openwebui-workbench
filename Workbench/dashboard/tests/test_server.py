@@ -64,6 +64,7 @@ class WorkbenchStateTests(unittest.TestCase):
         (model_dir / "systemprompt.md").write_text("System\n", encoding="utf-8")
         (model_dir / "mainprompt.md").write_text("Main\n", encoding="utf-8")
         (model_dir / "fachwissen.md").write_text("Knowledge\n", encoding="utf-8")
+        (model_dir / "Golden_Example.md").write_text("Golden\n", encoding="utf-8")
         (model_dir / "beispielergebnis.md").write_text("Example\n", encoding="utf-8")
         (model_dir / "i18n").mkdir()
         (model_dir / "i18n" / "de.md").write_text("# Demo-Modell\n", encoding="utf-8")
@@ -101,6 +102,7 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(models[0]["i18n"]["de"]["name"], "Demo-Modell")
         self.assertIn("日本語", models[0]["i18n"]["de"]["description"])
         self.assertIn("i18n/de.md", [item["name"] for item in models[0]["files"]])
+        self.assertIn("Golden_Example.md", [item["name"] for item in models[0]["files"]])
         self.assertIn("test", models[0]["tags"])
         self.assertEqual(models[1]["id"], "übersetzung-lokalisierung")
 
@@ -155,10 +157,22 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(after["content"], "{\"ok\": true}\n")
         self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispielergebnis.json").is_file())
 
+    def test_reads_and_writes_allowed_golden_example(self) -> None:
+        after = self.state.write_model_file("demo-model", "Golden_Example.json", "{\"quality\": \"golden\"}\n")
+        self.assertEqual(after["content"], "{\"quality\": \"golden\"}\n")
+        self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "Golden_Example.json").is_file())
+
     def test_reads_and_writes_allowed_json_file_under_examples(self) -> None:
         after = self.state.write_model_file("demo-model", "beispiele/demo.json", "{\"ok\": true}\n")
         self.assertEqual(after["content"], "{\"ok\": true}\n")
         self.assertTrue((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispiele" / "demo.json").is_file())
+
+    def test_reads_and_writes_allowed_generated_example(self) -> None:
+        after = self.state.write_model_file("demo-model", "beispiele/generated/demo.md", "Generated example\n")
+        self.assertEqual(after["content"], "Generated example\n")
+        self.assertTrue(
+            (self.root / "Modelle" / "einzelmodelle" / "demo-model" / "beispiele" / "generated" / "demo.md").is_file()
+        )
 
     def test_reads_and_writes_allowed_product_i18n_markdown(self) -> None:
         after = self.state.write_model_file("demo-model", "i18n/de.md", "# Aktualisiertes Profil\n")
@@ -177,7 +191,7 @@ class WorkbenchStateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.state.read_model_file("demo-model", "beispiele/../systemprompt.md")
         with self.assertRaises(ValueError):
-            self.state.read_model_file("demo-model", "beispiele/sub/path.md")
+            self.state.read_model_file("demo-model", "beispiele/generated/bad:name.md")
 
     def test_rejects_unknown_model_id_shape(self) -> None:
         with self.assertRaises(ValueError):
@@ -208,6 +222,28 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(run.call_args.kwargs["cwd"], self.root)
         self.assertEqual(run.call_args.kwargs["env"]["WORKBENCH_ALLOW_WRITE"], "true")
 
+    def test_delete_openwebui_models_calls_admin_api(self) -> None:
+        with (
+            patch.dict(os.environ, {"OPENWEBUI_ADMIN_TOKEN": "secret-token", "OPENWEBUI_ADMIN_TOKEN_FILE": ""}),
+            patch.object(self.state, "openwebui_api_request", return_value=True) as request,
+        ):
+            result = self.state.delete_openwebui_models(["demo-model", "demo-model"])
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["deleted"], ["demo-model"])
+        request.assert_called_once_with(
+            "POST",
+            "/api/v1/models/model/delete",
+            payload={"id": "demo-model"},
+            query=None,
+        )
+
+    def test_read_only_state_blocks_openwebui_model_delete(self) -> None:
+        state = WorkbenchState(WorkbenchConfig(root=self.root, allow_write=False, locale="de"))
+
+        with self.assertRaisesRegex(PermissionError, "Schreibzugriff"):
+            state.delete_openwebui_models(["demo-model"])
+
     def test_sync_status_action_uses_token_env_without_command_exposure(self) -> None:
         state = WorkbenchState(
             WorkbenchConfig(
@@ -230,6 +266,37 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertNotIn("secret-token", command)
         self.assertEqual(run.call_args.kwargs["env"]["OPENWEBUI_ADMIN_TOKEN"], "secret-token")
         self.assertEqual(run.call_args.kwargs["env"]["OPENWEBUI_CA_FILE"], "/certs/top-secret-edge-root-ca.pem")
+        self.assertTrue(result["ok"])
+
+    def test_openwebui_base_model_options_include_remote_and_current_model(self) -> None:
+        with patch.object(
+            self.state,
+            "openwebui_api_request",
+            return_value={
+                "data": [
+                    {"id": "coder", "name": "Coder"},
+                    {"id": "groq/llama", "name": "Groq Llama"},
+                ]
+            },
+        ):
+            payload = self.state.list_openwebui_base_models()
+
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["selected"], "coder")
+        self.assertIn("coder", [item["id"] for item in payload["models"]])
+        self.assertIn("groq/llama", [item["id"] for item in payload["models"]])
+
+    def test_generate_action_passes_selected_base_model_to_generator(self) -> None:
+        completed = SimpleNamespace(returncode=0, stdout="generated\n")
+
+        with patch("Workbench.dashboard.server.subprocess.run", return_value=completed) as run:
+            result = self.state.run_action("generate", {"base_model_id": "groq/llama"})
+
+        command = run.call_args.args[0]
+        self.assertIn("--base-model-id", command)
+        self.assertIn("groq/llama", command)
+        self.assertEqual(run.call_args.kwargs["env"]["WORKBENCH_BASE_MODEL_ID"], "groq/llama")
+        self.assertEqual(result["base_model_id"], "groq/llama")
         self.assertTrue(result["ok"])
 
     def test_reads_and_writes_tool_resource(self) -> None:
@@ -625,7 +692,13 @@ class WorkbenchStateTests(unittest.TestCase):
         state = WorkbenchState(WorkbenchConfig(root=self.root, openwebui_base_url="http://openwebui:8080", locale="de"))
         release = threading.Event()
 
-        def fake_run_action(action: str) -> dict[str, object]:
+        def fake_run_action(
+            action: str,
+            options: dict[str, object] | None = None,
+            progress_callback: object | None = None,
+        ) -> dict[str, object]:
+            if callable(progress_callback):
+                progress_callback("running log\n")
             release.wait(timeout=2)
             return {
                 "action": action,
@@ -642,6 +715,12 @@ class WorkbenchStateTests(unittest.TestCase):
             second = state.start_action_job("import-openwebui")
             self.assertTrue(first["running"])
             self.assertEqual(first["job_id"], second["job_id"])
+            for _ in range(20):
+                progress = state.action_job(first["job_id"])
+                if progress["output"]:
+                    break
+                threading.Event().wait(0.05)
+            self.assertEqual(progress["output"], "running log\n")
             release.set()
             for _ in range(20):
                 current = state.action_job(first["job_id"])
@@ -748,7 +827,14 @@ class WorkbenchStateTests(unittest.TestCase):
             "output": "ok\n",
             "error": "",
         }
-        with patch.object(state, "run_action", return_value=result):
+        job = {
+            "job_id": "job-1",
+            "action": "check",
+            "running": True,
+            "ok": None,
+            "output": "",
+        }
+        with patch.object(state, "start_action_job", return_value=job) as start_job:
             status, response = self.request(
                 base_url,
                 authorization=auth,
@@ -758,8 +844,46 @@ class WorkbenchStateTests(unittest.TestCase):
                 headers={"X-Workbench-Request": "same-origin"},
             )
 
+        self.assertEqual(status, 202)
+        self.assertEqual(json.loads(response)["job_id"], "job-1")
+        start_job.assert_called_once_with("check", {})
+
+    def test_openwebui_model_delete_route_requires_workbench_request_header(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        base_url = self.start_server(state)
+        auth = self.basic_auth("admin", "secret")
+        body = json.dumps({"ids": ["demo-model"]})
+
+        status, response = self.request(
+            base_url,
+            authorization=auth,
+            path="/api/openwebui/models/delete",
+            method="POST",
+            body=body,
+        )
+        self.assertEqual(status, 403)
+        self.assertIn("same-origin", json.loads(response)["error"].lower())
+
+        with patch.object(state, "delete_openwebui_models", return_value={"ok": True, "deleted": ["demo-model"], "failed": [], "requested": ["demo-model"]}) as delete:
+            status, response = self.request(
+                base_url,
+                authorization=auth,
+                path="/api/openwebui/models/delete",
+                method="POST",
+                body=body,
+                headers={"X-Workbench-Request": "same-origin"},
+            )
+
         self.assertEqual(status, 200)
-        self.assertEqual(json.loads(response)["action"], "check")
+        self.assertEqual(json.loads(response)["deleted"], ["demo-model"])
+        delete.assert_called_once_with(["demo-model"])
 
     def test_automation_run_route_requires_workbench_request_header(self) -> None:
         state = WorkbenchState(

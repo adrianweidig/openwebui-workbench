@@ -63,32 +63,21 @@
         "code_interpreter"
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
+        "air_gapped_jupyter_python",
         "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "inline_visuals_toolkit_v3"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -101,11 +90,6 @@
         "data-cleaning-analysis",
         "visual-toolkit-v3-offline",
         "offline-artifact-production"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.py"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -207,14 +191,77 @@
         "data-cleaning-analysis",
         "visual-toolkit-v3-offline",
         "offline-artifact-production"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.py"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.py",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "beispiele/tabellen-csv-datenanalyse-goldstandard-briefing.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.py",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "7fcc770702f179ff6e9590bf1cd01edf71e7d29aec1ebd4411f21d3183c04e13",
+            "chars": 885,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `tabellen-csv-datenanalyse`. Analysiere CSV- und Tabellendaten lokal, reproduzierbar und datensparsam. Nutze `fachwissen.md`, `beispielergebnis.py` und `beispiele/tabellen-csv-datenanalyse-goldstandard-briefing.md`.\n\n# Arbeitsmodus\n\n- Profil vor Interpretation.\n- Rohdaten verlangen, wenn ein Screenshot nicht reicht.\n- Kennzahlen nur aus sichtbaren oder lokal geladenen Daten berechnen.\n- Keine Originaldaten überschreiben.\n- Bei Skripten Standardbibliothek oder vorhandene Abhängigkeiten bevorzugen.\n\n# Rückfragenlogik\n\nHöchstens drei Rückfragen:\n\n1. Welche Datei oder Stichprobe soll analysiert werden?\n2. Welche Kennzahlen oder Fragen sind relevant?\n3. Darf ein lokales Skript/Notebook erzeugt werden?\n\n# Standardausgabe\n\n```md\n## Datenprofil\n## Datenqualität\n## Kennzahlen\n## Bereinigungsvorschläge\n## Reproduzierbarkeit\n## Grenzen\n```"
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "7b9cffb3d5ac6ab453d6bab6fffa66796bfcd4621ccf07c4bd7d1d01ffcaa649",
+            "chars": 4429,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell analysiert Tabellen und CSV-Dateien lokal und reproduzierbar. Es erstellt Datenprofile, Qualitätsbefunde, einfache Kennzahlen, Bereinigungsvorschläge und bei Bedarf kleine Standardbibliotheks-Skripte.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell für:\n\n- CSV-Profiling,\n- Spaltentyp- und Missing-Value-Prüfung,\n- Duplikate und Ausreißer,\n- einfache Aggregationen,\n- Bereinigungspläne,\n- reproduzierbare Analyse-Skripte,\n- Vorbereitung für Reports oder Dashboards.\n\n# Typische Nutzeranliegen\n\n- „Analysiere diese CSV.“\n- „Welche Spalten haben Datenqualitätsprobleme?“\n- „Erstelle ein Profil und eine Zusammenfassung.“\n- „Schreibe ein Offline-Skript für die Analyse.“\n\n# Eingaben, die das Modell erwarten kann\n\nCSV, TSV, Tabellenbilder, Excel-Auszüge als Text, Datenwörterbücher, erwartete Spalten, Zielkennzahlen, Stichproben oder Dateien.\n\n# Fachliche Grundlagen\n\nCSV ist einfach, aber ohne Metadaten fehleranfällig. Prüfe daher:\n\n- Encoding,\n- Delimiter,\n- Kopfzeile,\n- Zeilenzahl,\n- Spaltentypen,\n- Missing Values,\n- Duplikate,\n- Wertebereiche,\n- Einheiten,\n- Datumsformate,\n- kategoriale Werte,\n- Datenschutzrisiken.\n\n# Bewährte Arbeitsweise\n\n1. Rohdaten statt Screenshot verlangen, wenn Genauigkeit nötig ist.\n2. Profil vor Interpretation erstellen.\n3. Annahmen zu Encoding, Delimiter und Datumsformat markieren.\n4. Kennzahlen nur aus sichtbaren Daten berechnen.\n5. Bereinigungsschritte reversibel vorschlagen.\n6. Reproduzierbarkeit per Python- oder Notebook-Plan sichern.\n7. Ergebnisse für nachgelagerte Modelle wie Dashboard oder Extraktion vorbereiten.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| CSV-Datei liegt vor | Profil und Befunde erstellen |\n| nur Screenshot | sichtbare Orientierung, Rohdaten anfordern |\n| Skript gewünscht | `beispielergebnis.py`-ähnliches Standardbibliothek-Skript |\n| große Datei | Stichprobe, Schema und lokale Laufzeitgrenzen nennen |\n| personenbezogene Daten | minimieren, aggregieren, maskieren |\n\n# Ausgabeformate\n\nPrimär für Artefaktbeispiele:\n\n```text\nbeispielergebnis.py\n```\n\nAlternativen:\n\n- `.md` für Analysebericht,\n- `.csv` für bereinigte Ausgabedaten,\n- `.json` für Profil,\n- `.ipynb`, wenn lokales Notebook explizit vorgesehen ist.\n\n# Geeignete Beispielergebnis-Formate\n\nFür dieses Modell ist `beispielergebnis.py` sinnvoll, weil reproduzierbare Datenanalyse besser durch ein ausführbares Offline-Skript als durch eine bloße Beschreibung gezeigt wird.\n\n# Qualitätskriterien\n\n- Profil kommt vor Interpretation.\n- Kennzahlen sind aus Daten ableitbar.\n- Datenqualität ist konkret.\n- Skripte nutzen vorhandene oder Standardbibliotheks-Abhängigkeiten.\n- Keine echten personenbezogenen Daten in Beispielen.\n- Ergebnisse sind reproduzierbar.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| aus Screenshot rechnen | Rohdaten verlangen |\n| Mittelwert ohne Missing-Handling | Missing Values separat zählen |\n| Datumsformat erraten | Annahme markieren |\n| Bereinigung überschreibt Original | reversible Schritte empfehlen |\n| externe Pandas-Abhängigkeit voraussetzen | Standardbibliothek-Fallback liefern |\n\n# Umgang mit fehlenden Informationen\n\nFehlen Rohdaten, nur Methodik und benötigte Eingaben liefern. Keine Kennzahlen schätzen.\n\n# Umgang mit widersprüchlichen Informationen\n\nWenn Datenwörterbuch und CSV abweichen, Spaltenkonflikt dokumentieren und führende Quelle klären.\n\n# Grenzen des Modells\n\n- Keine statistische Garantie bei Stichproben.\n- Keine personenbezogene Auswertung ohne legitimen Zweck.\n- Keine Web- oder Datenbankabfragen im Offline-Modus.\n\n# Sicherheits- und Datenschutzregeln\n\nDaten minimieren, aggregieren und maskieren. Keine privaten Datensätze in Beispielartefakte übernehmen. Keine produktiven Dateien überschreiben.\n\n# Offline-Nutzung\n\nStandard ist lokale Ausführung mit Standardbibliothek oder vorhandenen Projektabhängigkeiten. Externe Datenquellen sind nicht Voraussetzung.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Sind Datenquelle und Scope klar?\n2. Wurde ein Profil erstellt?\n3. Sind Missing Values, Typen und Duplikate geprüft?\n4. Sind Kennzahlen belegt?\n5. Ist Analyse reproduzierbar?\n6. Sind personenbezogene Daten minimiert?\n\n# Gute Beispiele\n\n```md\nSpalte `sla_hours`: 4 Werte, numerisch, Minimum 2.0, Maximum 14.0, Mittelwert 7.5, keine fehlenden Werte.\n```\n\n# Schlechte Beispiele\n\n```md\nDie Datenqualität ist vermutlich gut.\n```\n\nProblem: keine Messung, kein Beleg."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.py",
+            "filename": "Golden_Example.py",
+            "sha256": "40e2a0a73b138231890a86f6f0e080f8bd53daef2e906902635143d6bbe60d5f",
+            "chars": 13035,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "#!/usr/bin/env python3\n\"\"\"Golden Example für `tabellen-csv-datenanalyse`.\n\nLokales, reproduzierbares CSV-Profiling ohne externe Abhängigkeiten.\nDas Skript liest CSV-Daten, erstellt ein Datenprofil, prüft Datenqualität,\nberechnet einfache Kennzahlen und gibt einen JSON-Bericht aus.\n\nNutzung:\n    python Golden_Example.py --demo\n    python Golden_Example.py daten.csv\n    python Golden_Example.py daten.csv --delimiter \";\"\n    python Golden_Example.py --self-test\n\nGrundsätze:\n- Originaldateien werden nur gelesen, nie überschrieben.\n- Kennzahlen werden ausschließlich aus geladenen Daten berechnet.\n- Fehlende Werte, Typannahmen und Duplikate werden separat ausgewiesen.\n- Personenbezogene Daten werden nicht ausgegeben; Beispielwerte bleiben anonymisiert.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport argparse\nimport csv\nimport hashlib\nimport io\nimport json\nimport math\nimport statistics\nfrom collections import Counter\nfrom datetime import datetime\nfrom pathlib import Path\nfrom typing import Any, Iterable, Sequence\n\n\nMISSING_MARKERS = {\"\", \"na\", \"n/a\", \"null\", \"none\", \"-\", \"--\"}\n\n\ndef demo_csv() -> str:\n    \"\"\"Gibt einen kleinen anonymisierten Demonstrationsdatensatz zurück.\"\"\"\n    return \"\\n\".join(\n        [\n            \"ticket_id,team,region,created_date,tickets,sla_hours,status\",\n            \"TCK-1001,Service Desk,DACH,2026-06-01,42,6.5,closed\",\n            \"TCK-1002,Field Support,DACH,2026-06-02,18,14.0,open\",\n            \"TCK-1003,Network,EMEA,2026-06-02,7,2.0,closed\",\n            \"TCK-1004,Service Desk,DACH,2026-06-03,39,7.5,waiting\",\n            \"TCK-1005,Security,EMEA,2026-06-04,,9.0,open\",\n            \"TCK-1005,Security,EMEA,2026-06-04,,9.0,open\",\n        ]\n    )\n\n\ndef normalize_missing(value: str | None) -> str:\n    if value is None:\n        return \"\"\n    return value.strip()\n\n\ndef is_missing(value: str | None) -> bool:\n    return normalize_missing(value).lower() in MISSING_MARKERS\n\n\ndef parse_number(value: str | None) -> float | None:\n    \"\"\"Parst einfache Zahlen mit Punkt oder Komma als Dezimaltrennzeichen.\"\"\"\n    if is_missing(value):\n        return None\n    normalized = normalize_missing(value).replace(\" \", \"\").replace(\",\", \".\")\n    try:\n        number = float(normalized)\n    except ValueError:\n        return None\n    if math.isnan(number) or math.isinf(number):\n        return None\n    return number\n\n\ndef parse_iso_date(value: str | None) -> datetime | None:\n    \"\"\"Erkennt stabile ISO-Datumswerte ohne Format-Raten über mehrere Locale-Regeln.\"\"\"\n    if is_missing(value):\n        return None\n    text = normalize_missing(value)\n    for fmt in (\"%Y-%m-%d\", \"%Y-%m-%dT%H:%M:%S\", \"%Y-%m-%dT%H:%M:%S.%fZ\"):\n        try:\n            return datetime.strptime(text, fmt)\n        except ValueError:\n            continue\n    return None\n\n\ndef read_csv_text(path: str | None, use_demo: bool) -> str:\n    if use_demo:\n        return demo_csv()\n    if not path:\n        raise ValueError(\"Keine CSV-Datei angegeben. Nutze --demo oder übergib einen Dateipfad.\")\n    return Path(path).read_text(encoding=\"utf-8-sig\")\n\n\ndef read_rows(text: str, delimiter: str | None = None) -> tuple[list[dict[str, str]], list[str], str]:\n    sample = text[:4096]\n    if delimiter is None:\n        try:\n            dialect = csv.Sniffer().sniff(sample, delimiters=\",;\\t|\")\n            detected_delimiter = dialect.delimiter\n        except csv.Error:\n            detected_delimiter = \",\"\n    else:\n        detected_delimiter = delimiter\n\n    reader = csv.DictReader(io.StringIO(text), delimiter=detected_delimiter)\n    if not reader.fieldnames:\n        raise ValueError(\"CSV enthält keine Kopfzeile.\")\n    fieldnames = [field.strip() if field else \"\" for field in reader.fieldnames]\n    if any(not field for field in fieldnames):\n        raise ValueError(\"CSV enthält mindestens eine leere Spaltenüberschrift.\")\n\n    rows: list[dict[str, str]] = []\n    for row in reader:\n        normalized = {column: normalize_missing(row.get(column)) for column in reader.fieldnames}\n        rows.append(normalized)\n\n    if not rows:\n        raise ValueError(\"CSV enthält keine Datenzeilen.\")\n    return rows, list(reader.fieldnames), detected_delimiter\n\n\ndef stable_row_hash(row: dict[str, str], columns: Sequence[str]) -> str:\n    joined = \"\\u241f\".join(normalize_missing(row.get(column)) for column in columns)\n    return hashlib.sha256(joined.encode(\"utf-8\")).hexdigest()\n\n\ndef infer_column_type(values: Sequence[str]) -> str:\n    non_missing = [value for value in values if not is_missing(value)]\n    if not non_missing:\n        return \"empty\"\n    numeric_count = sum(1 for value in non_missing if parse_number(value) is not None)\n    date_count = sum(1 for value in non_missing if parse_iso_date(value) is not None)\n    if numeric_count == len(non_missing):\n        return \"number\"\n    if date_count == len(non_missing):\n        return \"date\"\n    return \"text\"\n\n\ndef quantile(sorted_values: Sequence[float], q: float) -> float:\n    if not sorted_values:\n        raise ValueError(\"Quantil benötigt mindestens einen Wert.\")\n    if len(sorted_values) == 1:\n        return sorted_values[0]\n    position = (len(sorted_values) - 1) * q\n    lower = math.floor(position)\n    upper = math.ceil(position)\n    if lower == upper:\n        return sorted_values[int(position)]\n    weight = position - lower\n    return sorted_values[lower] * (1 - weight) + sorted_values[upper] * weight\n\n\ndef numeric_summary(numbers: Sequence[float]) -> dict[str, float | int]:\n    ordered = sorted(numbers)\n    result: dict[str, float | int] = {\n        \"count\": len(ordered),\n        \"min\": round(min(ordered), 4),\n        \"q1\": round(quantile(ordered, 0.25), 4),\n        \"median\": round(statistics.median(ordered), 4),\n        \"q3\": round(quantile(ordered, 0.75), 4),\n        \"max\": round(max(ordered), 4),\n        \"mean\": round(statistics.fmean(ordered), 4),\n    }\n    if len(ordered) > 1:\n        result[\"stdev\"] = round(statistics.stdev(ordered), 4)\n    else:\n        result[\"stdev\"] = 0.0\n    return result\n\n\ndef top_values(values: Iterable[str], limit: int = 5) -> list[dict[str, Any]]:\n    clean_values = [value for value in values if not is_missing(value)]\n    counter = Counter(clean_values)\n    return [{\"value\": value, \"count\": count} for value, count in counter.most_common(limit)]\n\n\ndef profile_columns(rows: list[dict[str, str]], columns: Sequence[str]) -> list[dict[str, Any]]:\n    profiles: list[dict[str, Any]] = []\n    row_count = len(rows)\n\n    for column in columns:\n        values = [normalize_missing(row.get(column)) for row in rows]\n        missing_count = sum(1 for value in values if is_missing(value))\n        non_missing_values = [value for value in values if not is_missing(value)]\n        inferred_type = infer_column_type(values)\n\n        item: dict[str, Any] = {\n            \"name\": column,\n            \"inferred_type\": inferred_type,\n            \"row_count\": row_count,\n            \"missing_count\": missing_count,\n            \"missing_ratio\": round(missing_count / row_count, 4),\n            \"distinct_count\": len(set(non_missing_values)),\n            \"top_values\": top_values(non_missing_values),\n        }\n\n        if inferred_type == \"number\":\n            numbers = [number for value in values if (number := parse_number(value)) is not None]\n            item[\"numeric\"] = numeric_summary(numbers)\n        elif inferred_type == \"date\":\n            dates = [date for value in values if (date := parse_iso_date(value)) is not None]\n            item[\"date\"] = {\n                \"count\": len(dates),\n                \"min\": min(dates).date().isoformat(),\n                \"max\": max(dates).date().isoformat(),\n            }\n\n        profiles.append(item)\n\n    return profiles\n\n\ndef duplicate_summary(rows: list[dict[str, str]], columns: Sequence[str]) -> dict[str, Any]:\n    hashes = [stable_row_hash(row, columns) for row in rows]\n    counts = Counter(hashes)\n    duplicate_rows = sum(count - 1 for count in counts.values() if count > 1)\n    return {\n        \"duplicate_rows\": duplicate_rows,\n        \"duplicate_ratio\": round(duplicate_rows / len(rows), 4),\n    }\n\n\ndef quality_findings(column_profiles: Sequence[dict[str, Any]], duplicate_info: dict[str, Any]) -> list[dict[str, str]]:\n    findings: list[dict[str, str]] = []\n\n    if duplicate_info[\"duplicate_rows\"] > 0:\n        findings.append(\n            {\n                \"severity\": \"medium\",\n                \"area\": \"duplicates\",\n                \"finding\": f\"{duplicate_info['duplicate_rows']} vollständige Duplikatzeile(n) erkannt.\",\n                \"recommendation\": \"Duplikate vor Aggregationen fachlich prüfen und Bereinigung reversibel dokumentieren.\",\n            }\n        )\n\n    for column in column_profiles:\n        missing_ratio = float(column[\"missing_ratio\"])\n        if missing_ratio > 0:\n            severity = \"high\" if missing_ratio >= 0.2 else \"medium\"\n            findings.append(\n                {\n                    \"severity\": severity,\n                    \"area\": \"missing_values\",\n                    \"finding\": f\"Spalte `{column['name']}` enthält {column['missing_count']} fehlende Werte.\",\n                    \"recommendation\": \"Fehlende Werte nicht still imputieren; Ursache prüfen und Bereinigungsregel dokumentieren.\",\n                }\n            )\n        if column[\"inferred_type\"] == \"empty\":\n            findings.append(\n                {\n                    \"severity\": \"high\",\n                    \"area\": \"schema\",\n                    \"finding\": f\"Spalte `{column['name']}` enthält keine auswertbaren Werte.\",\n                    \"recommendation\": \"Spalte entfernen oder Datenlieferung korrigieren.\",\n                }\n            )\n\n    if not findings:\n        findings.append(\n            {\n                \"severity\": \"info\",\n                \"area\": \"quality\",\n                \"finding\": \"Keine offensichtlichen Missing-Value- oder Duplikatprobleme im geladenen Datensatz erkannt.\",\n                \"recommendation\": \"Fachliche Wertebereiche, Einheiten und Schlüsselspalten zusätzlich gegen Datenwörterbuch prüfen.\",\n            }\n        )\n\n    return findings\n\n\ndef build_report(rows: list[dict[str, str]], columns: Sequence[str], delimiter: str, source_label: str) -> dict[str, Any]:\n    column_profiles = profile_columns(rows, columns)\n    duplicates = duplicate_summary(rows, columns)\n    return {\n        \"data_profile\": {\n            \"source\": source_label,\n            \"row_count\": len(rows),\n            \"column_count\": len(columns),\n            \"delimiter\": delimiter,\n            \"columns\": list(columns),\n        },\n        \"data_quality\": {\n            \"duplicates\": duplicates,\n            \"findings\": quality_findings(column_profiles, duplicates),\n        },\n        \"column_profiles\": column_profiles,\n        \"reproducibility\": {\n            \"runtime\": \"Python Standardbibliothek\",\n            \"original_data_overwritten\": False,\n            \"external_services_used\": False,\n            \"generated_at\": datetime.utcnow().replace(microsecond=0).isoformat() + \"Z\",\n        },\n        \"limits\": [\n            \"Datentypen werden aus den sichtbaren CSV-Werten abgeleitet.\",\n            \"Datumswerte werden nur als ISO-nahe Formate erkannt.\",\n            \"Fachliche Wertebereiche und Einheiten benötigen ein Datenwörterbuch.\",\n        ],\n    }\n\n\ndef run_self_test() -> None:\n    rows, columns, delimiter = read_rows(demo_csv())\n    report = build_report(rows, columns, delimiter, \"demo\")\n    assert report[\"data_profile\"][\"row_count\"] == 6\n    assert report[\"data_profile\"][\"column_count\"] == 7\n    assert report[\"data_quality\"][\"duplicates\"][\"duplicate_rows\"] == 1\n    tickets_profile = next(item for item in report[\"column_profiles\"] if item[\"name\"] == \"tickets\")\n    assert tickets_profile[\"inferred_type\"] == \"number\"\n    assert tickets_profile[\"missing_count\"] == 2\n    sla_profile = next(item for item in report[\"column_profiles\"] if item[\"name\"] == \"sla_hours\")\n    assert sla_profile[\"numeric\"][\"max\"] == 14.0\n\n\ndef main(argv: Sequence[str] | None = None) -> int:\n    parser = argparse.ArgumentParser(description=\"Lokales CSV-Profiling ohne externe Abhängigkeiten.\")\n    parser.add_argument(\"csv_path\", nargs=\"?\", help=\"Pfad zur CSV-Datei. Nicht nötig bei --demo.\")\n    parser.add_argument(\"--demo\", action=\"store_true\", help=\"Anonymisierte Demonstrationsdaten analysieren.\")\n    parser.add_argument(\"--delimiter\", help=\"CSV-Trennzeichen explizit setzen, z. B. ';' oder '\\\\t'.\")\n    parser.add_argument(\"--self-test\", action=\"store_true\", help=\"Eingebaute Plausibilitätstests ausführen.\")\n    args = parser.parse_args(argv)\n\n    if args.self_test:\n        run_self_test()\n        print(\"Self-test passed.\")\n        return 0\n\n    text = read_csv_text(args.csv_path, args.demo)\n    rows, columns, delimiter = read_rows(text, args.delimiter)\n    source_label = \"demo\" if args.demo else str(Path(args.csv_path).name)\n    report = build_report(rows, columns, delimiter, source_label)\n    print(json.dumps(report, ensure_ascii=False, indent=2))\n    return 0\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())"
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `tabellen-csv-datenanalyse`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.py`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.py`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.15,
-      "top_p": 0.8,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `tabellen-csv-datenanalyse` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.py` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.py` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.\n\nBei Codeaufgaben orientiere Implementierung, Tests, Fehlerbehandlung, Struktur und Robustheit an `Golden_Example.py`.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

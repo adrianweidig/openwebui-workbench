@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0",
+  "model_id": "informationsextraktion",
+  "task_type": "structured_information_extraction",
+  "source_scope": "bereitgestellter Nutzertext, Formularauszug und Logauszug",
+  "input": {
+    "user_request": "Extrahiere die Support-Ticket-Angaben als valides JSON. Pflichtfelder sind ticket_id, affected_service, symptom, severity, environment.runtime und evidence. Erfinde keine fehlenden Werte und markiere Unsicherheiten.",
+    "source_text": "Ticket-ID: TCK-1042\nBetroffener Dienst: OpenWebUI\nMeldung: Beim Upload einer CSV-Datei bricht der Vorgang mit HTTP 500 ab.\nUmgebung: lokale Workbench, Netzwerk offline.\nAuswirkung: Drei interne Nutzer können neue Datensätze nicht importieren.\nHinweis: OpenWebUI-Version wurde im Formular nicht angegeben.\nKontakt: anna.mueller@example.org\n\nLogauszug:\n[2026-05-27 09:41:12] INFO upload.start user=anna.mueller@example.org file=kunden-import.csv\n[2026-05-27 09:41:14] ERROR ticket=TCK-1042 service=OpenWebUI status=500 route=/api/v1/files/upload message=\"CSV parser failed before validation\"\n[2026-05-27 09:41:14] WARN retry=false offline=true"
+  },
+  "expected_output": {
+    "schema_version": "1.0",
+    "task": "support_ticket_extraction",
+    "source_scope": "bereitgestellter Nutzertext, Formularauszug und Logauszug",
+    "records": [
+      {
+        "ticket_id": {
+          "raw": "TCK-1042",
+          "normalized": "TCK-1042",
+          "source": "Formularauszug Zeile 1 und Logzeile 2",
+          "confidence": "high"
+        },
+        "affected_service": {
+          "raw": "OpenWebUI",
+          "normalized": "OpenWebUI",
+          "source": "Formularauszug Zeile 2 und Logzeile 2",
+          "confidence": "high"
+        },
+        "symptom": {
+          "raw": "Beim Upload einer CSV-Datei bricht der Vorgang mit HTTP 500 ab.",
+          "normalized": "CSV-Upload bricht mit HTTP-Status 500 ab",
+          "source": "Formularauszug Zeile 3",
+          "confidence": "high"
+        },
+        "severity": {
+          "raw": "Drei interne Nutzer können neue Datensätze nicht importieren.",
+          "normalized": "high",
+          "source": "Formularauszug Zeile 5 und Logzeile 2",
+          "confidence": "medium",
+          "normalization_note": "Schweregrad aus HTTP 500 und blockiertem Import für drei interne Nutzer abgeleitet."
+        },
+        "environment": {
+          "runtime": {
+            "raw": "lokale Workbench",
+            "normalized": "lokale Workbench",
+            "source": "Formularauszug Zeile 4",
+            "confidence": "high"
+          },
+          "network": {
+            "raw": "offline",
+            "normalized": "offline",
+            "source": "Formularauszug Zeile 4 und Logzeile 3",
+            "confidence": "high"
+          },
+          "openwebui_version": {
+            "raw": null,
+            "normalized": null,
+            "source": "Formularauszug Zeile 6",
+            "confidence": "high",
+            "missing_reason": "Die Version wurde ausdrücklich nicht angegeben."
+          }
+        },
+        "technical_details": {
+          "http_status": {
+            "raw": "HTTP 500",
+            "normalized": 500,
+            "source": "Formularauszug Zeile 3 und Logzeile 2",
+            "confidence": "high"
+          },
+          "route": {
+            "raw": "/api/v1/files/upload",
+            "normalized": "/api/v1/files/upload",
+            "source": "Logzeile 2",
+            "confidence": "high"
+          },
+          "log_message": {
+            "raw": "CSV parser failed before validation",
+            "normalized": "CSV parser failed before validation",
+            "source": "Logzeile 2",
+            "confidence": "high"
+          },
+          "retry": {
+            "raw": "retry=false",
+            "normalized": false,
+            "source": "Logzeile 3",
+            "confidence": "high"
+          }
+        },
+        "privacy": {
+          "masked_personal_data": [
+            {
+              "field": "contact_email",
+              "raw": "anna.mueller@example.org",
+              "masked": "a***@example.org",
+              "source": "Formularauszug Zeile 7 und Logzeile 1",
+              "reason": "Die private Kontaktadresse ist für die technische Extraktion nicht erforderlich."
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "field": "ticket_id",
+            "source": "Formularauszug Zeile 1",
+            "quote": "Ticket-ID: TCK-1042"
+          },
+          {
+            "field": "ticket_id",
+            "source": "Logzeile 2",
+            "quote": "ticket=TCK-1042"
+          },
+          {
+            "field": "affected_service",
+            "source": "Formularauszug Zeile 2",
+            "quote": "Betroffener Dienst: OpenWebUI"
+          },
+          {
+            "field": "symptom",
+            "source": "Formularauszug Zeile 3",
+            "quote": "Beim Upload einer CSV-Datei bricht der Vorgang mit HTTP 500 ab."
+          },
+          {
+            "field": "environment.runtime",
+            "source": "Formularauszug Zeile 4",
+            "quote": "Umgebung: lokale Workbench, Netzwerk offline."
+          },
+          {
+            "field": "technical_details.route",
+            "source": "Logzeile 2",
+            "quote": "route=/api/v1/files/upload"
+          }
+        ],
+        "uncertainties": [
+          {
+            "field": "severity",
+            "reason": "Der Schweregrad wurde nicht wörtlich angegeben, sondern aus Auswirkung und Fehlerstatus abgeleitet.",
+            "status": "derived"
+          },
+          {
+            "field": "environment.openwebui_version",
+            "reason": "Die OpenWebUI-Version fehlt im sichtbaren Kontext.",
+            "status": "missing"
+          }
+        ]
+      }
+    ],
+    "validation": {
+      "missing_required_fields": [],
+      "normalization_notes": [
+        "HTTP-Status wurde von Textform zu Integer normalisiert.",
+        "severity wurde aus blockiertem Import und Serverfehler abgeleitet.",
+        "network wurde aus Formularauszug und Logwert offline=true normalisiert.",
+        "Kontaktadresse wurde maskiert, weil sie für die strukturierte technische Extraktion nicht erforderlich ist."
+      ],
+      "uncertainties": [
+        "OpenWebUI-Version nicht angegeben.",
+        "Schweregrad nicht explizit im Quelltext genannt."
+      ],
+      "conflicts": []
+    }
+  },
+  "quality_criteria": {
+    "valid_json": true,
+    "no_free_text_outside_json": true,
+    "no_fabricated_values": true,
+    "source_bound_fields": true,
+    "normalization_documented": true,
+    "missing_information_marked": true,
+    "sensitive_data_minimized": true
+  }
+}

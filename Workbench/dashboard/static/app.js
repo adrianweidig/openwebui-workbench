@@ -6,8 +6,11 @@ const state = {
   messages: {},
   fallbackMessages: {},
   selectedModel: null,
+  selectedModelIds: new Set(),
   selectedFile: "systemprompt.md",
   selectedResource: null,
+  baseModelOptions: [],
+  selectedBaseModelId: localStorage.getItem("workbench-base-model-id") || "",
   activePanel: "models",
   urlSyncReady: false,
   modelDirty: false,
@@ -221,7 +224,14 @@ function confirmDiscardUnsaved(scope = "any") {
 function formatActionResult(result) {
   const command = Array.isArray(result.command) ? `$ ${result.command.join(" ")}` : result.label || result.action || "";
   const returncode = result.returncode === null || typeof result.returncode === "undefined" ? "-" : result.returncode;
-  return `${command}\n\n${t("log.exitCode")}: ${returncode}\n${t("log.duration")}: ${formatNumber(result.duration_seconds, 1)}s\n\n${result.output || ""}`;
+  const baseModel = result.base_model_id ? `\n${t("sync.baseModel.selected")}: ${result.base_model_id}` : "";
+  return `${command}${baseModel}\n\n${t("log.exitCode")}: ${returncode}\n${t("log.duration")}: ${formatNumber(result.duration_seconds, 1)}s\n\n${result.output || ""}`;
+}
+
+function setActionLog(value) {
+  const log = el("action-log");
+  log.textContent = value;
+  log.scrollTop = log.scrollHeight;
 }
 
 function escapeHtml(value) {
@@ -752,6 +762,58 @@ function updateEditorWriteControls() {
   setWriteControlState("add-resource", false, reason);
   setWriteControlState("save-resource", !state.selectedResource || el("resource-editor").disabled, reason);
   setWriteControlState("delete-resource", !state.selectedResource, reason);
+  updateModelSelectionControls();
+}
+
+function currentBaseModelFromStatus() {
+  return String(state.status?.base_model?.current || "coder").trim();
+}
+
+function selectedBaseModelId() {
+  const select = el("base-model-select");
+  const selected = String(select?.value || state.selectedBaseModelId || currentBaseModelFromStatus()).trim();
+  return selected || "coder";
+}
+
+function renderBaseModelSelector(payload = null) {
+  const select = el("base-model-select");
+  const stateNode = el("base-model-state");
+  if (!select || !stateNode) return;
+  const current = String(payload?.selected || currentBaseModelFromStatus()).trim() || "coder";
+  const stored = String(localStorage.getItem("workbench-base-model-id") || "").trim();
+  if (!state.selectedBaseModelId) state.selectedBaseModelId = stored || current;
+  const options = [...(payload?.models || state.baseModelOptions || [])];
+  if (!options.some((item) => item.id === state.selectedBaseModelId)) {
+    options.unshift({ id: state.selectedBaseModelId, name: state.selectedBaseModelId, source: "selected" });
+  }
+  state.baseModelOptions = options;
+  select.replaceChildren();
+  for (const option of options) {
+    const node = document.createElement("option");
+    node.value = option.id;
+    const source = option.source ? ` · ${option.source}` : "";
+    node.textContent = `${option.name || option.id}${option.name && option.name !== option.id ? ` (${option.id})` : ""}${source}`;
+    select.append(node);
+  }
+  select.value = state.selectedBaseModelId;
+  stateNode.textContent = payload?.error
+    ? t("sync.baseModel.error", { error: payload.error })
+    : t("sync.baseModel.current", { model: selectedBaseModelId() });
+}
+
+async function refreshBaseModels() {
+  const stateNode = el("base-model-state");
+  if (stateNode) stateNode.textContent = t("sync.baseModel.loading");
+  try {
+    const payload = await api("/api/openwebui/models");
+    renderBaseModelSelector(payload);
+  } catch (error) {
+    renderBaseModelSelector({
+      selected: currentBaseModelFromStatus(),
+      models: [{ id: currentBaseModelFromStatus(), name: currentBaseModelFromStatus(), source: "workbench" }],
+      error: error.message,
+    });
+  }
 }
 
 function canUseEditorWrites(stateId) {
@@ -875,9 +937,21 @@ function renderModels() {
   setText("model-filter-state", t("models.count", { visible: formatNumber(models.length), total: formatNumber(state.models.length) }));
   if (!models.length) {
     renderEmpty(list, t("models.empty"));
+    updateModelSelectionControls();
     return;
   }
   models.forEach((model) => {
+    const row = document.createElement("div");
+    row.className = `model-row-item${state.selectedModel?.id === model.id ? " active" : ""}`;
+    const checkbox = document.createElement("input");
+    checkbox.className = "model-select";
+    checkbox.type = "checkbox";
+    checkbox.checked = state.selectedModelIds.has(model.id);
+    checkbox.setAttribute("aria-label", t("models.selectModel", { name: modelDisplayName(model) }));
+    checkbox.addEventListener("click", (event) => event.stopPropagation());
+    checkbox.addEventListener("change", () => {
+      setModelSelection(model.id, checkbox.checked);
+    });
     const button = document.createElement("button");
     button.className = `model-row${state.selectedModel?.id === model.id ? " active" : ""}`;
     button.type = "button";
@@ -904,8 +978,47 @@ function renderModels() {
     sub.textContent = modelDisplayDescriptionWithCapability(model);
     button.append(title, meta, sub);
     button.addEventListener("click", () => selectModel(model.id));
-    list.append(button);
+    row.append(checkbox, button);
+    list.append(row);
   });
+  updateModelSelectionControls();
+}
+
+function setModelSelection(modelId, selected) {
+  if (selected) state.selectedModelIds.add(modelId);
+  else state.selectedModelIds.delete(modelId);
+  renderModels();
+}
+
+function toggleVisibleModelSelection(selected) {
+  visibleModels().forEach((model) => {
+    if (selected) state.selectedModelIds.add(model.id);
+    else state.selectedModelIds.delete(model.id);
+  });
+  renderModels();
+}
+
+function remoteModelDeleteDisabledReason() {
+  if (!state.status?.write_enabled) return t("sync.disabled.readOnly");
+  if (!state.status?.openwebui?.admin_token_configured) return t("sync.disabled.tokenMissing");
+  return "";
+}
+
+function updateModelSelectionControls() {
+  const selectVisible = el("select-visible-models");
+  const deleteButton = el("delete-openwebui-models");
+  const stateNode = el("model-selection-state");
+  if (!selectVisible || !deleteButton || !stateNode) return;
+  const visibleIds = visibleModels().map((model) => model.id);
+  const selectedVisible = visibleIds.filter((modelId) => state.selectedModelIds.has(modelId));
+  selectVisible.checked = Boolean(visibleIds.length && selectedVisible.length === visibleIds.length);
+  selectVisible.indeterminate = Boolean(selectedVisible.length && selectedVisible.length < visibleIds.length);
+  selectVisible.disabled = visibleIds.length === 0;
+  stateNode.textContent = t("models.selection", { count: formatNumber(state.selectedModelIds.size) });
+  const reason = remoteModelDeleteDisabledReason();
+  deleteButton.disabled = state.selectedModelIds.size === 0 || Boolean(reason);
+  if (reason) deleteButton.title = reason;
+  else deleteButton.removeAttribute("title");
 }
 
 function makeChip(text, tone = "") {
@@ -934,6 +1047,7 @@ function displayRepoPath(value) {
 function modelFileGroup(name) {
   if (name.startsWith("beispiele/")) return "examples";
   if (name.startsWith("i18n/")) return "i18n";
+  if (name.startsWith("Golden_Example.")) return "core";
   if (name.startsWith("beispielergebnis.")) return "artifacts";
   return "core";
 }
@@ -1130,6 +1244,32 @@ async function deleteModelFile() {
   }
 }
 
+async function deleteSelectedOpenWebUIModels() {
+  const ids = Array.from(state.selectedModelIds);
+  if (!ids.length) return;
+  if (!window.confirm(t("prompt.deleteOpenWebUIModels", { count: formatNumber(ids.length) }))) return;
+  setText("editor-state", t("state.deleting"));
+  try {
+    const result = await api("/api/openwebui/models/delete", {
+      method: "POST",
+      body: JSON.stringify({ ids }),
+    });
+    state.selectedModelIds.clear();
+    await refreshStatus();
+    await refreshModels(false);
+    const failed = result.failed?.length || 0;
+    const deleted = result.deleted?.length || 0;
+    setText(
+      "editor-state",
+      failed
+        ? t("models.deleteRemoteFailed", { deleted: formatNumber(deleted), failed: formatNumber(failed) })
+        : t("models.deleteRemoteResult", { deleted: formatNumber(deleted) }),
+    );
+  } catch (error) {
+    setText("editor-state", error.message);
+  }
+}
+
 function resourceTemplate(kind, id) {
   if (kind === "tool") {
     let methodName = String(id || "new_tool").replace(/[^A-Za-z0-9_]/g, "_");
@@ -1235,37 +1375,39 @@ async function saveFile() {
 }
 
 async function runAction(action) {
-  const log = el("action-log");
-  log.textContent = t("log.starting", { action });
+  setActionLog(t("log.starting", { action }));
   try {
-    const result = await api(`/api/actions/${encodeURIComponent(action)}`, { method: "POST", body: "{}" });
+    const result = await api(`/api/actions/${encodeURIComponent(action)}`, {
+      method: "POST",
+      body: JSON.stringify({ base_model_id: selectedBaseModelId() }),
+    });
     if (result.running && result.job_id) {
       await pollActionJob(result.job_id);
       return;
     }
-    log.textContent = formatActionResult(result);
+    setActionLog(formatActionResult(result));
     await refreshStatus();
     await refreshModels(false);
     await refreshResources(false);
   } catch (error) {
     if (error.payload?.command && typeof error.payload.output === "string") {
-      log.textContent = `${formatActionResult(error.payload)}\n\n${t("state.error")}: ${error.message}`;
+      setActionLog(`${formatActionResult(error.payload)}\n\n${t("state.error")}: ${error.message}`);
     } else {
-      log.textContent += `\n\n${t("state.error")}: ${error.message}`;
+      const log = el("action-log");
+      setActionLog(`${log.textContent}\n\n${t("state.error")}: ${error.message}`);
     }
   }
 }
 
 async function pollActionJob(jobId) {
-  const log = el("action-log");
   for (;;) {
     const result = await api(`/api/action-jobs/${encodeURIComponent(jobId)}`);
     if (result.running) {
-      log.textContent = `${formatActionResult(result)}\n\n${t("state.running")}`;
+      setActionLog(`${formatActionResult(result)}\n\n${t("log.runningJob")}`);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       continue;
     }
-    log.textContent = formatActionResult(result);
+    setActionLog(formatActionResult(result));
     await refreshStatus();
     await refreshModels(false);
     await refreshResources(false);
@@ -1276,6 +1418,7 @@ async function pollActionJob(jobId) {
 async function refreshStatus() {
   state.status = await api("/api/status");
   renderStatus();
+  renderBaseModelSelector();
 }
 
 async function refreshResources(keepSelection = true) {
@@ -1296,6 +1439,10 @@ async function refreshModels(keepSelection = true) {
   const payload = await api("/api/models");
   const previous = state.selectedModel?.id;
   state.models = payload.models;
+  const currentIds = new Set(state.models.map((model) => model.id));
+  Array.from(state.selectedModelIds).forEach((modelId) => {
+    if (!currentIds.has(modelId)) state.selectedModelIds.delete(modelId);
+  });
   if (keepSelection && previous) {
     state.selectedModel = state.models.find((model) => model.id === previous) || null;
   }
@@ -1344,13 +1491,22 @@ function wireEvents() {
     if (!confirmDiscardUnsaved()) return;
     setText("editor-state", t("state.refreshing"));
     await refreshStatus();
+    await refreshBaseModels();
     await refreshModels(true);
     await refreshResources(true);
     setText("editor-state", t("state.refreshed"));
   });
+  el("base-model-select").addEventListener("change", () => {
+    state.selectedBaseModelId = selectedBaseModelId();
+    localStorage.setItem("workbench-base-model-id", state.selectedBaseModelId);
+    renderBaseModelSelector();
+  });
+  el("refresh-base-models").addEventListener("click", refreshBaseModels);
   el("save-file").addEventListener("click", saveFile);
   el("add-model-file").addEventListener("click", addModelFile);
   el("delete-model-file").addEventListener("click", deleteModelFile);
+  el("select-visible-models").addEventListener("change", () => toggleVisibleModelSelection(el("select-visible-models").checked));
+  el("delete-openwebui-models").addEventListener("click", deleteSelectedOpenWebUIModels);
   el("add-resource").addEventListener("click", addResource);
   el("delete-resource").addEventListener("click", deleteResource);
   el("save-resource").addEventListener("click", saveResource);
@@ -1400,6 +1556,7 @@ async function init() {
   wireEvents();
   activatePanel(requestedPanel);
   await Promise.all([refreshStatus(), refreshModels(false), refreshResources(false)]);
+  await refreshBaseModels();
   if (state.models.length > 0) {
     const requestedModel = queryParams.get("model");
     const initialModel = state.models.find((model) => model.id === requestedModel) || state.models[0];

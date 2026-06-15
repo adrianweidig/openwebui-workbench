@@ -1,0 +1,654 @@
+openapi: 3.1.0
+info:
+title: Ticket Import API
+version: 1.0.0
+summary: Lokaler OpenAPI-Vertrag für CSV-Ticketimporte mit Validierung und Protokollierung
+description: >
+Diese Spezifikation beschreibt eine kleine HTTP-/JSON-API für das Anlegen,
+Prüfen und Abfragen von Ticketimporten. Sie nutzt relative Serverpfade,
+lokale Komponenten und nicht-sensitive Beispielwerte.
+servers:
+
+url: /api
+description: Relativer Basispfad für lokale oder interne Deployments
+tags:
+
+name: imports
+description: Verwaltung von CSV-Ticketimporten
+
+name: validation
+description: Vorprüfung von Importdateien ohne Persistenz
+security:
+
+bearerAuth: []
+paths:
+/ticket-imports/validations:
+post:
+tags:
+- validation
+operationId: validateTicketImport
+summary: Prüft eine CSV-Ticketimportdatei ohne dauerhafte Übernahme
+description: >
+Nimmt Metadaten und CSV-Inhalt entgegen, validiert Struktur und Pflichtfelder
+und liefert ein Prüfergebnis. Die Datei wird dabei nicht dauerhaft als
+erfolgreicher Import übernommen.
+requestBody:
+required: true
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/TicketImportValidationRequest"
+examples:
+validMinimal:
+summary: Minimale prüfbare Datei
+value:
+fileName: support-tickets.csv
+encoding: utf-8
+delimiter: comma
+hasHeader: true
+contentBase64: dGlja2V0X2lkLHByaW9yaXR5LHN1bW1hcnkKVENLLTEwMDEsbWVkaXVtLE5vdGVib29rIHN0YXJ0ZXQgbmljaHQK
+responses:
+"200":
+description: Prüfergebnis wurde erstellt
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/TicketImportValidationResult"
+examples:
+valid:
+value:
+validationId: VLD-1001
+status: valid
+checkedRows: 1
+errors: []
+warnings: []
+"400":
+$ref: "#/components/responses/BadRequest"
+"401":
+$ref: "#/components/responses/Unauthorized"
+"403":
+$ref: "#/components/responses/Forbidden"
+"413":
+$ref: "#/components/responses/PayloadTooLarge"
+"500":
+$ref: "#/components/responses/InternalError"
+/ticket-imports:
+post:
+tags:
+- imports
+operationId: createTicketImport
+summary: Erstellt einen Ticketimport nach erfolgreicher Validierung
+description: >
+Legt einen Importauftrag an. Die API verwendet einen Idempotency-Key,
+damit wiederholte gleichwertige Aufrufe nicht unbeabsichtigt doppelte
+Importaufträge erzeugen.
+parameters:
+- $ref: "#/components/parameters/IdempotencyKey"
+requestBody:
+required: true
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/TicketImportCreateRequest"
+examples:
+createFromValidation:
+value:
+validationId: VLD-1001
+sourceSystem: support-export
+requestedBy: support-ops
+responses:
+"201":
+description: Importauftrag wurde erstellt
+headers:
+Location:
+description: Relativer Pfad zum erstellten Importauftrag
+schema:
+type: string
+examples:
+- /api/ticket-imports/IMP-1001
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/TicketImport"
+examples:
+created:
+value:
+importId: IMP-1001
+status: queued
+sourceSystem: support-export
+requestedBy: support-ops
+createdAt: "2026-01-15T10:30:00Z"
+processedRows: 0
+failedRows: 0
+"400":
+$ref: "#/components/responses/BadRequest"
+"401":
+$ref: "#/components/responses/Unauthorized"
+"403":
+$ref: "#/components/responses/Forbidden"
+"409":
+$ref: "#/components/responses/Conflict"
+"422":
+$ref: "#/components/responses/UnprocessableEntity"
+"500":
+$ref: "#/components/responses/InternalError"
+get:
+tags:
+- imports
+operationId: listTicketImports
+summary: Listet Ticketimporte mit optionalen Filtern
+parameters:
+- name: status
+in: query
+required: false
+schema:
+$ref: "#/components/schemas/TicketImportStatus"
+- name: sourceSystem
+in: query
+required: false
+schema:
+type: string
+minLength: 2
+maxLength: 80
+- name: limit
+in: query
+required: false
+schema:
+type: integer
+minimum: 1
+maximum: 100
+default: 50
+- name: cursor
+in: query
+required: false
+schema:
+type: string
+minLength: 8
+maxLength: 200
+responses:
+"200":
+description: Importliste wurde geladen
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/TicketImportList"
+"400":
+$ref: "#/components/responses/BadRequest"
+"401":
+$ref: "#/components/responses/Unauthorized"
+"403":
+$ref: "#/components/responses/Forbidden"
+"500":
+$ref: "#/components/responses/InternalError"
+/ticket-imports/{importId}:
+get:
+tags:
+- imports
+operationId: getTicketImport
+summary: Gibt einen Importauftrag zurück
+parameters:
+- $ref: "#/components/parameters/ImportId"
+responses:
+"200":
+description: Importauftrag wurde gefunden
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/TicketImport"
+"401":
+$ref: "#/components/responses/Unauthorized"
+"403":
+$ref: "#/components/responses/Forbidden"
+"404":
+$ref: "#/components/responses/NotFound"
+"500":
+$ref: "#/components/responses/InternalError"
+/ticket-imports/{importId}/errors:
+get:
+tags:
+- imports
+operationId: listTicketImportErrors
+summary: Listet fachliche Fehler eines Importauftrags
+parameters:
+- $ref: "#/components/parameters/ImportId"
+- name: limit
+in: query
+required: false
+schema:
+type: integer
+minimum: 1
+maximum: 200
+default: 100
+- name: cursor
+in: query
+required: false
+schema:
+type: string
+minLength: 8
+maxLength: 200
+responses:
+"200":
+description: Fehlerliste wurde geladen
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/TicketImportErrorList"
+"401":
+$ref: "#/components/responses/Unauthorized"
+"403":
+$ref: "#/components/responses/Forbidden"
+"404":
+$ref: "#/components/responses/NotFound"
+"500":
+$ref: "#/components/responses/InternalError"
+components:
+securitySchemes:
+bearerAuth:
+type: http
+scheme: bearer
+bearerFormat: opaque
+description: >
+Nicht-spezifisches Bearer-Schema für interne Authentifizierung.
+Diese Spezifikation enthält keine echten Tokens oder produktiven Secrets.
+parameters:
+ImportId:
+name: importId
+in: path
+required: true
+description: Stabile Importkennung ohne personenbezogene Daten
+schema:
+type: string
+pattern: "^IMP-[0-9]{4,}$"
+example: IMP-1001
+IdempotencyKey:
+name: Idempotency-Key
+in: header
+required: true
+description: Clientseitig erzeugter Schlüssel zur Vermeidung doppelter Importaufträge
+schema:
+type: string
+minLength: 12
+maxLength: 120
+pattern: "^[A-Za-z0-9.:-]+$"
+example: import-2026-01-15-001
+responses:
+BadRequest:
+description: Anfrage ist syntaktisch ungültig oder verletzt einfache Validierungsregeln
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+missingField:
+value:
+code: invalid_request
+message: Pflichtfeld fehlt oder ist ungültig.
+fieldErrors:
+- field: fileName
+reason: fileName ist erforderlich.
+Unauthorized:
+description: Authentifizierung fehlt oder ist ungültig
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+unauthorized:
+value:
+code: unauthorized
+message: Authentifizierung erforderlich.
+fieldErrors: []
+Forbidden:
+description: Authentifizierte Rolle darf diese Operation nicht ausführen
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+forbidden:
+value:
+code: forbidden
+message: Berechtigung für diese Operation fehlt.
+fieldErrors: []
+NotFound:
+description: Angeforderte Ressource wurde nicht gefunden
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+notFound:
+value:
+code: not_found
+message: Ressource wurde nicht gefunden.
+fieldErrors: []
+Conflict:
+description: Anfrage kollidiert mit bestehendem Zustand oder Idempotenzregel
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+conflict:
+value:
+code: conflict
+message: Ein gleichwertiger Importauftrag existiert bereits.
+fieldErrors: []
+UnprocessableEntity:
+description: Anfrage ist syntaktisch gültig, kann fachlich aber nicht verarbeitet werden
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+invalidValidation:
+value:
+code: validation_not_usable
+message: Die referenzierte Validierung ist nicht für einen Import verwendbar.
+fieldErrors:
+- field: validationId
+reason: Validierungsstatus muss valid sein.
+PayloadTooLarge:
+description: Nutzlast überschreitet die lokal konfigurierte Grenze
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+payloadTooLarge:
+value:
+code: payload_too_large
+message: Datei überschreitet die zulässige Größe.
+fieldErrors: []
+InternalError:
+description: Unerwarteter technischer Fehler ohne Offenlegung interner Details
+content:
+application/json:
+schema:
+$ref: "#/components/schemas/ErrorResponse"
+examples:
+internalError:
+value:
+code: internal_error
+message: Anfrage konnte nicht verarbeitet werden.
+fieldErrors: []
+schemas:
+TicketImportValidationRequest:
+type: object
+additionalProperties: false
+required:
+- fileName
+- encoding
+- delimiter
+- hasHeader
+- contentBase64
+properties:
+fileName:
+type: string
+minLength: 5
+maxLength: 180
+pattern: "^[A-Za-z0-9.-]+\.csv$"
+description: Dateiname ohne Pfadanteile
+encoding:
+type: string
+enum:
+- utf-8
+delimiter:
+type: string
+enum:
+- comma
+- semicolon
+hasHeader:
+type: boolean
+const: true
+contentBase64:
+type: string
+minLength: 4
+maxLength: 5242880
+description: Base64-kodierter CSV-Inhalt; Größenlimit ist lokal zu bestätigen
+TicketImportValidationResult:
+type: object
+additionalProperties: false
+required:
+- validationId
+- status
+- checkedRows
+- errors
+- warnings
+properties:
+validationId:
+type: string
+pattern: "^VLD-[0-9]{4,}$"
+status:
+type: string
+enum:
+- valid
+- invalid
+checkedRows:
+type: integer
+minimum: 0
+errors:
+type: array
+items:
+$ref: "#/components/schemas/TicketImportRowIssue"
+warnings:
+type: array
+items:
+$ref: "#/components/schemas/TicketImportRowIssue"
+TicketImportCreateRequest:
+type: object
+additionalProperties: false
+required:
+- validationId
+- sourceSystem
+- requestedBy
+properties:
+validationId:
+type: string
+pattern: "^VLD-[0-9]{4,}$"
+sourceSystem:
+type: string
+minLength: 2
+maxLength: 80
+pattern: "^[A-Za-z0-9.:-]+$"
+description: System- oder Exportkennung ohne internen Hostnamen
+requestedBy:
+type: string
+minLength: 2
+maxLength: 80
+pattern: "^[A-Za-z0-9.:-]+$"
+description: Rollen- oder Teamkennung, keine private E-Mail-Adresse
+TicketImport:
+type: object
+additionalProperties: false
+required:
+- importId
+- status
+- sourceSystem
+- requestedBy
+- createdAt
+- processedRows
+- failedRows
+properties:
+importId:
+type: string
+pattern: "^IMP-[0-9]{4,}$"
+status:
+$ref: "#/components/schemas/TicketImportStatus"
+sourceSystem:
+type: string
+requestedBy:
+type: string
+createdAt:
+type: string
+format: date-time
+completedAt:
+type:
+- string
+- "null"
+format: date-time
+processedRows:
+type: integer
+minimum: 0
+failedRows:
+type: integer
+minimum: 0
+TicketImportStatus:
+type: string
+enum:
+- queued
+- processing
+- completed
+- failed
+- rejected
+TicketImportList:
+type: object
+additionalProperties: false
+required:
+- items
+- page
+properties:
+items:
+type: array
+items:
+$ref: "#/components/schemas/TicketImport"
+page:
+$ref: "#/components/schemas/PageInfo"
+TicketImportErrorList:
+type: object
+additionalProperties: false
+required:
+- items
+- page
+properties:
+items:
+type: array
+items:
+$ref: "#/components/schemas/TicketImportRowIssue"
+page:
+$ref: "#/components/schemas/PageInfo"
+TicketImportRowIssue:
+type: object
+additionalProperties: false
+required:
+- code
+- message
+- severity
+properties:
+code:
+type: string
+enum:
+- missing_required_column
+- missing_required_value
+- invalid_value
+- invalid_csv
+- duplicate_ticket
+message:
+type: string
+minLength: 3
+maxLength: 300
+severity:
+type: string
+enum:
+- error
+- warning
+rowNumber:
+type:
+- integer
+- "null"
+minimum: 1
+field:
+type:
+- string
+- "null"
+minLength: 1
+maxLength: 80
+PageInfo:
+type: object
+additionalProperties: false
+required:
+- limit
+- hasMore
+properties:
+limit:
+type: integer
+minimum: 1
+maximum: 200
+nextCursor:
+type:
+- string
+- "null"
+minLength: 8
+maxLength: 200
+hasMore:
+type: boolean
+ErrorResponse:
+type: object
+additionalProperties: false
+required:
+- code
+- message
+- fieldErrors
+properties:
+code:
+type: string
+minLength: 3
+maxLength: 80
+pattern: "^[a-z0-9_]+$"
+message:
+type: string
+minLength: 3
+maxLength: 300
+fieldErrors:
+type: array
+items:
+type: object
+additionalProperties: false
+required:
+- field
+- reason
+properties:
+field:
+type: string
+minLength: 1
+maxLength: 120
+reason:
+type: string
+minLength: 3
+maxLength: 300
+x-open-decisions:
+authenticationRoles:
+description: Rollenmodell ist fachlich zu bestätigen; Spezifikation enthält nur das Authentifizierungsschema.
+csvRequiredColumns:
+description: Konkrete Pflichtspalten des Ticketimports sind fachlich zu bestätigen.
+fileSizeLimit:
+description: Maximalgröße in contentBase64 ist als lokale Grenze zu prüfen.
+partialImport:
+description: Ob Teilimporte erlaubt sind oder Alles-oder-nichts gilt, ist offen.
+x-local-test-cases:
+
+id: TC-001
+operationId: validateTicketImport
+case: gültige CSV-Datei mit Kopfzeile
+expectedStatus: 200
+
+id: TC-002
+operationId: validateTicketImport
+case: fehlende Pflichtspalte
+expectedStatus: 200
+expectedBodyStatus: invalid
+
+id: TC-003
+operationId: createTicketImport
+case: fehlender Idempotency-Key
+expectedStatus: 400
+
+id: TC-004
+operationId: getTicketImport
+case: unbekannte Importkennung
+expectedStatus: 404
+
+id: TC-005
+operationId: listTicketImportErrors
+case: authentifizierte Rolle ohne Berechtigung
+expectedStatus: 403

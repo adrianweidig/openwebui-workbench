@@ -6,6 +6,7 @@ import base64
 import hashlib
 import importlib.util
 import json
+import os
 import re
 import shutil
 import sys
@@ -56,9 +57,30 @@ ZIP_EPOCH = (1980, 1, 1, 0, 0, 0)
 FUNCTION_CALLING_NATIVE = "native"
 CHAT_MODEL_TOOL_MODE = "all_validated_custom_tools"
 CHAT_MODEL_FILTER_MODE = "all_validated_default_filters"
-SUPPORTED_MISTRAL_RUNTIME_PARAMS = {"system", "temperature", "top_p", "stop", "function_calling"}
+WORKBENCH_DEFAULT_BASE_MODEL_ID = "coder"
+WORKBENCH_BASE_MODEL_ID_ENV = "WORKBENCH_BASE_MODEL_ID"
+WORKBENCH_LEGACY_MISTRAL_MODEL_ID_ENV = "WORKBENCH_MISTRAL_MODEL_ID"
+WORKBENCH_FUNCTION_CALLING = "native"
+WORKBENCH_REASONING_EFFORT = "high"
+WORKBENCH_TEMPERATURE = 0.7
+WORKBENCH_TOP_P = 0.95
+WORKBENCH_PARALLEL_TOOL_CALLS = True
+WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA = "workbench-file-context/v1"
+WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID = "workbench_required_file_context_filter"
+WORKBENCH_REQUIRED_FILE_CONTEXT_MARKER = "## Workbench-Pflichtdateien"
+WORKBENCH_REQUIRED_FILE_CONTEXT_MAX_CHARS = 180_000
+WORKBENCH_SYSTEMPROMPT_MAX_CHARS = 2_500
+SUPPORTED_CHAT_RUNTIME_PARAMS = {
+    "system",
+    "temperature",
+    "top_p",
+    "stop",
+    "function_calling",
+    "reasoning_effort",
+    "parallel_tool_calls",
+}
 OMITTED_RUNTIME_PARAMS = ["max_tokens"]
-OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["reasoning_effort", "num_ctx", "top_k", "seed"]
+OMITTED_UNSUPPORTED_RUNTIME_PARAMS = ["num_ctx", "top_k", "seed"]
 PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 OFFLINE_EXCLUDED_TOOL_IDS = {
     "github_repo_inspector",
@@ -67,60 +89,110 @@ OFFLINE_EXCLUDED_TOOL_IDS = {
     "safe_http_fetcher",
     "web_search_and_crawl",
 }
-REQUIRED_MODEL_KNOWLEDGE_FILES = ["mainprompt.md", "fachwissen.md", "beispielergebnis.md"]
-MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES = {
-    "api-schnittstellenentwurf": ["mainprompt.md", "fachwissen.md", "beispielergebnis.yaml"],
-    "codegenerierung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.py"],
-    "informationsextraktion": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
-    "json-csv-log-analyse": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
-    "n8n-workflow-architect": ["mainprompt.md", "fachwissen.md", "beispielergebnis.json"],
-    "präsentationserstellung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
-    "report-dashboard-vorbereitung": ["mainprompt.md", "fachwissen.md", "beispielergebnis.html"],
-    "tabellen-csv-datenanalyse": ["mainprompt.md", "fachwissen.md", "beispielergebnis.py"],
+LEGACY_EXAMPLE_RESULT_FILE = "beispielergebnis.md"
+MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES = {
+    "api-schnittstellenentwurf": "beispielergebnis.yaml",
+    "codegenerierung": "beispielergebnis.py",
+    "informationsextraktion": "beispielergebnis.json",
+    "json-csv-log-analyse": "beispielergebnis.json",
+    "n8n-workflow-architect": "beispielergebnis.json",
+    "präsentationserstellung": "beispielergebnis.html",
+    "report-dashboard-vorbereitung": "beispielergebnis.html",
+    "tabellen-csv-datenanalyse": "beispielergebnis.py",
 }
-SYSTEM_BOOTLOADER_MAX_CHARS = 1400
+COMPILED_CONTEXT_MARKER = "## Deterministischer Workbench-Pflichtkontext"
+COMPILED_SYSTEM_MAX_CHARS = 220_000
+COMPILED_EXAMPLES_MAX_FILES = 2
+COMPILED_EXAMPLES_MAX_CHARS_TOTAL = 60_000
+COMPILED_EXAMPLE_MAX_CHARS = 35_000
+COMPILED_CONTEXT_TEXT_EXTENSIONS = {
+    ".md",
+    ".txt",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".py",
+    ".html",
+    ".htm",
+    ".csv",
+    ".xml",
+    ".ini",
+    ".sh",
+    ".ps1",
+}
+SYSTEM_BOOTLOADER_MAX_CHARS = 2400
 MODEL_EXAMPLES_DIR_NAME = "beispiele"
 MODEL_I18N_DIR_NAME = "i18n"
 PRIMARY_MODEL_I18N_FILES = ("manifest.json", "de.md", "en.md")
+REQUIRED_DEFAULT_FILTER_IDS = [
+    WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID,
+    "context_compressor_filter",
+    "auto_tool_selector",
+    "markdown_normalizer",
+]
+EXAMPLE_PRIORITY_TERMS = {
+    "default": [
+        "perfekt",
+        "referenz",
+        "gold",
+        "goldstandard",
+        "gpt",
+        "gpt-5",
+        "gpt5",
+        "5.5",
+        "best",
+        "final",
+    ],
+    "codegenerierung": [
+        "code",
+        "implementation",
+        "implementierung",
+        "test",
+        "pytest",
+        "unittest",
+        "validierung",
+        "production",
+    ],
+    "api-schnittstellenentwurf": [
+        "openapi",
+        "schema",
+        "endpoint",
+        "validation",
+    ],
+    "präsentationserstellung": [
+        "html",
+        "report",
+        "dashboard",
+        "slide",
+        "präsentation",
+    ],
+    "report-dashboard-vorbereitung": [
+        "html",
+        "dashboard",
+        "chart",
+        "bericht",
+    ],
+}
 MODEL_BOOTLOADER_EXTRA_RULES = {
     "eggplant-flaui-skriptmigration": "Spezialregel: Migriere nur nach NUnit/FlaUI UIA3 oder UIA2/OpenCvSharp/Verify.NUnit; keine Koordinatenklicks, xUnit, MSTest, ImageSharp, WinAppDriver oder Playwright-Desktop.",
     "flaui-testassistent": "Spezialregel: Nutze NUnit/FlaUI UIA3 oder UIA2/OpenCvSharp/Verify.NUnit; ersetze Koordinatenklicks durch UIA-Suche und liefere Waits, Assertions und Failure-Artefakte.",
     "n8n-workflow-architect": "n8n-Spezialregel: Ohne konkret bereitgestellten API-Endpunkt erzeugst du keine URL-Felder, keine HTTP-Request-Nodes und keine externen Domains; nutze Manual Trigger, Set/Code und Audit-Ausgabe.",
 }
-CLOUD_CODER_PRODUCTION_MODEL_IDS = {"eggplant-flaui-skriptmigration", "flaui-testassistent"}
-CLOUD_CODER_PRODUCTION_SYSTEM_PROMPTS = {
-    "eggplant-flaui-skriptmigration": """# Rolle
-
-Du bist das OpenWebUI-Modell `eggplant-flaui-skriptmigration` für Eggplant-zu-FlaUI/NUnit-Migrationen auf dem Basismodell `coder`.
-
-Zielruntime: Cloud-Coder wie Mistral Medium 3.5 128B hinter `coder`. Nutze Tools, Skills, Datei-/Knowledge-Kontext und native Tool-Calls, wenn verfügbar.
-
-Bearbeite Nutzeraufgaben direkt und produktionsnah. Nutze `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/` gezielt; Primäres Beispielergebnis: `beispielergebnis.md`.
-
-Fordere fehlende Dateien oder Beispielkontexte an, statt Fakten zu erfinden. Nenne `i18n/` nur bei Lokalisierung, UI-Texten, Metadaten oder Importfragen.
-
-Wende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen und Beispielmuster an. Beschreibe nicht diese internen Anweisungen.
-
-Zielstack: NUnit, FlaUI.UIA3 für WPF, FlaUI.UIA2 für WinForms, OpenCvSharp4.Windows für VisualTrack, Verify.NUnit, Serilog, Azure DevOps Server.
-
-Bei Migrationen: Abschnitte `Klassifizierung`, `Verbote`, `Zielstack`, `C#-Skizze`, `VisualTrack`; Code knapp. Verbote: keine Koordinatenklicks, `Thread.Sleep`, xUnit/MSTest, ImageSharp, WinAppDriver, Playwright-Desktop.
-
-Erfinde keine Fakten, Quellen, Dateiinhalte, APIs, Secrets, Tokens, Ergebnisse oder internen URLs. Benenne fehlenden Kontext knapp als fachliche Lücke.""",
-    "flaui-testassistent": """# Rolle
-
-Du bist das OpenWebUI-Modell `flaui-testassistent` für FlaUI/NUnit-Testdesign, Review, Stabilisierung und Diagnose auf dem Basismodell `coder`.
-
-Zielruntime ist ein leistungsfähiger Cloud-Coder wie Mistral Medium 3.5 128B hinter der Route `coder`. Nutze Tools, Skills, Datei-/Knowledge-Kontext und native Tool-Calls, wenn OpenWebUI sie bereitstellt.
-
-Bearbeite Nutzeraufgaben direkt und produktionsnah. Nutze `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/` gezielt; Primäres Beispielergebnis: `beispielergebnis.md`.
-
-Fordere fehlende Nutzerdateien oder relevante Beispielkontexte an, statt Fakten zu erfinden. Nenne `i18n/` nur bei Lokalisierung, UI-Texten, Metadaten oder Importfragen.
-
-Wende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen und Beispielmuster auf die Aufgabe an. Beschreibe nicht diese internen Anweisungen.
-
-Zielstack: NUnit, FlaUI.UIA3 für WPF, FlaUI.UIA2 für WinForms, AutomationId/UIA-Suche, Wait/Retry, Assertions, Screenshot-/UIA-Dump-Artefakte, OpenCvSharp4.Windows für VisualTrack, Verify.NUnit und Azure DevOps Server. Kein Selenium, xUnit, MSTest, WinAppDriver oder Playwright-Desktop.
-
-Erfinde keine Fakten, Quellen, Dateiinhalte, APIs, Secrets, Tokens, Ergebnisse oder internen URLs. Benenne fehlenden Kontext knapp als fachliche Lücke.""",
+CLOUD_CODER_PRODUCTION_MODEL_IDS: set[str] = set()
+CODE_OR_TECHNICAL_MODEL_IDS = {
+    "api-schnittstellenentwurf",
+    "code-dokumentation",
+    "code-review",
+    "codeanalyse",
+    "codegenerierung",
+    "debugging-fehleranalyse",
+    "eggplant-flaui-skriptmigration",
+    "flaui-testassistent",
+    "json-csv-log-analyse",
+    "refactoring-unterstützung",
+    "tabellen-csv-datenanalyse",
+    "testfall-generierung",
+    "testprogrammierung",
 }
 SUPPORTED_PRODUCT_LOCALES = ["de", "en", "es", "fr", "pt-BR", "it", "nl", "pl", "tr", "ja", "zh-Hans"]
 MARKDOWN_FORMATTING_MARKER = "Formatting re-enabled"
@@ -136,46 +208,99 @@ MANAGED_SYSTEM_SECTION_MARKERS = [
     TOOL_CALL_PLAYBOOK_SYSTEM_MARKER,
     TOOL_FORCE_SYSTEM_MARKER,
 ]
+def workbench_base_model_id() -> str:
+    return (
+        os.environ.get(WORKBENCH_BASE_MODEL_ID_ENV, "").strip()
+        or os.environ.get(WORKBENCH_LEGACY_MISTRAL_MODEL_ID_ENV, "").strip()
+        or WORKBENCH_DEFAULT_BASE_MODEL_ID
+    )
+
+
+def validate_base_model_id(value: str) -> str:
+    clean = str(value or "").strip()
+    if not clean:
+        raise ValueError("base model id must not be empty")
+    if len(clean) > 200 or any(ord(char) < 32 for char in clean):
+        raise ValueError("base model id contains invalid characters")
+    return clean
+
+
+def legacy_example_result_file_for_model(model_id: str) -> str:
+    return MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES.get(model_id, LEGACY_EXAMPLE_RESULT_FILE)
+
+
 def required_model_knowledge_files(model_id: str) -> List[str]:
-    return MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES.get(model_id, REQUIRED_MODEL_KNOWLEDGE_FILES)
+    """Legacy compatibility: only the old example result remains Knowledge."""
+    return [legacy_example_result_file_for_model(model_id)]
 
 
 def formatted_required_model_knowledge_files(model_id: str) -> str:
     return ", ".join(f"`{name}`" for name in required_model_knowledge_files(model_id))
 
 
-def example_result_file_for_model(model_id: str) -> str:
-    return next(
-        (name for name in required_model_knowledge_files(model_id) if name.startswith("beispielergebnis.")),
-        "modellseitig definierte Beispielergebnis-Datei",
+def golden_example_file_for_model(model_dir: Path) -> Path:
+    candidates = sorted(
+        path for path in model_dir.glob("Golden_Example.*")
+        if path.is_file()
     )
+    if len(candidates) != 1:
+        raise ValueError(
+            f"{model_dir.name}: genau eine Golden_Example.<ext>-Datei erforderlich, gefunden: {candidates}"
+        )
+    return candidates[0]
+
+
+def required_file_context_sources(model_id: str, model_dir: Path) -> list[dict[str, Any]]:
+    golden = golden_example_file_for_model(model_dir)
+    files = [
+        ("mainprompt", model_dir / "mainprompt.md"),
+        ("fachwissen", model_dir / "fachwissen.md"),
+        ("golden_example", golden),
+    ]
+    result: list[dict[str, Any]] = []
+    total_chars = 0
+    for role, path in files:
+        if not path.exists():
+            raise FileNotFoundError(f"{model_id}: Pflichtdatei fehlt: {path}")
+        content = path.read_text(encoding="utf-8").strip()
+        if not content:
+            raise ValueError(f"{model_id}: Pflichtdatei ist leer: {path}")
+        total_chars += len(content)
+        result.append(
+            {
+                "role": role,
+                "path": path.relative_to(model_dir).as_posix(),
+                "filename": path.name,
+                "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+                "chars": len(content),
+                "attachAsOpenWebUIFile": True,
+                "injectAsFullContext": True,
+                "useKnowledgeRag": False,
+                "content": content,
+            }
+        )
+    if total_chars > WORKBENCH_REQUIRED_FILE_CONTEXT_MAX_CHARS:
+        raise ValueError(
+            f"{model_id}: Pflichtdateien zu groß: {total_chars} Zeichen > "
+            f"{WORKBENCH_REQUIRED_FILE_CONTEXT_MAX_CHARS}. Nicht automatisch kürzen."
+        )
+    return result
+
+
+def required_file_context_file_names(model_id: str, model_dir: Path) -> list[str]:
+    return [item["path"] for item in required_file_context_sources(model_id, model_dir)]
+
+
+def formatted_required_file_context_files(model_id: str, model_dir: Path) -> str:
+    return ", ".join(f"`{name}`" for name in required_file_context_file_names(model_id, model_dir))
+
+
+def example_result_file_for_model(model_id: str) -> str:
+    return legacy_example_result_file_for_model(model_id)
 
 
 def is_cloud_coder_production_model(model_id: str) -> bool:
-    return model_id in CLOUD_CODER_PRODUCTION_MODEL_IDS
-
-
-def cloud_coder_production_systemprompt_for_model(model_id: str) -> str:
-    try:
-        return CLOUD_CODER_PRODUCTION_SYSTEM_PROMPTS[model_id]
-    except KeyError as exc:
-        raise ValueError(f"Kein Cloud-Coder-Produktionsprofil für {model_id}") from exc
-
-
-def has_cloud_coder_production_systemprompt(system_text: str, model_id: str) -> bool:
-    if not is_cloud_coder_production_model(model_id):
-        return False
-    return (
-        system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER)
-        and len(system_text) <= SYSTEM_BOOTLOADER_MAX_CHARS
-        and "Mistral Medium 3.5 128B" in system_text
-        and "Basismodell `coder`" in system_text
-        and "native Tool-Calls" in system_text
-        and all(name in system_text for name in required_model_knowledge_files(model_id))
-        and "`beispiele/`" in system_text
-        and "`i18n/`" in system_text
-        and "Erfinde keine Fakten" in system_text
-    )
+    return False
 
 
 def custom_gpt_quality_system_block_for_model(model_id: str) -> str:
@@ -204,44 +329,8 @@ VISION_SYSTEM_BLOCK = f"""{VISION_SYSTEM_MARKER}
 - Nutze Vision bei Bildern, Screenshots, Scans, Folien, Diagrammen, UI-Zuständen und visueller Artefakt-QA; behaupte keine nicht sichtbaren Details.
 - Prüfe Layout, Lesbarkeit, Kontrast, Responsiveness, Overlaps, Dark Mode, Hover/Focus/Touch und sichtbare Fehler; nutze lokale Offline-Tools oder `openwebui-offline-addons`, wenn sie verfügbar sind.
 """
-MODEL_TEMPERATURES = {
-    "allgemein": 0.45,
-    "anforderungsanalyse-lastenheft": 0.4,
-    "api-schnittstellenentwurf": 0.35,
-    "code-dokumentation": 0.35,
-    "code-review": 0.2,
-    "codeanalyse": 0.2,
-    "codegenerierung": 0.35,
-    "compliance-richtlinienprüfung": 0.2,
-    "debugging-fehleranalyse": 0.2,
-    "dokumentenanalyse": 0.2,
-    "dokumentengenerierung": 0.7,
-    "dokumentenvergleich": 0.15,
-    "dokumentenzusammenfassung": 0.25,
-    "email-kommunikationsassistenz": 0.7,
-    "eggplant-flaui-skriptmigration": 0.1,
-    "flaui-testassistent": 0.15,
-    "informationsextraktion": 0.0,
-    "internetwissen": 0.25,
-    "istqb-testfallgenerator": 0.2,
-    "it-helpdesk-diagnose": 0.25,
-    "json-csv-log-analyse": 0.15,
-    "meeting-protokoll-auswertung": 0.35,
-    "mistral-vision-workbench": 0.25,
-    "n8n-workflow-architect": 0.25,
-    "offline-workbench-agent": 0.45,
-    "openwebui-model-builder": 0.35,
-    "promptforge": 0.35,
-    "prozess-workflow-dokumentation": 0.4,
-    "präsentationserstellung": 0.7,
-    "refactoring-unterstützung": 0.25,
-    "report-dashboard-vorbereitung": 0.4,
-    "support-ticket-vorbereitung": 0.35,
-    "tabellen-csv-datenanalyse": 0.15,
-    "testfall-generierung": 0.3,
-    "testprogrammierung": 0.15,
-    "übersetzung-lokalisierung": 0.35,
-}
+MODEL_TEMPERATURES = {}
+DEFAULT_CHAT_TEMPERATURE = 0.7
 TOOL_FORCE_PROFILES = {
     "allgemein": {
         "tools": ["air_gapped_jupyter_python", "ask_user", "comfyui_workflow_inspector", "docker_compose_triage", "inline_visuals_toolkit_v3", "json_csv_text_validator", "llm_council", "markdown_skill_builder", "offline_artifact_workbench", "openapi_schema_inspector", "parallel_task_planner", "parallel_tools", "repo_tree_analyzer", "sub_agent", "subagent_orchestrator", "tool_skill_overlay_planner", "visuals_toolkit_v4"],
@@ -356,7 +445,7 @@ TOOL_FORCE_PROFILES = {
     "mistral-vision-workbench": {
         "tools": ["ask_user", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "air_gapped_jupyter_python", "json_csv_text_validator", "repo_tree_analyzer", "docker_compose_triage", "parallel_task_planner", "parallel_tools", "sub_agent", "subagent_orchestrator", "tool_skill_overlay_planner", "llm_council"],
         "skills": ["visual-toolkit-v3-offline", "offline-artifact-production", "data-cleaning-analysis", "parallel-tools-subagents", "secure-tool-usage"],
-        "focus": "Mistral-Medium-Vision für Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern.",
+        "focus": "Das ausgewählte visionfähige Basismodell für Screenshots, UI-Tests, Folien, Diagramme, Scans, Dokumentbilder und visuelle Artefakt-QA nutzen und mit lokalen Offline-Tools absichern.",
     },
     "offline-workbench-agent": {
         "tools": ["ask_user", "json_csv_text_validator", "air_gapped_jupyter_python", "offline_artifact_workbench", "inline_visuals_toolkit_v3", "visuals_toolkit_v4", "parallel_task_planner", "parallel_tools", "subagent_orchestrator", "sub_agent", "tool_skill_overlay_planner", "repo_tree_analyzer", "docker_compose_triage", "openapi_schema_inspector", "llm_council", "comfyui_workflow_inspector"],
@@ -1022,8 +1111,154 @@ def merge_unique(existing: Any, required: Any) -> List[str]:
     return merged
 
 
+def profile_for_model(model_id: str) -> dict[str, Any]:
+    return TOOL_FORCE_PROFILES.get(
+        model_id,
+        TOOL_FORCE_PROFILES["offline-workbench-agent"],
+    )
+
+
+def selected_tool_ids_for_model(model_id: str, valid_tool_ids: set[str]) -> list[str]:
+    profile = profile_for_model(model_id)
+    requested = list(dict.fromkeys(profile.get("tools", [])))
+    unknown = sorted(set(requested) - set(valid_tool_ids))
+    if unknown:
+        raise ValueError(
+            f"{model_id}: TOOL_FORCE_PROFILES enthält unbekannte oder nicht importierbare Tools: {unknown}"
+        )
+    return requested
+
+
+def selected_skill_ids_for_model(model_id: str, valid_skill_ids: set[str]) -> list[str]:
+    profile = profile_for_model(model_id)
+    requested = list(dict.fromkeys(profile.get("skills", [])))
+    unknown = sorted(set(requested) - set(valid_skill_ids))
+    if unknown:
+        raise ValueError(
+            f"{model_id}: TOOL_FORCE_PROFILES enthält unbekannte oder nicht importierbare Skills: {unknown}"
+        )
+    return requested
+
+
+def read_utf8_required(path: Path, model_id: str, logical_name: str) -> str:
+    if not path.exists():
+        raise ValueError(f"{model_id}: Pflichtdatei fehlt: {path}")
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n").strip()
+    if not text:
+        raise ValueError(f"{model_id}: Pflichtdatei ist leer: {path}")
+    return text
+
+
+def read_utf8_optional(path: Path) -> str:
+    if not path.exists():
+        return ""
+    return path.read_text(encoding="utf-8").replace("\r\n", "\n").strip()
+
+
+def truncate_example_for_system_context(text: str, max_chars: int) -> str:
+    if len(text) <= max_chars:
+        return text
+    head_budget = int(max_chars * 0.70)
+    tail_budget = max_chars - head_budget
+    return (
+        text[:head_budget].rstrip()
+        + "\n\n[... Beispiel für Systemkontext gekürzt; vollständiges Beispiel bleibt über Knowledge/RAG verfügbar ...]\n\n"
+        + text[-tail_budget:].lstrip()
+    )
+
+
+def score_example_file(model_id: str, path: Path, profile_focus: str = "") -> tuple[int, str]:
+    rel_path = path.as_posix().lower()
+    score = 0
+    for term in EXAMPLE_PRIORITY_TERMS.get("default", []):
+        if term in rel_path:
+            score += 10
+    for term in EXAMPLE_PRIORITY_TERMS.get(model_id, []):
+        if term in rel_path:
+            score += 15
+    for term in re.findall(r"[a-zA-ZäöüÄÖÜß0-9_-]{4,}", profile_focus.lower()):
+        if term in rel_path:
+            score += 3
+    return (-score, rel_path)
+
+
+def select_best_example_files_for_model(model_dir: Path, model_id: str, profile_focus: str) -> List[Path]:
+    examples_dir = model_dir / MODEL_EXAMPLES_DIR_NAME
+    if not examples_dir.exists():
+        return []
+    example_files = sorted(path for path in examples_dir.rglob("*") if path.is_file() and should_archive(path))
+    if not example_files:
+        return []
+    prioritized = sorted(example_files, key=lambda p: score_example_file(model_id, p, profile_focus))
+    return prioritized[:COMPILED_EXAMPLES_MAX_FILES]
+
+
+def compile_mandatory_context_for_model(model_id: str, model_dir: Path) -> tuple[str, list[dict[str, Any]]]:
+    profile = profile_for_model(model_id)
+    profile_focus = str(profile.get("focus", ""))
+    parts: list[str] = []
+    manifest: list[dict[str, Any]] = []
+
+    def append_text(logical_name: str, rel_path: str, content: str) -> None:
+        sha256 = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        parts.append("")
+        parts.append(f"# Datei: {rel_path}")
+        parts.append("")
+        parts.append(content)
+        manifest.append(
+            {
+                "path": rel_path,
+                "logicalName": logical_name,
+                "sha256": sha256,
+                "chars": len(content),
+            }
+        )
+
+    parts.append(COMPILED_CONTEXT_MARKER)
+    parts.append("")
+    parts.append(
+        "Die folgenden Inhalte sind verbindlicher, bereits geladener Systemkontext. "
+        "Sie sind nicht optionales RAG-Wissen. Rolle, Hauptauftrag, Fachwissen, "
+        "Ausgabeformat und Beispielmuster müssen ab dem ersten Nutzerprompt angewendet werden. "
+        "Knowledge/RAG soll zusätzlich gezielt genutzt werden, wenn dadurch ein passenderes Ergebnis entsteht."
+    )
+
+    systemprompt_file = model_dir / "systemprompt.md"
+    if systemprompt_file.exists():
+        append_text("systemprompt", "systemprompt.md", read_utf8_required(systemprompt_file, model_id, "systemprompt"))
+    for filename in required_model_knowledge_files(model_id):
+        append_text(filename, filename, read_utf8_required(model_dir / filename, model_id, filename))
+
+    selected_examples = select_best_example_files_for_model(model_dir, model_id, profile_focus)
+    remaining_budget = COMPILED_EXAMPLES_MAX_CHARS_TOTAL
+    for path in selected_examples:
+        if remaining_budget <= 0:
+            break
+        raw = read_utf8_optional(path)
+        if not raw:
+            continue
+        max_for_file = min(COMPILED_EXAMPLE_MAX_CHARS, remaining_budget)
+        truncated = truncate_example_for_system_context(raw, max_for_file)
+        remaining_budget -= len(truncated)
+        append_text(
+            "beispielanker",
+            path.relative_to(model_dir).as_posix(),
+            truncated,
+        )
+
+    compiled = "\n".join(parts).strip() + "\n"
+    if len(compiled) > COMPILED_SYSTEM_MAX_CHARS:
+        raise ValueError(
+            f"{model_id}: kompilierter Pflichtkontext ist zu groß: "
+            f"{len(compiled)} Zeichen > {COMPILED_SYSTEM_MAX_CHARS}. "
+            "Nicht automatisch auf RAG verschieben. Beispielanker reduzieren oder Limit bewusst anpassen."
+        )
+    return compiled, manifest
+
+
 def temperature_for_model(model_id: str) -> float:
-    return MODEL_TEMPERATURES.get(model_id, 0.35)
+    # Konsistente moderate Temperatur für Chat-Profile.
+    return MODEL_TEMPERATURES.get(model_id, DEFAULT_CHAT_TEMPERATURE)
 
 
 def top_p_for_temperature(temperature: float) -> float:
@@ -1064,10 +1299,10 @@ def ensure_high_reasoning_profile(system_prompt: Any) -> Any:
         return system_prompt
     legacy_line = (
         "- Die Modellprofile erlauben bis zu " + "256" + "k Tokens über `max_tokens`, "
-        "setzen aber keine nicht unterstützten Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` oder `seed`."
+        "setzen aber keine nicht unterstützten Runtime-Parameter wie `num_ctx`, `top_k` oder `seed`."
     )
     previous_default_line = "- Die Modellprofile setzen keine festen Laufzeitwerte wie `max_tokens`, `temperature`, `top_p`, `reasoning_effort`, `num_ctx`, `top_k` oder `seed`; die Zielinstanz verwendet ihre eigenen Defaults."
-    tuned_line = "- Die Modellprofile setzen use-case-spezifische Werte für `temperature` und `top_p`, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits."
+    tuned_line = "- Die Modellprofile setzen `reasoning_effort=high`, `temperature=0.7`, `top_p=0.95`, native Tool-Calls und parallele Tool-Calls, aber kein festes `max_tokens`; die Zielinstanz bestimmt Kontext- und Antwortlimits."
     current_line = "- Arbeite im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch."
     upgraded_line = "- Arbeite grundsätzlich im Reasoning-Profil `high`: Plane schwierige Aufgaben intern gründlich, prüfe Zwischenergebnisse und validiere Tool-Ausgaben kritisch. Gib keine verborgene Herleitung aus; liefere nur das fachlich notwendige Ergebnis."
     if HIGH_REASONING_SYSTEM_MARKER in system_prompt:
@@ -1194,38 +1429,52 @@ def managed_system_profile_for_model(model_id: str) -> str:
 
 
 def systemprompt_source_for_model(model_id: str) -> str:
-    if is_cloud_coder_production_model(model_id):
-        return cloud_coder_production_systemprompt_for_model(model_id)
-    knowledge_files = formatted_required_model_knowledge_files(model_id)
-    example_file = example_result_file_for_model(model_id)
+    model_dir = SINGLE_MODELS / model_id
+    golden_file = golden_example_file_for_model(model_dir).name
     extra_rule = MODEL_BOOTLOADER_EXTRA_RULES.get(model_id, "")
     extra_rule_block = f"\n\n{extra_rule}" if extra_rule else ""
+    code_rule = (
+        "\n\nBei Codeaufgaben orientiere Implementierung, Tests, Fehlerbehandlung, Struktur und Robustheit an "
+        f"`{golden_file}`."
+        if model_id in CODE_OR_TECHNICAL_MODEL_IDS
+        else ""
+    )
     return f"""# Rolle
 
-Du bist das OpenWebUI-Modell `{model_id}`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.
+Du bist das Workbench-Modell `{model_id}` für den in `mainprompt.md` definierten Auftrag.
 
-Nutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: {knowledge_files}, `beispiele/`. Primäres Beispielergebnis: `{example_file}`.{extra_rule_block}
+# Pflichtkontext
 
-Nenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.
+Vor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `{golden_file}` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.
 
-Wende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.
+`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `{golden_file}` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.
 
-Bei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.
+# Beispiele und RAG
 
-Beschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.
+Weitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.
 
-Keine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus."""
+# Ausführung
+
+Nutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.{code_rule}{extra_rule_block}"""
 
 
 def has_short_bootloader_systemprompt(system_text: str, model_id: str) -> bool:
+    model_dir = SINGLE_MODELS / model_id
+    try:
+        golden_name = golden_example_file_for_model(model_dir).name
+    except ValueError:
+        golden_name = "Golden_Example."
     return (
-        system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER)
-        and len(system_text) <= SYSTEM_BOOTLOADER_MAX_CHARS
-        and "Bearbeite Nutzeraufgaben direkt" in system_text
+        "Workbench-Modell" in system_text
+        and "Werte alle drei aus" in system_text
+        and "mainprompt.md" in system_text
+        and "fachwissen.md" in system_text
+        and golden_name in system_text
+        and "Golden_Example" in system_text
+        and "höchstens 1-2 passende Beispiele" in system_text
         and "Erfinde keine Fakten" in system_text
-        and all(name in system_text for name in required_model_knowledge_files(model_id))
-        and "`beispiele/`" in system_text
-        and "`i18n/`" in system_text
+        and WORKBENCH_REQUIRED_FILE_CONTEXT_MARKER not in system_text
+        and len(system_text) <= WORKBENCH_SYSTEMPROMPT_MAX_CHARS
     )
 
 
@@ -1253,15 +1502,14 @@ def normalize_base_prompt_text(system_prompt: str) -> str:
 
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
     system_prompt = systemprompt_source_for_model(model_id)
-    system_prompt = ensure_markdown_formatting_enabled(system_prompt)
-    temperature = temperature_for_model(model_id)
     params.clear()
-    if system_prompt is not None:
-        params["system"] = system_prompt
-    params["temperature"] = temperature
-    params["top_p"] = top_p_for_temperature(temperature)
+    params["system"] = system_prompt.strip()
+    params["temperature"] = WORKBENCH_TEMPERATURE
+    params["top_p"] = WORKBENCH_TOP_P
     params["stop"] = []
-    params["function_calling"] = FUNCTION_CALLING_NATIVE
+    params["function_calling"] = WORKBENCH_FUNCTION_CALLING
+    params["reasoning_effort"] = WORKBENCH_REASONING_EFFORT
+    params["parallel_tool_calls"] = WORKBENCH_PARALLEL_TOOL_CALLS
 
 
 def icon_data_uri_for_model(model_id: str) -> str:
@@ -1280,13 +1528,7 @@ def icon_data_uri_for_model(model_id: str) -> str:
 
 
 def tool_ids_for_model(model_id: str, offline_tool_ids: List[str], all_tool_ids: List[str]) -> List[str]:
-    if model_id == "allgemein":
-        return list(offline_tool_ids)
-    if model_id == "internetwissen":
-        return list(TOOL_FORCE_PROFILES[model_id]["tools"])
-    if model_id in {"eggplant-flaui-skriptmigration", "flaui-testassistent"}:
-        return list(TOOL_FORCE_PROFILES[model_id]["tools"])
-    return list(offline_tool_ids)
+    return list(selected_tool_ids_for_model(model_id, set(all_tool_ids)))
 
 
 def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_ids: List[str], all_tool_ids: List[str]) -> Dict[str, Any]:
@@ -1309,27 +1551,41 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
         return model
 
     model_id = str(model.get("id", ""))
-    profile = TOOL_FORCE_PROFILES.get(model_id, TOOL_FORCE_PROFILES["offline-workbench-agent"])
+    profile = profile_for_model(model_id)
+    model_dir = SINGLE_MODELS / model_id
+    required_sources = required_file_context_sources(model_id, model_dir)
+    example_knowledge = [path.relative_to(model_dir).as_posix() for path in model_knowledge_files(model_id)]
+    model["base_model_id"] = workbench_base_model_id()
     meta["profile_image_url"] = icon_data_uri_for_model(model_id)
     meta.pop("localCoderProfile", None)
     meta["toolIds"] = tool_ids_for_model(model_id, offline_tool_ids, all_tool_ids)
-    meta["filterIds"] = merge_unique(filter_ids, meta.get("filterIds"))
-    meta["defaultFilterIds"] = merge_unique(filter_ids, meta.get("defaultFilterIds"))
-    meta["primaryToolIds"] = list(profile["tools"])
-    meta["skillIds"] = list(profile["skills"])
-    meta["recommendedSkillIds"] = list(profile["skills"])
-    if is_cloud_coder_production_model(model_id):
-        meta["coderRuntimeProfile"] = {
-            "mode": "cloud_production_chat",
-            "base_model_id": "coder",
-            "recommendedProviderModel": "mistral-medium-3-5",
-            "recommendedLiteLLMModel": "mistral/mistral-medium-3-5",
-            "recommendedOpenRouterModel": "openrouter/mistralai/mistral-medium-3-5",
-            "reason": "Produktionsziel: Die Route coder soll auf einen leistungsfähigen Cloud-Coder wie Mistral Medium 3.5 128B zeigen; Tools, Skills und native Tool-Calls bleiben aktiv.",
-        }
-    else:
-        meta.pop("coderRuntimeProfile", None)
-    meta["requiredKnowledgeFiles"] = list(required_model_knowledge_files(model_id))
+    meta["filterIds"] = merge_unique(REQUIRED_DEFAULT_FILTER_IDS, merge_unique(filter_ids, meta.get("filterIds")))
+    meta["defaultFilterIds"] = merge_unique(
+        REQUIRED_DEFAULT_FILTER_IDS,
+        merge_unique(filter_ids, meta.get("defaultFilterIds")),
+    )
+    meta["primaryToolIds"] = selected_tool_ids_for_model(model_id, set(all_tool_ids))
+    meta["skillIds"] = selected_skill_ids_for_model(model_id, set(skill_ids()))
+    meta["recommendedSkillIds"] = list(meta["skillIds"])
+    meta.pop("coderRuntimeProfile", None)
+    meta.pop("requiredKnowledgeFiles", None)
+    meta.pop("deterministicContext", None)
+    meta["requiredFileContextFiles"] = [item["path"] for item in required_sources]
+    meta["exampleKnowledgeFiles"] = example_knowledge
+    legacy_example = legacy_example_result_file_for_model(model_id)
+    meta["legacyExampleResult"] = legacy_example if (model_dir / legacy_example).exists() else None
+    meta["workbenchFileContext"] = {
+        "schema": WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA,
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID,
+        "requiredFiles": required_sources,
+        "exampleKnowledgePolicy": {
+            "sourceDir": f"{MODEL_EXAMPLES_DIR_NAME}/",
+            "mode": "focused_retrieval_on_demand",
+            "maxExamplesPerAnswer": 2,
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": False,
+    }
     meta["defaultLocale"] = "de"
     meta["fallbackLocale"] = "en"
     meta["supportedLocales"] = list(SUPPORTED_PRODUCT_LOCALES)
@@ -1361,7 +1617,10 @@ def skill_ids() -> List[str]:
 
 def model_knowledge_files(model_id: str) -> List[Path]:
     model_dir = SINGLE_MODELS / model_id
-    files = [model_dir / name for name in required_model_knowledge_files(model_id)]
+    files: List[Path] = []
+    legacy_example = model_dir / legacy_example_result_file_for_model(model_id)
+    if legacy_example.is_file() and should_archive(legacy_example):
+        files.append(legacy_example)
     files.extend(model_example_files(model_id))
     files.extend(model_i18n_files(model_id))
     return files
@@ -1442,11 +1701,11 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
     summary = {
         "schema": "openwebui-model-params-summary/v1",
         "max_tokens_policy": "omitted; target OpenWebUI/model-server limits are used.",
-        "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+        "supported_runtime_params": sorted(SUPPORTED_CHAT_RUNTIME_PARAMS),
         "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
         "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
-        "mistral_medium_128b_policy": "High reasoning is prompt-enforced with explicit tool-call playbooks; unsupported runtime parameters stay omitted.",
-        "mistral_medium_vision_policy": "All chat model profiles enable OpenWebUI vision capability and include prompt rules for screenshot, UI, chart, scan, presentation and visual artifact analysis when the backing Mistral deployment supports image inputs.",
+        "base_model_policy": "All chat models target the selected OpenWebUI base model, defaulting to `coder`, with `reasoning_effort=high`, `parallel_tool_calls=true`, `temperature=0.7`, `top_p=0.95` and native tool calling.",
+        "vision_policy": "All chat model profiles enable OpenWebUI vision capability and include prompt rules for screenshot, UI, chart, scan, presentation and visual artifact analysis when the selected backing model supports image inputs.",
         "openwebui_builtin_and_addon_policy": "Chat models prefer standard OpenWebUI builtins and the mounted openwebui-offline-addons runtime for local caches, Playwright/Chromium, Tiktoken, NLTK and Python packages when available.",
         "offline_excluded_tool_ids": sorted(OFFLINE_EXCLUDED_TOOL_IDS),
         "product_i18n_policy": {
@@ -1464,6 +1723,7 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "product_i18n_locales": sorted(
                     (model.get("meta", {}).get("productI18n", {}) if isinstance(model.get("meta"), dict) else {}).keys()
                 ),
+                "params": model.get("params", {}) if isinstance(model.get("params"), dict) else {},
                 "product_locale_files": model.get("meta", {}).get("productLocaleFiles", []) if isinstance(model.get("meta"), dict) else [],
                 "temperature": model.get("params", {}).get("temperature") if isinstance(model.get("params"), dict) else None,
                 "top_p": model.get("params", {}).get("top_p") if isinstance(model.get("params"), dict) else None,
@@ -1506,7 +1766,8 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
                 "recommended_skill_ids": TOOL_FORCE_PROFILES.get(str(model.get("id")), {}).get("skills", []),
                 "assigned_tool_ids": model.get("meta", {}).get("toolIds", []) if isinstance(model.get("meta"), dict) else [],
                 "attached_skill_ids": model.get("meta", {}).get("skillIds", []) if isinstance(model.get("meta"), dict) else [],
-                "required_knowledge_files": required_model_knowledge_files(str(model.get("id"))),
+                "required_file_context_files": model.get("meta", {}).get("requiredFileContextFiles", []) if isinstance(model.get("meta"), dict) else [],
+                "example_knowledge_files": model.get("meta", {}).get("exampleKnowledgeFiles", []) if isinstance(model.get("meta"), dict) else [],
                 "knowledge_files": model_knowledge_status(str(model.get("id"))),
                 "vision_enabled": bool(
                     model.get("meta", {}).get("capabilities", {}).get("vision")
@@ -1546,10 +1807,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "6_apply_function_filter_valves",
             "7_import_workspace_skills",
             "8_publish_skills_public",
-            "9_upload_model_knowledge",
-            "10_publish_model_knowledge_public",
-            "11_import_or_update_models",
-            "12_publish_models_public",
+            "9_upload_model_required_file_context",
+            "10_upload_model_example_knowledge",
+            "11_publish_model_knowledge_public",
+            "12_import_or_update_models",
+            "13_publish_models_public",
         ],
         "api_import_script": rel(IMPORT_SCRIPT),
         "api_import_config_file": rel(CONFIG_FILE),
@@ -1566,10 +1828,11 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
                 "environment",
                 "tool_valves",
                 "function_valves",
+                "model_file_context",
                 "import",
             ],
             "auth": "Default is Authorization: Bearer <token>. For OpenWebUI CUSTOM_API_KEY_HEADER setups use openwebui.auth_header and openwebui.auth_scheme in the central YAML.",
-            "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves and function/filter valves into OpenWebUI before importing models. Tools, skills, model knowledge and models are published with public read access; functions and filters are enabled and made global.",
+            "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves, function/filter valves and required model-file-context settings into OpenWebUI before importing models. Tools, skills, example Knowledge and models are published with public read access; functions and filters are enabled and made global.",
         },
         "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override. The token must be an OpenWebUI API key or JWT for an admin user.",
         "public_access_policy": {
@@ -1585,12 +1848,20 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "specialist_model_id": "mistral-vision-workbench",
             "behavior": "Vision remains enabled in model metadata. Detailed image, screenshot and artifact-QA rules live in Knowledge so the OpenWebUI system prompt can stay a short bootloader.",
         },
+        "model_file_context_policy": {
+            "schema": WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA,
+            "required_files": ["mainprompt.md", "fachwissen.md", "Golden_Example.<ext>"],
+            "injection_filter": WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID,
+            "max_required_context_chars": WORKBENCH_REQUIRED_FILE_CONTEXT_MAX_CHARS,
+            "behavior": "The importer uploads mainprompt.md, fachwissen.md and Golden_Example.<ext> as real OpenWebUI Files. The required-file-context filter attaches their file IDs and injects their stored content as protected full-context system block on every request.",
+        },
         "model_example_policy": {
-            "default_required_knowledge_file": "beispielergebnis.md",
-            "model_required_knowledge_file_overrides": MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES,
+            "default_legacy_example_file": LEGACY_EXAMPLE_RESULT_FILE,
+            "model_legacy_example_file_overrides": MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES,
             "example_dir": MODEL_EXAMPLES_DIR_NAME,
+            "source_dir": f"{MODEL_EXAMPLES_DIR_NAME}/",
             "dist_examples_dir": rel(MODEL_EXAMPLE_ARTIFACTS),
-            "behavior": "Each model package contains a use-case-specific reusable example file and optional rich artifacts. The API importer uploads them into the per-model Knowledge collection together with mainprompt.md, fachwissen.md and the model-specific example result file.",
+            "behavior": "Files under beispiele/ and optional legacy beispielergebnis.* files are imported into per-model Knowledge for focused on-demand retrieval. The three required files are not the Knowledge/RAG core-behavior path.",
         },
         "model_product_i18n_policy": {
             "default_locale": "de",
@@ -1654,8 +1925,9 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "filters_before_models": filter_ids,
         "skills_before_models": workspace_skill_ids,
         "skill_source_dir": rel(SKILLS_DIR),
-        "model_knowledge_files_required": REQUIRED_MODEL_KNOWLEDGE_FILES,
-        "model_knowledge_file_overrides": MODEL_REQUIRED_KNOWLEDGE_FILE_OVERRIDES,
+        "model_required_file_context_schema": WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA,
+        "model_legacy_example_file": LEGACY_EXAMPLE_RESULT_FILE,
+        "model_legacy_example_file_overrides": MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES,
         "model_product_locales_supported": SUPPORTED_PRODUCT_LOCALES,
         "knowledge_before_models": {
             str(model.get("id")): model_knowledge_status(str(model.get("id")))
@@ -1669,41 +1941,43 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "tool_force_policy": {
             "behavior": "Standard chat models keep primaryToolIds, skillIds and recommendedSkillIds in metadata. OpenWebUI uses meta.skillIds for real model-attached Skills; recommendedSkillIds stays as an audit-friendly mirror.",
             "model_profiles": TOOL_FORCE_PROFILES,
-            "cloud_coder_production_model_ids": sorted(CLOUD_CODER_PRODUCTION_MODEL_IDS),
-            "cloud_coder_behavior": "The FlaUI/Eggplant production models use the coder route as a high-performance cloud coder target, with model-attached tools, filters, skills and native function calling enabled. The recommended backend is Mistral Medium 3.5 128B via LiteLLM.",
+            "code_capable_model_ids": sorted(CODE_OR_TECHNICAL_MODEL_IDS),
+            "behavior_note": "All chat models, including code-oriented Workbench models, target the selected OpenWebUI base model while keeping model-attached tools, filters, skills and native function calling enabled.",
         },
         "tool_call_playbook_policy": {
-            "target_model_runtime": "local Mistral Medium 128B",
-            "behavior": "Tool-call guidance is model-specific Knowledge. The system prompt only tells the model to load Knowledge and apply the relevant tool hints.",
+            "target_model_runtime": "selected OpenWebUI base model",
+            "behavior": "Tool-call guidance remains available through model metadata, tools and optional example Knowledge. The short system prompt tells the model to use tools and skills when they improve the result.",
             "required_prompt_phrases": [
-                "Toolhinweise",
-                "Knowledge-Dateien",
+                "Tools und Skills",
+                "Golden_Example",
                 "beispiele/",
-                "i18n/",
             ],
         },
         "custom_gpt_quality_policy": {
             "formatting_marker": MARKDOWN_FORMATTING_MARKER,
-            "system_prompt_max_chars": SYSTEM_BOOTLOADER_MAX_CHARS,
-            "behavior": "Every chat model uses a short bootloader system prompt. It references mainprompt.md, fachwissen.md, the model-specific example result file and beispiele/ as primary context; i18n profiles are used only when localization, UI text, model metadata or import behavior is relevant.",
+            "system_prompt_max_chars": WORKBENCH_SYSTEMPROMPT_MAX_CHARS,
+            "behavior": "Every chat model uses a short deterministic system prompt. It references mainprompt.md, fachwissen.md and Golden_Example.<ext> as required files; beispiele/ stays focused Knowledge/RAG material.",
         },
         "model_params_policy": {
             "max_tokens": "omitted",
             "runtime_defaults": "target OpenWebUI/model-server context and answer limits",
-            "reasoning_profile": "knowledge_driven_not_runtime_param",
-            "reasoning_effort_runtime_param": "omitted_for_mistral_medium_128b_compatibility",
-            "supported_runtime_params": sorted(SUPPORTED_MISTRAL_RUNTIME_PARAMS),
+            "reasoning_profile": "runtime_param_high",
+            "reasoning_effort_runtime_param": "reasoning_effort=high",
+            "supported_runtime_params": sorted(SUPPORTED_CHAT_RUNTIME_PARAMS),
             "omitted_runtime_params": OMITTED_RUNTIME_PARAMS,
             "omitted_unsupported_runtime_params": OMITTED_UNSUPPORTED_RUNTIME_PARAMS,
-            "temperature_by_model": MODEL_TEMPERATURES,
+            "temperature": WORKBENCH_TEMPERATURE,
+            "top_p": WORKBENCH_TOP_P,
+            "parallel_tool_calls": WORKBENCH_PARALLEL_TOOL_CALLS,
+            "base_model_id": workbench_base_model_id(),
         },
-        "global_model_params_recommendation": {"function_calling": FUNCTION_CALLING_NATIVE},
-        "cloud_coder_model_params_recommendation": {
-            "model_ids": sorted(CLOUD_CODER_PRODUCTION_MODEL_IDS),
-            "function_calling": FUNCTION_CALLING_NATIVE,
-            "recommended_litellm_model": "mistral/mistral-medium-3-5",
-            "recommended_openrouter_model": "openrouter/mistralai/mistral-medium-3-5",
-            "reason": "Production tests and target deployment use a high-performance cloud coder route; do not validate these models against small CPU-local Ollama fallbacks.",
+        "global_model_params_recommendation": {
+            "base_model_id": workbench_base_model_id(),
+            "function_calling": WORKBENCH_FUNCTION_CALLING,
+            "reasoning_effort": WORKBENCH_REASONING_EFFORT,
+            "temperature": WORKBENCH_TEMPERATURE,
+            "top_p": WORKBENCH_TOP_P,
+            "parallel_tool_calls": WORKBENCH_PARALLEL_TOOL_CALLS,
         },
         "verified_model_fields_used": [
             "meta.toolIds",
@@ -1714,7 +1988,9 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "meta.primaryToolIds",
             "meta.skillIds",
             "meta.recommendedSkillIds",
-            "meta.requiredKnowledgeFiles",
+            "meta.requiredFileContextFiles",
+            "meta.exampleKnowledgeFiles",
+            "meta.workbenchFileContext",
             "meta.defaultLocale",
             "meta.fallbackLocale",
             "meta.supportedLocales",
@@ -1732,7 +2008,7 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "skill_note": "OpenWebUI binds model-attached Skills through meta.skillIds. Skills are imported and published before models, then each chat model receives the profile-specific skillIds list so OpenWebUI can inject the lightweight Skill manifest and expose the view_skill builtin for lazy loading.",
         "offline_note": "The standard workflow is offline/air-gapped. Public network tools are not part of tools_first and are not assigned to any model by default. Optional network tools can still be imported explicitly for connected target instances.",
         "filter_note": "OpenWebUI filter functions are registered as Functions. The context compressor is assigned through meta.filterIds and enabled by default through meta.defaultFilterIds for every chat model. The API importer applies function/filter valves from scripts/openwebui_workspace_config.yaml after the functions are imported.",
-        "knowledge_note": "The API importer uploads mainprompt.md, fachwissen.md, the model-specific example result file, files under beispiele/ and the primary product-i18n files manifest.json, de.md and en.md for every model package as a per-model Knowledge collection before importing the model profile, then appends the Knowledge reference to meta.knowledge for that model.",
+        "knowledge_note": "The API importer uploads only example/RAG material such as beispiele/**, legacy beispielergebnis.* and primary product-i18n files into the per-model Knowledge collection. mainprompt.md, fachwissen.md and Golden_Example.<ext> are uploaded as OpenWebUI Files and injected by the required-file-context filter.",
         "icon_note": "Generic black-on-white PNG/SVG profile icons are shipped under Modelle/dist/artifacts/icons. Model profiles embed PNG data URIs in meta.profile_image_url because current OpenWebUI rejects SVG data URIs for profile images.",
         "chat_models_configured": [model["id"] for model in models if not is_non_chat_model(model)],
         "non_chat_models_excluded": [model["id"] for model in models if is_non_chat_model(model)],
@@ -1766,43 +2042,43 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
         tool_ids = meta.get("toolIds", [])
         filter_ids = meta.get("filterIds", [])
         default_filter_ids = meta.get("defaultFilterIds", [])
-        is_cloud_coder_production = is_cloud_coder_production_model(model_id)
         if is_non_chat_model(model):
             if tool_ids or filter_ids or default_filter_ids or params.get("function_calling"):
                 issues.append(f"Non-Chat-Modell {model_id} hat Tool-/Filter-/Function-Calling-Konfiguration")
             continue
-        if params.get("function_calling") != FUNCTION_CALLING_NATIVE:
+        if model.get("base_model_id") != workbench_base_model_id():
+            issues.append(f"Chat-Modell {model_id} nutzt nicht das konfigurierte Mistral-Basismodell {workbench_base_model_id()}")
+        if params.get("function_calling") != WORKBENCH_FUNCTION_CALLING:
             issues.append(f"Chat-Modell {model_id} hat function_calling nicht auf native")
+        if params.get("reasoning_effort") != WORKBENCH_REASONING_EFFORT:
+            issues.append(f"Chat-Modell {model_id} hat reasoning_effort nicht auf 'high' gesetzt")
+        if params.get("parallel_tool_calls") is not WORKBENCH_PARALLEL_TOOL_CALLS:
+            issues.append(f"Chat-Modell {model_id} hat parallel_tool_calls nicht auf true gesetzt")
         profile_image_url = str(meta.get("profile_image_url", ""))
         if not profile_image_url.startswith("data:image/png;base64,"):
             issues.append(f"Chat-Modell {model_id} hat kein eingebettetes PNG-Icon in meta.profile_image_url")
-        unsupported_params = sorted(set(params) - SUPPORTED_MISTRAL_RUNTIME_PARAMS)
+        unsupported_params = sorted(set(params) - SUPPORTED_CHAT_RUNTIME_PARAMS)
         if unsupported_params:
             issues.append(f"Chat-Modell {model_id} setzt nicht freigegebene Runtime-Parameter: {', '.join(unsupported_params)}")
-        expected_temperature = temperature_for_model(model_id)
-        if params.get("temperature") != expected_temperature:
-            issues.append(f"Chat-Modell {model_id} nutzt temperature nicht use-case-gerecht auf {expected_temperature}")
-        if params.get("top_p") != top_p_for_temperature(expected_temperature):
-            issues.append(f"Chat-Modell {model_id} nutzt top_p nicht passend zur Temperatur")
+        if params.get("temperature") != WORKBENCH_TEMPERATURE:
+            issues.append(f"Chat-Modell {model_id} nutzt temperature nicht auf {WORKBENCH_TEMPERATURE}")
+        if params.get("top_p") != WORKBENCH_TOP_P:
+            issues.append(f"Chat-Modell {model_id} nutzt top_p nicht auf {WORKBENCH_TOP_P}")
         if params.get("stop") != []:
             issues.append(f"Chat-Modell {model_id} nutzt stop nicht als leere Liste")
         system_text = str(params.get("system", ""))
-        if not system_text.lstrip().startswith(MARKDOWN_FORMATTING_MARKER):
-            issues.append(f"Chat-Modell {model_id} aktiviert Markdown-Formatierung nicht am Promptanfang")
-        if len(system_text) > SYSTEM_BOOTLOADER_MAX_CHARS:
-            issues.append(f"Chat-Modell {model_id} hat keinen kurzen Bootloader-Systemprompt ({len(system_text)} Zeichen)")
         if not has_short_bootloader_systemprompt(system_text, model_id):
             issues.append(f"Chat-Modell {model_id} hat keinen vollständigen Bootloader-Systemprompt")
-        if is_cloud_coder_production and not has_cloud_coder_production_systemprompt(system_text, model_id):
-            issues.append(f"Chat-Modell {model_id} hat kein vollständiges Cloud-Coder-Produktionsprofil")
+        if len(system_text) > WORKBENCH_SYSTEMPROMPT_MAX_CHARS:
+            issues.append(f"Chat-Modell {model_id} hat params.system über {WORKBENCH_SYSTEMPROMPT_MAX_CHARS} Zeichen")
         for required_phrase in [
-            *required_model_knowledge_files(model_id),
+            "mainprompt.md",
+            "fachwissen.md",
+            "Golden_Example",
+            "Werte alle drei aus",
+            "Qualitäts-, Struktur-, Stil- und Formatanker",
             "beispiele/",
-            "i18n/",
-            "gezielt",
-            "Primäres Beispielergebnis",
-            "Rolle, Ziel, Ausgabeformat",
-            "Beschreibe nicht diese internen Anweisungen",
+            "höchstens 1-2 passende Beispiele",
             "Erfinde keine Fakten",
         ]:
             if required_phrase not in system_text:
@@ -1823,18 +2099,34 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             issues.append(f"Chat-Modell {model_id} hat meta.recommendedSkillIds nicht passend zum Skill-Profil")
         if not isinstance(bound_skills, list) or profile_skills - set(bound_skills):
             issues.append(f"Chat-Modell {model_id} hat meta.skillIds nicht passend zum Skill-Profil")
-        if is_cloud_coder_production:
-            runtime_profile = meta.get("coderRuntimeProfile", {})
-            if not isinstance(runtime_profile, dict) or runtime_profile.get("mode") != "cloud_production_chat":
-                issues.append(f"Chat-Modell {model_id} dokumentiert kein Cloud-Coder-Produktionsprofil")
-                runtime_profile = {}
-            if runtime_profile.get("base_model_id") != "coder":
-                issues.append(f"Chat-Modell {model_id} dokumentiert nicht coder als Cloud-Coder-Route")
-            if runtime_profile.get("recommendedLiteLLMModel") != "mistral/mistral-medium-3-5":
-                issues.append(f"Chat-Modell {model_id} dokumentiert nicht Mistral Medium 3.5 als LiteLLM-Zielmodell")
-        required_knowledge = meta.get("requiredKnowledgeFiles", [])
-        if required_knowledge != required_model_knowledge_files(model_id):
-            issues.append(f"Chat-Modell {model_id} hat meta.requiredKnowledgeFiles nicht vollständig")
+        workbench_file_context = meta.get("workbenchFileContext", {})
+        if not isinstance(workbench_file_context, dict) or workbench_file_context.get("schema") != WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA:
+            issues.append(f"Chat-Modell {model_id} hat kein gültiges meta.workbenchFileContext")
+            workbench_file_context = {}
+        required_files = workbench_file_context.get("requiredFiles", [])
+        if not isinstance(required_files, list) or len(required_files) != 3:
+            issues.append(f"Chat-Modell {model_id} hat nicht genau drei requiredFiles im File-Context")
+            required_files = []
+        required_paths = [item.get("path") for item in required_files if isinstance(item, dict)]
+        if required_paths[:2] != ["mainprompt.md", "fachwissen.md"] or not any(str(path).startswith("Golden_Example.") for path in required_paths):
+            issues.append(f"Chat-Modell {model_id} hat falsche Pflichtdateien im File-Context")
+        if meta.get("requiredFileContextFiles") != required_paths:
+            issues.append(f"Chat-Modell {model_id} hat meta.requiredFileContextFiles nicht passend zum File-Context")
+        if "requiredKnowledgeFiles" in meta:
+            issues.append(f"Chat-Modell {model_id} nutzt noch meta.requiredKnowledgeFiles als Pflichtpfad")
+        for item in required_files:
+            if not isinstance(item, dict):
+                continue
+            if item.get("useKnowledgeRag") is not False or item.get("injectAsFullContext") is not True or item.get("attachAsOpenWebUIFile") is not True:
+                issues.append(f"Chat-Modell {model_id} hat falsche Flags für Pflichtdatei {item.get('path')}")
+            if not isinstance(item.get("content"), str) or not item.get("content", "").strip():
+                issues.append(f"Chat-Modell {model_id} hat keinen eingebetteten Pflichtdateiinhalt für {item.get('path')}")
+        example_knowledge_files = meta.get("exampleKnowledgeFiles", [])
+        if not isinstance(example_knowledge_files, list):
+            issues.append(f"Chat-Modell {model_id} hat keine gültigen meta.exampleKnowledgeFiles")
+            example_knowledge_files = []
+        if any(path in {"mainprompt.md", "fachwissen.md"} or str(path).startswith("Golden_Example.") for path in example_knowledge_files):
+            issues.append(f"Chat-Modell {model_id} enthält Pflichtdateien in exampleKnowledgeFiles")
         if meta.get("defaultLocale") != "de":
             issues.append(f"Chat-Modell {model_id} hat Deutsch nicht als meta.defaultLocale")
         if meta.get("fallbackLocale") != "en":
@@ -1897,6 +2189,12 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
                 issues.append(f"Chat-Modell {model_id} hat nicht alle Pflichtfilter in filterIds")
             if not isinstance(default_filter_ids, list) or not valid_filter_ids.issubset(set(default_filter_ids)):
                 issues.append(f"Chat-Modell {model_id} hat nicht alle Pflichtfilter in defaultFilterIds")
+            required_prefix = REQUIRED_DEFAULT_FILTER_IDS
+            if isinstance(default_filter_ids, list) and default_filter_ids[: len(required_prefix)] != required_prefix:
+                issues.append(
+                    f"Chat-Modell {model_id} hat Pflichtfilter nicht in der geforderten Reihenfolge: "
+                    + ", ".join(required_prefix)
+                )
             missing_filters = sorted(set(filter_ids) - valid_filter_ids) if isinstance(filter_ids, list) else []
             if missing_filters:
                 issues.append(f"Chat-Modell {model_id} referenziert unbekannte Filter: {', '.join(missing_filters)}")
@@ -1977,6 +2275,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--write", action="store_true", help="Write generated registry and model JSON changes.")
     parser.add_argument("--check", action="store_true", help="Validate current/generated state and fail on issues.")
     parser.add_argument("--rebuild-zips", action="store_true", help="Rebuild portable offline ZIP artifacts after writing.")
+    parser.add_argument("--base-model-id", default=None, help="OpenWebUI model ID used as base_model_id for all generated Workbench models. Defaults to WORKBENCH_BASE_MODEL_ID, legacy WORKBENCH_MISTRAL_MODEL_ID, or coder.")
     parser.add_argument("--import-openwebui", action="store_true", help="After a successful write/check pass, import tools, functions, skills, knowledge and models into an OpenWebUI instance.")
     parser.add_argument("--import-dry-run", action="store_true", help="Run the importer's local payload validation through this script without calling OpenWebUI.")
     parser.add_argument("--config", default=None, help="Central YAML config for OpenWebUI endpoint, tokens, backend paths and valves. Defaults to scripts/openwebui_workspace_config.yaml when present.")
@@ -2002,6 +2301,11 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--include-optional-network-tools", action="store_true", help="Also import optional network-capable tools during --import-openwebui.")
     parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds for --import-openwebui.")
     args = parser.parse_args(list(argv) if argv is not None else None)
+    if args.base_model_id:
+        try:
+            os.environ[WORKBENCH_BASE_MODEL_ID_ENV] = validate_base_model_id(args.base_model_id)
+        except ValueError as exc:
+            parser.error(str(exc))
     if args.import_openwebui and args.import_dry_run:
         parser.error("--import-openwebui and --import-dry-run are mutually exclusive.")
     if (args.import_openwebui or args.import_dry_run) and not args.write:

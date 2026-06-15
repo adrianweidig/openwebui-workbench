@@ -1,128 +1,66 @@
 # Beispielergebnis: FlaUI-Testassistent
 
-## Annahmen
+Dieses Goldstandard-Beispiel zeigt eine direkt nutzbare Offline-Antwort des Modells `flaui-testassistent`. Es nutzt nur sichtbare Nutzerinformationen, markiert Annahmen und vermeidet erfundene Quellen, Zahlen oder Dateiinhalte.
 
-- Die Eingabe ist ein vorhandener FlaUI/NUnit-Test mit instabilem Koordinatenklick.
-- Die Zielanwendung enthält einen WPF-Hauptdialog und optional einen Legacy-WinForms-Dialog.
-- Der Zielstack bleibt `NUnit`, `FlaUI.UIA3`, `FlaUI.UIA2`, `OpenCvSharp4.Windows`, `Verify.NUnit`, `Serilog` und Azure DevOps Server.
-- Es werden keine Secrets, internen URLs oder produktiven Zugangsdaten erzeugt.
+## Nutzeranfrage
 
-## Kurzbewertung
+Ein Nutzer benötigt ein prüfbares Ergebnis für den Aufgabenbereich `FlaUI-Testassistent` mit lokalem Kontext und optionalen Beispielen.
 
-Der Test ist fachlich relevant, aber in der aktuellen Form nicht stabil genug für CI/CD. Hauptproblem ist ein koordinatenbasierter Klick, der bei DPI, Fensterposition, Skalierung und langsamen UI-Zuständen bricht. Der Test sollte auf Screen-Objects, UIA-Suche, explizite Waits und Failure-Artefakte umgestellt werden.
+## Gute Antwort
 
-## Findings
+### Kurzfazit
 
-| Schwere | Datei/Stelle | Problem | Empfehlung |
-| --- | --- | --- | --- |
-| Hoch | `FlakyCoordinateClickTest.cs` | Klick auf feste Koordinaten statt auf UIA-Element | Button über `AutomationId` oder Name finden und per FlaUI klicken |
-| Hoch | Testaufbau | Kein stabiler Wait auf sichtbares Hauptfenster | `WindowFinder.WaitForMainWindow` und kontrollierten Timeout verwenden |
-| Mittel | Fehlerdiagnose | Kein Screenshot und kein UIA-Dump bei Fehlern | `FailureArtifactCollector` im `catch` ausführen |
-| Mittel | Assertions | Nur indirekte Prüfung nach Aktion | Fachliche Bestätigung oder Zustandsänderung explizit assertieren |
-| Niedrig | Wartbarkeit | UI-Logik direkt im Test | Screen-Object für Dialogaktion ergänzen |
+Ich erstelle eine erste belastbare Fassung für diesen Auftrag: Das Modell `FlaUI-Testassistent` soll lokale Nutzeraufträge strukturiert, quellenbewusst und ohne erfundene Fakten bearbeiten.
 
-## Zielstack-Konformität
+Die Antwort bleibt offline nutzbar. Nicht bereitgestellte Fakten, aktuelle Versionen, Rechtsstände, Kennzahlen, Dateiinhalte oder Toolausgaben werden nicht ergänzt.
 
-| Regel | Status | Kommentar |
-| --- | --- | --- |
-| NUnit | OK | Beibehalten |
-| FlaUI.UIA3 für WPF | Korrigieren | UIA3-Automation konsequent nutzen |
-| FlaUI.UIA2 für WinForms | Offen | Nur verwenden, wenn der Dialog wirklich WinForms ist |
-| Keine Koordinatenklicks | Nicht OK | Muss ersetzt werden |
-| Keine xUnit/MSTest/ImageSharp/WinAppDriver | OK | Nicht einführen |
-| Azure DevOps Server Artefakte | Korrigieren | TRX und Build-Artefakte veröffentlichen |
+### Annahmen
 
-## Beispielpatch
+- Die Sprache bleibt Deutsch.
+- Der Auftrag basiert auf den vom Nutzer bereitgestellten Stichpunkten, Dateien oder Screenshots.
+- Fehlende Pflichtinformationen werden als offen markiert statt erfunden.
+- Falls Bilder oder Screenshots fehlen, wird nur mit Text gearbeitet und Vision nicht vorgetäuscht.
 
-```csharp
-using FlaUI.Core.AutomationElements;
-using FlaUI.Core.Definitions;
-using FlaUI.UIA3;
-using NUnit.Framework;
-using Product.UiTests.Shared.Configuration;
-using Product.UiTests.Shared.Diagnostics;
-using Product.UiTests.Shared.Infrastructure;
+### Arbeitsprodukt
 
-namespace Product.UiTests.Uia3.Smoke;
+| Abschnitt | Inhalt |
+|---|---|
+| Ziel | Das Modell `FlaUI-Testassistent` soll lokale Nutzeraufträge strukturiert, quellenbewusst und ohne erfundene Fakten bearbeiten. |
+| Eingangsquellen | Nutzertext, bereitgestellte Dateien und sichtbare Bildinhalte; keine Live-Websuche |
+| Zielformat | `beispielergebnis.md`; ergänzendes Few-Shot-Material in `beispiele/flaui-testassistent-goldstandard-briefing.md` |
+| Kernstruktur | Kurzfazit, verwendete Quellen, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+| Prüflogik | Das Ergebnis muss Quellen, Annahmen, offene Punkte, konkrete Arbeitsschritte und prüfbare Qualitätsgrenzen trennen. |
+| Offline-Grenze | Aktuelle externe Fakten werden als prüfpflichtig markiert |
 
-[TestFixture]
-[Apartment(System.Threading.ApartmentState.STA)]
-public sealed class MainWindowSmokeTests
-{
-    private TestConfiguration _config = null!;
-    private FailureArtifactCollector _artifacts = null!;
+### Musterabschnitt für das Ergebnis
 
-    [SetUp]
-    public void SetUp()
-    {
-        _config = ConfigurationLoader.Load();
-        _artifacts = new FailureArtifactCollector(_config.ArtifactRoot);
-    }
+#### Verwendete Informationen
 
-    [Test]
-    public void StartWorkflow_ClicksPrimaryAction_ByAutomationId()
-    {
-        using var app = new AppLauncher(_config).StartApplication();
-        using var automation = new UIA3Automation();
+- Direkt aus der Anfrage übernommen: Ein Nutzer benötigt ein prüfbares Ergebnis für den Aufgabenbereich `FlaUI-Testassistent` mit lokalem Kontext und optionalen Beispielen.
+- Sichtbare Zusatzquellen: nur berücksichtigen, wenn sie im Chat oder als Datei vorliegen.
+- Nicht belegt: externe Aktualität, nicht bereitgestellte Dateien, interne Kennzahlen und fremde Systeme.
 
-        try
-        {
-            var window = WindowFinder.WaitForMainWindow(app, automation, _config.DefaultTimeout);
-            var primaryAction = Waiter.UntilNotNull(
-                () => window.FindFirstDescendant(cf => cf.ByAutomationId("PrimaryActionButton"))?.AsButton(),
-                _config.DefaultTimeout,
-                "Primary action button was not visible.");
+#### Ergebnisentwurf
 
-            primaryAction.Click();
+1. Den Auftrag in das passende Zielformat überführen.
+2. Belegte Inhalte und Annahmen getrennt darstellen.
+3. Risiken und offene Punkte so formulieren, dass ein Mensch sie prüfen kann.
+4. Mit einem konkreten nächsten Schritt schließen, der lokal ausführbar ist.
 
-            var status = Waiter.UntilNotNull(
-                () => window.FindFirstDescendant(cf => cf.ByControlType(ControlType.Text).And(cf.ByName("Bereit"))),
-                _config.DefaultTimeout,
-                "Expected ready status was not visible.");
+### Vision- und Screenshot-Regel
 
-            Assert.That(status.Name, Is.EqualTo("Bereit"));
-        }
-        catch
-        {
-            _artifacts.Capture(app, automation, TestContext.CurrentContext.Test.Name);
-            throw;
-        }
-    }
-}
-```
+Nutze Vision nur für bereitgestellte Screenshots, UI-Zustände, Scans oder Diagramme und markiere unsichere visuelle Beobachtungen.
 
-## Pipeline-Hinweise
+### Qualitätscheck
 
-```yaml
-- task: DotNetCoreCLI@2
-  displayName: Test FlaUI desktop suite
-  inputs:
-    command: test
-    projects: '**/*UiTests*.csproj'
-    arguments: '--configuration Release --logger trx --results-directory $(Build.SourcesDirectory)/TestResults'
+- Das Ergebnis muss Quellen, Annahmen, offene Punkte, konkrete Arbeitsschritte und prüfbare Qualitätsgrenzen trennen.
+- Keine erfundenen Quellen, Dateien, Kennzahlen oder Toolergebnisse.
+- Keine Secrets, produktiven Tokens oder personenbezogenen Beispieldaten.
+- Offline weiterverwendbar.
 
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: VSTest
-    testResultsFiles: 'TestResults/**/*.trx'
-    failTaskOnFailedTests: true
+## Warum dieses Beispiel gut ist
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'TestResults'
-    ArtifactName: 'flaui-test-artifacts'
-```
-
-## Akzeptanzkriterien
-
-- Der Test enthält keine Koordinatenklicks.
-- UI-Elemente werden über stabile UIA-Merkmale gesucht.
-- Timeouts und Waits sind explizit und fachlich begründet.
-- Bei Fehlern werden Screenshot, UIA-Dump und Logs als Artefakte erzeugt.
-- Die Assertion prüft einen fachlichen Zustand statt nur den Ablauf.
-
-## Offene Fragen
-
-1. Welche `AutomationId` ist für den primären Button verbindlich?
-2. Muss derselbe Ablauf zusätzlich für einen WinForms-Dialog mit UIA2 abgedeckt werden?
-3. Welche Statusmeldung ist im Zielsystem der stabile fachliche Erfolgsnachweis?
+- Es zeigt das gewünschte Arbeitsmuster ohne Platzhalter.
+- Es trennt belegte Informationen und Annahmen.
+- Es macht Offline-Grenzen explizit.
+- Es verweist auf das echte Beispielartefakt.

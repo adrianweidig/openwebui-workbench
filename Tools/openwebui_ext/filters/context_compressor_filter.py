@@ -39,6 +39,8 @@ class Filter:
         "Der folgende Kontext wurde automatisch gekürzt; Details außerhalb der "
         "Zusammenfassung sind nicht zuverlässig verfügbar."
     )
+    COMPILER_CONTEXT_MARKER = "## Deterministischer Workbench-Pflichtkontext"
+    WORKBENCH_REQUIRED_CONTEXT_MARKER = "## Workbench-Pflichtdateien"
     ZERO_OUTPUT_TOKEN_KEYS = {
         "max_tokens",
         "max_completion_tokens",
@@ -277,6 +279,24 @@ class Filter:
         summary = "\n".join(lines)
         return self._truncate(summary, max_chars)
 
+    def is_workbench_required_context_message(self, message: Dict[str, Any]) -> bool:
+        if not isinstance(message, dict):
+            return False
+        if str(message.get("role", "")) != "system":
+            return False
+        content = self._message_text(message)
+        return self.WORKBENCH_REQUIRED_CONTEXT_MARKER in content
+
+    def is_protected_workbench_system_message(self, message: Dict[str, Any]) -> bool:
+        if self.is_workbench_required_context_message(message):
+            return True
+        if not isinstance(message, dict):
+            return False
+        if str(message.get("role", "")) != "system":
+            return False
+        content = self._message_text(message)
+        return self.COMPILER_CONTEXT_MARKER in content
+
     def _fit_message_to_budget(self, message: Dict[str, Any], token_budget: int, is_last: bool = False) -> Dict[str, Any]:
         token_budget = max(int(self.valves.hard_guard_min_message_tokens), int(token_budget))
         if self._estimate_tokens(self._message_text(message)) <= token_budget:
@@ -344,7 +364,9 @@ class Filter:
                 continue
             role = str(message.get("role", "user"))
             content = self._message_text(message)
-            if role == "system" and self.SUMMARY_MARKER in content:
+            if self.is_protected_workbench_system_message(message):
+                system_messages.append(message)
+            elif role == "system" and self.SUMMARY_MARKER in content:
                 existing_summaries.append(message)
             elif role == "system":
                 system_messages.append(message)

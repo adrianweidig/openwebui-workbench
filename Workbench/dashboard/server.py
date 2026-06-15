@@ -6,7 +6,9 @@ import hmac
 import ipaddress
 import json
 import os
+import queue
 import re
+import shlex
 import ssl
 import subprocess
 import sys
@@ -17,9 +19,9 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlencode, urlparse
 from urllib.request import Request, urlopen
 
 try:
@@ -52,6 +54,7 @@ MODEL_TEXT_FILES = {
     "beispielergebnis.txt",
     "customgpt_infos.md",
 }
+GOLDEN_EXAMPLE_PREFIX = "Golden_Example."
 CONFIGURATION_ERRORS: list[str] = []
 TRUE_VALUES = {"1", "true", "yes", "on"}
 FALSE_VALUES = {"0", "false", "no", "off"}
@@ -130,6 +133,9 @@ DEFAULT_AUTOMATION_ACTIONS = ("check",)
 MIN_AUTOMATION_INTERVAL_MINUTES = 5
 MAX_AUTOMATION_INTERVAL_MINUTES = 1440
 OPENWEBUI_STATUS_TIMEOUT_SECONDS = 5
+ACTION_LOG_MAX_CHARS = 60_000
+ACTION_LOG_HEARTBEAT_SECONDS = 15
+ACTION_LOG_POLL_SECONDS = 0.5
 
 
 def configure_utf8_stdio() -> None:
@@ -192,6 +198,29 @@ def require_safe_path_segment(value: str, message: str) -> str:
     return clean
 
 
+def require_openwebui_model_id(value: str, message: str) -> str:
+    clean = str(value or "").strip()
+    if not clean or len(clean) > 200 or any(ord(char) < 32 for char in clean):
+        raise ValueError(message)
+    return clean
+
+
+def is_golden_example_file_name(name: str) -> bool:
+    return (
+        name.startswith(GOLDEN_EXAMPLE_PREFIX)
+        and "/" not in name
+        and "\\" not in name
+        and Path(name).suffix.lower() in MODEL_EXAMPLE_SUFFIXES
+    )
+
+
+def safe_relative_parts(value: str, message: str) -> list[str]:
+    parts = [part for part in value.strip().replace("\\", "/").split("/") if part]
+    if not parts:
+        raise ValueError(message)
+    return [require_safe_path_segment(part, message) for part in parts]
+
+
 def static_file_path(raw_path: str) -> Path:
     decoded = unquote(raw_path).replace("\\", "/")
     parts = decoded.split("/")
@@ -223,6 +252,23 @@ def format_local_time(value: float | None) -> str | None:
     if value is None:
         return None
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
+
+
+def format_log_time(value: float | None = None) -> str:
+    return time.strftime("%H:%M:%S", time.localtime(value or time.time()))
+
+
+def tail_action_log(text: str) -> str:
+    if len(text) <= ACTION_LOG_MAX_CHARS:
+        return text
+    omitted = len(text) - ACTION_LOG_MAX_CHARS
+    return f"[... {omitted} Zeichen ältere Ausgabe gekürzt ...]\n{text[-ACTION_LOG_MAX_CHARS:]}"
+
+
+def format_display_command(command: list[str]) -> str:
+    if os.name == "nt":
+        return subprocess.list2cmdline(command)
+    return shlex.join(command)
 
 
 def redact(text: str, secrets: list[str]) -> str:
@@ -383,6 +429,10 @@ class WorkbenchState:
                 "ca_file_configured": bool(self.config.ca_file),
                 "ca_path_configured": bool(self.config.ca_path),
                 "reachable": self.probe_openwebui(),
+            },
+            "base_model": {
+                "current": self.current_base_model_id(),
+                "env_key": "WORKBENCH_BASE_MODEL_ID",
             },
             "counts": {
                 "models": len(models),
@@ -593,6 +643,67 @@ class WorkbenchState:
             return [*local_models, *remote_models]
         return local_models
 
+    def local_base_model_ids(self) -> list[str]:
+        values: list[str] = []
+        if not self.models_root.exists():
+            return values
+        for model_json in sorted(self.models_root.glob("*/model.json")):
+            try:
+                payload = read_json_file(model_json)
+            except Exception:
+                continue
+            model = payload[0] if isinstance(payload, list) and payload and isinstance(payload[0], dict) else {}
+            base_model_id = str(model.get("base_model_id") or "").strip()
+            if base_model_id and base_model_id not in values:
+                values.append(base_model_id)
+        return values
+
+    def current_base_model_id(self) -> str:
+        return next(iter(self.local_base_model_ids()), os.environ.get("WORKBENCH_BASE_MODEL_ID", "").strip() or "coder")
+
+    def list_openwebui_base_models(self) -> dict[str, Any]:
+        models: list[dict[str, str]] = []
+        errors: list[str] = []
+        try:
+            response = self.openwebui_api_request("GET", "/api/models")
+            raw_items = response.get("data") if isinstance(response, dict) else response
+            if isinstance(raw_items, list):
+                for item in raw_items:
+                    if not isinstance(item, dict):
+                        continue
+                    model_id = str(item.get("id") or "").strip()
+                    if not model_id:
+                        continue
+                    models.append(
+                        {
+                            "id": model_id,
+                            "name": str(item.get("name") or item.get("id") or model_id),
+                            "base_model_id": str(item.get("base_model_id") or item.get("owned_by") or ""),
+                            "source": "openwebui",
+                        }
+                    )
+        except Exception as exc:
+            errors.append(str(exc))
+
+        for model_id in self.local_base_model_ids() or [self.current_base_model_id()]:
+            if not any(item["id"] == model_id for item in models):
+                models.insert(
+                    0,
+                    {
+                        "id": model_id,
+                        "name": model_id,
+                        "base_model_id": "",
+                        "source": "workbench",
+                    },
+                )
+
+        return {
+            "ok": not errors,
+            "error": "; ".join(errors),
+            "selected": self.current_base_model_id(),
+            "models": models,
+        }
+
     def model_files(self, model_id: str) -> list[dict[str, Any]]:
         directory = self.model_dir(model_id)
         files: list[dict[str, Any]] = []
@@ -607,14 +718,29 @@ class WorkbenchState:
                     "mtime": format_mtime(path) if path.exists() else None,
                 }
             )
+        for path in sorted(
+            item
+            for item in directory.glob(f"{GOLDEN_EXAMPLE_PREFIX}*")
+            if item.is_file() and is_golden_example_file_name(item.name)
+        ):
+            files.append(
+                {
+                    "name": path.name,
+                    "exists": True,
+                    "path": rel(path),
+                    "bytes": path.stat().st_size,
+                    "mtime": format_mtime(path),
+                }
+            )
         examples = directory / "beispiele"
         if examples.exists():
             for path in sorted(
-                item for item in examples.glob("*") if item.is_file() and item.suffix.lower() in MODEL_EXAMPLE_SUFFIXES
+                item for item in examples.rglob("*") if item.is_file() and item.suffix.lower() in MODEL_EXAMPLE_SUFFIXES
             ):
+                example_rel = path.relative_to(examples).as_posix()
                 files.append(
                     {
-                        "name": f"beispiele/{path.name}",
+                        "name": f"beispiele/{example_rel}",
                         "exists": True,
                         "path": rel(path),
                         "bytes": path.stat().st_size,
@@ -645,13 +771,12 @@ class WorkbenchState:
     def normalize_model_file(self, model_id: str, name: str) -> Path:
         directory = self.model_dir(model_id)
         clean = name.strip().replace("\\", "/")
-        if clean in MODEL_TEXT_FILES:
+        if clean in MODEL_TEXT_FILES or is_golden_example_file_name(clean):
             safe_name = require_safe_path_segment(clean, t("invalid_model_filename", self.config.locale))
             return directory / safe_name
         if clean.startswith("beispiele/") and Path(clean).suffix.lower() in MODEL_EXAMPLE_SUFFIXES:
-            example_name = clean.removeprefix("beispiele/")
-            safe_example_name = require_safe_path_segment(example_name, t("invalid_example_filename", self.config.locale))
-            return directory / "beispiele" / safe_example_name
+            parts = safe_relative_parts(clean.removeprefix("beispiele/"), t("invalid_example_filename", self.config.locale))
+            return directory / "beispiele" / Path(*parts)
         if clean.startswith("i18n/") and clean.endswith(".md"):
             locale_name = clean.removeprefix("i18n/")
             safe_locale_name = require_safe_path_segment(locale_name, t("invalid_model_filename", self.config.locale))
@@ -690,6 +815,78 @@ class WorkbenchState:
             raise FileNotFoundError(t("file_not_found", self.config.locale))
         path.unlink()
         return {"model_id": model_id, "name": name, "path": rel(path), "deleted": True}
+
+    def openwebui_api_request(
+        self,
+        method: str,
+        path: str,
+        payload: Any | None = None,
+        query: dict[str, str] | None = None,
+    ) -> Any:
+        token = self.config.admin_token
+        if not token:
+            raise PermissionError(t("token_missing", self.config.locale))
+        url = f"{self.config.openwebui_base_url}{path}"
+        if query:
+            url = f"{url}?{urlencode(query)}"
+        body = None
+        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        if payload is not None:
+            body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+            headers["Content-Type"] = "application/json; charset=utf-8"
+        request = Request(url, data=body, method=method.upper(), headers=headers)
+        try:
+            with urlopen(  # nosec B310
+                request,
+                timeout=self.config.import_http_timeout,
+                context=openwebui_ssl_context(self.config.tls_verify, self.config.ca_file, self.config.ca_path),
+            ) as response:
+                raw = response.read()
+        except HTTPError as exc:
+            detail = exc.read(2048).decode("utf-8", errors="replace")
+            raise RuntimeError(f"OpenWebUI {method.upper()} {path} failed with HTTP {exc.code}: {detail}") from exc
+        except URLError as exc:
+            raise RuntimeError(f"OpenWebUI {method.upper()} {path} failed: {exc.reason}") from exc
+        if not raw:
+            return True
+        try:
+            return json.loads(raw.decode("utf-8"))
+        except json.JSONDecodeError:
+            return raw.decode("utf-8", errors="replace")
+
+    def delete_openwebui_models(self, model_ids: list[str]) -> dict[str, Any]:
+        if not self.config.allow_write:
+            raise PermissionError(t("write_disabled", self.config.locale))
+        unique_ids = list(dict.fromkeys(require_safe_path_segment(str(item), t("invalid_model_id", self.config.locale)) for item in model_ids))
+        if not unique_ids:
+            raise ValueError(t("model_selection_empty", self.config.locale))
+        deleted: list[str] = []
+        failed: list[dict[str, str]] = []
+        for model_id in unique_ids:
+            last_error = ""
+            candidates = [
+                ("POST", "/api/v1/models/model/delete", {"id": model_id}, None),
+                ("POST", "/api/models/model/delete", {"id": model_id}, None),
+                ("DELETE", "/api/v1/models/model", None, {"id": model_id}),
+            ]
+            for method, path, payload, query in candidates:
+                try:
+                    self.openwebui_api_request(method, path, payload=payload, query=query)
+                    deleted.append(model_id)
+                    last_error = ""
+                    break
+                except RuntimeError as exc:
+                    last_error = str(exc)
+                    if "HTTP 404" not in last_error and "HTTP 405" not in last_error:
+                        break
+            if last_error:
+                failed.append({"id": model_id, "error": last_error})
+        return {
+            "deleted": deleted,
+            "failed": failed,
+            "requested": unique_ids,
+            "ok": not failed,
+        }
 
     def list_tools(self) -> list[dict[str, Any]]:
         return self._list_markdown_or_python(self.tools_root, "*.py", "tool")
@@ -790,11 +987,196 @@ class WorkbenchState:
         if action in WRITE_ACTIONS and not self.config.allow_write:
             raise PermissionError(t("write_disabled", self.config.locale))
 
-    def run_action(self, action: str) -> dict[str, Any]:
+    def action_log_steps(self, action: str) -> list[str]:
+        steps = {
+            "check": [
+                "Python-Syntax, Dokumentationspaare, Security-Hygiene und KnowledgePacks prüfen.",
+                "OpenWebUI-Erweiterungen validieren.",
+                "Generator-Check, Import-Dry-Run, Unit-Tests und JSON-Validierung ausführen.",
+            ],
+            "generate": [
+                "Tools, Filter, Skills und Modellpakete aus dem Repository lesen.",
+                "Modellparameter, Pflichtdatei-Kontext, Icons und Dist-Artefakte aktualisieren.",
+                "Offline-ZIP-Pakete neu bauen und Generator-Konsistenz prüfen.",
+            ],
+            "import-dry-run": [
+                "Lokale Dist-Artefakte schreiben und prüfen.",
+                "Importer-Payload mit der gewählten OpenWebUI-Konfiguration simulieren.",
+                "Keine Zielinstanz verändern.",
+            ],
+            "sync-status": [
+                "Lokale Workbench-Modellprofile lesen.",
+                "OpenWebUI-Modellliste über die konfigurierte API abfragen.",
+                "Identische, lokale, remote-only, inaktive und konfliktbehaftete Modelle ausweisen.",
+            ],
+            "pull-openwebui": [
+                "OpenWebUI-Modellliste über die konfigurierte API abfragen.",
+                "Einen prüfbaren Snapshot unter Artefakte/openwebui_sync schreiben.",
+                "Keine Workbench-Modellpakete überschreiben.",
+            ],
+            "import-openwebui": [
+                "Dist-Artefakte neu erzeugen und validieren.",
+                "Tools, Functions/Filter und Skills in OpenWebUI importieren.",
+                "Pro Modell mainprompt.md, fachwissen.md und Golden_Example.<ext> als echte Files hochladen.",
+                "Beispiele nur als Knowledge/RAG-Material anlegen und Modellprofile synchronisieren.",
+            ],
+        }
+        return steps.get(action, ["Aktion vorbereiten und ausführen."])
+
+    def build_action_log_header(
+        self,
+        *,
+        action: str,
+        label: str,
+        safe_command: list[str],
+        base_model_id: str,
+        timeout: int,
+    ) -> list[str]:
+        lines = [
+            f"[{format_log_time()}] Aktion gestartet: {label} ({action})",
+            f"[{format_log_time()}] Arbeitsverzeichnis: {self.root}",
+            f"[{format_log_time()}] Standardmodell: {base_model_id}",
+            f"[{format_log_time()}] Timeout: {timeout}s",
+            f"[{format_log_time()}] Befehl: {format_display_command(safe_command)}",
+            "",
+            "Geplante Schritte:",
+        ]
+        for index, step in enumerate(self.action_log_steps(action), start=1):
+            lines.append(f"  {index}. {step}")
+        lines.extend(["", "Live-Ausgabe:"])
+        return lines
+
+    def run_streamed_command(
+        self,
+        *,
+        command: list[str],
+        command_env: dict[str, str],
+        safe_command: list[str],
+        action: str,
+        label: str,
+        base_model_id: str,
+        timeout: int,
+        progress_callback: Callable[[str], None],
+    ) -> dict[str, Any]:
+        secrets = [self.config.admin_token, self.config.auth_password]
+        started = time.time()
+        log_lines = self.build_action_log_header(
+            action=action,
+            label=label,
+            safe_command=safe_command,
+            base_model_id=base_model_id,
+            timeout=timeout,
+        )
+
+        def publish() -> None:
+            progress_callback(tail_action_log("\n".join(log_lines).rstrip() + "\n"))
+
+        publish()
+        try:
+            process = subprocess.Popen(
+                command,
+                cwd=self.root,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                bufsize=1,
+                env={**os.environ, **command_env},
+            )
+        except Exception as exc:
+            log_lines.append(f"[{format_log_time()}] Prozessstart fehlgeschlagen: {type(exc).__name__}: {exc}")
+            publish()
+            raise
+
+        output_queue: queue.Queue[str | None] = queue.Queue()
+
+        def read_output() -> None:
+            try:
+                if process.stdout is not None:
+                    for raw_line in process.stdout:
+                        output_queue.put(raw_line)
+            finally:
+                output_queue.put(None)
+
+        reader = threading.Thread(target=read_output, daemon=True)
+        reader.start()
+        reader_done = False
+        timed_out = False
+        last_output_at = time.time()
+        next_heartbeat_at = last_output_at + ACTION_LOG_HEARTBEAT_SECONDS
+
+        while True:
+            elapsed = time.time() - started
+            if elapsed > timeout and process.poll() is None:
+                timed_out = True
+                log_lines.append(f"[{format_log_time()}] Timeout nach {round(elapsed, 1)}s erreicht; Prozess wird beendet.")
+                process.kill()
+                publish()
+            try:
+                item = output_queue.get(timeout=ACTION_LOG_POLL_SECONDS)
+            except queue.Empty:
+                item = ""
+            if item is None:
+                reader_done = True
+            elif item:
+                clean = redact(item.rstrip("\r\n"), secrets)
+                log_lines.append(f"[{format_log_time()}] {clean}" if clean else "")
+                last_output_at = time.time()
+                publish()
+            now = time.time()
+            if process.poll() is None and now >= next_heartbeat_at:
+                log_lines.append(
+                    f"[{format_log_time()}] Läuft seit {round(now - started, 1)}s; "
+                    f"letzte Prozessausgabe vor {round(now - last_output_at, 1)}s."
+                )
+                next_heartbeat_at = now + ACTION_LOG_HEARTBEAT_SECONDS
+                publish()
+            if reader_done and process.poll() is not None:
+                break
+
+        returncode = process.wait()
+        duration = round(time.time() - started, 1)
+        if timed_out:
+            error = f"Aktion nach {timeout}s Timeout beendet."
+            ok = False
+        else:
+            error = "" if returncode == 0 else t("action_failed", self.config.locale, returncode=returncode)
+            ok = returncode == 0
+        log_lines.append("")
+        log_lines.append(f"[{format_log_time()}] Aktion beendet: Exit-Code {returncode}, Dauer {duration}s")
+        if error:
+            log_lines.append(f"[{format_log_time()}] Ergebnis: {error}")
+        output = tail_action_log("\n".join(log_lines).rstrip() + "\n")
+        progress_callback(output)
+        return {
+            "action": action,
+            "label": label,
+            "command": safe_command,
+            "returncode": returncode,
+            "duration_seconds": duration,
+            "ok": ok,
+            "output": output,
+            "base_model_id": base_model_id,
+            "error": error,
+        }
+
+    def run_action(
+        self,
+        action: str,
+        options: dict[str, Any] | None = None,
+        progress_callback: Callable[[str], None] | None = None,
+    ) -> dict[str, Any]:
         self.ensure_action_allowed(action)
+        options = options or {}
+        base_model_id = require_openwebui_model_id(
+            str(options.get("base_model_id") or self.current_base_model_id()),
+            t("invalid_base_model_id", self.config.locale),
+        )
         command_env: dict[str, str] = {
             "PYTHONUTF8": "1",
             "PYTHONIOENCODING": "utf-8",
+            "WORKBENCH_BASE_MODEL_ID": base_model_id,
         }
         if action == "check":
             # Keep repository verification independent from the dashboard runtime mode.
@@ -802,7 +1184,15 @@ class WorkbenchState:
             command = [sys.executable, "scripts/verify_openwebui_workspace.py"]
             label = "Verify workspace"
         elif action == "generate":
-            command = [sys.executable, "scripts/configure_openwebui_tool_models.py", "--write", "--check", "--rebuild-zips"]
+            command = [
+                sys.executable,
+                "scripts/configure_openwebui_tool_models.py",
+                "--write",
+                "--check",
+                "--rebuild-zips",
+                "--base-model-id",
+                base_model_id,
+            ]
             label = "Generate registries and ZIPs"
         elif action == "import-dry-run":
             config_path = self.config_file if self.config_file.exists() else self.config_example
@@ -814,6 +1204,8 @@ class WorkbenchState:
                 "--import-dry-run",
                 "--config",
                 str(config_path),
+                "--base-model-id",
+                base_model_id,
             ]
             label = "Import dry-run"
         elif action in {"sync-status", "pull-openwebui"}:
@@ -850,6 +1242,8 @@ class WorkbenchState:
                 "--check",
                 "--rebuild-zips",
                 "--import-openwebui",
+                "--base-model-id",
+                base_model_id,
             ]
             if self.config_file.exists():
                 command.extend(["--config", str(self.config_file)])
@@ -872,6 +1266,19 @@ class WorkbenchState:
         if action != "import-openwebui":
             timeout = self.config.command_timeout
 
+        safe_command = [part if part != self.config.admin_token else "[REDACTED]" for part in command]
+        if progress_callback is not None:
+            return self.run_streamed_command(
+                command=command,
+                command_env=command_env,
+                safe_command=safe_command,
+                action=action,
+                label=label,
+                base_model_id=base_model_id,
+                timeout=timeout,
+                progress_callback=progress_callback,
+            )
+
         started = time.time()
         completed = subprocess.run(
             command,
@@ -885,7 +1292,6 @@ class WorkbenchState:
             env={**os.environ, **command_env},
         )
         output = redact(completed.stdout or "", [self.config.admin_token, self.config.auth_password])
-        safe_command = [part if part != self.config.admin_token else "[REDACTED]" for part in command]
         return {
             "action": action,
             "label": label,
@@ -894,10 +1300,11 @@ class WorkbenchState:
             "duration_seconds": round(time.time() - started, 1),
             "ok": completed.returncode == 0,
             "output": output[-20000:],
+            "base_model_id": base_model_id,
             "error": "" if completed.returncode == 0 else t("action_failed", self.config.locale, returncode=completed.returncode),
         }
 
-    def start_action_job(self, action: str) -> dict[str, Any]:
+    def start_action_job(self, action: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
         with self.action_lock:
             for job in self.action_jobs.values():
                 if job.get("action") == action and job.get("running"):
@@ -914,24 +1321,38 @@ class WorkbenchState:
                 "output": "",
                 "error": "",
                 "started_at": time.time(),
+                "updated_at": time.time(),
+                "options": dict(options or {}),
             }
             self.action_jobs[job_id] = job
 
-        thread = threading.Thread(target=self._run_action_job, args=(job_id, action), daemon=True)
+        thread = threading.Thread(target=self._run_action_job, args=(job_id, action, dict(options or {})), daemon=True)
         thread.start()
         return dict(job)
 
-    def _run_action_job(self, job_id: str, action: str) -> None:
+    def _run_action_job(self, job_id: str, action: str, options: dict[str, Any]) -> None:
+        def publish(output: str) -> None:
+            with self.action_lock:
+                job = self.action_jobs.get(job_id)
+                if not job:
+                    return
+                job["output"] = output
+                job["duration_seconds"] = round(time.time() - float(job.get("started_at") or time.time()), 1)
+                job["updated_at"] = time.time()
+
         try:
-            result = self.run_action(action)
+            result = self.run_action(action, options, progress_callback=publish)
         except Exception as exc:  # pragma: no cover - defensive background boundary
+            with self.action_lock:
+                current_output = str(self.action_jobs.get(job_id, {}).get("output") or "")
+            output = f"{current_output}\n[{format_log_time()}] Fehler: {type(exc).__name__}: {exc}\n".lstrip()
             result = {
                 "action": action,
                 "label": action,
                 "returncode": None,
                 "duration_seconds": 0,
                 "ok": False,
-                "output": "",
+                "output": tail_action_log(output),
                 "error": f"{type(exc).__name__}: {exc}",
             }
         with self.action_lock:
@@ -1095,6 +1516,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 self.send_json({"skills": STATE.list_skills()})
             elif parsed.path == "/api/resources":
                 self.send_json({"tools": STATE.list_tools(), "skills": STATE.list_skills()})
+            elif parsed.path == "/api/openwebui/models":
+                self.send_json(STATE.list_openwebui_base_models())
             elif parsed.path.startswith("/api/resources/") and parsed.path.endswith("/file"):
                 parts = parsed.path.split("/")
                 kind = unquote(parts[3])
@@ -1139,13 +1562,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         try:
             if parsed.path.startswith("/api/actions/"):
                 action = unquote(parsed.path.removeprefix("/api/actions/"))
-                if action == "import-openwebui":
-                    STATE.ensure_action_allowed(action)
-                    self.send_json(STATE.start_action_job(action), HTTPStatus.ACCEPTED)
-                    return
-                result = STATE.run_action(action)
-                status = HTTPStatus.OK if result["ok"] else HTTPStatus.BAD_GATEWAY
-                self.send_json(result, status)
+                payload = self.read_json_body()
+                STATE.ensure_action_allowed(action)
+                self.send_json(STATE.start_action_job(action, payload), HTTPStatus.ACCEPTED)
             elif parsed.path == "/api/automation/run":
                 result = STATE.ensure_automation_scheduler().run_once("manual")
                 self.send_json(result, HTTPStatus.ACCEPTED)
@@ -1159,6 +1578,12 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                     ),
                     HTTPStatus.CREATED,
                 )
+            elif parsed.path == "/api/openwebui/models/delete":
+                payload = self.read_json_body()
+                raw_ids = payload.get("ids") if isinstance(payload, dict) else []
+                model_ids = raw_ids if isinstance(raw_ids, list) else []
+                result = STATE.delete_openwebui_models([str(item) for item in model_ids])
+                self.send_json(result, HTTPStatus.OK if result.get("ok") else HTTPStatus.BAD_GATEWAY)
             else:
                 self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
         except Exception as exc:

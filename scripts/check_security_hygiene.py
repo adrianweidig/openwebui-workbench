@@ -61,6 +61,9 @@ SECRET_LITERAL_RES = [
     re.compile(r"\bhf_[A-Za-z0-9]{20,}\b"),
     re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{20,}\b"),
 ]
+PUBLIC_INFRA_MARKER_RES = [
+    re.compile("".join(("tor", "vs", r"[.-]", "bw")), re.IGNORECASE),
+]
 
 
 @dataclass(frozen=True)
@@ -176,6 +179,31 @@ def scan_text(path: Path, root: Path) -> list[Finding]:
     return findings
 
 
+def scan_public_infra_markers(paths: Iterable[Path], root: Path = ROOT) -> list[Finding]:
+    findings: list[Finding] = []
+    for path in sorted(paths):
+        if not path.exists():
+            continue
+        try:
+            rel = path.relative_to(root)
+        except ValueError:
+            continue
+        rel_name = rel.as_posix()
+        if any(pattern.search(rel_name) for pattern in PUBLIC_INFRA_MARKER_RES):
+            findings.append(Finding(rel, 0, "public infrastructure marker in path"))
+            continue
+        if not should_scan(path, root):
+            continue
+        try:
+            lines = path.read_text(encoding="utf-8").splitlines()
+        except UnicodeDecodeError:
+            continue
+        for line_no, line in enumerate(lines, start=1):
+            if any(pattern.search(line) for pattern in PUBLIC_INFRA_MARKER_RES):
+                findings.append(Finding(rel, line_no, "public infrastructure marker in text"))
+    return findings
+
+
 def scan_paths(paths: Iterable[Path], root: Path = ROOT) -> tuple[int, list[Finding]]:
     checked = 0
     findings: list[Finding] = []
@@ -215,14 +243,20 @@ def run_bandit(root: Path) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
-    checked, findings = scan_paths(candidate_paths(ROOT), ROOT)
+    paths = candidate_paths(ROOT)
+    checked, findings = scan_paths(paths, ROOT)
+    public_marker_findings = scan_public_infra_markers(paths, ROOT)
     print("# Security hygiene check")
     print(f"- Dateien geprüft: {checked}")
     print(f"- Verdächtige Secret-Werte: {len(findings)}")
-    if findings:
+    print(f"- Öffentliche Infrastrukturmarker: {len(public_marker_findings)}")
+    if findings or public_marker_findings:
         print("\n## Befunde")
         for finding in findings:
             print(f"- {finding.path.as_posix()}:{finding.line}: {finding.kind}")
+        for finding in public_marker_findings:
+            line = finding.line if finding.line else 1
+            print(f"- {finding.path.as_posix()}:{line}: {finding.kind}")
         print("\nHinweis: Werte werden absichtlich nicht ausgegeben.")
         return 1
     if args.include_bandit:

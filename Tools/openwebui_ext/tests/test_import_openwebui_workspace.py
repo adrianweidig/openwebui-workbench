@@ -91,6 +91,92 @@ class ImportOpenWebUIWorkspaceTests(unittest.TestCase):
                 expect_knowledge=False,
             )
 
+    def test_verify_imported_models_checks_required_file_context_links(self) -> None:
+        module = load_import_module()
+        file_context = {
+            "requiredFiles": [
+                {"filename": "mainprompt.md", "path": "mainprompt.md"},
+                {"filename": "fachwissen.md", "path": "fachwissen.md"},
+                {"filename": "Golden_Example.md", "path": "Golden_Example.md"},
+            ],
+            "uploadedFiles": [
+                {"filename": "mainprompt.md", "fileId": "file-main"},
+                {"filename": "fachwissen.md", "fileId": "file-knowledge"},
+                {"filename": "Golden_Example.md", "fileId": "file-golden"},
+            ],
+        }
+        client = FakeClient({"/api/v1/models/model?id=demo": {"id": "demo", "meta": {"workbenchFileContext": file_context}}})
+
+        module.verify_imported_models(
+            client,
+            [{"id": "demo", "meta": {"workbenchFileContext": file_context}}],
+            expect_knowledge=False,
+        )
+
+    def test_verify_imported_models_rejects_missing_required_file_context_links(self) -> None:
+        module = load_import_module()
+        expected_context = {
+            "requiredFiles": [
+                {"filename": "mainprompt.md", "path": "mainprompt.md"},
+                {"filename": "fachwissen.md", "path": "fachwissen.md"},
+                {"filename": "Golden_Example.md", "path": "Golden_Example.md"},
+            ],
+            "uploadedFiles": [{"filename": "mainprompt.md", "fileId": "file-main"}],
+        }
+        client = FakeClient(
+            {
+                "/api/v1/models/model?id=demo": {
+                    "id": "demo",
+                    "meta": {"workbenchFileContext": {"requiredFiles": expected_context["requiredFiles"], "uploadedFiles": []}},
+                }
+            }
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "required file context links"):
+            module.verify_imported_models(
+                client,
+                [{"id": "demo", "meta": {"workbenchFileContext": expected_context}}],
+                expect_knowledge=False,
+            )
+
+    def test_verify_imported_models_rejects_required_files_in_knowledge(self) -> None:
+        module = load_import_module()
+        file_context = {
+            "requiredFiles": [
+                {"filename": "mainprompt.md", "path": "mainprompt.md"},
+                {"filename": "fachwissen.md", "path": "fachwissen.md"},
+                {"filename": "Golden_Example.md", "path": "Golden_Example.md"},
+            ],
+            "uploadedFiles": [{"filename": "mainprompt.md", "fileId": "file-main"}],
+        }
+        client = FakeClient(
+            {
+                "/api/v1/models/model?id=demo": {
+                    "id": "demo",
+                    "meta": {
+                        "knowledge": [{"id": "knowledge-1", "name": "Modellwissen - Demo"}],
+                        "workbenchFileContext": file_context,
+                    },
+                },
+                "/api/v1/knowledge/knowledge-1": {"files": [{"filename": "mainprompt.md"}]},
+            }
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Knowledge/RAG"):
+            module.verify_imported_models(
+                client,
+                [
+                    {
+                        "id": "demo",
+                        "meta": {
+                            "knowledge": [{"id": "knowledge-1"}],
+                            "workbenchFileContext": file_context,
+                        },
+                    }
+                ],
+                expect_knowledge=True,
+            )
+
     def test_import_models_rejects_unexpected_import_response(self) -> None:
         module = load_import_module()
         client = FakeClient({"/api/v1/models/import": "<html>not an api response</html>"})
@@ -101,7 +187,12 @@ class ImportOpenWebUIWorkspaceTests(unittest.TestCase):
             return_value=module.ModelLoadResult([{"id": "demo", "meta": {}}]),
         ):
             with self.assertRaisesRegex(RuntimeError, "Unexpected OpenWebUI model import response"):
-                module.import_models(client, public=False, upload_knowledge=False)
+                module.import_models(
+                    client,
+                    public=False,
+                    upload_knowledge=False,
+                    runtime={"model_file_context": {"enabled": False, "upload_required_files": False}},
+                )
 
     def test_upsert_knowledge_skips_unchanged_fingerprinted_files(self) -> None:
         module = load_import_module()
@@ -130,6 +221,37 @@ class ImportOpenWebUIWorkspaceTests(unittest.TestCase):
         self.assertEqual(result.knowledge, {"id": "knowledge-1", "name": "Modellwissen - Demo"})
         self.assertFalse(result.changed)
         self.assertNotIn(("POST", "/api/v1/knowledge/knowledge-1/reset"), client.calls)
+
+    def test_upsert_knowledge_resets_fingerprinted_collection_with_extra_files(self) -> None:
+        module = load_import_module()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "beispiel.md"
+            path.write_text("# Beispiel\n", encoding="utf-8")
+            fingerprint = module.knowledge_fingerprint([path])
+            client = FakeClient(
+                {
+                    "/api/v1/knowledge/search?query=Modellwissen+-+Demo": {
+                        "items": [
+                            {
+                                "id": "knowledge-1",
+                                "name": "Modellwissen - Demo",
+                                "description": f"Import-Fingerprint: {fingerprint}",
+                            }
+                        ]
+                    },
+                    "/api/v1/knowledge/knowledge-1/update": {"id": "knowledge-1"},
+                    "/api/v1/knowledge/knowledge-1/files": [{"id": "file-1"}, {"id": "file-extra"}],
+                    "/api/v1/knowledge/knowledge-1/reset": {"ok": True},
+                    "/api/v1/knowledge/knowledge-1/files/batch/add": {"ok": True},
+                    "/api/v1/knowledge/knowledge-1": {"files": [{"id": "file-new"}]},
+                }
+            )
+
+            with patch.object(client, "upload_file", return_value={"id": "file-new"}):
+                result = module.upsert_knowledge_with_files(client, "demo", "Demo", [path], public=False)
+
+        self.assertTrue(result.changed)
+        self.assertIn(("POST", "/api/v1/knowledge/knowledge-1/reset"), client.calls)
 
 
 if __name__ == "__main__":

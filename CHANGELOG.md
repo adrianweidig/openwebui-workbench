@@ -6,6 +6,12 @@ Alle nennenswerten Änderungen an diesem Repository werden hier gesammelt. Verö
 
 ## Unreleased
 
+- Workbench-Modellimport auf echten Pflichtdatei-Kontext für `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` umgestellt.
+- Workbench-Dashboard um auswählbares Basismodell, Bulk-Aktionen und detaillierte Live-Logs für lange Aktionen erweitert.
+- Kontextkompressor und neuer Pflichtdatei-Filter schützen den verbindlichen Full-Context-Systemblock vor Kompression.
+- Öffentliche Infrastrukturmarker-Prüfung ergänzt und lokale torvs-spezifische Übergabevorlagen entfernt.
+- Historische Root-Snapshot-Notizen entfernt; der aktuelle Status wird über Verify-Runner, Release Notes und Maintainer-Checkliste dokumentiert.
+- Offline-Image `openwebui-workbench-dashboard:seu` als lokales Portainer-Import-Tar validiert.
 - `internetwissen` als integriertes Offline-Recherche- und Erklärmodell dokumentiert und gehärtet.
 - Offline-Datenpolicy mit KnowledgePack-Struktur und 10-GiB-Gesamtgrenze ergänzt.
 - KnowledgePack-Manifestvalidierung und Offline-Datenbudget in den Verify-Runner aufgenommen.
@@ -13,5 +19,4 @@ Alle nennenswerten Änderungen an diesem Repository werden hier gesammelt. Verö
 - Dist-Artefakte für Modelle, Tools und Offline-Handover neu erzeugt.
 - Mehrsprachige Repository-Struktur, englische README-/Community-Varianten und Dashboard-i18n mit Deutsch als Fallback ergänzt.
 - Öffentliche Repository-Dokumentation, Community-Dateien, CI-Workflows und Maintainer-Checkliste ergänzt.
-- Readiness-Bericht für den aktuellen Workspace-Stand hinzugefügt.
 - OpenWebUI-Workbench-Struktur, Importwege, Validierung und Offline-Grenzen in der README stärker navigierbar gemacht.

@@ -59,6 +59,9 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    python scripts/verify_openwebui_workspace.py
    ```
 
+   Vor diesem Schritt muss jedes Modellpaket genau eine `Golden_Example.<ext>`-Datei besitzen. Der Generator nutzt `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` als Pflichtdateien für `meta.workbenchFileContext`; zusätzliche Dateien aus `beispiele/` und Legacy-Artefakte `beispielergebnis.*` bleiben Knowledge/RAG-Material.
+   Das Basismodell ist nicht fest auf einen Anbieter codiert. Ohne Override wird der OpenWebUI-Modellname `coder` genutzt; für Zielinstanzen mit anderem Modellnamen kann derselbe Pfad mit `--base-model-id <modell-id>` oder `WORKBENCH_BASE_MODEL_ID=<modell-id>` geprüft werden. Die Workbench-GUI reicht die Auswahl im Sync-Bereich an Generator, Dry-Run und API-Import weiter.
+
 ## Einzelbefehle für Diagnose
 
 ```powershell

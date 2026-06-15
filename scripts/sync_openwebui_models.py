@@ -36,12 +36,15 @@ MANAGED_META_KEYS = {
     "productLocaleFiles",
     "profile_image_url",
     "recommendedSkillIds",
-    "requiredKnowledgeFiles",
+    "exampleKnowledgeFiles",
+    "legacyExampleResult",
+    "requiredFileContextFiles",
     "skillIds",
     "suggestion_prompts",
     "supportedLocales",
     "tags",
     "toolIds",
+    "workbenchFileContext",
 }
 MANAGED_TOP_KEYS = ("id", "name", "base_model_id", "meta", "params")
 PLACEHOLDER_TOKENS = {"", "PASTE_OPENWEBUI_ADMIN_API_TOKEN_HERE", "YOUR_OPEN_WEBUI_API_KEY"}

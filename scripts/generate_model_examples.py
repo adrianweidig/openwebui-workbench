@@ -245,6 +245,17 @@ def read_model_name(model_id: str) -> str:
     return str(data[0].get("name") or model_id)
 
 
+def fallback_example_config(model_id: str, name: str) -> dict[str, str]:
+    slug = model_id.replace("_", "-")
+    return {
+        "purpose": f"Das Modell `{name}` soll lokale Nutzeraufträge strukturiert, quellenbewusst und ohne erfundene Fakten bearbeiten.",
+        "artifact": f"{slug}-goldstandard-briefing.md",
+        "scenario": f"Ein Nutzer benötigt ein prüfbares Ergebnis für den Aufgabenbereich `{name}` mit lokalem Kontext und optionalen Beispielen.",
+        "vision": "Nutze Vision nur für bereitgestellte Screenshots, UI-Zustände, Scans oder Diagramme und markiere unsichere visuelle Beobachtungen.",
+        "quality": "Das Ergebnis muss Quellen, Annahmen, offene Punkte, konkrete Arbeitsschritte und prüfbare Qualitätsgrenzen trennen.",
+    }
+
+
 EXAMPLE_RESULT_FILE_OVERRIDES = {
     "api-schnittstellenentwurf": "beispielergebnis.yaml",
     "codegenerierung": "beispielergebnis.py",
@@ -854,6 +865,70 @@ def template_markdown(model_id: str, name: str, config: dict[str, str]) -> str:
         Das Goldstandard-Ergebnis liegt in `{example_result}`. Es soll als Format- und Qualitätsmuster nachgeahmt werden: direkt verwendbar, quellenbewusst, offlinefähig, ohne Platzhalter und ohne erfundene Fakten.
         """
     )
+
+
+def generated_rag_example(model_id: str, name: str, config: dict[str, str], index: int) -> str:
+    if index == 1:
+        title = "Fokussierter Standardauftrag"
+        request = config["scenario"]
+        response_focus = (
+            "Arbeite mit sichtbaren Quellen, markiere Annahmen und liefere ein direkt prüfbares "
+            "Zwischenergebnis. Nutze die Pflichtdateien als Qualitätsanker; dieses Beispiel ist nur "
+            "zusätzliches RAG-Material."
+        )
+    elif index == 2:
+        title = "Unvollständige Eingabe mit Qualitätsgrenze"
+        request = "Die Eingabe ist knapp, enthält aber genug Kontext für einen ersten sicheren Entwurf."
+        response_focus = (
+            "Stelle höchstens drei gezielte Rückfragen, erfinde keine fehlenden Fakten und liefere eine "
+            "konservative Arbeitsfassung mit klaren offenen Punkten."
+        )
+    else:
+        title = "Visuelle oder dateibasierte Ergänzung"
+        request = "Es liegen Text, Screenshot oder Datei als ergänzende Quelle vor."
+        response_focus = config["vision"]
+
+    return dedent(
+        f"""\
+        # Zusatzbeispiel {index}: {name}
+
+        Dieses Beispiel ist optionales Knowledge/RAG-Material für `{model_id}`. Es ersetzt nicht den Pflichtkontext aus `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>`.
+
+        ## Szenario
+
+        {title}
+
+        ## Nutzeranfrage
+
+        {request}
+
+        ## Gute Antwort
+
+        {response_focus}
+
+        Ergebnisziel: {config["purpose"]}
+
+        Qualitätskriterium: {config["quality"]}
+        """
+    )
+
+
+def ensure_generated_rag_examples(model_dir: Path, model_id: str, name: str, config: dict[str, str]) -> None:
+    examples_dir = model_dir / EXAMPLE_DIR
+    existing = [
+        path
+        for path in examples_dir.rglob("*")
+        if path.is_file() and not path.relative_to(examples_dir).as_posix().startswith("generated/")
+    ]
+    needed = max(0, 3 - len(existing))
+    if needed <= 0:
+        return
+
+    generated_dir = examples_dir / "generated"
+    generated_dir.mkdir(parents=True, exist_ok=True)
+    for index in range(1, needed + 1):
+        target = generated_dir / f"zusatzbeispiel-{index:02d}.md"
+        target.write_text(generated_rag_example(model_id, name, config, index), encoding="utf-8", newline="\n")
 
 
 def code_generation_goldstandard_python() -> str:
@@ -2137,10 +2212,11 @@ def openwebui_model_builder_goldstandard() -> str:
         ```text
         support-ticket-vorbereitung-lite/
         ├─ model.json
-        ├─ systemprompt.md
         ├─ mainprompt.md
         ├─ fachwissen.md
-        ├─ beispielergebnis.md
+        ├─ Golden_Example.md
+        ├─ beispiele/
+        │  └─ ticket-rueckfrage.md
         └─ README.md
         ```
 
@@ -2188,21 +2264,26 @@ def openwebui_model_builder_goldstandard() -> str:
                   "name": "ticket"
                 }
               ],
-              "requiredKnowledgeFiles": [
+              "requiredFileContextFiles": [
                 "mainprompt.md",
                 "fachwissen.md",
-                "beispielergebnis.md"
+                "Golden_Example.md"
+              ],
+              "exampleKnowledgeFiles": [
+                "beispiele/ticket-rueckfrage.md"
               ],
               "primaryToolIds": [],
               "skillIds": ["knowledge-artifact-packaging"],
               "recommendedSkillIds": ["knowledge-artifact-packaging"]
             },
             "params": {
-              "system": "Formatting re-enabled\\n\\n# Systemprompt\\n\\nDu bist das OpenWebUI-Modell `support-ticket-vorbereitung-lite`. Lade vor jeder Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`, falls vorhanden. Wende daraus Rolle, Ausgabeformat, Qualitätsregeln und Sicherheitsgrenzen an. Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen. Wenn Knowledge fehlt, arbeite nur mit dem sichtbaren Kontext und benenne die Lücke knapp.",
-              "temperature": 0.25,
-              "top_p": 0.9,
+              "system": "Du bist das Workbench-Modell `support-ticket-vorbereitung-lite`. Nutze bei jeder Antwort den geschützten Pflichtkontext aus `mainprompt.md`, `fachwissen.md` und `Golden_Example.md`. Verwende Dateien aus `beispiele/` nur als optionales Knowledge/RAG-Material. Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen.",
+              "temperature": 0.7,
+              "top_p": 0.95,
               "stop": [],
-              "function_calling": "native"
+              "function_calling": "native",
+              "reasoning_effort": "high",
+              "parallel_tool_calls": true
             },
             "access_grants": [
               {
@@ -2214,18 +2295,6 @@ def openwebui_model_builder_goldstandard() -> str:
             "is_active": true
           }
         ]
-        ```
-
-        ## systemprompt.md
-
-        ```md
-        Formatting re-enabled
-
-        # Systemprompt
-
-        Du bist das OpenWebUI-Modell `support-ticket-vorbereitung-lite`. Lade vor jeder Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`, falls vorhanden. Wende daraus Rolle, Ausgabeformat, Qualitätsregeln und Sicherheitsgrenzen an.
-
-        Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen. Wenn Knowledge fehlt, arbeite nur mit dem sichtbaren Kontext und benenne die Lücke knapp.
         ```
 
         ## mainprompt.md
@@ -2274,7 +2343,8 @@ def openwebui_model_builder_goldstandard() -> str:
         ## Import-Checkliste
 
         - `python -m json.tool model.json` muss gültig sein.
-        - `systemprompt.md`, `mainprompt.md`, `fachwissen.md` und `beispielergebnis.md` müssen als Knowledge verfügbar sein.
+        - `mainprompt.md`, `fachwissen.md` und `Golden_Example.md` müssen als OpenWebUI-Files hochgeladen und über den Pflichtkontext-Filter injiziert werden.
+        - Dateien unter `beispiele/` bleiben optionales Knowledge/RAG-Material.
         - `web_search` bleibt aus, wenn der Betrieb offline sein soll.
         - `function_calling` steht auf `native`, sofern die Zielinstanz dies unterstützt.
         - Tool-, Skill- und Knowledge-IDs werden erst nach Abgleich mit der Zielinstanz ergänzt.
@@ -2295,7 +2365,7 @@ def openwebui_model_builder_goldstandard_briefing() -> str:
 
         ### Gute Antwort
 
-        Das Modellpaket nutzt ein aufgabenorientiertes `model.json`, kurzen Bootloader-Systemprompt, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, sinnvolle Promptvorschläge, deaktivierte Websuche und klare Sicherheitsgrenzen.
+        Das Modellpaket nutzt ein aufgabenorientiertes `model.json`, kurzen deterministischen Systemprompt, `mainprompt.md`, `fachwissen.md`, `Golden_Example.<ext>` als Pflichtdateien, sinnvolle Promptvorschläge, optionale Beispiele unter `beispiele/`, deaktivierte Websuche und klare Sicherheitsgrenzen.
 
         ## Beispiel 2: Realistischer Standardfall
 
@@ -2903,14 +2973,11 @@ def vision_demo_html() -> str:
 
 def main() -> int:
     model_dirs = sorted(path for path in SINGLE_MODELS.iterdir() if path.is_dir() and (path / "model.json").exists())
-    missing = [path.name for path in model_dirs if path.name not in MODEL_EXAMPLES]
-    if missing:
-        raise SystemExit(f"Missing example definitions for models: {', '.join(missing)}")
 
     for model_dir in model_dirs:
         model_id = model_dir.name
-        config = MODEL_EXAMPLES[model_id]
         name = read_model_name(model_id)
+        config = MODEL_EXAMPLES.get(model_id) or fallback_example_config(model_id, name)
         examples_dir = model_dir / EXAMPLE_DIR
         examples_dir.mkdir(parents=True, exist_ok=True)
 
@@ -3002,6 +3069,7 @@ def main() -> int:
             (examples_dir / "praesentation-premium-demo.html").write_text(premium_presentation_demo(), encoding="utf-8", newline="\n")
         if model_id == "mistral-vision-workbench":
             (examples_dir / "vision-ui-qa-demo.html").write_text(vision_demo_html(), encoding="utf-8", newline="\n")
+        ensure_generated_rag_examples(model_dir, model_id, name, config)
 
     print(f"Generated examples for {len(model_dirs)} models.")
     return 0

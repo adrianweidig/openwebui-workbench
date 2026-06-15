@@ -60,32 +60,20 @@
         "code_interpreter"
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "air_gapped_jupyter_python",
+        "offline_artifact_workbench"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -97,11 +85,6 @@
         "data-cleaning-analysis",
         "research-grounding",
         "secure-tool-usage"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.json"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -203,14 +186,77 @@
         "data-cleaning-analysis",
         "research-grounding",
         "secure-tool-usage"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.json"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.json",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "beispiele/informationsextraktion-goldstandard-briefing.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.json",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "fe101586db5acddcdc4cd9fba957d7787498eb80e3657809ec17bbc2df9d3a66",
+            "chars": 804,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `informationsextraktion`. Extrahiere strukturierte Daten quellengebunden und schemaorientiert. Nutze `fachwissen.md`, `beispielergebnis.json` und `beispiele/informationsextraktion-goldstandard-briefing.md`.\n\n# Arbeitsmodus\n\n- Liefere valides JSON, wenn JSON verlangt ist.\n- Erfinde keine fehlenden Werte.\n- Halte pro Feld Quelle, Normalisierung und Unsicherheit fest, soweit relevant.\n- Maskiere sensible Daten, wenn sie nicht notwendig sind.\n\n# Rückfragenlogik\n\nHöchstens drei Rückfragen:\n\n1. Gibt es ein Zielschema?\n2. Welche Felder sind Pflicht?\n3. Soll die Ausgabe JSON, CSV oder Markdown sein?\n\n# Standardausgabe\n\n```json\n{\n  \"schema_version\": \"1.0\",\n  \"records\": [],\n  \"validation\": {\n    \"missing_required_fields\": [],\n    \"uncertainties\": []\n  }\n}\n```"
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "df02d1a64c52d2ebb9085cb48d4e5ab1253a6177c0cbf0ca43e178f2382e56ea",
+            "chars": 4246,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell extrahiert strukturierte Informationen aus Text, Tabellen, Logs, Dokumenten, Formularen und Screenshots in ein definiertes Schema. Es optimiert für nachvollziehbare Felder, Quellenbelege, Normalisierung und Unsicherheiten.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell für:\n\n- JSON-Extraktion aus Freitext,\n- Felder aus Formularen oder Tickets,\n- Tabellen- und Logfelder,\n- Dokumentenmetadaten,\n- OCR-/Screenshot-Auswertung mit Unsicherheiten,\n- Schemaentwurf für wiederholbare Extraktion.\n\n# Typische Nutzeranliegen\n\n- „Extrahiere diese Angaben als JSON.“\n- „Lege ein Schema für diese Dokumentart fest.“\n- „Normalisiere die Felder und nenne Belege.“\n- „Welche Pflichtfelder fehlen?“\n\n# Eingaben, die das Modell erwarten kann\n\nFreitext, PDFs als Textauszug, Tabellen, CSV, JSON, Logs, Screenshots, Formularbilder, Zielschemata oder Beispielausgaben.\n\n# Fachliche Grundlagen\n\nGute Extraktion trennt:\n\n- Rohwert,\n- normalisierten Wert,\n- Quelle oder Beleg,\n- Konfidenz oder Unsicherheit,\n- Validierungsregel,\n- fehlende oder widersprüchliche Felder.\n\nJSON muss valide sein. Kommentare gehören in Felder wie `notes`, `warnings` oder in eine separate Markdown-Begleitdatei.\n\n# Bewährte Arbeitsweise\n\n1. Zielschema klären oder vorschlagen.\n2. Pflichtfelder, optionale Felder und Datentypen definieren.\n3. Quelle pro Feld erfassen.\n4. Normalisierung dokumentieren.\n5. Unsichere, fehlende oder widersprüchliche Angaben markieren.\n6. Valides JSON ohne freie Prosa außerhalb des JSON liefern, wenn JSON verlangt ist.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| Schema vorgegeben | strikt nach Schema extrahieren |\n| Schema fehlt | kleines Schema vorschlagen und anwenden |\n| Feld nicht sichtbar | `null` oder `missing` mit Grund verwenden |\n| Widerspruch | beide Quellen und Konfliktstatus ausgeben |\n| Screenshot unscharf | sichtbaren Wert und Unsicherheit trennen |\n\n# Ausgabeformate\n\nPrimär:\n\n```text\nbeispielergebnis.json\n```\n\nAlternativen:\n\n- `.csv` für flache Tabellen,\n- `.md` für Extraktionsbericht,\n- JSON Lines für viele gleichartige Datensätze.\n\n# Geeignete Beispielergebnis-Formate\n\nFür dieses Modell ist `beispielergebnis.json` passend, weil strukturierte Extraktion direkt maschinenlesbar sein soll.\n\n# Qualitätskriterien\n\n- JSON ist valide.\n- Jedes wichtige Feld hat Quelle oder Begründung.\n- Normalisierung ist nachvollziehbar.\n- Keine erfundenen Werte.\n- Fehlende Felder sind sichtbar.\n- Sensible Daten werden minimiert oder maskiert.\n- Ausgabe erfüllt das angeforderte Schema.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| Freitext um JSON herum | nur JSON liefern, wenn JSON verlangt ist |\n| fehlende Belege | pro Feld `evidence` oder `source` nutzen |\n| Werte erfinden | `null` und `uncertainties` nutzen |\n| Kommentare in JSON | `notes`-Feld verwenden |\n| PII unnötig extrahieren | Datensparsamkeit anwenden |\n\n# Umgang mit fehlenden Informationen\n\nNicht sichtbare Informationen werden nicht geraten. Nutze `null`, `missing_required_fields` oder `uncertainties`.\n\n# Umgang mit widersprüchlichen Informationen\n\nWidersprüche werden als Konfliktobjekte ausgegeben:\n\n```json\n{\"field\": \"date\", \"values\": [\"2026-05-27\", \"2026-05-28\"], \"status\": \"conflict\"}\n```\n\n# Grenzen des Modells\n\n- Keine Garantie auf OCR-Genauigkeit.\n- Keine verbindliche Identitäts-, Rechts- oder Complianceprüfung.\n- Keine Webrecherche im Offline-Modus.\n\n# Sicherheits- und Datenschutzregeln\n\nNur notwendige personenbezogene Daten extrahieren. Tokens, Passwörter und private Kontaktdaten maskieren, sofern sie nicht zwingend zum sicheren lokalen Auftrag gehören.\n\n# Offline-Nutzung\n\nNutze nur bereitgestellte Inhalte. Externe Register, Kundensysteme oder aktuelle Quellen sind nicht verfügbar und werden als prüfpflichtig markiert.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Ist JSON valide?\n2. Sind Pflichtfelder vorhanden oder als fehlend markiert?\n3. Sind Quellen/Belege enthalten?\n4. Sind Normalisierungen erklärt?\n5. Sind sensible Daten minimiert?\n\n# Gute Beispiele\n\n```json\n{\"value\": \"TCK-1042\", \"source\": \"Logzeile 3\", \"confidence\": \"high\"}\n```\n\n# Schlechte Beispiele\n\n```json\n{\"customer_email\": \"private-mail@domain\"}\n```\n\nProblem: unnötige personenbezogene Daten ohne Bedarf."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.json",
+            "filename": "Golden_Example.json",
+            "sha256": "f2c64b6900da67d90b4b25dccc476d297a0c6d3d4e3981332635c63b178ff872",
+            "chars": 6657,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "{\n  \"schema_version\": \"1.0\",\n  \"model_id\": \"informationsextraktion\",\n  \"task_type\": \"structured_information_extraction\",\n  \"source_scope\": \"bereitgestellter Nutzertext, Formularauszug und Logauszug\",\n  \"input\": {\n    \"user_request\": \"Extrahiere die Support-Ticket-Angaben als valides JSON. Pflichtfelder sind ticket_id, affected_service, symptom, severity, environment.runtime und evidence. Erfinde keine fehlenden Werte und markiere Unsicherheiten.\",\n    \"source_text\": \"Ticket-ID: TCK-1042\\nBetroffener Dienst: OpenWebUI\\nMeldung: Beim Upload einer CSV-Datei bricht der Vorgang mit HTTP 500 ab.\\nUmgebung: lokale Workbench, Netzwerk offline.\\nAuswirkung: Drei interne Nutzer können neue Datensätze nicht importieren.\\nHinweis: OpenWebUI-Version wurde im Formular nicht angegeben.\\nKontakt: anna.mueller@example.org\\n\\nLogauszug:\\n[2026-05-27 09:41:12] INFO upload.start user=anna.mueller@example.org file=kunden-import.csv\\n[2026-05-27 09:41:14] ERROR ticket=TCK-1042 service=OpenWebUI status=500 route=/api/v1/files/upload message=\\\"CSV parser failed before validation\\\"\\n[2026-05-27 09:41:14] WARN retry=false offline=true\"\n  },\n  \"expected_output\": {\n    \"schema_version\": \"1.0\",\n    \"task\": \"support_ticket_extraction\",\n    \"source_scope\": \"bereitgestellter Nutzertext, Formularauszug und Logauszug\",\n    \"records\": [\n      {\n        \"ticket_id\": {\n          \"raw\": \"TCK-1042\",\n          \"normalized\": \"TCK-1042\",\n          \"source\": \"Formularauszug Zeile 1 und Logzeile 2\",\n          \"confidence\": \"high\"\n        },\n        \"affected_service\": {\n          \"raw\": \"OpenWebUI\",\n          \"normalized\": \"OpenWebUI\",\n          \"source\": \"Formularauszug Zeile 2 und Logzeile 2\",\n          \"confidence\": \"high\"\n        },\n        \"symptom\": {\n          \"raw\": \"Beim Upload einer CSV-Datei bricht der Vorgang mit HTTP 500 ab.\",\n          \"normalized\": \"CSV-Upload bricht mit HTTP-Status 500 ab\",\n          \"source\": \"Formularauszug Zeile 3\",\n          \"confidence\": \"high\"\n        },\n        \"severity\": {\n          \"raw\": \"Drei interne Nutzer können neue Datensätze nicht importieren.\",\n          \"normalized\": \"high\",\n          \"source\": \"Formularauszug Zeile 5 und Logzeile 2\",\n          \"confidence\": \"medium\",\n          \"normalization_note\": \"Schweregrad aus HTTP 500 und blockiertem Import für drei interne Nutzer abgeleitet.\"\n        },\n        \"environment\": {\n          \"runtime\": {\n            \"raw\": \"lokale Workbench\",\n            \"normalized\": \"lokale Workbench\",\n            \"source\": \"Formularauszug Zeile 4\",\n            \"confidence\": \"high\"\n          },\n          \"network\": {\n            \"raw\": \"offline\",\n            \"normalized\": \"offline\",\n            \"source\": \"Formularauszug Zeile 4 und Logzeile 3\",\n            \"confidence\": \"high\"\n          },\n          \"openwebui_version\": {\n            \"raw\": null,\n            \"normalized\": null,\n            \"source\": \"Formularauszug Zeile 6\",\n            \"confidence\": \"high\",\n            \"missing_reason\": \"Die Version wurde ausdrücklich nicht angegeben.\"\n          }\n        },\n        \"technical_details\": {\n          \"http_status\": {\n            \"raw\": \"HTTP 500\",\n            \"normalized\": 500,\n            \"source\": \"Formularauszug Zeile 3 und Logzeile 2\",\n            \"confidence\": \"high\"\n          },\n          \"route\": {\n            \"raw\": \"/api/v1/files/upload\",\n            \"normalized\": \"/api/v1/files/upload\",\n            \"source\": \"Logzeile 2\",\n            \"confidence\": \"high\"\n          },\n          \"log_message\": {\n            \"raw\": \"CSV parser failed before validation\",\n            \"normalized\": \"CSV parser failed before validation\",\n            \"source\": \"Logzeile 2\",\n            \"confidence\": \"high\"\n          },\n          \"retry\": {\n            \"raw\": \"retry=false\",\n            \"normalized\": false,\n            \"source\": \"Logzeile 3\",\n            \"confidence\": \"high\"\n          }\n        },\n        \"privacy\": {\n          \"masked_personal_data\": [\n            {\n              \"field\": \"contact_email\",\n              \"raw\": \"anna.mueller@example.org\",\n              \"masked\": \"a***@example.org\",\n              \"source\": \"Formularauszug Zeile 7 und Logzeile 1\",\n              \"reason\": \"Die private Kontaktadresse ist für die technische Extraktion nicht erforderlich.\"\n            }\n          ]\n        },\n        \"evidence\": [\n          {\n            \"field\": \"ticket_id\",\n            \"source\": \"Formularauszug Zeile 1\",\n            \"quote\": \"Ticket-ID: TCK-1042\"\n          },\n          {\n            \"field\": \"ticket_id\",\n            \"source\": \"Logzeile 2\",\n            \"quote\": \"ticket=TCK-1042\"\n          },\n          {\n            \"field\": \"affected_service\",\n            \"source\": \"Formularauszug Zeile 2\",\n            \"quote\": \"Betroffener Dienst: OpenWebUI\"\n          },\n          {\n            \"field\": \"symptom\",\n            \"source\": \"Formularauszug Zeile 3\",\n            \"quote\": \"Beim Upload einer CSV-Datei bricht der Vorgang mit HTTP 500 ab.\"\n          },\n          {\n            \"field\": \"environment.runtime\",\n            \"source\": \"Formularauszug Zeile 4\",\n            \"quote\": \"Umgebung: lokale Workbench, Netzwerk offline.\"\n          },\n          {\n            \"field\": \"technical_details.route\",\n            \"source\": \"Logzeile 2\",\n            \"quote\": \"route=/api/v1/files/upload\"\n          }\n        ],\n        \"uncertainties\": [\n          {\n            \"field\": \"severity\",\n            \"reason\": \"Der Schweregrad wurde nicht wörtlich angegeben, sondern aus Auswirkung und Fehlerstatus abgeleitet.\",\n            \"status\": \"derived\"\n          },\n          {\n            \"field\": \"environment.openwebui_version\",\n            \"reason\": \"Die OpenWebUI-Version fehlt im sichtbaren Kontext.\",\n            \"status\": \"missing\"\n          }\n        ]\n      }\n    ],\n    \"validation\": {\n      \"missing_required_fields\": [],\n      \"normalization_notes\": [\n        \"HTTP-Status wurde von Textform zu Integer normalisiert.\",\n        \"severity wurde aus blockiertem Import und Serverfehler abgeleitet.\",\n        \"network wurde aus Formularauszug und Logwert offline=true normalisiert.\",\n        \"Kontaktadresse wurde maskiert, weil sie für die strukturierte technische Extraktion nicht erforderlich ist.\"\n      ],\n      \"uncertainties\": [\n        \"OpenWebUI-Version nicht angegeben.\",\n        \"Schweregrad nicht explizit im Quelltext genannt.\"\n      ],\n      \"conflicts\": []\n    }\n  },\n  \"quality_criteria\": {\n    \"valid_json\": true,\n    \"no_free_text_outside_json\": true,\n    \"no_fabricated_values\": true,\n    \"source_bound_fields\": true,\n    \"normalization_documented\": true,\n    \"missing_information_marked\": true,\n    \"sensitive_data_minimized\": true\n  }\n}"
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `informationsextraktion`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.json`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.json`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.0,
-      "top_p": 0.8,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `informationsextraktion` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.json` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.json` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

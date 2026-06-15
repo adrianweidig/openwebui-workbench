@@ -136,6 +136,48 @@ class DashboardStaticAssetsTests(unittest.TestCase):
             with self.subTest(control=control):
                 self.assertIn(f'setWriteControlState("{control}"', app_js)
 
+    def test_model_bulk_openwebui_delete_controls_are_visible(self) -> None:
+        collector = collect_index()
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        for element_id in ("select-visible-models", "delete-openwebui-models", "model-selection-state"):
+            with self.subTest(element_id=element_id):
+                self.assertIn(element_id, collector.ids)
+        for symbol in (
+            "function deleteSelectedOpenWebUIModels",
+            "/api/openwebui/models/delete",
+            "function updateModelSelectionControls",
+        ):
+            with self.subTest(symbol=symbol):
+                self.assertIn(symbol, app_js)
+
+    def test_sync_base_model_selector_is_visible(self) -> None:
+        collector = collect_index()
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        for element_id in ("base-model-select", "refresh-base-models", "base-model-state"):
+            with self.subTest(element_id=element_id):
+                self.assertIn(element_id, collector.ids)
+        for symbol in (
+            "/api/openwebui/models",
+            "function refreshBaseModels",
+            "base_model_id: selectedBaseModelId()",
+        ):
+            with self.subTest(symbol=symbol):
+                self.assertIn(symbol, app_js)
+
+    def test_action_log_uses_live_job_updates(self) -> None:
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        for symbol in (
+            "function setActionLog",
+            "log.scrollTop = log.scrollHeight",
+            "log.runningJob",
+            "/api/action-jobs/",
+        ):
+            with self.subTest(symbol=symbol):
+                self.assertIn(symbol, app_js)
+
     def test_automation_status_is_visible(self) -> None:
         collector = collect_index()
         app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")

@@ -67,6 +67,9 @@ tool_valves:
 
 function_valves:
   # Filter/function valves are updated after functions are imported.
+  workbench_required_file_context_filter:
+    priority: 850
+    emit_status: true
   auto_tool_selector:
     priority: 50
     enable_local_tool_selection: true
@@ -92,6 +95,15 @@ function_valves:
     enable_table_fix: true
     show_status: true
     show_debug_log: false
+
+model_file_context:
+  enabled: true
+  upload_required_files: true
+  poll_processing_status: true
+  processing_timeout_seconds: 180
+  attach_uploaded_files_to_model_meta: true
+  required_context_filter_id: workbench_required_file_context_filter
+  knowledge_examples_only: true
 
 import:
   # Workspace imports are published for all OpenWebUI users by default:

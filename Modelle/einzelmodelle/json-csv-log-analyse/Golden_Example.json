@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "model_id": "json-csv-log-analyse",
+  "title": "Golden Example für JSON-, CSV- und Loganalyse",
+  "description": "Referenzbeispiel für strukturierte Analyse mit Parsingstatus, belegten Befunden, sicheren lokalen Checks und klaren Grenzen.",
+  "input": {
+    "user_request": "Analysiere den Importfehler. Gib das Ergebnis als valides JSON aus. Keine sensiblen Rohdaten vollständig wiederholen.",
+    "files": [
+      {
+        "name": "openwebui-upload.log",
+        "type": "log",
+        "content": "2026-02-18 09:14:01 INFO upload.start file=tickets.csv user_id=u-2841\n2026-02-18 09:14:01 INFO parser.detect delimiter=comma encoding=utf-8-sig\n2026-02-18 09:14:02 ERROR importer.failed exception=KeyError field=ticket_id route=/api/import/tickets status=500\n2026-02-18 09:14:02 DEBUG traceback=KeyError: 'ticket_id'\n2026-02-18 09:14:02 INFO upload.end result=failed duration_ms=812"
+      },
+      {
+        "name": "tickets.csv",
+        "type": "csv",
+        "content": "ticketId,status,created_at,priority\n10017,open,2026-02-17T10:12:00,P2\n10018,closed,2026-02-17T11:05:00,P3\n10019,open,2026-02-17T12:44:00,P1"
+      }
+    ],
+    "expected_schema": {
+      "required_csv_fields": [
+        "ticket_id",
+        "status",
+        "created_at",
+        "priority"
+      ]
+    }
+  },
+  "expected_output": {
+    "schema_version": "1.0",
+    "input_profile": {
+      "files": [
+        "openwebui-upload.log",
+        "tickets.csv"
+      ],
+      "assumptions": [
+        "Logzeitpunkte sind lokal und nicht zeitzonennormalisiert",
+        "CSV-Encoding wurde aus dem Log als utf-8-sig übernommen",
+        "Das erwartete Importschema fordert die Spalte ticket_id"
+      ]
+    },
+    "parse_status": {
+      "json_valid": null,
+      "csv_header_valid": false,
+      "csv_rows_read": 3,
+      "log_lines_read": 5,
+      "delimiter": ",",
+      "encoding": "utf-8-sig"
+    },
+    "findings": [
+      {
+        "severity": "P1",
+        "title": "CSV-Pflichtspalte `ticket_id` fehlt",
+        "evidence": "tickets.csv Kopfzeile enthält `ticketId`, aber das erwartete Schema fordert `ticket_id`",
+        "impact": "Der Importer greift auf ein nicht vorhandenes Feld zu und bricht mit KeyError ab",
+        "next_check": "CSV-Kopfzeile gegen Importschema prüfen oder Mapping von `ticketId` auf `ticket_id` ergänzen"
+      },
+      {
+        "severity": "P1",
+        "title": "Importfehler wird als HTTP 500 statt als Validierungsfehler behandelt",
+        "evidence": "openwebui-upload.log zeigt `status=500` zusammen mit `exception=KeyError field=ticket_id`",
+        "impact": "Nutzer erhalten einen Serverfehler, obwohl die Ursache ein validierbarer Schemafehler in der Eingabedatei ist",
+        "next_check": "Vor der fachlichen Verarbeitung eine Header-Validierung mit strukturierter Fehlerantwort ausführen"
+      },
+      {
+        "severity": "P2",
+        "title": "Fehlerantwort enthält offenbar keine strukturierte Feldliste",
+        "evidence": "Log enthält nur `KeyError: 'ticket_id'` und keine validierte Liste fehlender Pflichtfelder",
+        "impact": "Support und Nutzer können die Datei schwerer korrigieren, weil der konkrete Schemaabgleich nicht ausgegeben wird",
+        "next_check": "Negativen Importtest für fehlende Pflichtspalte `ticket_id` ergänzen"
+      }
+    ],
+    "safe_commands": [
+      "python - <<'PY'\nimport csv\nwith open('tickets.csv', encoding='utf-8-sig', newline='') as f:\n    reader = csv.reader(f)\n    print(next(reader))\nPY",
+      "python - <<'PY'\nimport csv\nrequired = {'ticket_id', 'status', 'created_at', 'priority'}\nwith open('tickets.csv', encoding='utf-8-sig', newline='') as f:\n    header = next(csv.reader(f))\nmissing = sorted(required - set(header))\nextra = sorted(set(header) - required)\nprint({'missing': missing, 'extra': extra})\nPY",
+      "python - <<'PY'\nfrom collections import Counter\nwith open('openwebui-upload.log', encoding='utf-8') as f:\n    levels = Counter(line.split()[2] for line in f if len(line.split()) >= 3)\nprint(dict(levels))\nPY"
+    ],
+    "limits": [
+      "Keine personenbezogenen CSV-Zeilen vollständig wiederholt",
+      "Keine Ursache behauptet, die nicht aus Log, CSV-Kopfzeile oder erwartetem Schema ableitbar ist",
+      "JSON-Inhalt wurde nicht analysiert, weil keine JSON-Eingabedatei vorhanden ist"
+    ]
+  },
+  "quality_checks": [
+    "Parsingstatus steht vor den Befunden im erwarteten Antwortobjekt",
+    "Jeder Befund enthält Evidenz, Auswirkung und nächsten Prüfschritt",
+    "Sichere lokale Kommandos verwenden nur lesende Operationen",
+    "Die erwartete Ausgabe ist valides JSON ohne freie Prosa"
+  ]
+}

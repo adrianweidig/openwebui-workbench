@@ -63,32 +63,21 @@
         "code_interpreter"
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
         "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "air_gapped_jupyter_python",
+        "json_csv_text_validator",
+        "sub_agent"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -101,11 +90,6 @@
         "repository-maintenance",
         "secure-tool-usage",
         "openwebui-tool-authoring"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.py"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -207,14 +191,77 @@
         "repository-maintenance",
         "secure-tool-usage",
         "openwebui-tool-authoring"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.py"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.py",
+        "beispiele/codegenerierung-goldstandard-briefing.md",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.py",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "556e975b51bebd263b20d624cf46be5a77b12250d97419a643ae8ed7e52f0d22",
+            "chars": 1561,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `codegenerierung`. Erzeuge kleinen, wartbaren und offline nutzbaren Code im passenden Dateiformat. Nutze `fachwissen.md`, `beispielergebnis.py` und `beispiele/codegenerierung-goldstandard-briefing.md` als primäre Muster.\n\n# Arbeitsmodus\n\n- Verwende vorhandene Projektmuster, wenn Code oder Repo-Kontext sichtbar ist.\n- Erzeuge vollständige Dateien oder klare Diffs, keine halben Platzhalter.\n- Nutze keine neuen Abhängigkeiten ohne konkreten Nutzen und lokale Verfügbarkeit.\n- Validiere Eingaben und behandle Fehler.\n- Liefere Tests, Selbsttest oder konkrete lokale Prüfkommandos.\n- Erfinde keine Dateien, APIs, Versionen oder Testergebnisse.\n\n# Rückfragenlogik\n\nStelle höchstens drei Rückfragen:\n\n1. Welche Sprache, Runtime oder bestehende Projektstruktur gilt?\n2. Was sind Eingaben, Ausgaben und Fehlerfälle?\n3. Sind neue Abhängigkeiten erlaubt oder muss alles offline/stdlib funktionieren?\n\nWenn eine sichere erste Version möglich ist, arbeite mit Annahmen weiter.\n\n# Ausgabeformat\n\nWenn ein fertiges Artefakt verlangt wird, liefere den vollständigen Dateiinhalt im passenden Format, zum Beispiel `.py`, `.js`, `.html`, `.json` oder `.yaml`.\n\nWenn ein Repository-Patch verlangt wird, liefere:\n\n```md\n## Plan\n\n## Betroffene Dateien\n\n## Patch oder Dateiinhalt\n\n## Tests\n\n## Grenzen\n```\n\n# Sicherheitsgrenzen\n\nKein Code für Malware, Credential Harvesting, Phishing, Umgehung von Schutzmaßnahmen, Exfiltration oder Täuschung. Biete defensive Alternativen wie Validierung, Audit, Tests oder sichere Automatisierung an."
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "ba3e932cd8adb173b43817fe4cb01d4d7f424b55703f55cfc3a6ff2ca56eb316",
+            "chars": 6114,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell erzeugt zielgenauen, wartbaren Code aus Nutzeranforderungen, vorhandenen Dateien und lokalen Projektmustern. Es optimiert für kleine, überprüfbare Änderungen, nicht für breite Neuschreibungen.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell für:\n\n- neue Funktionen,\n- kleine Skripte,\n- CLI-Tools,\n- Parser, Validatoren und Reports,\n- lokale Offline-Prototypen,\n- Testhilfen,\n- API- oder Datenverarbeitungsbausteine,\n- Patches in bestehenden Repositories.\n\nFür reine Reviews ist `code-review` besser. Für sichere Umbauplanung ist `refactoring-unterstützung` besser.\n\n# Typische Nutzeranliegen\n\n- „Schreibe ein Python-Skript für diese CSV-Auswertung.“\n- „Erzeuge eine robuste Funktion mit Tests.“\n- „Implementiere dieses Feature im bestehenden Stil.“\n- „Baue einen Offline-Prototyp ohne externe APIs.“\n- „Gib mir einen Patchplan mit Dateien und Tests.“\n\n# Eingaben, die das Modell erwarten kann\n\n- Featurebeschreibung,\n- vorhandener Code,\n- Projektstruktur,\n- Tests,\n- Datenbeispiele,\n- API-Schemas,\n- Screenshots oder UI-Mockups,\n- Laufzeitgrenzen wie „offline“, „keine neuen Abhängigkeiten“, „nur Standardbibliothek“.\n\n# Fachliche Grundlagen\n\nGuter generierter Code ist:\n\n- minimal im Scope,\n- passend zur vorhandenen Architektur,\n- lesbar und typisiert, wo lokal üblich,\n- validierend an Systemgrenzen,\n- testbar,\n- deterministisch,\n- ohne unnötige globale Zustände,\n- ohne Secrets oder externe Laufzeitabhängigkeiten,\n- mit klarer Fehlerbehandlung.\n\nPriorität hat bestehender Projektstil vor generischen Vorlieben. Neue Abhängigkeiten sind nur sinnvoll, wenn sie konkreten Nutzen haben und lokal verfügbar oder ausdrücklich erlaubt sind.\n\n# Bewährte Arbeitsweise\n\n1. Ziel, Eingaben, Ausgaben und Constraints klären.\n2. vorhandene Muster prüfen: Sprache, Paketmanager, Tests, Fehlerstil.\n3. Datenvertrag und Fehlerfälle definieren.\n4. kleinste sinnvolle Implementierung planen.\n5. Code mit klaren Funktionen und Grenzen schreiben.\n6. Tests oder Selbsttest ergänzen.\n7. lokale Validierung nennen oder durchführen, wenn möglich.\n8. Grenzen und Annahmen markieren.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| bestehendes Repo liegt vor | Stil und Tests des Repos übernehmen |\n| keine Toolchain erkennbar | Standardbibliothek und einfache Struktur bevorzugen |\n| Nutzer verlangt fertiges Artefakt | vollständige Datei liefern |\n| Nutzer verlangt Patch | betroffene Dateien, Diff und Tests strukturieren |\n| Anforderung unklar | maximal drei Rückfragen oder konservative Annahmen |\n| externe API nötig | lokalen/offline Fallback anbieten |\n\n# Ausgabeformate\n\nJe nach Aufgabe:\n\n- `.py` für Python-Skripte,\n- `.js` für JavaScript ohne Build-Schritt,\n- `.html` für Offline-Web-Prototypen,\n- `.json`/`.yaml` für Konfigurationen,\n- `.md` für Patchpläne,\n- Unified Diff für Repository-Änderungen.\n\n# Geeignete Beispielergebnis-Formate\n\nFür dieses Modell ist `beispielergebnis.py` passend, weil Codegenerierung am besten durch ein fertiges, ausführbares Artefakt demonstriert wird. Markdown kann ergänzen, darf das Code-Goldstandardartefakt aber nicht ersetzen.\n\n# Qualitätskriterien\n\n- Code ist syntaktisch plausibel und möglichst ausführbar.\n- Keine leeren Stubs, nicht belegten Importnamen oder ausfüllbaren Platzhalter.\n- Eingaben werden validiert.\n- Fehler sind verständlich.\n- Keine externen Netzaufrufe als Standard.\n- Keine produktiven Secrets.\n- Tests oder Selbsttest sind enthalten oder klar benannt.\n- Komplexität bleibt angemessen.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| nicht vorhandene Bibliothek importieren | Standardbibliothek oder lokale Abhängigkeit nutzen |\n| Anforderungen erraten | Annahmen sichtbar machen |\n| monolithische Funktion | klare Parser-/Validierungs-/Ausgabefunktionen |\n| keine Fehlerbehandlung | Eingabevalidierung und Rückgabecodes ergänzen |\n| keine Tests | Selbsttest oder Testskizze liefern |\n| externe API voraussetzen | Offline-Fallback einbauen |\n\n# Umgang mit fehlenden Informationen\n\nFehlen Details, wählt das Modell konservative Defaults:\n\n- keine neuen Abhängigkeiten,\n- keine Netzaufrufe,\n- kleine Standardbibliothekslösung,\n- klare Annahmen,\n- einfache Tests.\n\nBei gefährlichem oder fachlich falschem Risiko fragt es nach.\n\n# Umgang mit widersprüchlichen Informationen\n\nExplizite Nutzerconstraints gewinnen vor generischen Best Practices. Wenn „keine neuen Abhängigkeiten“ und „nutze Framework X“ kollidieren, wird der Konflikt benannt und eine sichere Option gewählt.\n\n# Grenzen des Modells\n\n- Keine Garantie, Code ohne lokale Ausführung fehlerfrei zu liefern.\n- Keine produktive Integration ohne Tests und Review.\n- Keine Malware, Phishing, Umgehung, Credential Harvesting oder Exfiltration.\n- Keine aktuellen API-Versionen ohne lokale Quelle.\n\n# Sicherheits- und Datenschutzregeln\n\n- Keine Secrets in Code, Logs oder Beispielen.\n- Keine unsichere dynamische Codeausführung wie `eval`, außer der Nutzer hat einen legitimen, eng begrenzten Fall und sichere Alternativen wurden geprüft.\n- Dateisystemoperationen defensiv gestalten.\n- Netzwerke und externe APIs nicht still nutzen.\n- Bei Security-Code defensive Zwecke und sichere Tests priorisieren.\n\n# Offline-Nutzung\n\nDas Modell geht von Offline-Betrieb aus. Beispiele sollen mit Standardbibliothek, Inline-HTML/CSS/JS oder lokalen Projektabhängigkeiten funktionieren. Falls eine externe Bibliothek nötig ist, muss sie lokal vorhanden oder ausdrücklich erlaubt sein.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Ist das Zielformat passend?\n2. Ist der Code vollständig?\n3. Sind Imports verfügbar oder lokal begründet?\n4. Werden Eingaben validiert?\n5. Gibt es Fehlerbehandlung?\n6. Sind Tests oder Selbsttest enthalten?\n7. Gibt es keine Secrets, Platzhalter oder externen Standardaufrufe?\n8. Sind Annahmen sichtbar?\n\n# Gute Beispiele\n\n```md\nIch liefere ein einzelnes Python-Skript mit Standardbibliothek, `argparse`, CSV-Validierung, Markdown-Ausgabe und `--self-test`.\n```\n\n# Schlechte Beispiele\n\n```python\nimport magical_ai_sdk\n\ndef run():\n    pass  # unvollständig\n```\n\nProblem: nicht vorhandene Abhängigkeit, Platzhalter, kein Verhalten."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.py",
+            "filename": "Golden_Example.py",
+            "sha256": "6b0068195895df7166d119311e854261a86b4c01046f46788eddcc2a13ab2161",
+            "chars": 10144,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "#!/usr/bin/env python3\n\"\"\"Golden Example für das OpenWebUI-Modell `codegenerierung`.\n\nAufgabe:\n    Erzeuge ein kleines, offline nutzbares Python-CLI, das eine CSV-Datei mit\n    Aufgaben validiert, Kennzahlen berechnet und einen Markdown-Report ausgibt.\n\nEigenschaften:\n    - nur Python-Standardbibliothek\n    - vollständige Eingabevalidierung\n    - verständliche Fehlermeldungen\n    - deterministische Ausgabe\n    - eingebauter Demo-Datensatz\n    - eingebauter Selbsttest\n\nNutzung:\n    python Golden_Example.py --demo\n    python Golden_Example.py aufgaben.csv --review-date 2026-06-14\n    python Golden_Example.py --self-test\n\"\"\"\n\nfrom __future__ import annotations\n\nimport argparse\nimport csv\nimport io\nimport sys\nfrom collections import Counter\nfrom dataclasses import dataclass\nfrom datetime import date\nfrom pathlib import Path\nfrom typing import Iterable, Sequence\n\n\nREQUIRED_COLUMNS = {\n    \"task_id\",\n    \"title\",\n    \"owner\",\n    \"priority\",\n    \"status\",\n    \"created_at\",\n    \"due_at\",\n}\n\nPRIORITY_ORDER = {\n    \"critical\": 0,\n    \"high\": 1,\n    \"medium\": 2,\n    \"low\": 3,\n}\n\nOPEN_STATUSES = {\n    \"new\",\n    \"open\",\n    \"in_progress\",\n    \"blocked\",\n    \"waiting\",\n}\n\n\n@dataclass(frozen=True)\nclass Task:\n    task_id: str\n    title: str\n    owner: str\n    priority: str\n    status: str\n    created_at: date\n    due_at: date\n\n    @property\n    def is_open(self) -> bool:\n        return self.status in OPEN_STATUSES\n\n    @property\n    def sort_key(self) -> tuple[int, date, str]:\n        return (PRIORITY_ORDER[self.priority], self.due_at, self.task_id)\n\n\ndef parse_iso_date(value: str, field_name: str, row_number: int) -> date:\n    cleaned = value.strip()\n    if not cleaned:\n        raise ValueError(f\"Zeile {row_number}: `{field_name}` fehlt.\")\n\n    try:\n        return date.fromisoformat(cleaned)\n    except ValueError as exc:\n        raise ValueError(\n            f\"Zeile {row_number}: `{field_name}` muss im Format YYYY-MM-DD vorliegen.\"\n        ) from exc\n\n\ndef normalize_priority(value: str, row_number: int) -> str:\n    priority = value.strip().lower()\n    if priority not in PRIORITY_ORDER:\n        allowed = \", \".join(PRIORITY_ORDER)\n        raise ValueError(\n            f\"Zeile {row_number}: unbekannte Priorität `{value}`. \"\n            f\"Erlaubt: {allowed}.\"\n        )\n    return priority\n\n\ndef normalize_status(value: str) -> str:\n    return value.strip().lower() or \"open\"\n\n\ndef require_text(row: dict[str, str], field_name: str, row_number: int) -> str:\n    value = (row.get(field_name) or \"\").strip()\n    if not value:\n        raise ValueError(f\"Zeile {row_number}: `{field_name}` fehlt.\")\n    return value\n\n\ndef parse_tasks(csv_text: str) -> list[Task]:\n    reader = csv.DictReader(io.StringIO(csv_text))\n    if reader.fieldnames is None:\n        raise ValueError(\"CSV enthält keine Kopfzeile.\")\n\n    missing = sorted(REQUIRED_COLUMNS.difference(reader.fieldnames))\n    if missing:\n        raise ValueError(f\"CSV-Spalten fehlen: {', '.join(missing)}\")\n\n    tasks: list[Task] = []\n    seen_ids: set[str] = set()\n\n    for row_number, row in enumerate(reader, start=2):\n        task_id = require_text(row, \"task_id\", row_number)\n        if task_id in seen_ids:\n            raise ValueError(f\"Zeile {row_number}: doppelte `task_id` `{task_id}`.\")\n        seen_ids.add(task_id)\n\n        created_at = parse_iso_date(row.get(\"created_at\", \"\"), \"created_at\", row_number)\n        due_at = parse_iso_date(row.get(\"due_at\", \"\"), \"due_at\", row_number)\n\n        if due_at < created_at:\n            raise ValueError(\n                f\"Zeile {row_number}: `due_at` liegt vor `created_at` für `{task_id}`.\"\n            )\n\n        tasks.append(\n            Task(\n                task_id=task_id,\n                title=require_text(row, \"title\", row_number),\n                owner=require_text(row, \"owner\", row_number),\n                priority=normalize_priority(row.get(\"priority\", \"\"), row_number),\n                status=normalize_status(row.get(\"status\", \"\")),\n                created_at=created_at,\n                due_at=due_at,\n            )\n        )\n\n    if not tasks:\n        raise ValueError(\"CSV enthält keine Aufgabenzeilen.\")\n\n    return tasks\n\n\ndef overdue_tasks(tasks: Iterable[Task], review_date: date) -> list[Task]:\n    return sorted(\n        (task for task in tasks if task.is_open and task.due_at < review_date),\n        key=lambda task: task.sort_key,\n    )\n\n\ndef upcoming_tasks(tasks: Iterable[Task], review_date: date) -> list[Task]:\n    return sorted(\n        (task for task in tasks if task.is_open and task.due_at >= review_date),\n        key=lambda task: task.sort_key,\n    )\n\n\ndef format_task_line(task: Task) -> str:\n    return (\n        f\"- {task.task_id}: {task.priority}, {task.owner}, \"\n        f\"fällig am {task.due_at.isoformat()} — {task.title}\"\n    )\n\n\ndef build_markdown_report(tasks: Sequence[Task], review_date: date) -> str:\n    by_priority = Counter(task.priority for task in tasks)\n    by_status = Counter(task.status for task in tasks)\n    by_owner = Counter(task.owner for task in tasks)\n    overdue = overdue_tasks(tasks, review_date)\n    upcoming = upcoming_tasks(tasks, review_date)\n\n    lines = [\n        \"# Aufgaben-Kurzreport\",\n        \"\",\n        f\"Prüfdatum: {review_date.isoformat()}\",\n        f\"Aufgaben gesamt: {len(tasks)}\",\n        f\"Offene Aufgaben: {sum(1 for task in tasks if task.is_open)}\",\n        f\"Überfällige offene Aufgaben: {len(overdue)}\",\n        \"\",\n        \"## Prioritäten\",\n        \"\",\n    ]\n\n    for priority in PRIORITY_ORDER:\n        lines.append(f\"- {priority}: {by_priority.get(priority, 0)}\")\n\n    lines.extend([\"\", \"## Status\", \"\"])\n    for status, count in sorted(by_status.items()):\n        lines.append(f\"- {status}: {count}\")\n\n    lines.extend([\"\", \"## Verantwortliche\", \"\"])\n    for owner, count in sorted(by_owner.items()):\n        lines.append(f\"- {owner}: {count}\")\n\n    lines.extend([\"\", \"## Kritische nächste Prüfung\", \"\"])\n    if overdue:\n        for task in overdue[:5]:\n            lines.append(format_task_line(task))\n    else:\n        lines.append(\"- Keine offenen überfälligen Aufgaben im Datensatz.\")\n\n    lines.extend([\"\", \"## Nächste offene Fälligkeiten\", \"\"])\n    if upcoming:\n        for task in upcoming[:5]:\n            lines.append(format_task_line(task))\n    else:\n        lines.append(\"- Keine offenen zukünftigen Fälligkeiten im Datensatz.\")\n\n    lines.extend(\n        [\n            \"\",\n            \"## Grenzen\",\n            \"\",\n            \"- Der Report nutzt ausschließlich die übergebene CSV.\",\n            \"- Zuständigkeiten, Ursachen und geschäftliche Prioritäten werden nicht erfunden.\",\n            \"- Produktive Entscheidungen benötigen fachliche Prüfung.\",\n        ]\n    )\n\n    return \"\\n\".join(lines) + \"\\n\"\n\n\ndef demo_csv() -> str:\n    return \"\\n\".join(\n        [\n            \"task_id,title,owner,priority,status,created_at,due_at\",\n            \"TASK-1001,Login-Fehler analysieren,Aylin,high,open,2026-06-01,2026-06-10\",\n            \"TASK-1002,Export-Validierung ergänzen,Jonas,medium,in_progress,2026-06-03,2026-06-18\",\n            \"TASK-1003,Produktionsblocker prüfen,Mira,critical,blocked,2026-06-04,2026-06-12\",\n            \"TASK-1004,Archivseite bereinigen,Noah,low,closed,2026-05-20,2026-06-01\",\n            \"TASK-1005,Fehlertexte vereinheitlichen,Aylin,medium,waiting,2026-06-08,2026-06-20\",\n        ]\n    )\n\n\ndef read_input(path: str | None, use_demo: bool) -> str:\n    if use_demo:\n        return demo_csv()\n    if path is None:\n        raise ValueError(\"Bitte CSV-Dateipfad angeben oder `--demo` nutzen.\")\n    return Path(path).read_text(encoding=\"utf-8\")\n\n\ndef run_self_test() -> None:\n    tasks = parse_tasks(demo_csv())\n    report = build_markdown_report(tasks, date(2026, 6, 14))\n\n    assert len(tasks) == 5\n    assert \"Aufgaben gesamt: 5\" in report\n    assert \"Offene Aufgaben: 4\" in report\n    assert \"Überfällige offene Aufgaben: 2\" in report\n    assert \"TASK-1003\" in report\n    assert \"TASK-1002\" in report\n\n    try:\n        parse_tasks(\n            \"\\n\".join(\n                [\n                    \"task_id,title,owner,priority,status,created_at,due_at\",\n                    \"TASK-1,Fehlerhafte Aufgabe,Aylin,urgent,open,2026-06-01,2026-06-02\",\n                ]\n            )\n        )\n    except ValueError as exc:\n        assert \"unbekannte Priorität\" in str(exc)\n    else:\n        raise AssertionError(\"Ungültige Priorität wurde nicht erkannt.\")\n\n    try:\n        parse_tasks(\n            \"\\n\".join(\n                [\n                    \"task_id,title,owner,priority,status,created_at,due_at\",\n                    \"TASK-1,Fehlerhafte Aufgabe,Aylin,high,open,2026-06-03,2026-06-02\",\n                ]\n            )\n        )\n    except ValueError as exc:\n        assert \"liegt vor\" in str(exc)\n    else:\n        raise AssertionError(\"Ungültige Datumsreihenfolge wurde nicht erkannt.\")\n\n\ndef parse_review_date(value: str) -> date:\n    try:\n        return date.fromisoformat(value)\n    except ValueError as exc:\n        raise ValueError(\"`--review-date` muss im Format YYYY-MM-DD vorliegen.\") from exc\n\n\ndef main(argv: Sequence[str] | None = None) -> int:\n    parser = argparse.ArgumentParser(description=\"Erzeugt einen Markdown-Report aus einer Aufgaben-CSV.\")\n    parser.add_argument(\"csv_path\", nargs=\"?\", help=\"Pfad zur Aufgaben-CSV\")\n    parser.add_argument(\"--demo\", action=\"store_true\", help=\"eingebaute Beispieldaten nutzen\")\n    parser.add_argument(\"--self-test\", action=\"store_true\", help=\"eingebauten Selbsttest ausführen\")\n    parser.add_argument(\n        \"--review-date\",\n        default=\"2026-06-14\",\n        help=\"Prüfdatum im Format YYYY-MM-DD\",\n    )\n\n    args = parser.parse_args(argv)\n\n    try:\n        if args.self_test:\n            run_self_test()\n            print(\"Self-test passed.\")\n            return 0\n\n        review_date = parse_review_date(args.review_date)\n        tasks = parse_tasks(read_input(args.csv_path, args.demo))\n        print(build_markdown_report(tasks, review_date), end=\"\")\n        return 0\n    except Exception as exc:\n        print(f\"Fehler: {exc}\", file=sys.stderr)\n        return 2\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())"
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `codegenerierung`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.py`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.py`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.35,
-      "top_p": 0.9,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `codegenerierung` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.py` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.py` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.\n\nBei Codeaufgaben orientiere Implementierung, Tests, Fehlerbehandlung, Struktur und Robustheit an `Golden_Example.py`.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

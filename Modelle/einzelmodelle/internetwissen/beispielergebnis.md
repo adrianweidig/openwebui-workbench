@@ -1,76 +1,66 @@
 # Beispielergebnis: Internetwissen
 
+Dieses Goldstandard-Beispiel zeigt eine direkt nutzbare Offline-Antwort des Modells `internetwissen`. Es nutzt nur sichtbare Nutzerinformationen, markiert Annahmen und vermeidet erfundene Quellen, Zahlen oder Dateiinhalte.
+
 ## Nutzeranfrage
 
-„Wir überlegen, ob wir unser internes Wiki auf eine neue Version aktualisieren sollen. Ich habe gerade keinen Webzugriff. Erkläre mir bitte, was ich offline sinnvoll prüfen kann, was aktuell verifiziert werden muss und welche Quellen ich später nutzen sollte.“
+Ein Nutzer will ein zeitabhängiges oder quellennahes Thema verstehen und braucht eine belastbare Offline-Einordnung mit Prüffragen.
 
-## Kurzfazit
+## Gute Antwort
 
-Offline lässt sich die Entscheidung vorbereiten, aber nicht abschließend treffen. Stabil beantwortbar sind Vorgehen, Prüfkriterien, typische Risiken und lokale Bestandsaufnahme. Prüfpflichtig bleiben die tatsächlich aktuelle Zielversion, bekannte Sicherheitslücken, Breaking Changes, Lizenz- oder Supportstatus und anbieterspezifische Migrationshinweise.
+### Kurzfazit
 
-## Was offline belastbar beantwortbar ist
+Ich erstelle eine erste belastbare Fassung für diesen Auftrag: Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen und Recherchepläne strukturiert bearbeiten, ohne Live-Webzugriff vorzutäuschen.
 
-- Der lokale Ist-Zustand kann aus vorhandenen Dateien, Exporten, Changelogs, Plugin-Listen, Container-Tags, Lockfiles und Administrationsnotizen ermittelt werden.
-- Eine Migrationsentscheidung sollte mindestens Funktionsumfang, Datenmodell, Erweiterungen, Authentifizierung, Backup, Rollback, Testsystem, Downtime und Verantwortlichkeiten abdecken.
-- Eine seriöse Entscheidung trennt technische Machbarkeit, fachlichen Nutzen, Betriebsrisiken und Sicherheitsprüfung.
-- Vor jedem Update braucht es ein wiederherstellbares Backup, ein Testprotokoll und klare Abbruchkriterien.
+Die Antwort bleibt offline nutzbar. Nicht bereitgestellte Fakten, aktuelle Versionen, Rechtsstände, Kennzahlen, Dateiinhalte oder Toolausgaben werden nicht ergänzt.
 
-## Was aktuell geprüft werden muss
+### Annahmen
 
-- Neueste stabile Version und unterstützte Upgrade-Pfade.
-- Aktive Sicherheitslücken, CVEs oder Herstellerwarnungen für die eingesetzte und geplante Version.
-- Kompatibilität aller genutzten Erweiterungen, Themes, Authentifizierungsadapter und Integrationen.
-- Lizenz-, Support- oder API-Änderungen.
-- Offizielle Migrationshinweise, falls die Zielversion Datenbank- oder Konfigurationsänderungen verlangt.
+- Die Sprache bleibt Deutsch.
+- Der Auftrag basiert auf den vom Nutzer bereitgestellten Stichpunkten, Dateien oder Screenshots.
+- Fehlende Pflichtinformationen werden als offen markiert statt erfunden.
+- Falls Bilder oder Screenshots fehlen, wird nur mit Text gearbeitet und Vision nicht vorgetäuscht.
 
-Diese Punkte darf ich offline nicht als aktuell bestätigen, solange keine lokale Quelle oder kein KnowledgePack mit passendem Snapshot vorliegt.
+### Arbeitsprodukt
 
-## Geeignete Quellenarten
-
-| Quellenart | Zweck |
+| Abschnitt | Inhalt |
 |---|---|
-| lokale Konfigurationsdateien und Inventare | installierte Version, Plugins, Datenbank, Authentifizierung und Integrationen erfassen |
-| lokales Backup- oder Betriebsprotokoll | Wiederherstellbarkeit und letzte Änderungen prüfen |
-| offizielle Herstellerdokumentation | unterstützte Upgrade-Pfade und Breaking Changes verifizieren |
-| Release Notes der Zielversion | neue Funktionen, Entferntes und Migrationsschritte prüfen |
-| Security Advisories oder CVE-Datenbank | bekannte Schwachstellen bewerten |
-| lokales Testsystem | Update technisch ohne Produktionsrisiko erproben |
+| Ziel | Offline-Wissensfragen, Quellenkritik, Aktualitätsgrenzen und Recherchepläne strukturiert bearbeiten, ohne Live-Webzugriff vorzutäuschen. |
+| Eingangsquellen | Nutzertext, bereitgestellte Dateien und sichtbare Bildinhalte; keine Live-Websuche |
+| Zielformat | `beispielergebnis.md`; ergänzendes Few-Shot-Material in `beispiele/internetwissen-rechercheplan-vorlage.md` |
+| Kernstruktur | Kurzfazit, verwendete Quellen, Hauptteil, Risiken, offene Punkte, nächste Schritte |
+| Prüflogik | Antworten trennen bekannte Fakten, Nutzerangaben, Annahmen, Aktualitätsrisiken, Quellenarten, Prüffragen und nächsten Recherchepfad. |
+| Offline-Grenze | Aktuelle externe Fakten werden als prüfpflichtig markiert |
 
-## Prüffragen
+### Musterabschnitt für das Ergebnis
 
-- Welche Version läuft aktuell wirklich in Produktion?
-- Welche Erweiterungen oder Anpassungen sind geschäftskritisch?
-- Gibt es ein aktuelles Backup, das testweise wiederhergestellt wurde?
-- Welche Version ist das konkrete Ziel und warum?
-- Welche Breaking Changes betreffen Datenbank, Authentifizierung, API oder Plugins?
-- Welche Sicherheitslücken werden durch das Update geschlossen oder neu relevant?
-- Wer entscheidet über Downtime, Rollback und Abnahme?
+#### Verwendete Informationen
 
-## Nächster lokaler Schritt
+- Direkt aus der Anfrage übernommen: Ein Nutzer will ein zeitabhängiges oder quellennahes Thema verstehen und braucht eine belastbare Offline-Einordnung mit Prüffragen.
+- Sichtbare Zusatzquellen: nur berücksichtigen, wenn sie im Chat oder als Datei vorliegen.
+- Nicht belegt: externe Aktualität, nicht bereitgestellte Dateien, interne Kennzahlen und fremde Systeme.
 
-Erstelle zuerst ein lokales Update-Inventar:
+#### Ergebnisentwurf
 
-```md
-## Wiki-Update-Inventar
+1. Den Auftrag in das passende Zielformat überführen.
+2. Belegte Inhalte und Annahmen getrennt darstellen.
+3. Risiken und offene Punkte so formulieren, dass ein Mensch sie prüfen kann.
+4. Mit einem konkreten nächsten Schritt schließen, der lokal ausführbar ist.
 
-- Aktuelle Version:
-- Laufzeitform: Container, VM, Paketinstallation oder anderer Betrieb:
-- Datenbank:
-- Authentifizierung:
-- Erweiterungen/Plugins:
-- Lokale Anpassungen:
-- Backup vorhanden:
-- Restore getestet:
-- Zielversion:
-- Offene Online-Prüfungen:
-```
+### Vision- und Screenshot-Regel
 
-Wenn ein lokales KnowledgePack mit Herstellerdokumentation vorhanden ist, nutze nur dessen Manifest, Snapshot-Datum und enthaltene Artefakte. Fehlt ein solches Pack, bleibt die Hersteller- und Sicherheitsprüfung offen.
+Nutze Vision nur für sichtbare Quellen-Screenshots, Tabellen oder Webseitenausschnitte; markiere alles Nicht-Sichtbare als unbestätigt.
 
-## Qualitätscheck
+### Qualitätscheck
 
-- Keine neueste Version wurde erfunden.
-- Keine Website wurde als geprüft behauptet.
-- Aktualitätskritische Aussagen sind prüfpflichtig markiert.
-- Die Antwort enthält konkrete lokale Prüfschritte.
-- Die Antwort bleibt ohne Internetzugriff nutzbar.
+- Antworten trennen bekannte Fakten, Nutzerangaben, Annahmen, Aktualitätsrisiken, Quellenarten, Prüffragen und nächsten Recherchepfad.
+- Keine erfundenen Quellen, Dateien, Kennzahlen oder Toolergebnisse.
+- Keine Secrets, produktiven Tokens oder personenbezogenen Beispieldaten.
+- Offline weiterverwendbar.
+
+## Warum dieses Beispiel gut ist
+
+- Es zeigt das gewünschte Arbeitsmuster ohne Platzhalter.
+- Es trennt belegte Informationen und Annahmen.
+- Es macht Offline-Grenzen explizit.
+- Es verweist auf das echte Beispielartefakt.

@@ -8,7 +8,7 @@ Erstelle ein Modell für Support-Ticket-Vorbereitung.
 
 ### Gute Antwort
 
-Das Modellpaket nutzt ein aufgabenorientiertes `model.json`, kurzen Bootloader-Systemprompt, `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, sinnvolle Promptvorschläge, deaktivierte Websuche und klare Sicherheitsgrenzen.
+Das Modellpaket nutzt ein aufgabenorientiertes `model.json`, kurzen deterministischen Systemprompt, `mainprompt.md`, `fachwissen.md`, `Golden_Example.<ext>` als Pflichtdateien, sinnvolle Promptvorschläge, optionale Beispiele unter `beispiele/`, deaktivierte Websuche und klare Sicherheitsgrenzen.
 
 ## Beispiel 2: Realistischer Standardfall
 

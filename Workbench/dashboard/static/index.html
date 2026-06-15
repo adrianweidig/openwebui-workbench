@@ -114,6 +114,14 @@
                 </div>
                 <input id="model-search" type="search" placeholder="Filtern" data-i18n-placeholder="search.placeholder" autocomplete="off" />
               </div>
+              <div class="model-bulk-actions" aria-label="Modellaktionen" data-i18n-aria-label="models.bulkAria">
+                <label>
+                  <input id="select-visible-models" type="checkbox" />
+                  <span data-i18n="models.selectVisible">Sichtbare auswählen</span>
+                </label>
+                <span id="model-selection-state" data-i18n="models.selection">0 ausgewählt</span>
+                <button id="delete-openwebui-models" class="ghost compact danger-action" type="button" disabled data-i18n="action.deleteOpenWebUIModels">Aus OpenWebUI entfernen</button>
+              </div>
               <div id="model-list" class="model-list"></div>
             </section>
 
@@ -201,6 +209,14 @@
           <div class="action-layout">
             <section>
               <h3 data-i18n="sync.title">Synchronisierung</h3>
+              <div class="sync-settings" aria-label="OpenWebUI Zielmodell" data-i18n-aria-label="sync.baseModel.aria">
+                <label for="base-model-select">
+                  <span data-i18n="sync.baseModel.label">Standardmodell</span>
+                  <select id="base-model-select"></select>
+                </label>
+                <button id="refresh-base-models" class="ghost compact" type="button" data-i18n="sync.baseModel.refresh">Modelle laden</button>
+                <span id="base-model-state" class="sync-setting-state" data-i18n="sync.baseModel.loading">Modelle werden geladen.</span>
+              </div>
               <div class="action-grid">
                 <button class="action-card" data-action="check">
                   <small data-i18n="sync.check.step">2 · Verify</small>

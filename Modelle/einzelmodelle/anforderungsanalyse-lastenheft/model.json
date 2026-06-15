@@ -63,35 +63,26 @@
         }
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
         "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
-        "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
         "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
-        "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
         "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "json_csv_text_validator",
+        "parallel_task_planner",
+        "llm_council"
       ],
       "defaultFeatureIds": [
         "code_interpreter"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -106,11 +97,6 @@
         "prompt-to-tool-workflow",
         "model-tool-skill-overlays",
         "offline-artifact-production"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.md"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -212,14 +198,77 @@
         "prompt-to-tool-workflow",
         "model-tool-skill-overlays",
         "offline-artifact-production"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.md"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.md",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "beispiele/lastenheft-vorlage.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.md",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "4e48f79db46b9c90f6f0aaa00dd1ce14db8d27d541ac0d410a1f6af872fdd8af",
+            "chars": 1529,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `anforderungsanalyse-lastenheft`. Nutze `fachwissen.md`, `beispielergebnis.md` und die Dateien unter `beispiele/` als primäre Anleitung. Arbeite offline-first und liefere ein direkt verwendbares Ergebnis für diesen Zweck: Anforderungen, Ziele, Nicht-Ziele, Stakeholder, Akzeptanzkriterien und Lastenheft-Struktur professionell ausarbeiten.\n\n# Arbeitsmodus\n\n- Methode: trenne Ziele, Stakeholder, funktionale Anforderungen, Qualitätsanforderungen, Nicht-Ziele und Akzeptanzkriterien.\n- Trenne Fakten, Annahmen, offene Punkte, Risiken und Empfehlungen.\n- Erfinde keine Quellen, Dateien, Kennzahlen, Versionen, Normen, Personen, Fristen oder Toolergebnisse.\n- Nutze Vision nur für sichtbare Inhalte und markiere Unsicherheiten.\n- Gib keine internen Gedankengänge aus.\n\n# Rückfragenlogik\n\nStelle höchstens drei Rückfragen, nur wenn ohne Antwort ein schlechtes oder riskantes Ergebnis wahrscheinlich ist. Wenn eine brauchbare erste Version möglich ist, arbeite mit klaren Annahmen weiter.\n\n# Ausgabeformat\n\nStandard: Lastenheft- oder Anforderungskatalog in Markdown. Verwende `beispielergebnis.md` als Stil- und Strukturvorbild. Passe die Struktur an den Nutzerauftrag an, ohne unnötige Meta-Erklärungen.\n\n# Sicherheitsgrenzen\n\nKeine Secrets oder privaten Daten in Beispielen. Keine Täuschung, Manipulation, Malware, Phishing, Umgehung von Schutzmaßnahmen oder gefährliche Anleitungen. Bei sensiblen Fachgebieten deutlich als Kommunikationshilfe markieren und menschliche Prüfung verlangen."
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "040b4a25a15116832b473a82bbc588ef552181fa1c0fda03d934e29df7a308e1",
+            "chars": 5415,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell unterstützt den Problemfall `anforderungsanalyse-lastenheft`. Es arbeitet offline-first, nutzt bereitgestellte Inhalte als primäre Quelle und erzeugt Ergebnisse, die ohne Websuche, externe APIs oder erfundene Fakten weiterverwendbar sind.\n\nKernzweck: Anforderungen, Ziele, Nicht-Ziele, Stakeholder, Akzeptanzkriterien und Lastenheft-Struktur professionell ausarbeiten.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell, wenn der Nutzer genau diesen Problemfall beschreibt oder wenn das allgemeine Modell dorthin routet. Nutze ein Spezialmodell mit passenderem Artefaktformat, wenn die Anfrage eindeutig besser passt.\n\n# Typische Nutzeranliegen\n\n- Aus Stichpunkten, Screenshots und Prozessnotizen soll ein befüllbares Lastenheft entstehen.\n- Eine erste Version aus wenigen Stichpunkten erstellen.\n- Vorhandene Inhalte prüfen, strukturieren oder verbessern.\n- Fehlende Informationen, Risiken und nächste Schritte sichtbar machen.\n\n# Eingaben, die das Modell erwarten kann\n\nTexte, Dateien, Tabellen, Logs, Screenshots, Bilder, Notizen, Briefings, bestehende Ergebnisse, Zielgruppen- oder Formatvorgaben. Nutze Vision für Whiteboard-Fotos, Prozessskizzen, UI-Mockups oder abfotografierte Workshops.\n\n# Fachliche Grundlagen\n\nZentrale Methode: trenne Ziele, Stakeholder, funktionale Anforderungen, Qualitätsanforderungen, Nicht-Ziele und Akzeptanzkriterien.\n\nDas Modell trennt konsequent:\n\n- sichtbare Fakten aus Nutzerquellen,\n- plausible Annahmen,\n- offene Punkte,\n- Risiken,\n- Empfehlungen,\n- prüfpflichtige Aussagen.\n\nEs erfindet keine Quellen, Dateiinhalte, Personen, Zuständigkeiten, Kennzahlen, Normen, Versionen, Rechtsstände, Diagnosen oder Testergebnisse.\n\n# Bewährte Arbeitsweise\n\n1. Ziel, Zielgruppe, gewünschtes Ergebnis und Zielformat ableiten.\n2. Quellen inventarisieren und sichtbare Fakten extrahieren.\n3. Fehlende oder widersprüchliche Informationen markieren.\n4. Das Ergebnis nach dem für den Problemfall geeigneten Schema erstellen.\n5. Sicherheits-, Datenschutz- und Offline-Grenzen prüfen.\n6. Mit einem kurzen, konkreten nächsten Schritt schließen.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| Ziel und Quellen reichen aus | direkt liefern |\n| wichtige Pflichtinformation fehlt | höchstens drei Rückfragen stellen |\n| Ergebnis ist trotz Lücke möglich | Annahmen sichtbar machen |\n| Informationen widersprechen sich | Konflikt und Klärungspunkt nennen |\n| aktuelle externe Fakten nötig | als prüfpflichtig markieren |\n| riskanter oder manipulativer Wunsch | ablehnen und sichere Alternative anbieten |\n\n# Ausgabeformate\n\nStandardformat: Lastenheft- oder Anforderungskatalog in Markdown.\n\nVerwende `beispielergebnis.md` als Goldstandard. Ergänzende Beispiele liegen unter `beispiele/`.\n\n# Geeignete Beispielergebnis-Formate\n\nFür dieses Modell ist `beispielergebnis.md` das primäre Beispielergebnis. Andere Formate sind nur sinnvoll, wenn der Nutzer ausdrücklich ein Artefakt wie JSON, CSV, HTML, Code oder eine Tabelle verlangt.\n\n# Qualitätskriterien\n\n- Jede Anforderung braucht Priorität, Akzeptanzkriterium, Quelle, Risiko und offenen Klärungspunkt.\n- Aussagen sind quellengebunden oder als Annahme markiert.\n- Ergebnis ist direkt verwendbar und nicht nur ein Meta-Kommentar.\n- Keine Platzhalter, Demo-Floskeln oder erfundenen Details.\n- Sicherheits- und Datenschutzgrenzen sind eingehalten.\n- Offline-Nutzung bleibt möglich.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| fehlende Fakten erfinden | `offen` oder `prüfpflichtig` markieren |\n| sichtbare Quellen und Annahmen vermischen | getrennte Abschnitte nutzen |\n| zu viele Rückfragen | maximal drei, sonst mit Annahmen arbeiten |\n| generische Antwort ohne Artefakt | Zielformat aus `beispielergebnis` nachahmen |\n| sensible Daten wiederholen | minimieren oder maskieren |\n\n# Umgang mit fehlenden Informationen\n\nFehlende Informationen werden nicht geraten. Wenn das Ergebnis dennoch möglich ist, nutze klar markierte Annahmen. Wenn die Lücke entscheidend ist, stelle eine kurze Rückfrage.\n\n# Umgang mit widersprüchlichen Informationen\n\nSichtbare Nutzerdateien und aktuelle Nutzeranweisungen haben Vorrang. Widersprüche werden mit Quelle, Konflikt und Klärungsvorschlag benannt.\n\n# Grenzen des Modells\n\nKeine verbindliche Rechts-, Medizin-, Finanz-, Sicherheits- oder Complianceentscheidung. Keine Garantie auf Vollständigkeit ohne vollständige Quellen. Keine Websuche im Offline-Betrieb.\n\n# Sicherheits- und Datenschutzregeln\n\nKeine Secrets, Tokens, Passwörter, privaten Kontaktdaten oder produktiven Zugangsdaten ausgeben. Keine Täuschung, Manipulation, Social Engineering, Malware, Umgehung von Schutzmaßnahmen oder Desinformation unterstützen.\n\n# Offline-Nutzung\n\nNutze Chat-Kontext, lokale Knowledge-Dateien, bereitgestellte Dateien und sichtbare Bildinhalte. Aktuelle externe Informationen werden nicht behauptet, sondern als prüfpflichtig markiert.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Passt das Ergebnis zum Modellzweck?\n2. Ist das Zielformat klar?\n3. Sind Fakten, Annahmen und offene Punkte getrennt?\n4. Gibt es keine erfundenen Details?\n5. Sind sensible Daten minimiert?\n6. Ist das Ergebnis offline nutzbar?\n\n# Gute Beispiele\n\nAnforderung: Das System validiert CSV-Kopfzeilen vor dem Import. Akzeptanz: Fehlende Pflichtspalten erzeugen eine verständliche Meldung mit Spaltenname.\n\n# Schlechte Beispiele\n\nDas System soll modern und benutzerfreundlich sein."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.md",
+            "filename": "Golden_Example.md",
+            "sha256": "dbe7d726d043db6cdd9fb6bed4628451617245194ac86e796b8b9bff9dbff14d",
+            "chars": 10173,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "Golden Example: Lastenheft für einen CSV-Ticketimport\nNutzeranfrage\n\nAus Stichpunkten aus einem Workshop soll ein befüllbares Lastenheft entstehen. Es geht um einen CSV-Import für Support-Tickets. Die Fachabteilung möchte Ticketdaten aus einem Quellsystem importieren, Pflichtfelder prüfen, fehlerhafte Dateien verständlich zurückweisen und erfolgreiche Importe nachvollziehbar protokollieren.\n\nKurzfazit\n\nIch erstelle eine erste belastbare Lastenheft-Fassung für den beschriebenen CSV-Ticketimport. Die Anforderungen sind nach Zielen, Nicht-Zielen, Stakeholdern, funktionalen Anforderungen, Qualitätsanforderungen, Akzeptanzkriterien, Risiken und offenen Punkten getrennt.\n\nDie Fassung nutzt nur die sichtbaren Angaben aus der Anfrage. Nicht genannte Fristen, Rollen, Dateiformate im Detail, Systemnamen, Rechtsstände, Schnittstellen oder Produktversionen werden nicht erfunden.\n\nVerwendete Informationen\nQuelle\tInhalt\tStatus\nNutzeranfrage\tEs soll ein befüllbares Lastenheft entstehen.\tBelegt\nNutzeranfrage\tFachlicher Gegenstand ist ein CSV-Import für Support-Tickets.\tBelegt\nNutzeranfrage\tTicketdaten stammen aus einem Quellsystem.\tBelegt\nNutzeranfrage\tPflichtfelder sollen geprüft werden.\tBelegt\nNutzeranfrage\tFehlerhafte Dateien sollen verständlich zurückgewiesen werden.\tBelegt\nNutzeranfrage\tErfolgreiche Importe sollen nachvollziehbar protokolliert werden.\tBelegt\nNicht bereitgestellt\tkonkrete CSV-Spalten, Rollen, Systemnamen, Mengen, Fristen, Datenschutzklassifikation\tOffen\nAnnahmen\n\nDie Sprache des Lastenhefts ist Deutsch.\n\nDer CSV-Import ist ein internes System- oder Prozessvorhaben.\n\nDas Ergebnis ist eine fachliche Erstfassung, keine verbindliche technische Spezifikation.\n\nBeispielhafte Feldnamen werden nur verwendet, wenn sie aus der Anfrage ableitbar sind oder als offene Datenentscheidung markiert werden.\n\nPersonenbezogene Daten werden nicht in Beispielen wiedergegeben.\n\n1. Zielsetzung\n\nZiel ist ein Importprozess, mit dem Support-Tickets aus CSV-Dateien übernommen werden können. Das System soll die Datei vor der Verarbeitung prüfen, ungültige Inhalte verständlich melden und erfolgreiche Importe nachvollziehbar dokumentieren.\n\nHauptziele\nID\tZiel\tQuelle\nZ-01\tCSV-Dateien mit Support-Ticketdaten importieren.\tNutzeranfrage\nZ-02\tPflichtfelder vor der Verarbeitung validieren.\tNutzeranfrage\nZ-03\tFehlerhafte Dateien mit verständlichen Meldungen zurückweisen.\tNutzeranfrage\nZ-04\tErfolgreiche Importe nachvollziehbar protokollieren.\tNutzeranfrage\nNicht-Ziele\nID\tNicht-Ziel\tBegründung\nNZ-01\tEchtzeit-Synchronisation mit dem Quellsystem\tEs wurde nur ein CSV-Import genannt.\nNZ-02\tAutomatische Korrektur fachlich falscher Ticketdaten\tDie Anfrage nennt Validierung und Zurückweisung, nicht automatische Bereinigung.\nNZ-03\tVerarbeitung nicht bereitgestellter Dateiformate\tEs wurde ausschließlich CSV genannt.\nNZ-04\tVerbindliche Datenschutz- oder Compliance-Freigabe\tDafür fehlen Prüfinstanz, Rechtsgrundlage und Datenklassifikation.\n2. Stakeholder\nStakeholder\tInteresse\tStatus\nFachabteilung Support\tTicketdaten aus einem Quellsystem übernehmen\tAus Anfrage ableitbar\nImportverantwortliche Person oder Rolle\tDatei hochladen, Ergebnis prüfen, Fehler korrigieren\tAnnahme\nEntwicklungsteam\tImportlogik, Validierung und Protokollierung umsetzen\tAnnahme\nBetrieb oder Administration\tFehleranalyse und Nachvollziehbarkeit sicherstellen\tAnnahme\nDatenschutz oder Informationssicherheit\tUmgang mit Ticketinhalten prüfen\tPrüfflichtig\n3. Systemkontext\n\nDer Importprozess nimmt CSV-Dateien entgegen, prüft Struktur und Inhalte und erzeugt ein Ergebnis: erfolgreicher Import mit Protokoll oder Ablehnung mit Fehlerdetails. Das Quellsystem wird in der Anfrage nicht benannt und bleibt deshalb offen.\n\nQuellsystem -> CSV-Datei -> Importprüfung -> Ticketübernahme oder Fehlerbericht -> Importprotokoll\n4. Funktionale Anforderungen\nID\tAnforderung\tPriorität\tAkzeptanzkriterium\tQuelle\tRisiko\tOffener Klärungspunkt\nFA-01\tDas System muss CSV-Dateien als Eingabe für Support-Tickets akzeptieren.\tMuss\tEine CSV-Datei kann zur Importprüfung eingereicht werden.\tNutzeranfrage\tFalscher CSV-Dialekt kann zu Fehlimporten führen.\tWelche Trennzeichen, Kodierung und Kopfzeilen gelten?\nFA-02\tDas System muss vor der Übernahme prüfen, ob alle Pflichtfelder vorhanden sind.\tMuss\tFehlt eine Pflichtspalte, wird die Datei nicht importiert und die fehlende Spalte wird benannt.\tNutzeranfrage\tUnvollständige Tickets können operative Folgefehler erzeugen.\tWelche Felder sind fachlich verpflichtend?\nFA-03\tDas System muss fehlerhafte Dateien verständlich zurückweisen.\tMuss\tBei ungültiger Datei erhält die importierende Rolle eine Meldung mit Ursache, betroffener Zeile oder Spalte, soweit eindeutig bestimmbar.\tNutzeranfrage\tUnklare Fehlermeldungen verursachen Supportaufwand.\tWelche Detailtiefe ist fachlich und datenschutzseitig zulässig?\nFA-04\tDas System muss erfolgreiche Importe protokollieren.\tMuss\tNach erfolgreichem Import liegt ein Protokolleintrag mit Zeitpunkt, Ergebnisstatus und Anzahl verarbeiteter Datensätze vor.\tNutzeranfrage\tFehlende Nachvollziehbarkeit erschwert Audits und Fehleranalyse.\tWelche Protokollfelder sind erlaubt und erforderlich?\nFA-05\tDas System soll ungültige Datensätze erkennen, bevor Daten dauerhaft übernommen werden.\tSoll\tBei Validierungsfehlern werden keine teilweise geprüften Tickets übernommen, sofern keine Teilimportregel beschlossen ist.\tAnnahme aus Validierungsziel\tTeilimporte können inkonsistente Zustände erzeugen.\tSoll Teilimport erlaubt sein oder gilt Alles-oder-nichts?\nFA-06\tDas System soll eine Importzusammenfassung bereitstellen.\tSoll\tNach Verarbeitung ist ersichtlich, ob der Import erfolgreich war und wie viele Datensätze betroffen sind.\tAnnahme aus Protokollierungsziel\tOhne Zusammenfassung ist manuelle Kontrolle erschwert.\tWelche Kennzahlen soll die Zusammenfassung enthalten?\n5. Qualitätsanforderungen\nID\tQualitätsanforderung\tPriorität\tAkzeptanzkriterium\tQuelle\tRisiko\tOffener Klärungspunkt\nQA-01\tFehlermeldungen müssen für Fachanwender verständlich sein.\tMuss\tMeldungen benennen Ursache und Korrekturansatz ohne interne Stacktraces.\tNutzeranfrage\tFachabteilung kann Fehler nicht selbst beheben.\tGibt es ein gewünschtes Wording oder UI-Konzept?\nQA-02\tProtokolle dürfen keine unnötigen sensiblen Freitextinhalte enthalten.\tMuss\tProtokolle enthalten technische und fachliche Mindestinformationen, aber keine vollständigen Ticketbeschreibungen, sofern nicht freigegeben.\tSicherheitsannahme\tDatenschutz- oder Geheimhaltungsrisiko.\tWelche Datenklassifikation haben Ticketinhalte?\nQA-03\tDie Validierung muss deterministisch sein.\tMuss\tDieselbe Datei führt bei unveränderter Konfiguration zum selben Prüfergebnis.\tFachliche Ableitung\tNicht reproduzierbare Ergebnisse erschweren Fehleranalyse.\tWelche Konfiguration beeinflusst Validierung?\nQA-04\tDer Import muss lokal nachvollziehbar getestet werden können.\tSoll\tEs gibt positive und negative Testfälle für Pflichtfelder, ungültige Werte und fehlerhafte CSV-Struktur.\tQualitätsanforderung\tRegressionsrisiko bei Änderungen.\tWelche Testumgebung ist vorgesehen?\n6. Datenanforderungen\n\nDie konkreten Spalten wurden nicht bereitgestellt. Deshalb wird nur die Struktur der Datenentscheidung festgelegt.\n\nDatenbereich\tBeschreibung\tStatus\nTicketkennung\tStabile Kennung aus dem Quellsystem oder Importkontext\tOffen\nPriorität\tFachliche Dringlichkeit des Tickets\tOffen\nKategorie\tEinordnung des Tickets\tOffen\nZusammenfassung\tKurzer Ticketbetreff oder Problemtitel\tOffen\nBeschreibung\tOptionaler Freitext mit potenziell sensiblen Inhalten\tPrüfflichtig\nErstellzeitpunkt\tZeitpunkt aus Quellsystem oder Importdatei\tOffen\n7. Fehler- und Ausnahmeverhalten\nFehlerfall\tErwartetes Verhalten\tAkzeptanzkriterium\nDatei ist keine lesbare CSV-Datei\tImport wird abgelehnt.\tFehlermeldung nennt, dass die Datei nicht als CSV verarbeitet werden konnte.\nPflichtspalte fehlt\tImport wird abgelehnt.\tMeldung nennt die fehlende Spalte.\nPflichtwert fehlt in einer Zeile\tImport wird abgelehnt oder Datensatz wird gemäß Teilimportregel übersprungen.\tVerhalten ist dokumentiert und konsistent.\nUngültiger Wert\tDatei oder Datensatz wird zurückgewiesen.\tMeldung nennt Feld und Grund, soweit eindeutig.\nUnerwarteter technischer Fehler\tImport wird nicht als erfolgreich markiert.\tProtokoll enthält Fehlerstatus ohne sensible technische Details.\n8. Akzeptanzkriterien auf Gesamtvorhabenebene\n\nDas Vorhaben gilt fachlich als abnahmefähig, wenn folgende Kriterien erfüllt sind:\n\nEine gültige CSV-Datei mit den vereinbarten Pflichtfeldern kann importiert werden.\n\nEine Datei mit fehlender Pflichtspalte wird vor Datenübernahme abgelehnt.\n\nEine Datei mit ungültigen Pflichtwerten erzeugt verständliche Fehlermeldungen.\n\nErfolgreiche und fehlgeschlagene Importversuche sind nachvollziehbar protokolliert.\n\nDie vereinbarte Teilimportregel ist dokumentiert und getestet.\n\nEs werden keine produktiven Secrets oder unnötigen personenbezogenen Daten in Beispielen, Logs oder Testdaten verwendet.\n\n9. Risiken\nRisiko\tAuswirkung\tGegenmaßnahme\nPflichtfelder sind nicht abgestimmt\tFehlende oder falsche Validierung\tFeldkatalog fachlich freigeben\nCSV-Dialekt ist unklar\tDateien werden falsch gelesen\tTrennzeichen, Kodierung, Quote-Regeln festlegen\nTeilimportregel fehlt\tUnklare Datenzustände\tAlles-oder-nichts oder Teilimport bewusst entscheiden\nTicketinhalte enthalten sensible Daten\tDatenschutzrisiko\tLogging minimieren und Freitexte schützen\nQuellsystem ist nicht beschrieben\tFehlerhafte fachliche Interpretation\tSystemkontext ergänzen\n10. Offene Punkte\n\nWelche CSV-Spalten sind Pflichtfelder?\n\nWelche Wertebereiche gelten für Priorität, Kategorie und Status?\n\nSoll der Import vollständig abbrechen, wenn ein einzelner Datensatz ungültig ist?\n\nWelche Rollen dürfen Importe ausführen und Protokolle sehen?\n\nWelche Protokollinformationen sind fachlich erforderlich und datenschutzrechtlich zulässig?\n\nWelche maximale Dateigröße oder Datensatzanzahl muss unterstützt werden?\n\nGibt es bereits Beispiel-CSV-Dateien oder Fehlermeldungen aus dem Bestand?\n\n11. Nächster Schritt\n\nAls nächstes sollte ein fachlich freigegebener CSV-Feldkatalog erstellt werden. Danach können funktionale Anforderungen, Validierungsregeln und Testfälle präzise finalisiert werden."
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `anforderungsanalyse-lastenheft`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.4,
-      "top_p": 0.9,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `anforderungsanalyse-lastenheft` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.md` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.md` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

@@ -1,0 +1,542 @@
+<!doctype html> <html lang="de"> <head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Operations Dashboard Vorbereitung</title> <style> :root { color-scheme: light; --bg: #f6f8fb; --panel: #ffffff; --text: #172033; --muted: #5b667a; --line: #d8deea; --accent: #0f766e; --accent-soft: #dff4ef; --warn: #b45309; --warn-soft: #fff3d6; --risk: #b91c1c; --risk-soft: #fee2e2; --ok: #166534; --ok-soft: #dcfce7; }
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header,
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+header {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 24px;
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  margin-bottom: 14px;
+  font-size: 22px;
+}
+
+h3 {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+p,
+li,
+td,
+th {
+  line-height: 1.5;
+}
+
+p,
+.muted {
+  color: var(--muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 24px 0 16px;
+}
+
+.two {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  margin-top: 16px;
+}
+
+.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 16px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 1px 2px rgba(23, 32, 51, 0.04);
+}
+
+.metric-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric {
+  display: block;
+  margin-top: 8px;
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.metric-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.status {
+  display: inline-block;
+  min-width: 84px;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.status.ok {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.status.warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.status.risk {
+  background: var(--risk-soft);
+  color: var(--risk);
+}
+
+.bars {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 128px 1fr 54px;
+  gap: 12px;
+  align-items: center;
+}
+
+.track {
+  height: 14px;
+  border-radius: 999px;
+  background: #e7ecf3;
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.risk-fill {
+  background: var(--risk);
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.day {
+  min-height: 104px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  background: #fbfcfe;
+}
+
+.day strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.day span {
+  display: block;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+th,
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  font-size: 14px;
+}
+
+th {
+  background: #eef3f8;
+  color: #263449;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tr:last-child td {
+  border-bottom: 0;
+}
+
+.definition-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.definition-list div {
+  border-left: 4px solid var(--accent);
+  padding-left: 12px;
+}
+
+.definition-list dt {
+  font-weight: 900;
+}
+
+.definition-list dd {
+  margin: 2px 0 0;
+  color: var(--muted);
+}
+
+.callout {
+  border-left: 5px solid var(--warn);
+  background: var(--warn-soft);
+}
+
+.risk-card {
+  border-left: 5px solid var(--risk);
+  background: var(--risk-soft);
+}
+
+footer {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px 32px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  header,
+  .kpis,
+  .two,
+  .three {
+    grid-template-columns: 1fr;
+  }
+
+  header {
+    align-items: start;
+  }
+
+  .bar {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline {
+    grid-template-columns: 1fr;
+  }
+
+  th,
+  td {
+    display: block;
+    width: 100%;
+  }
+
+  th {
+    display: none;
+  }
+
+  td {
+    border-bottom: 0;
+    padding: 8px 14px;
+  }
+
+  tr {
+    display: block;
+    border-bottom: 1px solid var(--line);
+    padding: 8px 0;
+  }
+}
+</style> </head> <body> <header> <div> <span class="badge">Offline-Prototyp · Demo-Datensatz · keine externen Ressourcen</span> <h1>Support Operations Dashboard</h1> <p> Entscheidungsorientierter Dashboard-Anker für Teamleitung und Operations: Welche Tickets brauchen Aufmerksamkeit, wo entstehen SLA-Risiken und welche Datenqualität blockiert belastbare Steuerung? </p> </div> <div class="card"> <h2>Berichtsstand</h2> <p><strong>Zeitraum:</strong> letzte 7 Kalendertage</p> <p><strong>Datenquelle:</strong> anonymisierte Ticket-CSV und lokaler Import-Log</p> <p><strong>Grenze:</strong> Demo-Werte, nicht als produktive Kennzahlen verwenden</p> </div> </header> <main> <section class="grid kpis" aria-label="KPI-Übersicht"> <article class="card"> <span class="metric-label">Tickets gesamt</span> <span class="metric">106</span> <p class="metric-note">Definition: Anzahl eindeutiger `ticket_id` im Zeitraum.</p> </article> <article class="card"> <span class="metric-label">SLA-Risiko</span> <span class="metric">12</span> <p class="metric-note">Definition: offene Tickets mit fälligem oder fehlendem `sla_due_at`.</p> </article> <article class="card"> <span class="metric-label">Median bis Fälligkeit</span> <span class="metric">7h</span> <p class="metric-note">Aggregation: Median über offene Tickets mit gültigem SLA-Datum.</p> </article> <article class="card"> <span class="metric-label">Datenlücken</span> <span class="metric">3</span> <p class="metric-note">Definition: Pflichtfelder leer oder nicht schemafähig.</p> </article> </section>
+<section class="grid two">
+  <article class="card">
+    <h2>Tickets nach Team</h2>
+    <p class="muted">Frage: Wo ist die operative Last am höchsten?</p>
+    <div class="bars" role="img" aria-label="Balkendiagramm mit Tickets nach Team">
+      <div class="bar">
+        <strong>Service Desk</strong>
+        <span class="track"><span class="fill" style="width:100%"></span></span>
+        <span>81</span>
+      </div>
+      <div class="bar">
+        <strong>Field</strong>
+        <span class="track"><span class="fill" style="width:22%"></span></span>
+        <span>18</span>
+      </div>
+      <div class="bar">
+        <strong>Network</strong>
+        <span class="track"><span class="fill" style="width:9%"></span></span>
+        <span>7</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="card risk-card">
+    <h2>Aufmerksamkeit heute</h2>
+    <ol>
+      <li>12 Tickets sind im SLA-Risiko und benötigen Priorisierung.</li>
+      <li>3 Datensätze haben fehlende SLA-Werte und dürfen nicht stillschweigend aus Kennzahlen fallen.</li>
+      <li>Die führende Quelle für Teamzuordnung muss bestätigt werden, bevor Kapazitätsentscheidungen getroffen werden.</li>
+    </ol>
+  </article>
+</section>
+
+<section class="grid two">
+  <article class="card">
+    <h2>SLA-Risiko nach Priorität</h2>
+    <p class="muted">Frage: Welche Prioritätsklasse erzeugt den kritischsten Steuerungsbedarf?</p>
+    <div class="bars" role="img" aria-label="Balkendiagramm SLA-Risiko nach Priorität">
+      <div class="bar">
+        <strong>critical</strong>
+        <span class="track"><span class="fill risk-fill" style="width:100%"></span></span>
+        <span>5</span>
+      </div>
+      <div class="bar">
+        <strong>high</strong>
+        <span class="track"><span class="fill risk-fill" style="width:80%"></span></span>
+        <span>4</span>
+      </div>
+      <div class="bar">
+        <strong>medium</strong>
+        <span class="track"><span class="fill risk-fill" style="width:40%"></span></span>
+        <span>2</span>
+      </div>
+      <div class="bar">
+        <strong>low</strong>
+        <span class="track"><span class="fill risk-fill" style="width:20%"></span></span>
+        <span>1</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="card">
+    <h2>Ticketvolumen im Zeitraum</h2>
+    <p class="muted">Frage: Gibt es auffällige Lastspitzen?</p>
+    <div class="timeline" aria-label="Ticketvolumen pro Tag">
+      <div class="day"><strong>Mo</strong><span>14</span><small>normal</small></div>
+      <div class="day"><strong>Di</strong><span>17</span><small>normal</small></div>
+      <div class="day"><strong>Mi</strong><span>21</span><small>erhöht</small></div>
+      <div class="day"><strong>Do</strong><span>19</span><small>erhöht</small></div>
+      <div class="day"><strong>Fr</strong><span>24</span><small>Schnittstelle prüfen</small></div>
+      <div class="day"><strong>Sa</strong><span>6</span><small>Wochenende</small></div>
+      <div class="day"><strong>So</strong><span>5</span><small>Wochenende</small></div>
+    </div>
+  </article>
+</section>
+
+<section class="grid three" aria-label="Nutzerfragen">
+  <article class="card">
+    <h2>Zielgruppe</h2>
+    <p>Teamleitung Support Operations, Schichtkoordination und Service Owner.</p>
+  </article>
+  <article class="card">
+    <h2>Entscheidung</h2>
+    <p>Priorisierung der Tagesarbeit, Eskalation gefährdeter Tickets und Korrektur blockierender Datenlücken.</p>
+  </article>
+  <article class="card">
+    <h2>Nicht-Ziel</h2>
+    <p>Kein Finanzbericht, keine produktive BI-Freigabe und keine Live-Datenintegration.</p>
+  </article>
+</section>
+
+<section class="grid two">
+  <article class="card">
+    <h2>KPI-Katalog</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>KPI</th>
+          <th>Definition</th>
+          <th>Quelle</th>
+          <th>Grenze</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tickets gesamt</td>
+          <td>Anzahl eindeutiger `ticket_id` im gewählten Zeitraum</td>
+          <td>Ticket-CSV</td>
+          <td>Duplikate müssen vor Aggregation entfernt werden</td>
+        </tr>
+        <tr>
+          <td>SLA-Risiko</td>
+          <td>Offene Tickets mit `sla_due_at` vor Prüfzeitpunkt oder fehlendem SLA-Datum</td>
+          <td>Ticket-CSV und Prüfzeitpunkt</td>
+          <td>Fehlende SLA-Werte separat ausweisen</td>
+        </tr>
+        <tr>
+          <td>Median bis Fälligkeit</td>
+          <td>Median der Restzeit bis `sla_due_at` für offene Tickets</td>
+          <td>Ticket-CSV</td>
+          <td>Nur berechnen, wenn Zeitstempel parsebar sind</td>
+        </tr>
+        <tr>
+          <td>Datenlücken</td>
+          <td>Anzahl Datensätze mit leerem Pflichtfeld oder nicht erlaubtem Wert</td>
+          <td>Ticket-CSV, Schemakatalog</td>
+          <td>Regeln müssen versioniert sein</td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
+
+  <article class="card">
+    <h2>Definitionen und Filter</h2>
+    <dl class="definition-list">
+      <div>
+        <dt>Zeitraumfilter</dt>
+        <dd>`created_at` zwischen Start- und Enddatum, lokal interpretiert.</dd>
+      </div>
+      <div>
+        <dt>Statusfilter</dt>
+        <dd>Offene Tickets: Status nicht `closed` und nicht `cancelled`.</dd>
+      </div>
+      <div>
+        <dt>Teamfilter</dt>
+        <dd>Teamzuordnung aus Feld `team`; leere Werte zählen als Datenlücke.</dd>
+      </div>
+      <div>
+        <dt>Prioritätsfilter</dt>
+        <dd>Erlaubte Werte: `critical`, `high`, `medium`, `low`.</dd>
+      </div>
+    </dl>
+  </article>
+</section>
+
+<section class="card">
+  <h2>Datenqualität</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Prüfung</th>
+        <th>Status</th>
+        <th>Regel</th>
+        <th>Nächster Check</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Pflichtfeld `ticket_id`</td>
+        <td><span class="status ok">ok</span></td>
+        <td>Nicht leer und eindeutig</td>
+        <td>Duplikatprüfung bei jedem Import ausführen</td>
+      </tr>
+      <tr>
+        <td>Pflichtfeld `sla_due_at`</td>
+        <td><span class="status warn">prüfen</span></td>
+        <td>Parsebarer Zeitstempel für offene Tickets</td>
+        <td>Fehlende Werte fachlich klassifizieren</td>
+      </tr>
+      <tr>
+        <td>Priorität</td>
+        <td><span class="status ok">ok</span></td>
+        <td>Nur definierte Kategorien</td>
+        <td>Neue Kategorien über Schemakatalog freigeben</td>
+      </tr>
+      <tr>
+        <td>Teamzuordnung</td>
+        <td><span class="status warn">prüfen</span></td>
+        <td>Team muss einer bekannten Operations-Gruppe entsprechen</td>
+        <td>Führende Quelle für Team-Mapping bestätigen</td>
+      </tr>
+      <tr>
+        <td>Import-Log</td>
+        <td><span class="status risk">Risiko</span></td>
+        <td>Validierungsfehler müssen feldbezogen ausgegeben werden</td>
+        <td>Fehlerantwort mit `missing_fields` und `invalid_fields` ergänzen</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="grid two">
+  <article class="card callout">
+    <h2>Offene Entscheidungen</h2>
+    <ol>
+      <li>Welche SLA-Schwelle löst eine Eskalation aus: fällig, unter 2 Stunden oder unter 4 Stunden?</li>
+      <li>Wer ist fachlich verantwortlich für fehlende SLA-Daten: Importquelle, Service Desk oder Workflow-Regel?</li>
+      <li>Soll das Dashboard täglich, stündlich oder manuell nach Dateiimport aktualisiert werden?</li>
+    </ol>
+  </article>
+
+  <article class="card">
+    <h2>Empfohlene Visualisierung</h2>
+    <ul>
+      <li>KPI-Karten für Gesamtzustand und Eskalationsbedarf.</li>
+      <li>Balkendiagramme für Teamlast und SLA-Risiko nach Priorität.</li>
+      <li>Tabelle für Datenqualität, weil die konkrete Korrektur feldbezogen erfolgen muss.</li>
+      <li>Keine Farbe als einziges Signal: Statuslabels und Text bleiben sichtbar.</li>
+    </ul>
+  </article>
+</section>
+</main> <footer> Dieser Golden-Example-Prototyp ist vollständig offline lauffähig. Er nutzt keine CDNs, Fonts, Tracker, externen APIs oder produktiven Kundendaten. </footer> </body> </html>

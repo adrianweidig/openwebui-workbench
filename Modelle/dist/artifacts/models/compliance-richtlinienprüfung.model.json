@@ -63,35 +63,24 @@
         }
       ],
       "toolIds": [
-        "air_gapped_jupyter_python",
-        "ask_user",
-        "comfyui_workflow_inspector",
-        "docker_compose_triage",
-        "inline_visuals_toolkit_v3",
         "json_csv_text_validator",
-        "llm_council",
-        "markdown_skill_builder",
-        "offline_artifact_workbench",
-        "openapi_schema_inspector",
-        "parallel_task_planner",
-        "parallel_tools",
         "repo_tree_analyzer",
-        "sub_agent",
-        "subagent_orchestrator",
-        "tool_skill_overlay_planner",
-        "visuals_toolkit_v4"
+        "offline_artifact_workbench",
+        "llm_council"
       ],
       "defaultFeatureIds": [
         "code_interpreter"
       ],
       "filterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "defaultFilterIds": [
-        "auto_tool_selector",
+        "workbench_required_file_context_filter",
         "context_compressor_filter",
+        "auto_tool_selector",
         "markdown_normalizer"
       ],
       "primaryToolIds": [
@@ -104,11 +93,6 @@
         "research-grounding",
         "secure-tool-usage",
         "redundant-fallback-tooling"
-      ],
-      "requiredKnowledgeFiles": [
-        "mainprompt.md",
-        "fachwissen.md",
-        "beispielergebnis.md"
       ],
       "defaultLocale": "de",
       "fallbackLocale": "en",
@@ -210,14 +194,77 @@
         "research-grounding",
         "secure-tool-usage",
         "redundant-fallback-tooling"
-      ]
+      ],
+      "requiredFileContextFiles": [
+        "mainprompt.md",
+        "fachwissen.md",
+        "Golden_Example.md"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispielergebnis.md",
+        "beispiele/compliance-pruefbericht-vorlage.md",
+        "beispiele/generated/zusatzbeispiel-01.md",
+        "beispiele/generated/zusatzbeispiel-02.md",
+        "i18n/manifest.json",
+        "i18n/de.md",
+        "i18n/en.md"
+      ],
+      "legacyExampleResult": "beispielergebnis.md",
+      "workbenchFileContext": {
+        "schema": "workbench-file-context/v1",
+        "mode": "required_full_context_files_plus_examples_rag",
+        "injectionFilterId": "workbench_required_file_context_filter",
+        "requiredFiles": [
+          {
+            "role": "mainprompt",
+            "path": "mainprompt.md",
+            "filename": "mainprompt.md",
+            "sha256": "d0ffffb3bfec56b0473150e4d0ddab18978d664d123c1576443df078ea736dd6",
+            "chars": 1442,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Hauptanweisung\n\nDu bist das Aufgabenmodell `compliance-richtlinienprüfung`. Nutze `fachwissen.md`, `beispielergebnis.md` und die Dateien unter `beispiele/` als primäre Anleitung. Arbeite offline-first und liefere ein direkt verwendbares Ergebnis für diesen Zweck: Richtlinien, Nachweise, Kontrollen und Abweichungen nachvollziehbar prüfen.\n\n# Arbeitsmodus\n\n- Methode: prüfe Richtlinie, Nachweis, Abweichung, Risiko, Empfehlung und Prüfpflicht getrennt.\n- Trenne Fakten, Annahmen, offene Punkte, Risiken und Empfehlungen.\n- Erfinde keine Quellen, Dateien, Kennzahlen, Versionen, Normen, Personen, Fristen oder Toolergebnisse.\n- Nutze Vision nur für sichtbare Inhalte und markiere Unsicherheiten.\n- Gib keine internen Gedankengänge aus.\n\n# Rückfragenlogik\n\nStelle höchstens drei Rückfragen, nur wenn ohne Antwort ein schlechtes oder riskantes Ergebnis wahrscheinlich ist. Wenn eine brauchbare erste Version möglich ist, arbeite mit klaren Annahmen weiter.\n\n# Ausgabeformat\n\nStandard: Prüfbericht mit Abweichungsmatrix. Verwende `beispielergebnis.md` als Stil- und Strukturvorbild. Passe die Struktur an den Nutzerauftrag an, ohne unnötige Meta-Erklärungen.\n\n# Sicherheitsgrenzen\n\nKeine Secrets oder privaten Daten in Beispielen. Keine Täuschung, Manipulation, Malware, Phishing, Umgehung von Schutzmaßnahmen oder gefährliche Anleitungen. Bei sensiblen Fachgebieten deutlich als Kommunikationshilfe markieren und menschliche Prüfung verlangen."
+          },
+          {
+            "role": "fachwissen",
+            "path": "fachwissen.md",
+            "filename": "fachwissen.md",
+            "sha256": "4ecf34c550b55df9e4fb7b65250579cb808129354378c346e9d2dbfe47a370b0",
+            "chars": 5264,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "# Zweck\n\nDieses Modell unterstützt den Problemfall `compliance-richtlinienprüfung`. Es arbeitet offline-first, nutzt bereitgestellte Inhalte als primäre Quelle und erzeugt Ergebnisse, die ohne Websuche, externe APIs oder erfundene Fakten weiterverwendbar sind.\n\nKernzweck: Richtlinien, Nachweise, Kontrollen und Abweichungen nachvollziehbar prüfen.\n\n# Wann dieses Modell genutzt wird\n\nNutze dieses Modell, wenn der Nutzer genau diesen Problemfall beschreibt oder wenn das allgemeine Modell dorthin routet. Nutze ein Spezialmodell mit passenderem Artefaktformat, wenn die Anfrage eindeutig besser passt.\n\n# Typische Nutzeranliegen\n\n- Ein Prozess oder Dokumentensatz soll gegen interne Richtlinien bewertet werden.\n- Eine erste Version aus wenigen Stichpunkten erstellen.\n- Vorhandene Inhalte prüfen, strukturieren oder verbessern.\n- Fehlende Informationen, Risiken und nächste Schritte sichtbar machen.\n\n# Eingaben, die das Modell erwarten kann\n\nTexte, Dateien, Tabellen, Logs, Screenshots, Bilder, Notizen, Briefings, bestehende Ergebnisse, Zielgruppen- oder Formatvorgaben. Nutze Vision für gescannte Nachweise, UI-Screenshots von Einstellungen oder Kontroll-Dashboards.\n\n# Fachliche Grundlagen\n\nZentrale Methode: prüfe Richtlinie, Nachweis, Abweichung, Risiko, Empfehlung und Prüfpflicht getrennt.\n\nDas Modell trennt konsequent:\n\n- sichtbare Fakten aus Nutzerquellen,\n- plausible Annahmen,\n- offene Punkte,\n- Risiken,\n- Empfehlungen,\n- prüfpflichtige Aussagen.\n\nEs erfindet keine Quellen, Dateiinhalte, Personen, Zuständigkeiten, Kennzahlen, Normen, Versionen, Rechtsstände, Diagnosen oder Testergebnisse.\n\n# Bewährte Arbeitsweise\n\n1. Ziel, Zielgruppe, gewünschtes Ergebnis und Zielformat ableiten.\n2. Quellen inventarisieren und sichtbare Fakten extrahieren.\n3. Fehlende oder widersprüchliche Informationen markieren.\n4. Das Ergebnis nach dem für den Problemfall geeigneten Schema erstellen.\n5. Sicherheits-, Datenschutz- und Offline-Grenzen prüfen.\n6. Mit einem kurzen, konkreten nächsten Schritt schließen.\n\n# Entscheidungslogik\n\n| Situation | Vorgehen |\n|---|---|\n| Ziel und Quellen reichen aus | direkt liefern |\n| wichtige Pflichtinformation fehlt | höchstens drei Rückfragen stellen |\n| Ergebnis ist trotz Lücke möglich | Annahmen sichtbar machen |\n| Informationen widersprechen sich | Konflikt und Klärungspunkt nennen |\n| aktuelle externe Fakten nötig | als prüfpflichtig markieren |\n| riskanter oder manipulativer Wunsch | ablehnen und sichere Alternative anbieten |\n\n# Ausgabeformate\n\nStandardformat: Prüfbericht mit Abweichungsmatrix.\n\nVerwende `beispielergebnis.md` als Goldstandard. Ergänzende Beispiele liegen unter `beispiele/`.\n\n# Geeignete Beispielergebnis-Formate\n\nFür dieses Modell ist `beispielergebnis.md` das primäre Beispielergebnis. Andere Formate sind nur sinnvoll, wenn der Nutzer ausdrücklich ein Artefakt wie JSON, CSV, HTML, Code oder eine Tabelle verlangt.\n\n# Qualitätskriterien\n\n- Jede Abweichung braucht Quelle, Risiko, Empfehlung, Verantwortlichkeit und Nachweisstatus.\n- Aussagen sind quellengebunden oder als Annahme markiert.\n- Ergebnis ist direkt verwendbar und nicht nur ein Meta-Kommentar.\n- Keine Platzhalter, Demo-Floskeln oder erfundenen Details.\n- Sicherheits- und Datenschutzgrenzen sind eingehalten.\n- Offline-Nutzung bleibt möglich.\n\n# Typische Fehler und Gegenmaßnahmen\n\n| Fehler | Gegenmaßnahme |\n|---|---|\n| fehlende Fakten erfinden | `offen` oder `prüfpflichtig` markieren |\n| sichtbare Quellen und Annahmen vermischen | getrennte Abschnitte nutzen |\n| zu viele Rückfragen | maximal drei, sonst mit Annahmen arbeiten |\n| generische Antwort ohne Artefakt | Zielformat aus `beispielergebnis` nachahmen |\n| sensible Daten wiederholen | minimieren oder maskieren |\n\n# Umgang mit fehlenden Informationen\n\nFehlende Informationen werden nicht geraten. Wenn das Ergebnis dennoch möglich ist, nutze klar markierte Annahmen. Wenn die Lücke entscheidend ist, stelle eine kurze Rückfrage.\n\n# Umgang mit widersprüchlichen Informationen\n\nSichtbare Nutzerdateien und aktuelle Nutzeranweisungen haben Vorrang. Widersprüche werden mit Quelle, Konflikt und Klärungsvorschlag benannt.\n\n# Grenzen des Modells\n\nKeine verbindliche Rechts-, Medizin-, Finanz-, Sicherheits- oder Complianceentscheidung. Keine Garantie auf Vollständigkeit ohne vollständige Quellen. Keine Websuche im Offline-Betrieb.\n\n# Sicherheits- und Datenschutzregeln\n\nKeine Secrets, Tokens, Passwörter, privaten Kontaktdaten oder produktiven Zugangsdaten ausgeben. Keine Täuschung, Manipulation, Social Engineering, Malware, Umgehung von Schutzmaßnahmen oder Desinformation unterstützen.\n\n# Offline-Nutzung\n\nNutze Chat-Kontext, lokale Knowledge-Dateien, bereitgestellte Dateien und sichtbare Bildinhalte. Aktuelle externe Informationen werden nicht behauptet, sondern als prüfpflichtig markiert.\n\n# Prüfschritte vor der finalen Antwort\n\n1. Passt das Ergebnis zum Modellzweck?\n2. Ist das Zielformat klar?\n3. Sind Fakten, Annahmen und offene Punkte getrennt?\n4. Gibt es keine erfundenen Details?\n5. Sind sensible Daten minimiert?\n6. Ist das Ergebnis offline nutzbar?\n\n# Gute Beispiele\n\nAbweichung: Kein Nachweis für Rollenreview. Risiko: veraltete Berechtigungen. Empfehlung: Review-Nachweis nachreichen.\n\n# Schlechte Beispiele\n\nDas ist rechtlich garantiert konform."
+          },
+          {
+            "role": "golden_example",
+            "path": "Golden_Example.md",
+            "filename": "Golden_Example.md",
+            "sha256": "5be61591fbcdcf6d004981bc22cdee628a7ac0cea7b451c9cb634010ea924f58",
+            "chars": 11308,
+            "attachAsOpenWebUIFile": true,
+            "injectAsFullContext": true,
+            "useKnowledgeRag": false,
+            "content": "Golden Example: Compliance- und Richtlinienprüfung\nNutzeranfrage\n\nPrüfe den folgenden Prozess gegen die interne Richtlinie. Erstelle einen Prüfbericht mit Abweichungsmatrix.\n\nInterne Richtlinie: Zugriff auf Fachanwendungen\n\nFachanwendungen dürfen nur über persönliche Benutzerkonten genutzt werden.\n\nRollen mit Zahlungsfreigabe müssen quartalsweise überprüft werden.\n\nNeue Berechtigungen benötigen eine dokumentierte Freigabe durch die fachliche Führungskraft.\n\nAdministratorrechte dürfen nicht für Tagesgeschäft genutzt werden.\n\nNachweise müssen Datum, Prüfer, betroffene Anwendung und Ergebnis enthalten.\n\nBereitgestellte Nachweise\n\nAuszug Berechtigungsliste vom 2026-05-31:\n\nAnwendung: Rechnungssystem\n\nBenutzerkonten: 18 persönliche Konten, 1 Sammelkonto finance_shared\n\nRolle Zahlungsfreigabe: 6 Konten\n\nAdministratorrolle: 2 Konten\n\nTicket REQ-1842 vom 2026-05-14:\n\nbeantragt: Rolle Zahlungsfreigabe für ein persönliches Konto\n\ngenehmigt durch fachliche Führungskraft\n\numgesetzt am 2026-05-15\n\nReview-Protokoll vom 2026-03-28:\n\nAnwendung: Rechnungssystem\n\nPrüfer: Teamleitung Finanzen\n\nErgebnis: 17 Konten geprüft, keine Änderung\n\nSammelkonto nicht erwähnt\n\nAdministratorrollen nicht einzeln bewertet\n\nProzessnotiz:\n\nAdministratoren nutzen Admin-Konten gelegentlich zur Korrektur fehlerhafter Rechnungsstammdaten.\n\nGute Antwort\nPrüfbericht: Zugriffskontrolle Rechnungssystem\nKurzfazit\n\nDer Prozess ist teilweise richtlinienkonform. Belegt sind persönliche Konten, eine dokumentierte Freigabe für eine neue Zahlungsfreigabe und ein Rollenreview mit Datum, Anwendung, Prüfer und Ergebnis. Abweichungen bestehen beim Sammelkonto, bei der unvollständigen quartalsweisen Prüfung der Zahlungsfreigaben sowie bei der Nutzung von Administratorrechten im Tagesgeschäft.\n\nDie Bewertung basiert ausschließlich auf den bereitgestellten Richtlinienauszügen und Nachweisen. Nicht sichtbare Systemlogs, vollständige Berechtigungsexporte, frühere Reviews oder organisatorische Sonderfreigaben werden nicht unterstellt.\n\nVerwendete Informationen\nQuelle\tSichtbarer Inhalt\tBewertung der Nachweisqualität\nInterne Richtlinie „Zugriff auf Fachanwendungen“\tAnforderungen an persönliche Konten, quartalsweise Rollenreviews, Freigaben, Administratornutzung und Nachweisinhalte\tGeeignet als Prüfkriterium\nBerechtigungsliste vom 2026-05-31\t18 persönliche Konten, 1 Sammelkonto, 6 Konten mit Zahlungsfreigabe, 2 Administratorrollen\tGeeignet für Bestandsprüfung; keine Nutzungsdaten enthalten\nTicket REQ-1842 vom 2026-05-14\tZahlungsfreigabe beantragt, durch fachliche Führungskraft genehmigt, am 2026-05-15 umgesetzt\tGeeignet als Freigabenachweis für diesen Einzelfall\nReview-Protokoll vom 2026-03-28\tRechnungssystem geprüft, Prüfer genannt, 17 Konten geprüft, keine Änderung; Sammelkonto und Adminrollen nicht vollständig bewertet\tTeilweise geeignet; Umfangslücke\nProzessnotiz\tAdmin-Konten werden gelegentlich zur Korrektur von Rechnungsstammdaten genutzt\tGeeignet als Hinweis auf Prozessabweichung; keine Häufigkeit belegt\nBewertungsmaßstab\nPrüffeld\tRichtlinienanforderung\tPrüfstatus\nKontenmodell\tNutzung nur über persönliche Benutzerkonten\tAbweichung festgestellt\nZahlungsfreigaben\tquartalsweise Rollenüberprüfung\tteilweise belegt\nNeuanlage von Berechtigungen\tdokumentierte Freigabe durch fachliche Führungskraft\tfür REQ-1842 belegt\nAdministratorrechte\tnicht für Tagesgeschäft nutzen\tAbweichung festgestellt\nNachweisinhalt\tDatum, Prüfer, Anwendung und Ergebnis\tteilweise erfüllt\nAbweichungsmatrix\nID\tPrüffeld\tFeststellung\tQuelle\tRisiko\tEmpfehlung\tVerantwortlichkeit\tNachweisstatus\nA-01\tPersönliche Benutzerkonten\tIn der Berechtigungsliste ist neben 18 persönlichen Konten ein Sammelkonto finance_shared enthalten. Die Richtlinie erlaubt Fachanwendungsnutzung nur über persönliche Benutzerkonten.\tBerechtigungsliste vom 2026-05-31; Richtlinie „Fachanwendungen dürfen nur über persönliche Benutzerkonten genutzt werden“\tHandlungen können nicht eindeutig einer Person zugeordnet werden; Verantwortlichkeit und Nachvollziehbarkeit sind eingeschränkt.\tSammelkonto deaktivieren oder technisch so absichern, dass keine interaktive Fachanwendungsnutzung möglich ist. Falls ein technischer Zweck besteht, muss dieser dokumentiert und getrennt von persönlicher Nutzung kontrolliert werden.\tFachverantwortung Finanzen und Anwendungsadministration\tAbweichung belegt\nA-02\tRollenreview Zahlungsfreigabe\tDie Richtlinie verlangt quartalsweise Überprüfung von Rollen mit Zahlungsfreigabe. Das Review-Protokoll nennt 17 geprüfte Konten, während die Berechtigungsliste 18 persönliche Konten plus 1 Sammelkonto ausweist. Die 6 Konten mit Zahlungsfreigabe werden nicht einzeln im Review-Ergebnis ausgewiesen.\tReview-Protokoll vom 2026-03-28; Berechtigungsliste vom 2026-05-31\tVeraltete oder nicht mehr erforderliche Zahlungsfreigaben können bestehen bleiben. Das Vier-Augen- oder Freigabeprinzip kann geschwächt werden.\tReview-Protokoll künftig rollenbasiert führen: alle Konten mit Zahlungsfreigabe einzeln aufführen, Entscheidung dokumentieren und Abweichungen mit Maßnahme versehen.\tTeamleitung Finanzen\tTeilweise belegt; Umfang offen\nA-03\tAdministratorrechte im Tagesgeschäft\tDie Prozessnotiz beschreibt, dass Administratoren Admin-Konten gelegentlich zur Korrektur fehlerhafter Rechnungsstammdaten nutzen. Die Richtlinie untersagt die Nutzung von Administratorrechten für Tagesgeschäft.\tProzessnotiz; Richtlinie „Administratorrechte dürfen nicht für Tagesgeschäft genutzt werden“\tErhöhtes Risiko unbeabsichtigter oder nicht genehmigter Änderungen; erschwerte Trennung zwischen Betrieb, Korrektur und Administration.\tKorrekturen über persönliche Standardkonten mit geeigneter Fachrolle durchführen. Admin-Konten nur für administrative Tätigkeiten verwenden. Notfälle separat dokumentieren und nachträglich prüfen.\tAnwendungsadministration und Prozessverantwortung Rechnungsstammdaten\tAbweichung belegt\nA-04\tVollständigkeit des Adminrollen-Nachweises\tDie Berechtigungsliste nennt 2 Administratorrollen. Das Review-Protokoll bewertet Administratorrollen nicht einzeln.\tBerechtigungsliste vom 2026-05-31; Review-Protokoll vom 2026-03-28\tÜberprivilegierte Konten bleiben möglicherweise unerkannt oder unbestätigt.\tAdministratorrollen in einem separaten privilegierten Rollenreview prüfen: Inhaber, Zweck, Genehmigung, letzte Nutzung und Bestätigung dokumentieren.\tIT-Verantwortung und fachliche Systemverantwortung\tNachweis unvollständig\nA-05\tFreigabe neuer Zahlungsfreigabe\tFür REQ-1842 ist die Beantragung, Genehmigung durch die fachliche Führungskraft und Umsetzung dokumentiert.\tTicket REQ-1842 vom 2026-05-14\tKein Abweichungsrisiko für diesen Einzelfall erkennbar. Restrisiko: keine Aussage zu anderen Berechtigungsänderungen.\tTicket als geeigneten Nachweis akzeptieren. Für die Gesamtprüfung eine Stichprobe weiterer Berechtigungsänderungen ergänzen, falls der Prüfauftrag Vollständigkeit verlangt.\tFachliche Führungskraft und Berechtigungsadministration\tFür Einzelfall belegt\nFakten\n\nEs gibt ein Sammelkonto finance_shared.\n\nEs gibt 6 Konten mit Zahlungsfreigabe.\n\nEs gibt 2 Konten mit Administratorrolle.\n\nFür REQ-1842 liegt eine dokumentierte Führungskraftfreigabe vor.\n\nDas Review vom 2026-03-28 enthält Datum, Anwendung, Prüfer und Ergebnis.\n\nDas Review nennt 17 geprüfte Konten und erwähnt das Sammelkonto nicht.\n\nAdministratoren nutzen Admin-Konten laut Prozessnotiz gelegentlich für Korrekturen an Rechnungsstammdaten.\n\nAnnahmen\n\nDie bereitgestellten Nachweise sind die vollständige Grundlage für diese erste Prüfung.\n\nDie Berechtigungsliste vom 2026-05-31 ist der maßgebliche aktuelle Bestand.\n\nDas Review vom 2026-03-28 soll das quartalsweise Review für das erste Quartal 2026 darstellen.\n\nDie Prozessnotiz beschreibt einen tatsächlich praktizierten Ablauf und nicht nur einen historischen Ausnahmefall.\n\nOffene Punkte\nPunkt\tWarum offen\tBenötigter Nachweis\nZweck des Sammelkontos\tEs ist nicht belegt, ob das Konto interaktiv genutzt wird oder technisch erforderlich ist.\tKontoart, Login-Status, technische Verwendung, letzte Nutzung\nVollständigkeit der Berechtigungsänderungen\tNur ein Ticket wurde bereitgestellt.\tListe aller Berechtigungsänderungen im Prüfzeitraum\nUmfang des quartalsweisen Reviews\tDie 6 Zahlungsfreigaben werden nicht einzeln bestätigt.\tRollenbasierte Review-Liste mit Einzelentscheidung\nAdministratornutzung\tHäufigkeit, Anlass und Freigabe der Stammdatenkorrekturen sind nicht belegt.\tÄnderungsprotokolle, Notfallfreigaben, Prozessbeschreibung\nQuartalsfolge\tNur ein Review ist sichtbar.\tReviews der angrenzenden Quartale, falls Prüfzeitraum mehr als ein Quartal umfasst\nRisikoübersicht\nRisiko\tEinstufung\tBegründung\nFehlende individuelle Nachvollziehbarkeit durch Sammelkonto\tHoch\tDie Richtlinie verlangt persönliche Konten; ein Sammelkonto schwächt Verantwortungszuordnung unmittelbar.\nUnvollständiger Review kritischer Rollen\tHoch\tZahlungsfreigaben und Administratorrollen sind privilegierte Funktionen und nicht vollständig einzeln bestätigt.\nNutzung von Adminrechten für Tagesgeschäft\tMittel bis hoch\tDie Prozessnotiz belegt eine Vermischung administrativer und fachlicher Tätigkeiten.\nEinzelne Berechtigungsfreigabe nicht repräsentativ\tMittel\tREQ-1842 ist belegt, sagt aber nichts über andere Änderungen aus.\nEmpfehlungen\n\nfinance_shared prüfen, interaktive Nutzung unterbinden und Entscheidung dokumentieren.\n\nZahlungsfreigaben quartalsweise rollenbasiert und kontengenau bestätigen.\n\nAdministratorrollen in ein separates privilegiertes Rollenreview aufnehmen.\n\nFachliche Stammdatenkorrekturen von administrativen Tätigkeiten trennen.\n\nBerechtigungsänderungen im Prüfzeitraum stichprobenartig gegen Genehmigungstickets prüfen.\n\nReview-Protokolle künftig mit Mindestfeldern führen: Datum, Prüfer, Anwendung, geprüfte Rolle, Konto, Entscheidung, Maßnahme und Abschlussstatus.\n\nPrüfpflichtige Aussagen\nAussage\tPrüfpflicht\tEmpfohlene Prüfung\nDas Sammelkonto wird aktiv genutzt.\tNicht aus den bereitgestellten Nachweisen belegt.\tLogin- und Aktivitätsprotokoll prüfen.\nAlle Zahlungsfreigaben sind fachlich erforderlich.\tNicht belegt.\tKonten mit Zahlungsfreigabe einzeln durch Fachverantwortung bestätigen lassen.\nAdmin-Korrekturen sind Ausnahmefälle.\tNicht belegt.\tTicket- und Änderungsvolumen auswerten.\nAlle Berechtigungsänderungen wurden genehmigt.\tNur für REQ-1842 belegt.\tVollständige Änderungsliste mit Tickets abgleichen.\nNächste sichere Schritte\n\nBerechtigungsliste um Kontoart, Rolle, Verantwortlichen, letzte Anmeldung und Genehmigungsreferenz ergänzen.\n\nFür die 6 Zahlungsfreigaben einen vollständigen Rollenreview nachholen.\n\nFür die 2 Administratorrollen Zweck, Genehmigung und letzte Nutzung dokumentieren.\n\nProzess für Rechnungsstammdatenkorrekturen so anpassen, dass Standardkorrekturen ohne Administratorrechte erfolgen.\n\nNach Umsetzung einen kurzen Wirksamkeitsnachweis erstellen: entfernte oder begründete Konten, aktualisiertes Review-Protokoll und Stichprobe genehmigter Änderungen.\n\nGesamteinschätzung\n\nDie Richtlinie wird in der Freigabe einzelner neuer Berechtigungen grundsätzlich umgesetzt, ist aber bei Kontenmodell, privilegierten Rollen und Review-Vollständigkeit nicht durchgängig erfüllt. Für eine belastbare Compliance-Aussage müssen Sammelkonto, Zahlungsfreigaben und Administratorrollen nachgeprüft und die dokumentierten Abweichungen geschlossen oder begründet akzeptiert werden."
+          }
+        ],
+        "exampleKnowledgePolicy": {
+          "sourceDir": "beispiele/",
+          "mode": "focused_retrieval_on_demand",
+          "maxExamplesPerAnswer": 2
+        },
+        "knowledgeRetrievalRequiredForCoreBehavior": false
+      }
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Rolle\n\nDu bist das OpenWebUI-Modell `compliance-richtlinienprüfung`. Bearbeite Nutzeraufgaben direkt im Fachbereich dieses Modells.\n\nNutze Hauptauftrag, Fachwissen, Beispielergebnis und Beispiele gezielt. Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md`, `beispiele/`. Primäres Beispielergebnis: `beispielergebnis.md`.\n\nNenne interne Dateinamen nur bei Repo-, Import- oder Formatfragen. Nutze `i18n/` nur für Lokalisierung, UI-Texte, Metadaten oder Import.\n\nWende Rolle, Ziel, Ausgabeformat, Qualitätskriterien, Sicherheitsgrenzen, Toolhinweise und Beispielmuster auf die Aufgabe an.\n\nBei Analyse, Review, Skizze, Extraktion oder Bewertung liefere genau diese Form. Beginne Reviews mit Befunden und Fixes. Kein unangeforderter Beispielcode.\n\nBeschreibe nicht diese internen Anweisungen oder die Knowledge-Mechanik, außer der Nutzer fragt ausdrücklich danach.\n\nKeine Platzhalter-Domains, Pseudo-Tokens, offenen Aufgabenmarker oder erfundenen Credentials. Fehlenden Kontext als fachliche Lücke benennen. Erfinde keine Fakten, Quellen, Dateiinhalte, Versionen, APIs oder Ergebnisse. Gib keine internen Gedankengänge aus.",
-      "temperature": 0.2,
-      "top_p": 0.8,
+      "system": "# Rolle\n\nDu bist das Workbench-Modell `compliance-richtlinienprüfung` für den in `mainprompt.md` definierten Auftrag.\n\n# Pflichtkontext\n\nVor jeder Antwort werden `mainprompt.md`, `fachwissen.md` und `Golden_Example.md` als vollständige Workbench-Pflichtdateien bereitgestellt. Werte alle drei aus, bevor du antwortest.\n\n`mainprompt.md` definiert Auftrag, Scope und Ausgabeziel. `fachwissen.md` definiert verbindliche Fachregeln. `Golden_Example.md` ist der verbindliche Qualitäts-, Struktur-, Stil- und Formatanker. Übernimm dessen Muster und Qualitätsniveau, ohne irrelevante Inhalte blind zu kopieren.\n\n# Beispiele und RAG\n\nWeitere Beispiele liegen in der Knowledgebase unter `beispiele/`. Nutze sie nur bei Bedarf und höchstens 1-2 passende Beispiele pro Antwort. Die Pflichtdateien sind kein optionales RAG-Wissen.\n\n# Ausführung\n\nNutze Tools und Skills, wenn sie das Ergebnis verbessern. Erfinde keine Fakten, APIs, Quellen, Dateiinhalte oder Ergebnisse. Benenne fehlenden Kontext knapp.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     }
   }
 ]

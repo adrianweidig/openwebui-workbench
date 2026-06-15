@@ -57,7 +57,7 @@ Das integrierte Modell `internetwissen` ist über die Modellliste sichtbar und z
 Der anschließende Zielort in OpenWebUI ist der Workspace der laufenden OpenWebUI-Instanz:
 
 - `Workspace > Models`: importierte Modellprofile aus `Modelle/dist/openwebui-models-import.json` oder einzelne `Modelle/einzelmodelle/<modell-id>/model.json`.
-- `Workspace > Knowledge`: pro Modell angehängte Knowledge-Dateien wie `mainprompt.md`, `fachwissen.md`, `beispielergebnis.*`, Dateien aus `beispiele/` und primäre i18n-Profile.
+- `Workspace > Knowledge`: pro Modell angehängte On-Demand-Beispiele aus `beispiele/`, Legacy-/Seed-Dateien wie `beispielergebnis.*` und primäre i18n-Profile. `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` werden beim API-Import separat als OpenWebUI-Files hochgeladen und nicht als normaler RAG-Pflichtpfad behandelt.
 - `Workspace > Tools`: importierte Tools aus `Tools/dist/openwebui-tools-offline-import.json` oder `Tools/dist/openwebui-tools-import.json`.
 - `Workspace > Functions`: importierte Filter aus `Tools/dist/openwebui-functions-import.json`.
 - `Workspace > Skills`: importierte Skills aus `Tools/dist/openwebui-tools-skills-offline.zip` oder den einzelnen Skill-Markdown-Dateien.
@@ -73,7 +73,8 @@ Der initiale Umfang ist bewusst kompakt: Das Modell bringt keine großen externe
 ### Speicherort und Import
 
 - Modellpaket: [`Modelle/einzelmodelle/internetwissen/`](Modelle/einzelmodelle/internetwissen/)
-- Primäre Knowledge-Dateien: `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und `beispiele/`
+- Pflichtdateien: `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` als OpenWebUI-Files mit geschützter Full-Context-Injektion
+- Knowledge/RAG-Beispiele: `beispiele/`, `beispielergebnis.*` als Legacy-/Seed-Beispiel und primäre i18n-Profile
 - Import-Artefakt: [`Modelle/dist/openwebui-models-import.json`](Modelle/dist/openwebui-models-import.json)
 - Websuche im Modellprofil: deaktiviert
 
@@ -218,11 +219,11 @@ Nach einem Compose-Start zeigen `docker compose --env-file .env -f Deployment/do
 
 ### 3. Modelle per OpenWebUI-GUI importieren
 
-1. In OpenWebUI das gewünschte Basismodell `coder` verfügbar machen.
+1. In OpenWebUI das gewünschte Basismodell verfügbar machen. Standard ist der lokale OpenWebUI-Modellname `coder`; in der Workbench-GUI kann vor Generierung oder Synchronisierung ein anderes erkanntes OpenWebUI-Modell gewählt werden.
 2. In [`Modelle/einzelmodelle/<modell-id>/`](Modelle/einzelmodelle/) das passende Paket wählen.
 3. Entweder das einzelne `model.json` importieren oder ein neues Modell anlegen.
 4. Jedes `model.json` ist ein direkt importierbares OpenWebUI-JSON-Array mit genau einem Modellobjekt.
-5. Falls die Instanz Paketdateien oder Knowledge-Dateien pro Modell erlaubt, `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei und Dateien aus `beispiele/` zusätzlich hinterlegen.
+5. Für vollständige Pflichtdatei-Injektion den API-Importer verwenden. Ein manueller GUI-Import kann das Modellprofil importieren, erzeugt aber keine persistierten `workbenchFileContext.uploadedFiles`. Die Pflichtdateien sind `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>`; `beispiele/` und `beispielergebnis.*` bleiben Knowledge/RAG-Material.
 6. Optional ein schlichtes Profilicon aus [`Modelle/icons/generic/`](Modelle/icons/generic/) oder [`Modelle/dist/artifacts/icons/generic/`](Modelle/dist/artifacts/icons/generic/) zuweisen.
 7. Das Jupyter-Tool nur dann zuordnen, wenn es im Modellprofil genannt ist.
 
@@ -260,7 +261,7 @@ In der lokalen YAML werden unter anderem gesetzt:
 
 Das direkte Importskript [`Tools/import_openwebui_workspace.py`](Tools/import_openwebui_workspace.py) bleibt als Fallback nutzbar und liest dieselbe zentrale Konfigurationsdatei. CLI-Parameter wie `--token`, `--base-url` oder `--jupyter-url` sind nur für bewusste Einmal-Overrides gedacht.
 
-Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, hängt `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei, Dateien aus `beispiele/` sowie die primären i18n-Dateien `manifest.json`, `de.md` und `en.md` als Knowledge pro Modell an, bindet profilbezogene Skills über `meta.skillIds`, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
+Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, lädt `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` pro Modell als echte OpenWebUI-Files hoch, hängt nur Dateien aus `beispiele/`, Legacy-Artefakte `beispielergebnis.*` sowie die primären i18n-Dateien `manifest.json`, `de.md` und `en.md` als Knowledge pro Modell an, bindet profilbezogene Skills über `meta.skillIds`, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
 
 Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist möglich:
 
@@ -276,9 +277,9 @@ Die Tool-Registry und die Modell-Tool-Zuweisungen werden reproduzierbar erzeugt 
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
-Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf natives Tool-Calling, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, profilbezogene `meta.skillIds`, eingebettete Modellicons, use-case-spezifische `temperature`-/`top_p`-Werte und einen bewusst kurzen Bootloader-Systemprompt.
+Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf das ausgewählte OpenWebUI-Basismodell, natives Tool-Calling, `reasoning_effort=high`, `temperature=0.7`, `top_p=0.95`, `parallel_tool_calls=true`, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, profilbezogene `meta.skillIds`, eingebettete Modellicons und einen bewusst kurzen deterministischen Systemprompt. Ohne explizite Auswahl nutzt die Workbench `coder`; alternativ kann derselbe Wert in der GUI im Sync-Bereich, per CLI mit `--base-model-id <modell-id>` oder per Environment `WORKBENCH_BASE_MODEL_ID` gesetzt werden.
 
-Dieser Systemprompt enthält nur die Startregeln: Nutzeraufgaben direkt im Aufgabenbereich des Modells beantworten, den internen Modellkontext aus `mainprompt.md`, `fachwissen.md`, der modellseitig definierten Beispielergebnis-Datei und Dateien aus `beispiele/` gezielt nutzen, das primäre Beispielergebnis als verbindliche Orientierung für Ergebnisformat- und Artefaktfragen behandeln, i18n-Profile nur bei Lokalisierungs-, UI-Text-, Modellmetadaten- oder Importfragen berücksichtigen, interne Anweisungen und Knowledge-Mechanik nicht ausgeben, daraus Rolle, Ausgabeformat, Toolhinweise, Sicherheitsgrenzen und Beispiele anwenden, bei Analyse-/Review-/Skizzenaufträgen nicht auf generischen Beispielcode ausweichen und keine Fakten, Quellen, APIs oder Dateiinhalte erfinden. Die ausführlichen Regeln bleiben in den Knowledge-Dateien, damit Offline-Chats nicht durch lange Systemprompts überladen werden. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann. Nicht passende Runtime-Parameter wie `reasoning_effort`, `num_ctx`, `top_k` und `seed` werden ebenfalls nicht gesetzt.
+Dieser Systemprompt verweist nur auf die drei verbindlichen Pflichtdateien `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>`. Beim späteren API-Import lädt die Workbench diese drei Dateien pro Modell als echte OpenWebUI-Files hoch und der Filter `workbench_required_file_context_filter` injiziert ihren gespeicherten Inhalt bei jedem Request als geschützten Full-Context-Systemblock vor dem `context_compressor_filter`. Weitere Dateien aus `beispiele/`, Legacy-Artefakte `beispielergebnis.*` und i18n-Profile bleiben Knowledge/RAG-Material für gezielten On-Demand-Abruf. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann.
 
 Der generierte Importplan liegt unter [`Modelle/dist/openwebui-registration-plan.json`](Modelle/dist/openwebui-registration-plan.json). Die Datei [`Modelle/dist/openwebui-model-params-summary.json`](Modelle/dist/openwebui-model-params-summary.json) listet Parameter, Toolprofile und Knowledge-Dateien je Modell zur schnellen Kontrolle.
 
@@ -286,7 +287,7 @@ Der generierte Importplan liegt unter [`Modelle/dist/openwebui-registration-plan
 
 Zusätzlich zu den Problemfallmodellen gibt es mehrere Querschnittsmodelle:
 
-- `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme; nutzt das Basismodell `coder` mit allen importierbaren Tools und Standardfiltern.
+- `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme; nutzt das konfigurierte OpenWebUI-Basismodell mit allen importierbaren Tools und Standardfiltern.
 - `Internetwissen`: offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung ohne Live-Websuche.
 - `PromptForge`: erzeugt vollständige Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows.
 - `n8n Workflow Architect`: erstellt oder prüft importierbare n8n-Workflow-JSONs.
@@ -295,7 +296,7 @@ Zusätzlich zu den Problemfallmodellen gibt es mehrere Querschnittsmodelle:
 
 Das Modell `Präsentationserstellung` ist an den Custom GPT `Präsentationscreator` angeglichen. Standardziel ist eine hochwertige, animierte und interaktive Browser-Keynote als `präsentation.html`; PDF/PPTX sind Fallbacks oder explizite Sonderwünsche.
 
-Alle Chat-Modelle aktivieren `meta.capabilities.vision` und enthalten eine Vision-/UI-Bildanalyse-Sektion. Vision wird genutzt, wenn die Zielinstanz Bildinhalte wirklich an Mistral weitergibt; andernfalls greifen OCR-/Datei-/Beschreibungspfad und lokale Offline-Tools.
+Alle Chat-Modelle aktivieren `meta.capabilities.vision` und enthalten eine Vision-/UI-Bildanalyse-Sektion. Vision wird genutzt, wenn die Zielinstanz Bildinhalte wirklich an das ausgewählte Basismodell weitergibt; andernfalls greifen OCR-/Datei-/Beschreibungspfad und lokale Offline-Tools.
 
 ## Volume- und Dateimount-Nutzung
 
@@ -409,4 +410,4 @@ Drittanbieterquellen, geprüfte OpenWebUI-Referenzen und übernommene Tool-Expor
 
 ## Status
 
-Der letzte lokale Readiness-Stand steht in [`CODEX_PROJECT_READINESS.md`](CODEX_PROJECT_READINESS.md). Für öffentliche GitHub-Einstellungen, Social Preview und Security-Settings gibt es eine konkrete Checkliste unter [`docs/MAINTAINER_CHECKLIST.md`](docs/MAINTAINER_CHECKLIST.md).
+Der aktuelle technische Stand wird über `python scripts/verify_openwebui_workspace.py` geprüft. Für öffentliche GitHub-Einstellungen, Social Preview und Security-Settings gibt es eine konkrete Checkliste unter [`docs/MAINTAINER_CHECKLIST.md`](docs/MAINTAINER_CHECKLIST.md).

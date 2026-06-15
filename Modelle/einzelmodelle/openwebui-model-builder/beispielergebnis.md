@@ -9,10 +9,11 @@ Erstelle ein OpenWebUI-Aufgabenmodell für interne Support-Ticket-Vorbereitung. 
 ```text
 support-ticket-vorbereitung-lite/
 ├─ model.json
-├─ systemprompt.md
 ├─ mainprompt.md
 ├─ fachwissen.md
-├─ beispielergebnis.md
+├─ Golden_Example.md
+├─ beispiele/
+│  └─ ticket-rueckfrage.md
 └─ README.md
 ```
 
@@ -60,21 +61,26 @@ support-ticket-vorbereitung-lite/
           "name": "ticket"
         }
       ],
-      "requiredKnowledgeFiles": [
+      "requiredFileContextFiles": [
         "mainprompt.md",
         "fachwissen.md",
-        "beispielergebnis.md"
+        "Golden_Example.md"
+      ],
+      "exampleKnowledgeFiles": [
+        "beispiele/ticket-rueckfrage.md"
       ],
       "primaryToolIds": [],
       "skillIds": ["knowledge-artifact-packaging"],
       "recommendedSkillIds": ["knowledge-artifact-packaging"]
     },
     "params": {
-      "system": "Formatting re-enabled\n\n# Systemprompt\n\nDu bist das OpenWebUI-Modell `support-ticket-vorbereitung-lite`. Lade vor jeder Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`, falls vorhanden. Wende daraus Rolle, Ausgabeformat, Qualitätsregeln und Sicherheitsgrenzen an. Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen. Wenn Knowledge fehlt, arbeite nur mit dem sichtbaren Kontext und benenne die Lücke knapp.",
-      "temperature": 0.25,
-      "top_p": 0.9,
+      "system": "Du bist das Workbench-Modell `support-ticket-vorbereitung-lite`. Nutze bei jeder Antwort den geschützten Pflichtkontext aus `mainprompt.md`, `fachwissen.md` und `Golden_Example.md`. Verwende Dateien aus `beispiele/` nur als optionales Knowledge/RAG-Material. Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen.",
+      "temperature": 0.7,
+      "top_p": 0.95,
       "stop": [],
-      "function_calling": "native"
+      "function_calling": "native",
+      "reasoning_effort": "high",
+      "parallel_tool_calls": true
     },
     "access_grants": [
       {
@@ -86,18 +92,6 @@ support-ticket-vorbereitung-lite/
     "is_active": true
   }
 ]
-```
-
-## systemprompt.md
-
-```md
-Formatting re-enabled
-
-# Systemprompt
-
-Du bist das OpenWebUI-Modell `support-ticket-vorbereitung-lite`. Lade vor jeder Antwort `mainprompt.md`, `fachwissen.md`, `beispielergebnis.md` und Dateien unter `beispiele/`, falls vorhanden. Wende daraus Rolle, Ausgabeformat, Qualitätsregeln und Sicherheitsgrenzen an.
-
-Erfinde keine Ticketdaten, Kundennamen, Systeme, SLAs, Ursachen oder Lösungen. Wenn Knowledge fehlt, arbeite nur mit dem sichtbaren Kontext und benenne die Lücke knapp.
 ```
 
 ## mainprompt.md
@@ -146,7 +140,8 @@ Dieses Modell unterstützt Supportteams bei der strukturierten Vorbereitung von 
 ## Import-Checkliste
 
 - `python -m json.tool model.json` muss gültig sein.
-- `systemprompt.md`, `mainprompt.md`, `fachwissen.md` und `beispielergebnis.md` müssen als Knowledge verfügbar sein.
+- `mainprompt.md`, `fachwissen.md` und `Golden_Example.md` müssen als OpenWebUI-Files hochgeladen und über den Pflichtkontext-Filter injiziert werden.
+- Dateien unter `beispiele/` bleiben optionales Knowledge/RAG-Material.
 - `web_search` bleibt aus, wenn der Betrieb offline sein soll.
 - `function_calling` steht auf `native`, sofern die Zielinstanz dies unterstützt.
 - Tool-, Skill- und Knowledge-IDs werden erst nach Abgleich mit der Zielinstanz ergänzt.

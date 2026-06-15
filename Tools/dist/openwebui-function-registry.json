@@ -9,7 +9,8 @@
   "filter_import_order": [
     "auto_tool_selector",
     "context_compressor_filter",
-    "markdown_normalizer"
+    "markdown_normalizer",
+    "workbench_required_file_context_filter"
   ],
   "functions": [
     {
@@ -30,7 +31,7 @@
       "path": "Tools/openwebui_ext/filters/context_compressor_filter.py",
       "purpose": "Counts chat-context tokens before model calls, normalizes zero output-token requests and keeps oversized prompts inside a safe context budget.",
       "function_type": "filter",
-      "sha256": "6809267c3dd668a2fce9120c8fb39e44abfb75894c73067a834d4e97646cd536",
+      "sha256": "9d2ec08f3f4417541f0928960d1ae502644979d15d37e4754de94788f6e375fe",
       "importable": true,
       "hooks": [
         "inlet"
@@ -46,6 +47,18 @@
       "importable": true,
       "hooks": [
         "outlet"
+      ]
+    },
+    {
+      "id": "workbench_required_file_context_filter",
+      "name": "Workbench Required File Context Filter",
+      "path": "Tools/openwebui_ext/filters/workbench_required_file_context_filter.py",
+      "purpose": "Injects Workbench model required files as protected full-context system block and attaches their OpenWebUI file IDs to every request.",
+      "function_type": "filter",
+      "sha256": "66630e45f91966d64a7d15054984751708505ddeac79f6d20202ffc99d1a6adb",
+      "importable": true,
+      "hooks": [
+        "inlet"
       ]
     }
   ]
