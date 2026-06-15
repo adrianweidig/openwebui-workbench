@@ -9,7 +9,7 @@ All notable changes to this repository are collected here. Published handover st
 - Switched Workbench model imports to real required file context for `mainprompt.md`, `fachwissen.md`, and `Golden_Example.<ext>`.
 - Extended the Workbench dashboard with selectable base model, bulk actions, and detailed live logs for long-running actions.
 - Hardened the context compressor and added the required-file filter to protect the mandatory full-context system block from compression.
-- Added public infrastructure marker checks and removed local torvs-specific handover templates.
+- Added public infrastructure marker checks and removed local domain-specific handover templates.
 - Removed historical root snapshot notes; current status is documented through the verify runner, release notes, and maintainer checklist.
 - Validated the offline image `openwebui-workbench-dashboard:seu` as a local Portainer import tar.
 - Documented and hardened `internetwissen` as an integrated offline research and explanation model.
