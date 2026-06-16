@@ -87,6 +87,10 @@ TEXT_KNOWLEDGE_SUFFIXES = {
     ".yaml",
     ".yml",
 }
+
+
+def log_progress(message: str) -> None:
+    print(f"[import] {message}", flush=True)
 PUBLIC_READ_GRANT = {"principal_type": "user", "principal_id": "*", "permission": "read"}
 
 
@@ -1333,8 +1337,11 @@ def import_tools(client: OpenWebUIClient, public: bool, include_optional_network
     created = updated = 0
     indexed = read_json(TOOLS_INDEX)
     by_id = {entry["id"]: entry for entry in indexed.get("tools", [])}
-    for record in load_tool_records(include_optional_network_tools):
+    records = load_tool_records(include_optional_network_tools)
+    log_progress(f"Tools importieren: {len(records)} Eintrag(e)")
+    for index, record in enumerate(records, start=1):
         tool_id = record["id"]
+        log_progress(f"Tool {index}/{len(records)}: {tool_id}")
         path = ROOT / record["path"]
         indexed_record = by_id.get(tool_id, {})
         meta = parse_python_metadata(path)
@@ -1376,7 +1383,11 @@ def update_tool_valves(client: OpenWebUIClient, tool_id: str, valves: dict[str, 
 
 def import_tool_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> ImportResult:
     updated = skipped = 0
-    for tool_id, valves in configured_tool_valves(runtime).items():
+    valves_by_tool = configured_tool_valves(runtime)
+    if valves_by_tool:
+        log_progress(f"Tool-Valves aktualisieren: {len(valves_by_tool)} Eintrag(e)")
+    for tool_id, valves in valves_by_tool.items():
+        log_progress(f"Tool-Valves: {tool_id}")
         if not valves:
             skipped += 1
             continue
@@ -1407,7 +1418,11 @@ def update_function_valves(client: OpenWebUIClient, function_id: str, valves: di
 
 def import_function_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> ImportResult:
     updated = skipped = 0
-    for function_id, valves in configured_function_valves(runtime).items():
+    valves_by_function = configured_function_valves(runtime)
+    if valves_by_function:
+        log_progress(f"Function-Valves aktualisieren: {len(valves_by_function)} Eintrag(e)")
+    for function_id, valves in valves_by_function.items():
+        log_progress(f"Function-Valves: {function_id}")
         if not valves:
             skipped += 1
             continue
@@ -1427,7 +1442,10 @@ def import_function_valves(client: OpenWebUIClient, runtime: dict[str, Any]) -> 
 
 def import_functions(client: OpenWebUIClient) -> ImportResult:
     created = updated = 0
-    for record in load_function_records():
+    records = load_function_records()
+    log_progress(f"Functions/Filter importieren: {len(records)} Eintrag(e)")
+    for index, record in enumerate(records, start=1):
+        log_progress(f"Function/Filter {index}/{len(records)}: {record['id']}")
         path = ROOT / record["path"]
         payload = {
             "id": record["id"],
@@ -1449,8 +1467,11 @@ def import_functions(client: OpenWebUIClient) -> ImportResult:
 def import_skills(client: OpenWebUIClient, public: bool) -> ImportResult:
     created = updated = skipped = 0
     skipped = 1 if (SKILLS_DIR / "README.md").exists() else 0
-    for path in skill_files():
+    paths = skill_files()
+    log_progress(f"Skills importieren: {len(paths)} Eintrag(e)")
+    for index, path in enumerate(paths, start=1):
         skill_id, name, description = parse_skill(path)
+        log_progress(f"Skill {index}/{len(paths)}: {skill_id}")
         payload = {
             "id": skill_id,
             "name": name,
@@ -1495,8 +1516,11 @@ def get_prompt_by_command(client: OpenWebUIClient, command: str) -> dict[str, An
 
 def import_prompts(client: OpenWebUIClient, public: bool) -> ImportResult:
     created = updated = 0
-    for record in load_prompt_records():
+    records = load_prompt_records()
+    log_progress(f"Promptvorlagen importieren: {len(records)} Eintrag(e)")
+    for index, record in enumerate(records, start=1):
         command = normalize_prompt_command(str(record.get("command") or record.get("id") or ""), str(record.get("id") or "workbench-prompt"))
+        log_progress(f"Promptvorlage {index}/{len(records)}: /{command}")
         record = {**record, "command": command}
         payload = prompt_form(record, public)
         existing = get_prompt_by_command(client, command)
@@ -1607,31 +1631,39 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
     fingerprint = knowledge_fingerprint(files)
     description = knowledge_description(model_id, files, fingerprint)
     payload = {"name": name, "description": description, "access_grants": public_read_grants(public)}
+    log_progress(f"Knowledge prüfen: {name} ({len(files)} Datei(en))")
     knowledge = find_knowledge_by_name(client, name)
     if knowledge:
         knowledge_id = knowledge["id"]
+        log_progress(f"Knowledge aktualisieren: {name}")
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/update", payload)
         if public:
             update_knowledge_access(client, knowledge_id, public=True)
         if knowledge_has_fingerprint(knowledge, fingerprint) and knowledge_file_count(client, knowledge_id) == len(files):
+            log_progress(f"Knowledge unverändert: {name}")
             return KnowledgeUpsertResult({"id": knowledge_id, "name": name}, changed=False)
+        log_progress(f"Knowledge zurücksetzen: {name}")
         client.request("POST", f"/api/v1/knowledge/{knowledge_id}/reset")
     else:
+        log_progress(f"Knowledge erstellen: {name}")
         created = client.request("POST", "/api/v1/knowledge/create", payload)
         knowledge_id = created["id"]
         if public:
             update_knowledge_access(client, knowledge_id, public=True)
     file_refs = []
-    for file_path in files:
+    for index, file_path in enumerate(files, start=1):
+        log_progress(f"Knowledge-Datei {index}/{len(files)} hochladen: {model_id}/{file_path.name}")
         uploaded = client.upload_file(file_path, process=True)
         file_refs.append({"file_id": uploaded["id"]})
     add_response: Any | None = None
     try:
+        log_progress(f"Knowledge-Dateien verknüpfen: {name} ({len(file_refs)} Datei(en))")
         add_response = client.request("POST", f"/api/v1/knowledge/{knowledge_id}/files/batch/add", file_refs)
     except RuntimeError as exc:
         if not is_not_found_error(exc):
             raise
         for file_ref in file_refs:
+            log_progress(f"Knowledge-Datei einzeln verknüpfen: {name}/{file_ref['file_id']}")
             client.request("POST", f"/api/v1/knowledge/{knowledge_id}/file/add", file_ref)
     result = client.request("GET", f"/api/v1/knowledge/{knowledge_id}")
     files_response = result.get("files") if isinstance(result, dict) else None
@@ -1651,6 +1683,7 @@ def upsert_knowledge_with_files(client: OpenWebUIClient, model_id: str, model_na
         raise RuntimeError(
             f"Knowledge import linked only {linked_count}/{len(files)} files for {name}.{warning_text}"
         )
+    log_progress(f"Knowledge fertig: {name} ({linked_count}/{len(files)} Datei(en) verknüpft)")
     return KnowledgeUpsertResult({"id": knowledge_id, "name": name}, changed=True)
 
 
@@ -1677,6 +1710,7 @@ def upload_required_file_context(
         sha256 = str(entry.get("sha256") or "")
         path = model_dir / rel_path
         if not should_upload:
+            log_progress(f"Pflichtdatei nicht hochgeladen: {model_id}/{rel_path}")
             uploaded_files.append(
                 {
                     "role": entry.get("role"),
@@ -1692,16 +1726,19 @@ def upload_required_file_context(
         if cached and cached.get("fileId"):
             file_id = str(cached["fileId"])
             status = str(cached.get("status") or "cached")
+            log_progress(f"Pflichtdatei aus Cache: {model_id}/{rel_path}")
             if should_poll:
                 status = client.wait_for_file_processing(file_id, timeout_seconds=timeout_seconds)
             reused += 1
         else:
+            log_progress(f"Pflichtdatei hochladen: {model_id}/{rel_path}")
             response = client.upload_file(path, process=True)
             file_id = str(response.get("id") or response.get("file_id") or "")
             if not file_id:
                 raise RuntimeError(f"OpenWebUI did not return a file id for required file {path.relative_to(ROOT)}")
             status = client.wait_for_file_processing(file_id, timeout_seconds=timeout_seconds) if should_poll else "uploaded"
             uploaded += 1
+        log_progress(f"Pflichtdatei bereit: {model_id}/{rel_path} ({status})")
         record = {
             "role": entry.get("role"),
             "path": rel_path,
@@ -1722,12 +1759,15 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
     required_files_uploaded = 0
     required_files_reused = 0
     file_context_cache = load_required_file_context_cache()
-    for model_file in sorted(SINGLE_MODELS.glob("*/model.json")):
+    model_files = sorted(SINGLE_MODELS.glob("*/model.json"))
+    log_progress(f"Modelle vorbereiten: {len(model_files)} Modell(e)")
+    for index, model_file in enumerate(model_files, start=1):
         data = read_json(model_file)
         if not isinstance(data, list) or not data:
             continue
         model = data[0]
         model_id = str(model.get("id"))
+        log_progress(f"Modell {index}/{len(model_files)} vorbereiten: {model_id}")
         meta = model.setdefault("meta", {})
         required_file_context_files(model_file.parent, model)
         uploaded_files, uploaded_count, reused_count = upload_required_file_context(
@@ -1739,6 +1779,9 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
         )
         required_files_uploaded += uploaded_count
         required_files_reused += reused_count
+        log_progress(
+            f"Pflichtdateien für {model_id}: {uploaded_count} hochgeladen, {reused_count} wiederverwendet"
+        )
         settings = runtime.get("model_file_context", {}) if isinstance(runtime.get("model_file_context"), dict) else {}
         if uploaded_files and as_bool(settings.get("attach_uploaded_files_to_model_meta"), True):
             workbench_file_context = meta.setdefault("workbenchFileContext", {})
@@ -1746,6 +1789,7 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
                 workbench_file_context["uploadedFiles"] = uploaded_files
         if upload_knowledge:
             prompt_files = model_knowledge_files(model_file.parent)
+            log_progress(f"Knowledge für {model_id}: {len(prompt_files)} Datei(en)")
             knowledge_result = upsert_knowledge_with_files(
                 client,
                 model_id,
@@ -1763,6 +1807,7 @@ def load_models_with_knowledge(client: OpenWebUIClient, public: bool, upload_kno
             meta["knowledge"].append(knowledge)
         else:
             model_knowledge_files(model_file.parent)
+            log_progress(f"Knowledge für {model_id}: übersprungen")
         if public:
             model["access_grants"] = public_read_grants(public)
         models.append(model)
@@ -1781,17 +1826,22 @@ def import_models(client: OpenWebUIClient, public: bool, upload_knowledge: bool,
     models = loaded.models
     if not models:
         return ImportResult("models", skipped=1), loaded
-    for model in models:
+    log_progress(f"Modelle in OpenWebUI importieren: {len(models)} Modell(e)")
+    for index, model in enumerate(models, start=1):
+        model_id = str(model.get("id") or "<unknown>")
+        log_progress(f"OpenWebUI-Modellimport {index}/{len(models)}: {model_id}")
         response = client.request("POST", "/api/v1/models/import", {"models": [model]})
         if response is not True:
-            model_id = str(model.get("id") or "<unknown>")
             raise RuntimeError(
                 f"Unexpected OpenWebUI model import response for {model_id}: {type(response).__name__}"
             )
+    log_progress("Importierte Modelle verifizieren")
     verify_imported_models(client, models, expect_knowledge=upload_knowledge)
     if public:
-        for model in models:
+        log_progress(f"Modellzugriffe aktualisieren: {len(models)} Modell(e)")
+        for index, model in enumerate(models, start=1):
             model_id = str(model.get("id"))
+            log_progress(f"Modellzugriff {index}/{len(models)}: {model_id}")
             update_model_access(client, model_id, str(model.get("name") or model_id), public=True)
     return ImportResult("models", updated=len(models)), loaded
 
@@ -1923,16 +1973,28 @@ def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> in
     prompt_records = load_prompt_records()
     skills = skill_files()
     model_count = len(sorted(SINGLE_MODELS.glob("*/model.json")))
+    log_progress(
+        "Workspace-Import startet: "
+        f"{len(tool_records)} Tools, {len(function_records)} Functions/Filter, "
+        f"{len(skills)} Skills, {len(prompt_records)} Promptvorlagen, {model_count} Modelle"
+    )
+    log_progress("Phase 1/7: Tools")
     tool_import = import_tools(
         client,
         public=bool(runtime["public_read"]),
         include_optional_network_tools=bool(runtime["include_optional_network_tools"]),
     )
+    log_progress("Phase 2/7: Tool-Valves")
     tool_valves = import_tool_valves(client, runtime)
+    log_progress("Phase 3/7: Functions/Filter")
     function_import = import_functions(client)
+    log_progress("Phase 4/7: Function-Valves")
     function_valves = import_function_valves(client, runtime)
+    log_progress("Phase 5/7: Skills")
     skill_import = import_skills(client, public=bool(runtime["public_read"]))
+    log_progress("Phase 6/7: Promptvorlagen")
     prompt_import = import_prompts(client, public=bool(runtime["public_read"]))
+    log_progress("Phase 7/7: Modelle, Pflichtdateien und Knowledge")
     model_import, model_load = import_models(
         client,
         public=bool(runtime["public_read"]),
