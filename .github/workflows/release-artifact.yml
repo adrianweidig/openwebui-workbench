@@ -44,37 +44,74 @@ jobs:
           git archive --format=zip --prefix="${root_dir}/" --output="release-artifacts/${archive_name}" "${GITHUB_SHA}"
           echo "artifact_name=${root_dir}" >> "$GITHUB_OUTPUT"
 
+          release_date="$(date -u '+%Y-%m-%d')"
+          release_time="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          release_title="${branch}"
+          if [[ "${branch}" =~ ^v([0-9]{4}\.[0-9]{2}\.[0-9]{2})-(.+)$ ]]; then
+            release_title="v${BASH_REMATCH[1]} ${BASH_REMATCH[2]//-/ }"
+          fi
+          echo "release_title=${release_title}" >> "$GITHUB_OUTPUT"
+
+          previous_tag=""
+          if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+            previous_tag="$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || true)"
+          else
+            previous_tag="$(git describe --tags --abbrev=0 "${GITHUB_SHA}" 2>/dev/null || true)"
+          fi
+          if [ -n "${previous_tag}" ]; then
+            log_args=("${previous_tag}..${GITHUB_SHA}")
+            changes_intro="Änderungen seit \`${previous_tag}\`:"
+          else
+            log_args=("-n" "20" "${GITHUB_SHA}")
+            changes_intro="Kein vorheriger Tag gefunden. Letzte relevante Commits:"
+          fi
+          mapfile -t commit_lines < <(git log --pretty=format:'- `%h` %s' "${log_args[@]}")
+
           {
-            echo "# OpenWebUI Workbench Snapshot"
+            echo "# Release Notes: ${branch}"
             echo
-            echo "| Field | Value |"
+            echo "Datum: ${release_date}"
+            echo "Zweck: Nachvollziehbarer Workbench-Release-Snapshot mit fachlichen Änderungen, Validierungshinweisen und Handover-Artefakt."
+            echo
+            echo "## Was geändert wurde"
+            echo
+            echo "${changes_intro}"
+            echo
+            if [ "${#commit_lines[@]}" -gt 0 ]; then
+              printf '%s\n' "${commit_lines[@]}"
+            else
+              echo "- Keine neuen Commits im berechneten Bereich."
+            fi
+            echo
+            echo "## Nutzen für Anwender"
+            echo
+            echo "- Der ZIP-Snapshot bildet exakt den angegebenen Commit ab und enthält keine Git-Metadaten."
+            echo "- Release Notes nennen die enthaltenen Commits statt nur technische Workflow-Felder."
+            echo "- Prüfsummen liegen als `SHA256SUMS.txt` neben Archiv und Notes."
+            echo
+            echo "## Technische Metadaten"
+            echo
+            echo "| Feld | Wert |"
             echo "|---|---|"
             echo "| Repository | ${GITHUB_REPOSITORY} |"
-            echo "| Branch | ${branch} |"
-            echo "| Branch slug | ${safe_branch} |"
+            echo "| Ref | ${branch} |"
+            echo "| Ref-Slug | ${safe_branch} |"
             echo "| Commit SHA | ${GITHUB_SHA} |"
             echo "| Short SHA | ${short_sha} |"
             echo "| Event | ${GITHUB_EVENT_NAME} |"
             echo "| Actor | ${GITHUB_ACTOR} |"
-            echo "| UTC time | $(date -u '+%Y-%m-%dT%H:%M:%SZ') |"
+            echo "| UTC-Zeit | ${release_time} |"
             echo "| Archive | ${archive_name} |"
             echo
-            echo "## Changes"
+            echo "## Validierung"
             echo
-            if git describe --tags --abbrev=0 >/tmp/previous-tag 2>/dev/null; then
-              previous_tag="$(cat /tmp/previous-tag)"
-              echo "Changes since ${previous_tag}:"
-              echo
-              git log --oneline --decorate "${previous_tag}..${GITHUB_SHA}" | sed 's/^/- /'
-            else
-              echo "No previous tag was found. Recent commits:"
-              echo
-              git log --oneline --decorate -n 20 "${GITHUB_SHA}" | sed 's/^/- /'
-            fi
+            echo "- Archiv-Erstellung per \`git archive\` aus \`${GITHUB_SHA}\`."
+            echo "- SHA-256-Prüfsummen werden für Archiv und Release Notes erzeugt."
+            echo "- CI, CodeQL und Docker/GHCR laufen als separate Workflows für denselben Ref."
             echo
             echo "## Docker Image"
             echo
-            echo "The Workbench dashboard image is built by the dedicated Docker workflow when its path filters match. Check that workflow before documenting GHCR image availability."
+            echo "Das Workbench-Dashboard-Image wird durch den separaten Docker-Workflow gebaut, wenn dessen Pfadfilter greifen. GHCR-Verfügbarkeit sollte am konkreten Docker-Workflow-Lauf geprüft werden, bevor sie dokumentiert oder zugesichert wird."
           } > release-artifacts/RELEASE_NOTES.md
 
           sha256sum "release-artifacts/${archive_name}" "release-artifacts/RELEASE_NOTES.md" > release-artifacts/SHA256SUMS.txt
@@ -91,11 +128,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ github.ref_name }}
+          RELEASE_TITLE: ${{ steps.package.outputs.release_title }}
         shell: bash
         run: |
           set -euo pipefail
           gh release create "${TAG_NAME}" \
             release-artifacts/* \
             --repo "${GITHUB_REPOSITORY}" \
-            --title "${TAG_NAME}" \
+            --title "${RELEASE_TITLE}" \
             --notes-file release-artifacts/RELEASE_NOTES.md
