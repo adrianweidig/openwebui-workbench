@@ -20,10 +20,12 @@ EXT_DIR = ROOT / "Tools" / "openwebui_ext"
 TOOLS_DIR = EXT_DIR / "tools"
 FILTERS_DIR = EXT_DIR / "filters"
 SKILLS_DIR = EXT_DIR / "skills"
+PROMPTS_DIR = EXT_DIR / "prompts"
 TOOLS_DIST = ROOT / "Tools" / "dist"
 TOOL_IMPORT = TOOLS_DIST / "openwebui-tools-import.json"
 OFFLINE_TOOL_IMPORT = TOOLS_DIST / "openwebui-tools-offline-import.json"
 FUNCTION_IMPORT = TOOLS_DIST / "openwebui-functions-import.json"
+PROMPT_IMPORT = TOOLS_DIST / "openwebui-prompts-import.json"
 
 RISK_PATTERNS = {
     "os.system": re.compile(r"\bos\.system\s*\("),
@@ -198,6 +200,21 @@ def check_gui_import_bundle(path: Path, expected_kind: str) -> List[str]:
         if not isinstance(item, dict):
             issues.append(f"Eintrag {index} ist kein Objekt")
             continue
+        if expected_kind == "prompt":
+            command = item.get("command")
+            if not isinstance(command, str) or not re.fullmatch(r"[a-z0-9_-]+", command):
+                issues.append(f"Prompt-Eintrag {index} hat keinen gültigen command")
+            elif command in ids:
+                issues.append(f"Command doppelt im Prompt-Importbundle: {command}")
+            else:
+                ids.append(command)
+            if not isinstance(item.get("name"), str) or not item["name"].strip():
+                issues.append(f"Prompt-Eintrag {command or index} hat keinen Namen")
+            if not isinstance(item.get("content"), str) or len(item["content"].strip()) < 40:
+                issues.append(f"Prompt-Eintrag {command or index} enthält keinen ausreichenden Inhalt")
+            if not isinstance(item.get("meta"), dict):
+                issues.append(f"Prompt-Eintrag {command or index} hat kein meta-Objekt")
+            continue
         tool_id = item.get("id")
         if not isinstance(tool_id, str) or not tool_id.isidentifier():
             issues.append(f"Eintrag {index} hat keine OpenWebUI-kompatible id")
@@ -297,10 +314,27 @@ def check_skill(path: Path) -> List[str]:
     return issues
 
 
+def check_prompt(path: Path) -> List[str]:
+    issues: List[str] = []
+    text = path.read_text(encoding="utf-8")
+    meta, body = parse_frontmatter(text)
+    command = meta.get("command", "")
+    if not command or not re.fullmatch(r"[a-z0-9_-]+", command):
+        issues.append("Frontmatter `command` fehlt oder ist nicht OpenWebUI-kompatibel")
+    if not meta.get("name"):
+        issues.append("Frontmatter `name` fehlt")
+    if not meta.get("description"):
+        issues.append("Frontmatter `description` fehlt")
+    if len(body.strip()) < 40:
+        issues.append("Prompt-Inhalt ist zu kurz")
+    return issues
+
+
 def main() -> int:
     tool_files = sorted(TOOLS_DIR.glob("*.py"))
     filter_files = sorted(FILTERS_DIR.glob("*.py")) if FILTERS_DIR.exists() else []
     skill_files = sorted(SKILLS_DIR.glob("*.md"))
+    prompt_files = sorted(PROMPTS_DIR.glob("*.md")) if PROMPTS_DIR.exists() else []
     all_issues: Dict[str, List[str]] = {}
 
     for path in tool_files:
@@ -320,7 +354,14 @@ def main() -> int:
         if issues:
             all_issues[str(path.relative_to(ROOT))] = issues
 
-    for bundle, kind in [(TOOL_IMPORT, "tool"), (OFFLINE_TOOL_IMPORT, "tool"), (FUNCTION_IMPORT, "function")]:
+    for path in prompt_files:
+        if path.name.upper() == "README.MD":
+            continue
+        issues = check_prompt(path)
+        if issues:
+            all_issues[str(path.relative_to(ROOT))] = issues
+
+    for bundle, kind in [(TOOL_IMPORT, "tool"), (OFFLINE_TOOL_IMPORT, "tool"), (FUNCTION_IMPORT, "function"), (PROMPT_IMPORT, "prompt")]:
         issues = check_gui_import_bundle(bundle, kind)
         if issues:
             all_issues[str(bundle.relative_to(ROOT))] = issues
@@ -330,6 +371,7 @@ def main() -> int:
     print(f"- Tools geprüft: {len(tool_files)}")
     print(f"- Filter geprüft: {len(filter_files)}")
     print(f"- Skills geprüft: {len([p for p in skill_files if p.name.upper() != 'README.MD'])}")
+    print(f"- Promptvorlagen geprüft: {len([p for p in prompt_files if p.name.upper() != 'README.MD'])}")
     print(f"- Dateien mit Befunden: {len(all_issues)}")
     print()
     if all_issues:
@@ -340,7 +382,7 @@ def main() -> int:
                 print(f"- {issue}")
         return 1
     print("## Ergebnis")
-    print("Alle geprüften OpenWebUI-Tools, Filter und Skills sind syntaktisch und strukturell valide.")
+    print("Alle geprüften OpenWebUI-Tools, Filter, Skills und Promptvorlagen sind syntaktisch und strukturell valide.")
     return 0
 
 

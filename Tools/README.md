@@ -5,10 +5,10 @@ Dieser Ordner enthält die operativ relevanten Tool-Artefakte.
 ## Unterstruktur
 
 - `jupyter/`: Offline-Jupyter-Tool für OpenWebUI
-- `openwebui_ext/`: zusätzliche direkt importierbare OpenWebUI-Tools, Skills, Doku und Tests
-- `dist/`: portables Offline-Paket für Tools und Skills
+- `openwebui_ext/`: zusätzliche direkt importierbare OpenWebUI-Tools, Functions/Filter, Skills, Promptvorlagen, Doku und Tests
+- `dist/`: portables Offline-Paket für Tools, Functions/Filter, Skills und Promptvorlagen
 - `index.json`: Tool-Index für die lokale Übersicht
-- `import_openwebui_workspace.py`: API-Importer für Tools, Functions/Filter, Skills, Knowledge und Modelle
+- `import_openwebui_workspace.py`: API-Importer für Tools, Functions/Filter, Skills, Promptvorlagen, Knowledge und Modelle
 
 ## Nutzung
 
@@ -51,8 +51,8 @@ notepad scripts/openwebui_workspace_config.yaml
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips --import-openwebui --config scripts/openwebui_workspace_config.yaml
 ```
 
-Die Konfigurationsdatei ist die zentrale Laufzeitquelle für den Import: `openwebui.base_url` muss von der Maschine erreichbar sein, auf der das Python-Skript läuft; `jupyter.url`, `artifacts.root`, `addons.*`, `tool_valves.*` und `function_valves.*` müssen aus Sicht des OpenWebUI-Backends sinnvoll sein, z. B. `http://jupyter:8888` oder `/app/backend/data/cache/ms-playwright`. Standardmäßig importiert der API-Importer alle importierbaren Tools aus dem Repo; `import.include_optional_network_tools: false` schränkt dies lokal auf die Offline-Default-Tools ein. Tools, Skills, modellbezogene Knowledge-Bases und Modelle werden dabei automatisch public gesetzt; Functions/Filter werden aktiv und global geschaltet.
+Die Konfigurationsdatei ist die zentrale Laufzeitquelle für den Import: `openwebui.base_url` muss von der Maschine erreichbar sein, auf der das Python-Skript läuft; `jupyter.url`, `artifacts.root`, `addons.*`, `tool_valves.*` und `function_valves.*` müssen aus Sicht des OpenWebUI-Backends sinnvoll sein, z. B. `http://jupyter:8888` oder `/app/backend/data/cache/ms-playwright`. Standardmäßig importiert der API-Importer alle importierbaren Tools aus dem Repo; `import.include_optional_network_tools: false` schränkt dies lokal auf die Offline-Default-Tools ein. Tools, Skills, Promptvorlagen, modellbezogene Knowledge-Bases und Modelle werden dabei automatisch public gesetzt; Functions/Filter werden aktiv und global geschaltet.
 
-`import_openwebui_workspace.py` bleibt als Fallback direkt ausführbar und nutzt dieselbe zentrale YAML. Es importiert Tools, setzt Tool-Valves, importiert Functions/Filter, setzt Function-/Filter-Valves, importiert Skills, lädt `mainprompt.md`, `fachwissen.md`, die modellseitig definierte Beispielergebnis-Datei und Dateien aus `beispiele/` je Modell als Knowledge hoch, importiert anschließend die Modellprofile inklusive eingebetteter Icons und erzwingt die Public-/Global-Sichtbarkeit über die OpenWebUI-API. Vor einem echten Import kann `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` die lokalen Payloads prüfen.
+`import_openwebui_workspace.py` bleibt als Fallback direkt ausführbar und nutzt dieselbe zentrale YAML. Es importiert Tools, setzt Tool-Valves, importiert Functions/Filter, setzt Function-/Filter-Valves, importiert Skills und Promptvorlagen, lädt `mainprompt.md`, `fachwissen.md`, `Golden_Example.<ext>` als echte OpenWebUI-Files hoch, importiert Dateien aus `beispiele/` je Modell als Knowledge, importiert anschließend die Modellprofile inklusive eingebetteter Icons und erzwingt die Public-/Global-Sichtbarkeit über die OpenWebUI-API. Vor einem echten Import kann `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` die lokalen Payloads prüfen.
 Tool-Updates und Tool-Valves werden zuerst über `/api/tools/...` ausgeführt und danach über `/api/v1/tools/...` versucht. Ein `We could not find what you're looking for` beim Valves-Schritt bedeutet in OpenWebUI normalerweise: Tool-ID noch nicht vorhanden, keine erkennbare `Valves`-Klasse im Tool oder eine ältere Instanz ohne diesen Endpunkt. Der Importer bricht dann nicht den gesamten Lauf ab, sondern meldet den übersprungenen Valves-Satz.
 Es wird auch in `dist/openwebui-tools-skills-offline.zip` mit ausgeliefert.

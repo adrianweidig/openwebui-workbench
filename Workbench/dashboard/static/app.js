@@ -472,7 +472,9 @@ function sourceDetailText(status) {
   return t("summary.sourceDetail", {
     models: formatNumber(workbenchModelCount(status)),
     tools: formatNumber(status.counts.tools || 0),
+    functions: formatNumber(status.counts.functions || 0),
     skills: formatNumber(status.counts.skills || 0),
+    prompts: formatNumber(status.counts.prompts || 0),
     mode,
   });
 }
@@ -522,7 +524,12 @@ function renderStatus() {
   const localModels = workbenchModelCount(status);
   setText("repo-root", displayRepoPath(status.root));
   setText("count-models", formatNumber(localModels));
-  setText("summary-source-detail", t("summary.sourceShort", { tools: formatNumber(status.counts.tools || 0), skills: formatNumber(status.counts.skills || 0) }));
+  setText("summary-source-detail", t("summary.sourceShort", {
+    tools: formatNumber(status.counts.tools || 0),
+    functions: formatNumber(status.counts.functions || 0),
+    skills: formatNumber(status.counts.skills || 0),
+    prompts: formatNumber(status.counts.prompts || 0),
+  }));
   setText("count-tools", `${formatNumber(stats.requiredExisting)}/${formatNumber(stats.requiredTotal)}`);
   setText("summary-dist-detail", artifactDetailText(stats));
   setText("count-skills", targetMainText(status));
@@ -762,6 +769,7 @@ function updateEditorWriteControls() {
   setWriteControlState("add-resource", false, reason);
   setWriteControlState("save-resource", !state.selectedResource || el("resource-editor").disabled, reason);
   setWriteControlState("delete-resource", !state.selectedResource, reason);
+  setWriteControlState("delete-openwebui-resource", !state.selectedResource, reason || (state.selectedResource ? remoteResourceDeleteDisabledReason() : ""));
   updateModelSelectionControls();
 }
 
@@ -921,7 +929,7 @@ function renderResources() {
     title.textContent = resource.name;
     const meta = document.createElement("div");
     meta.className = "row-meta";
-    meta.append(makeChip(t(`resource.kind.${resource.kind}`), resource.kind === "tool" ? "accent" : "ok"), makeChip(resource.extension), makeChip(formatBytes(resource.bytes)));
+    meta.append(makeChip(t(`resource.kind.${resource.kind}`), resourceKindTone(resource.kind)), makeChip(resource.extension), makeChip(formatBytes(resource.bytes)));
     const sub = document.createElement("span");
     sub.textContent = resource.path;
     button.append(title, meta, sub);
@@ -1004,6 +1012,12 @@ function remoteModelDeleteDisabledReason() {
   return "";
 }
 
+function remoteResourceDeleteDisabledReason() {
+  if (!state.status?.write_enabled) return t("sync.disabled.readOnly");
+  if (!state.status?.openwebui?.admin_token_configured) return t("sync.disabled.tokenMissing");
+  return "";
+}
+
 function updateModelSelectionControls() {
   const selectVisible = el("select-visible-models");
   const deleteButton = el("delete-openwebui-models");
@@ -1019,6 +1033,13 @@ function updateModelSelectionControls() {
   deleteButton.disabled = state.selectedModelIds.size === 0 || Boolean(reason);
   if (reason) deleteButton.title = reason;
   else deleteButton.removeAttribute("title");
+}
+
+function resourceKindTone(kind) {
+  if (kind === "tool") return "accent";
+  if (kind === "function") return "warn";
+  if (kind === "prompt") return "ok";
+  return "";
 }
 
 function makeChip(text, tone = "") {
@@ -1096,6 +1117,7 @@ function resetResourceEditor() {
   el("resource-preview").innerHTML = renderMarkdown("");
   el("save-resource").disabled = true;
   el("delete-resource").disabled = true;
+  el("delete-openwebui-resource").disabled = true;
   setText("resource-state", t("state.ready"));
   updateEditorWriteControls();
   syncUrlState();
@@ -1153,6 +1175,7 @@ async function selectResource(kind, resourceId) {
   updateResourcePreview();
   el("save-resource").disabled = false;
   el("delete-resource").disabled = false;
+  el("delete-openwebui-resource").disabled = false;
   setText("resource-state", t("state.loaded", { path: payload.path }));
   updateEditorWriteControls();
   syncUrlState();
@@ -1276,6 +1299,12 @@ function resourceTemplate(kind, id) {
     if (!/^[A-Za-z_]/.test(methodName)) methodName = `tool_${methodName}`;
     return `from __future__ import annotations\n\n\nclass Tools:\n    def __init__(self) -> None:\n        pass\n\n    async def ${methodName}(self, text: str) -> str:\n        \"\"\"Kurze Beschreibung der Tool-Funktion.\"\"\"\n        return text\n`;
   }
+  if (kind === "function") {
+    return `from __future__ import annotations\n\n\"\"\"\ntitle: ${id}\ndescription: Kurze Beschreibung der Filterfunktion.\ntype: filter\n\"\"\"\n\n\nclass Filter:\n    async def inlet(self, body: dict, __user__: dict | None = None) -> dict:\n        return body\n`;
+  }
+  if (kind === "prompt") {
+    return `---\ncommand: ${id}\nname: ${id}\ndescription: Kurze Beschreibung der Promptvorlage.\ntags: workbench\n---\n\n# ${id}\n\nBeschreibe hier die wiederverwendbare OpenWebUI-Promptvorlage.\n`;
+  }
   return `# ${id}\n\n## Zweck\n\nBeschreibe, wann dieser Skill genutzt werden soll.\n\n## Arbeitsweise\n\n- Prüfe zuerst die Eingaben.\n- Arbeite offline-fähig und ohne Secrets.\n- Gib konkrete, prüfbare Ergebnisse aus.\n`;
 }
 
@@ -1285,11 +1314,17 @@ async function addResource() {
   const rawKind = window.prompt(t("prompt.resourceKind"), "skill");
   if (!rawKind) return;
   const kind = rawKind.trim().toLowerCase();
-  if (!["tool", "skill"].includes(kind)) {
+  if (!["tool", "function", "skill", "prompt"].includes(kind)) {
     window.alert(t("resource.kind.invalid"));
     return;
   }
-  const id = window.prompt(t("prompt.resourceId"), kind === "tool" ? "neues_tool" : "neuer-skill");
+  const defaultIds = {
+    tool: "neues_tool",
+    function: "neuer_filter",
+    skill: "neuer-skill",
+    prompt: "neue-promptvorlage",
+  };
+  const id = window.prompt(t("prompt.resourceId"), defaultIds[kind] || "neue-ressource");
   if (!id) return;
   setText("resource-state", t("state.saving"));
   try {
@@ -1319,6 +1354,7 @@ async function deleteResource() {
     el("resource-preview").innerHTML = "";
     el("save-resource").disabled = true;
     el("delete-resource").disabled = true;
+    el("delete-openwebui-resource").disabled = true;
     setText("resource-title", t("resources.none"));
     setText("resource-description", t("resources.pick"));
     setText("resource-state", t("state.deleted"));
@@ -1326,6 +1362,37 @@ async function deleteResource() {
     updateEditorWriteControls();
   } catch (error) {
     setText("resource-state", error.message);
+  }
+}
+
+async function deleteSelectedOpenWebUIResource() {
+  const resource = state.selectedResource;
+  if (!resource) return;
+  const reason = remoteResourceDeleteDisabledReason();
+  if (reason) {
+    setText("resource-state", reason);
+    updateEditorWriteControls();
+    return;
+  }
+  if (!window.confirm(t("prompt.deleteOpenWebUIResource", { name: `${resource.kind}/${resource.id}` }))) return;
+  setText("resource-state", t("state.deleting"));
+  try {
+    const result = await api("/api/openwebui/resources/delete", {
+      method: "POST",
+      body: JSON.stringify({ kind: resource.kind, ids: [resource.id] }),
+    });
+    const failed = result.failed?.length || 0;
+    const deleted = result.deleted?.length || 0;
+    setText(
+      "resource-state",
+      failed
+        ? t("resources.deleteRemoteFailed", { deleted: formatNumber(deleted), failed: formatNumber(failed) })
+        : t("resources.deleteRemoteResult", { deleted: formatNumber(deleted) }),
+    );
+  } catch (error) {
+    setText("resource-state", error.message);
+  } finally {
+    updateEditorWriteControls();
   }
 }
 
@@ -1424,7 +1491,12 @@ async function refreshStatus() {
 async function refreshResources(keepSelection = true) {
   const payload = await api("/api/resources");
   const previous = state.selectedResource ? `${state.selectedResource.kind}:${state.selectedResource.id}` : "";
-  state.resources = [...payload.tools, ...payload.skills];
+  state.resources = [
+    ...(payload.tools || []),
+    ...(payload.functions || []),
+    ...(payload.skills || []),
+    ...(payload.prompts || []),
+  ];
   if (keepSelection && previous) {
     state.selectedResource = state.resources.find((resource) => `${resource.kind}:${resource.id}` === previous) || null;
   }
@@ -1509,6 +1581,7 @@ function wireEvents() {
   el("delete-openwebui-models").addEventListener("click", deleteSelectedOpenWebUIModels);
   el("add-resource").addEventListener("click", addResource);
   el("delete-resource").addEventListener("click", deleteResource);
+  el("delete-openwebui-resource").addEventListener("click", deleteSelectedOpenWebUIResource);
   el("save-resource").addEventListener("click", saveResource);
   document.querySelectorAll("[data-action]").forEach((button) => {
     button.addEventListener("click", () => {

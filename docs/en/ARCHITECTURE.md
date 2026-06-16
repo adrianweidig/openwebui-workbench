@@ -11,7 +11,7 @@ flowchart LR
   Briefings["Problemfälle<br/>domain briefings"] --> Builder["OpenWebUI Model Builder<br/>rules and generator workspace"]
   Builder --> Models["Modelle/einzelmodelle<br/>human-readable model packages"]
   Models --> Dist["Modelle/dist<br/>imports, ZIPs, handover"]
-  Tools["Tools/openwebui_ext<br/>tools, filters, skills"] --> ToolDist["Tools/dist<br/>OpenWebUI bundles"]
+  Tools["Tools/openwebui_ext<br/>tools, filters, skills, prompts"] --> ToolDist["Tools/dist<br/>OpenWebUI bundles"]
   Jupyter["Tools/jupyter<br/>Jupyter tool"] --> ToolDist
   Dashboard["Workbench/dashboard<br/>local repository UI"] --> Models
   Dashboard --> Tools
@@ -31,8 +31,8 @@ flowchart LR
 | `Modelle/einzelmodelle/` | Primary human-readable model store |
 | `Modelle/dist/` | Canonical handover and import artifacts |
 | `Tools/jupyter/` | Controlled Python execution through Jupyter |
-| `Tools/openwebui_ext/` | OpenWebUI tools, filters, skills, docs, and tests |
-| `Tools/dist/` | Importable tool, skill, and function bundles |
+| `Tools/openwebui_ext/` | OpenWebUI tools, filters, skills, prompt templates, docs, and tests |
+| `Tools/dist/` | Importable tool, skill, prompt, and function bundles |
 | `Workbench/dashboard/` | Local dashboard with German/English UI resources |
 | `scripts/` | Generator, validation, and example configuration scripts |
 | `Deployment/` | Offline Compose and volume templates |
@@ -42,8 +42,8 @@ flowchart LR
 
 1. Domain requirements are described in `Problemfälle/`.
 2. Model packages are maintained in `Modelle/einzelmodelle/`.
-3. Tools, filters, and skills are maintained under `Tools/openwebui_ext/`.
-4. `scripts/configure_openwebui_tool_models.py` checks and normalizes tool, filter, and model assignments.
+3. Tools, filters, skills, and prompt templates are maintained under `Tools/openwebui_ext/`.
+4. `scripts/configure_openwebui_tool_models.py` checks and normalizes tool, filter, prompt, and model assignments.
 5. The generator writes registries, import files, summaries, and ZIPs to `Modelle/dist/` and `Tools/dist/`.
 6. `Tools/import_openwebui_workspace.py` can import these artifacts into a target OpenWebUI instance with a local YAML configuration.
 

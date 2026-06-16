@@ -2,7 +2,7 @@
 
 🌐 Sprachen: [Deutsch](WORKBENCH_DASHBOARD.md) | [English](en/WORKBENCH_DASHBOARD.md)
 
-Das Workbench Dashboard macht dieses Repository zur aktiven Verwaltungsoberfläche für eine OpenWebUI-Instanz. OpenWebUI bleibt der Chat- und Runtime-Container; die Workbench läuft daneben als zweiter Container und verwaltet die Quellen, aus denen Tools, Filter, Skills, Knowledge und Modellprofile erzeugt und synchronisiert werden.
+Das Workbench Dashboard macht dieses Repository zur aktiven Verwaltungsoberfläche für eine OpenWebUI-Instanz. OpenWebUI bleibt der Chat- und Runtime-Container; die Workbench läuft daneben als zweiter Container und verwaltet die Quellen, aus denen Tools, Functions/Filter, Skills, Promptvorlagen, Knowledge und Modellprofile erzeugt und synchronisiert werden.
 
 ## Zielbild
 
@@ -24,7 +24,9 @@ Die bearbeitbare Quelle bleibt das Repository:
 - modellseitig definierte Beispielergebnis-Dateien wie `beispielergebnis.md`, `beispielergebnis.html` oder `beispielergebnis.json`
 - freigegebene Beispiele unter `Modelle/einzelmodelle/<modell>/beispiele/`
 - `Tools/openwebui_ext/tools/*.py`
+- `Tools/openwebui_ext/filters/*.py`
 - `Tools/openwebui_ext/skills/*.md`
+- `Tools/openwebui_ext/prompts/*.md`
 - `Tools/dist/`
 - `Modelle/dist/`
 
@@ -89,10 +91,10 @@ Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwend
 1. Modell im Dashboard auswählen.
 2. `systemprompt.md`, `mainprompt.md`, `fachwissen.md` oder Beispiele direkt im Markdown-Editor ändern und im Viewer prüfen.
 3. Datei speichern.
-4. Optional Tools unter `Tools/openwebui_ext/tools/*.py` oder Skills unter `Tools/openwebui_ext/skills/*.md` im Dashboard bearbeiten. Python-Tools werden in der Vorschau mit Syntax-Highlighting angezeigt.
+4. Optional Tools, Functions/Filter, Skills oder Promptvorlagen im Ressourcenbereich bearbeiten. Lokale Dateien können dort entfernt werden; mit Admin-Token können ausgewählte Ressourcen zusätzlich aus OpenWebUI gelöscht werden.
 5. `Artefakte neu erzeugen` ausführen.
 6. `Import prüfen` ausführen.
-7. Mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` `Zu OpenWebUI synchronisieren` ausführen.
+7. Im Sync-Bereich bei Bedarf `Basismodelle laden` nutzen, das gewünschte OpenWebUI-Basismodell auswählen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` `Zu OpenWebUI synchronisieren` ausführen. Dieser Sync importiert alle Workbench-Modelle sowie Tools, Functions/Filter, Skills, Promptvorlagen, Pflichtdateien und Knowledge.
 8. `Modellstatus vergleichen` ausführen, um die verwalteten Modellfelder der Workbench mit OpenWebUI zu vergleichen.
 9. `OpenWebUI-Snapshot aktualisieren` ausführen, wenn OpenWebUI-only-Modelle in der Workbench sichtbar werden sollen.
 

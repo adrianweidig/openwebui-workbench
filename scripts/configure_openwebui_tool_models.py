@@ -36,6 +36,9 @@ OFFLINE_TOOL_IMPORT = TOOLS_DIST / "openwebui-tools-offline-import.json"
 FUNCTION_REGISTRY = TOOLS_DIST / "openwebui-function-registry.json"
 FUNCTION_IMPORT = TOOLS_DIST / "openwebui-functions-import.json"
 SKILLS_DIR = ROOT / "Tools" / "openwebui_ext" / "skills"
+PROMPTS_DIR = ROOT / "Tools" / "openwebui_ext" / "prompts"
+PROMPT_REGISTRY = TOOLS_DIST / "openwebui-prompt-registry.json"
+PROMPT_IMPORT = TOOLS_DIST / "openwebui-prompts-import.json"
 MODEL_DIST = ROOT / "Modelle" / "dist"
 REGISTRATION_PLAN = MODEL_DIST / "openwebui-registration-plan.json"
 TOOLS_FALLBACK_BUNDLE = MODEL_DIST / "tools_fallback_bundle.json"
@@ -552,6 +555,20 @@ class FunctionRecord:
     source: str
 
 
+@dataclass(frozen=True)
+class PromptRecord:
+    id: str
+    command: str
+    name: str
+    path: str
+    description: str
+    tags: List[str]
+    sha256: str
+    importable: bool
+    source: str
+    content: str
+
+
 def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -645,6 +662,8 @@ def tool_zip_sources() -> List[Path]:
                 TOOL_IMPORT,
                 FUNCTION_REGISTRY,
                 FUNCTION_IMPORT,
+                PROMPT_REGISTRY,
+                PROMPT_IMPORT,
             ]
         )
         if path.exists()
@@ -665,6 +684,8 @@ def model_zip_sources() -> List[Path]:
                 OFFLINE_TOOL_IMPORT,
                 TOOL_IMPORT,
                 FUNCTION_IMPORT,
+                PROMPT_REGISTRY,
+                PROMPT_IMPORT,
                 REGISTRATION_PLAN,
                 MODEL_PARAMS_SUMMARY,
                 MODEL_DIST / "manual_import_checklist.md",
@@ -760,6 +781,41 @@ def inspect_filter(path: Path) -> Tuple[bool, List[str]]:
         return False, []
 
 
+def parse_markdown_frontmatter(path: Path) -> Tuple[Dict[str, str], str]:
+    text = path.read_text(encoding="utf-8")
+    normalized = text.replace("\r\n", "\n")
+    lines = normalized.split("\n")
+    if not lines or lines[0].strip() != "---":
+        return {}, normalized
+    meta: Dict[str, str] = {}
+    end_index: int | None = None
+    for index, line in enumerate(lines[1:], start=1):
+        if line.strip() == "---":
+            end_index = index
+            break
+        if ":" in line:
+            key, value = line.split(":", 1)
+            meta[key.strip().lower()] = value.strip().strip("\"'")
+    if end_index is None:
+        return {}, normalized
+    return meta, "\n".join(lines[end_index + 1 :]).lstrip("\n")
+
+
+def parse_csv_tags(value: str) -> List[str]:
+    tags: List[str] = []
+    for item in str(value or "").strip("[]").split(","):
+        tag = item.strip().strip("\"'")
+        if tag and tag not in tags:
+            tags.append(tag)
+    return tags or ["workbench"]
+
+
+def normalize_prompt_command(value: str, fallback: str) -> str:
+    command = str(value or fallback).strip().lstrip("/")
+    command = re.sub(r"[^a-z0-9_-]+", "-", command.lower()).strip("-")
+    return command or fallback
+
+
 def discover_tools() -> List[ToolRecord]:
     index = read_json(TOOLS_INDEX)
     indexed_entries = index.get("tools", [])
@@ -824,6 +880,19 @@ def function_record_metadata(record: FunctionRecord) -> Dict[str, Any]:
     }
 
 
+def prompt_record_metadata(record: PromptRecord) -> Dict[str, Any]:
+    return {
+        "id": record.id,
+        "command": record.command,
+        "name": record.name,
+        "path": record.path,
+        "description": record.description,
+        "tags": record.tags,
+        "sha256": record.sha256,
+        "importable": record.importable,
+    }
+
+
 def tool_import_payload(record: ToolRecord) -> Dict[str, Any]:
     return {
         "id": record.id,
@@ -849,6 +918,26 @@ def function_import_payload(record: FunctionRecord) -> Dict[str, Any]:
     }
 
 
+def prompt_import_payload(record: PromptRecord) -> Dict[str, Any]:
+    return {
+        "id": record.id,
+        "command": record.command,
+        "name": record.name,
+        "content": record.content,
+        "data": {
+            "source_file": record.path,
+            "source_sha256": record.sha256,
+        },
+        "meta": {
+            "description": record.description,
+            "source": record.path,
+            "schema": "openwebui-workbench-prompt/v1",
+        },
+        "tags": record.tags,
+        "access_grants": [PUBLIC_READ_GRANT],
+    }
+
+
 def discover_functions() -> List[FunctionRecord]:
     filter_dir = ROOT / "Tools" / "openwebui_ext" / "filters"
     records: List[FunctionRecord] = []
@@ -867,6 +956,34 @@ def discover_functions() -> List[FunctionRecord]:
                 importable=importable,
                 hooks=hooks,
                 source=path.read_text(encoding="utf-8"),
+            )
+        )
+    return records
+
+
+def discover_prompts() -> List[PromptRecord]:
+    records: List[PromptRecord] = []
+    if not PROMPTS_DIR.exists():
+        return records
+    for path in sorted(PROMPTS_DIR.glob("*.md")):
+        if path.name.upper() == "README.MD":
+            continue
+        meta, body = parse_markdown_frontmatter(path)
+        prompt_id = path.stem
+        command = normalize_prompt_command(meta.get("command", prompt_id), prompt_id)
+        content = body.strip() + "\n" if body.strip() else path.read_text(encoding="utf-8")
+        records.append(
+            PromptRecord(
+                id=prompt_id,
+                command=command,
+                name=str(meta.get("name") or prompt_id.replace("_", " ").replace("-", " ").title()),
+                path=rel(path),
+                description=str(meta.get("description") or "OpenWebUI Workspace Prompt."),
+                tags=parse_csv_tags(meta.get("tags", "workbench")),
+                sha256=hashlib.sha256(stable_text_bytes(path)).hexdigest(),
+                importable=bool(content.strip()),
+                source=path.read_text(encoding="utf-8"),
+                content=content,
             )
         )
     return records
@@ -980,6 +1097,29 @@ def write_function_artifacts(records: List[FunctionRecord], write: bool) -> bool
         write_json(FUNCTION_REGISTRY, registry)
         write_json(FUNCTIONS_FALLBACK_BUNDLE, fallback)
         write_json(FUNCTION_IMPORT, import_payload)
+    return changed
+
+
+def write_prompt_artifacts(records: List[PromptRecord], write: bool) -> bool:
+    importable_records = [record for record in records if record.importable]
+    registry = {
+        "schema": "openwebui-prompt-registry/v1",
+        "order": ["tools", "filters", "skills", "prompts", "models"],
+        "gui_import_file": rel(PROMPT_IMPORT),
+        "prompt_source_dir": rel(PROMPTS_DIR),
+        "prompt_import_order": [record.command for record in importable_records],
+        "prompts": [prompt_record_metadata(record) for record in records],
+    }
+    import_payload = [prompt_import_payload(record) for record in importable_records]
+    changed = (
+        not PROMPT_REGISTRY.exists()
+        or read_json(PROMPT_REGISTRY) != registry
+        or not PROMPT_IMPORT.exists()
+        or read_json(PROMPT_IMPORT) != import_payload
+    )
+    if changed and write:
+        write_json(PROMPT_REGISTRY, registry)
+        write_json(PROMPT_IMPORT, import_payload)
     return changed
 
 
@@ -1790,7 +1930,13 @@ def write_model_params_summary(models: List[Dict[str, Any]], write: bool) -> boo
     return changed
 
 
-def write_registration_plan(tool_records: List[ToolRecord], function_records: List[FunctionRecord], models: List[Dict[str, Any]], write: bool) -> bool:
+def write_registration_plan(
+    tool_records: List[ToolRecord],
+    function_records: List[FunctionRecord],
+    prompt_records: List[PromptRecord],
+    models: List[Dict[str, Any]],
+    write: bool,
+) -> bool:
     filter_ids = [record.id for record in function_records if record.importable and record.function_type == "filter"]
     offline_tool_ids = [record.id for record in offline_default_tool_records(tool_records)]
     offline_tool_id_set = set(offline_tool_ids)
@@ -1807,11 +1953,13 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
             "6_apply_function_filter_valves",
             "7_import_workspace_skills",
             "8_publish_skills_public",
-            "9_upload_model_required_file_context",
-            "10_upload_model_example_knowledge",
-            "11_publish_model_knowledge_public",
-            "12_import_or_update_models",
-            "13_publish_models_public",
+            "9_import_workspace_prompts",
+            "10_publish_prompts_public",
+            "11_upload_model_required_file_context",
+            "12_upload_model_example_knowledge",
+            "13_publish_model_knowledge_public",
+            "14_import_or_update_models",
+            "15_publish_models_public",
         ],
         "api_import_script": rel(IMPORT_SCRIPT),
         "api_import_config_file": rel(CONFIG_FILE),
@@ -1832,12 +1980,13 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
                 "import",
             ],
             "auth": "Default is Authorization: Bearer <token>. For OpenWebUI CUSTOM_API_KEY_HEADER setups use openwebui.auth_header and openwebui.auth_scheme in the central YAML.",
-            "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves, function/filter valves and required model-file-context settings into OpenWebUI before importing models. Tools, skills, example Knowledge and models are published with public read access; functions and filters are enabled and made global.",
+            "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves, function/filter valves and required model-file-context settings into OpenWebUI before importing models. Tools, skills, prompt templates, example Knowledge and models are published with public read access; functions and filters are enabled and made global.",
         },
         "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override. The token must be an OpenWebUI API key or JWT for an admin user.",
         "public_access_policy": {
             "tools": "public_read_grant_after_upsert",
             "skills": "public_read_grant_after_upsert",
+            "prompts": "public_read_grant_after_upsert",
             "model_knowledge": "public_read_grant_after_upsert",
             "models": "public_read_grant_after_import",
             "functions_and_filters": "active_and_global_after_upsert",
@@ -1925,6 +2074,9 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
         "filters_before_models": filter_ids,
         "skills_before_models": workspace_skill_ids,
         "skill_source_dir": rel(SKILLS_DIR),
+        "prompt_gui_import_file": rel(PROMPT_IMPORT),
+        "prompts_before_models": [record.command for record in prompt_records if record.importable],
+        "prompt_source_dir": rel(PROMPTS_DIR),
         "model_required_file_context_schema": WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA,
         "model_legacy_example_file": LEGACY_EXAMPLE_RESULT_FILE,
         "model_legacy_example_file_overrides": MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES,
@@ -2021,7 +2173,12 @@ def write_registration_plan(tool_records: List[ToolRecord], function_records: Li
     return changed
 
 
-def validate(tool_records: List[ToolRecord], function_records: List[FunctionRecord], models: List[Dict[str, Any]]) -> List[str]:
+def validate(
+    tool_records: List[ToolRecord],
+    function_records: List[FunctionRecord],
+    prompt_records: List[PromptRecord],
+    models: List[Dict[str, Any]],
+) -> List[str]:
     issues: List[str] = []
     valid_tool_ids = {record.id for record in tool_records if record.importable}
     valid_filter_ids = {record.id for record in function_records if record.importable and record.function_type == "filter"}
@@ -2034,6 +2191,15 @@ def validate(tool_records: List[ToolRecord], function_records: List[FunctionReco
             issues.append(f"Function nicht importierbar: {record.id} ({record.path})")
         elif record.function_type != "filter":
             issues.append(f"Aktivierte Function ist kein Filter: {record.id} ({record.path}) type={record.function_type}")
+    prompt_commands: dict[str, str] = {}
+    for record in prompt_records:
+        if not record.importable:
+            issues.append(f"Promptvorlage nicht importierbar: {record.id} ({record.path})")
+            continue
+        previous = prompt_commands.get(record.command)
+        if previous:
+            issues.append(f"Promptvorlagen nutzen denselben Command `{record.command}`: {previous}, {record.id}")
+        prompt_commands[record.command] = record.id
     for model in models:
         model_id = str(model.get("id"))
         meta = model.get("meta", {}) if isinstance(model.get("meta"), dict) else {}
@@ -2313,20 +2479,23 @@ def main(argv: Iterable[str] | None = None) -> int:
 
     records = discover_tools()
     function_records = discover_functions()
+    prompt_records = discover_prompts()
     changed_tools_index = sync_tools_index(records, args.write)
     changed_tool_artifacts = write_tool_artifacts(records, args.write)
     changed_function_artifacts = write_function_artifacts(function_records, args.write)
+    changed_prompt_artifacts = write_prompt_artifacts(prompt_records, args.write)
     changed_icon_artifacts = sync_icon_artifacts(args.write)
     changed_example_artifacts = sync_model_example_artifacts(args.write)
     changed_model_i18n_artifacts = sync_model_i18n_artifacts(args.write)
     changed_models, models = apply_model_config(records, function_records, args.write)
     changed_model_params_summary = write_model_params_summary(models, args.write)
-    changed_plan = write_registration_plan(records, function_records, models, args.write)
-    issues = validate(records, function_records, models)
+    changed_plan = write_registration_plan(records, function_records, prompt_records, models, args.write)
+    issues = validate(records, function_records, prompt_records, models)
     changed_generated_artifacts = (
         changed_tools_index
         or changed_tool_artifacts
         or changed_function_artifacts
+        or changed_prompt_artifacts
         or changed_icon_artifacts
         or changed_example_artifacts
         or changed_model_i18n_artifacts
@@ -2340,12 +2509,15 @@ def main(argv: Iterable[str] | None = None) -> int:
     print(f"- Tools importierbar: {sum(1 for record in records if record.importable)}")
     print(f"- Functions entdeckt: {len(function_records)}")
     print(f"- Filter importierbar: {sum(1 for record in function_records if record.importable and record.function_type == 'filter')}")
+    print(f"- Promptvorlagen entdeckt: {len(prompt_records)}")
+    print(f"- Promptvorlagen importierbar: {sum(1 for record in prompt_records if record.importable)}")
     print(f"- Modelle geprüft: {len(models)}")
     print(f"- Chat-Modelle: {sum(1 for model in models if not is_non_chat_model(model))}")
     print(f"- Non-Chat-Modelle ausgeschlossen: {sum(1 for model in models if is_non_chat_model(model))}")
     print(f"- Icon-Artefakte geändert: {changed_icon_artifacts}")
     print(f"- Beispielartefakte geändert: {changed_example_artifacts}")
     print(f"- Produkt-i18n-Artefakte geändert: {changed_model_i18n_artifacts}")
+    print(f"- Prompt-Artefakte geändert: {changed_prompt_artifacts}")
     print(f"- Modellparameter-Zusammenfassung geändert: {changed_model_params_summary}")
     print(f"- Änderungen erkannt: {changed_generated_artifacts}")
     if args.write and args.rebuild_zips:

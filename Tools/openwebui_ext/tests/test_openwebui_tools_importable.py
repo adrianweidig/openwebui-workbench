@@ -19,6 +19,7 @@ TOOLS_DIR = ROOT / "Tools" / "openwebui_ext" / "tools"
 TOOL_IMPORT = ROOT / "Tools" / "dist" / "openwebui-tools-import.json"
 OFFLINE_TOOL_IMPORT = ROOT / "Tools" / "dist" / "openwebui-tools-offline-import.json"
 FUNCTION_IMPORT = ROOT / "Tools" / "dist" / "openwebui-functions-import.json"
+PROMPT_IMPORT = ROOT / "Tools" / "dist" / "openwebui-prompts-import.json"
 OPTIONAL_RUNTIME_MODULES = {"aiohttp", "fastapi", "pydantic", "requests", "starlette"}
 
 
@@ -136,6 +137,24 @@ class OpenWebUIToolImportTests(unittest.TestCase):
                     self.assertIsInstance(item["meta"].get("description"), str)
                     if bundle == FUNCTION_IMPORT:
                         self.assertIn(item.get("type"), {"filter", "action", "pipe"})
+
+    def test_prompt_import_bundle_has_openwebui_prompt_form_shape(self) -> None:
+        data = json.loads(PROMPT_IMPORT.read_text(encoding="utf-8"))
+        self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 0)
+        seen = set()
+        for item in data:
+            self.assertIsInstance(item, dict)
+            self.assertIsInstance(item.get("command"), str)
+            self.assertRegex(item["command"], r"^[a-z0-9_-]+$")
+            self.assertNotIn(item["command"], seen)
+            seen.add(item["command"])
+            self.assertIsInstance(item.get("name"), str)
+            self.assertIsInstance(item.get("content"), str)
+            self.assertGreater(len(item["content"].strip()), 40)
+            self.assertIsInstance(item.get("meta"), dict)
+            self.assertIsInstance(item.get("data"), dict)
+            self.assertIsInstance(item.get("tags"), list)
 
 
 if __name__ == "__main__":

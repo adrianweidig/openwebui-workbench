@@ -42,7 +42,9 @@ TOOLS_INDEX = TOOLS_DIR / "index.json"
 OPENWEBUI_EXT = TOOLS_DIR / "openwebui_ext"
 TOOLS_REGISTRY = TOOLS_DIR / "dist" / "openwebui-tool-registry.json"
 FUNCTION_REGISTRY = TOOLS_DIR / "dist" / "openwebui-function-registry.json"
+PROMPT_IMPORT = TOOLS_DIR / "dist" / "openwebui-prompts-import.json"
 SKILLS_DIR = OPENWEBUI_EXT / "skills"
+PROMPTS_DIR = OPENWEBUI_EXT / "prompts"
 SINGLE_MODELS = ROOT / "Modelle" / "einzelmodelle"
 WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA = "workbench-file-context/v1"
 WORKBENCH_REQUIRED_FILE_CONTEXT_FILTER_ID = "workbench_required_file_context_filter"
@@ -863,6 +865,41 @@ def parse_skill(path: Path) -> tuple[str, str, str]:
     return slugify(path.stem), name, description
 
 
+def parse_markdown_frontmatter(path: Path) -> tuple[dict[str, str], str]:
+    text = path.read_text(encoding="utf-8")
+    normalized = text.replace("\r\n", "\n")
+    lines = normalized.split("\n")
+    if not lines or lines[0].strip() != "---":
+        return {}, normalized
+    meta: dict[str, str] = {}
+    end_index: int | None = None
+    for index, line in enumerate(lines[1:], start=1):
+        if line.strip() == "---":
+            end_index = index
+            break
+        if ":" in line:
+            key, value = line.split(":", 1)
+            meta[key.strip().lower()] = value.strip().strip("\"'")
+    if end_index is None:
+        return {}, normalized
+    return meta, "\n".join(lines[end_index + 1 :]).lstrip("\n")
+
+
+def parse_csv_tags(value: str) -> list[str]:
+    tags: list[str] = []
+    for item in str(value or "").strip("[]").split(","):
+        tag = item.strip().strip("\"'")
+        if tag and tag not in tags:
+            tags.append(tag)
+    return tags or ["workbench"]
+
+
+def normalize_prompt_command(value: str, fallback: str) -> str:
+    command = str(value or fallback).strip().lstrip("/")
+    command = re.sub(r"[^a-z0-9_-]+", "-", command.lower()).strip("-")
+    return command or fallback
+
+
 def load_tool_records(include_optional_network_tools: bool) -> list[dict[str, Any]]:
     registry = read_json(TOOLS_REGISTRY)
     excluded = set(registry.get("optional_network_tools_not_in_offline_default", []))
@@ -879,6 +916,45 @@ def load_tool_records(include_optional_network_tools: bool) -> list[dict[str, An
 def load_function_records() -> list[dict[str, Any]]:
     registry = read_json(FUNCTION_REGISTRY)
     return [record for record in registry.get("functions", []) if record.get("importable")]
+
+
+def prompt_files() -> list[Path]:
+    if not PROMPTS_DIR.exists():
+        return []
+    return sorted(path for path in PROMPTS_DIR.glob("*.md") if path.name.upper() != "README.MD")
+
+
+def prompt_records_from_files() -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for path in prompt_files():
+        meta, body = parse_markdown_frontmatter(path)
+        command = normalize_prompt_command(meta.get("command", path.stem), path.stem)
+        content = body.strip() + "\n" if body.strip() else path.read_text(encoding="utf-8")
+        records.append(
+            {
+                "id": path.stem,
+                "command": command,
+                "name": meta.get("name") or path.stem.replace("_", " ").replace("-", " ").title(),
+                "content": content,
+                "data": {"source_file": str(path.relative_to(ROOT)).replace("\\", "/")},
+                "meta": {
+                    "description": meta.get("description") or "OpenWebUI Workspace Prompt.",
+                    "source": str(path.relative_to(ROOT)).replace("\\", "/"),
+                    "schema": "openwebui-workbench-prompt/v1",
+                },
+                "tags": parse_csv_tags(meta.get("tags", "workbench")),
+            }
+        )
+    return records
+
+
+def load_prompt_records() -> list[dict[str, Any]]:
+    if PROMPT_IMPORT.exists():
+        payload = read_json(PROMPT_IMPORT)
+        if not isinstance(payload, list):
+            raise RuntimeError(f"{PROMPT_IMPORT.relative_to(ROOT)} must be a JSON array")
+        return [record for record in payload if isinstance(record, dict) and record.get("command") and record.get("content")]
+    return prompt_records_from_files()
 
 
 def get_existing(client: OpenWebUIClient, path: str) -> dict[str, Any] | None:
@@ -1003,6 +1079,19 @@ def update_skill_access(client: OpenWebUIClient, skill_id: str, public: bool = T
     )
     if public:
         require_public_read_access(value, "skill", skill_id)
+
+
+def update_prompt_access(client: OpenWebUIClient, prompt_id: str, public: bool = True) -> None:
+    value = client.request_any(
+        "POST",
+        [
+            f"/api/v1/prompts/id/{prompt_id}/access/update",
+            f"/api/prompts/id/{prompt_id}/access/update",
+        ],
+        access_payload(public),
+    )
+    if public:
+        require_public_read_access(value, "prompt", prompt_id)
 
 
 def update_knowledge_access(client: OpenWebUIClient, knowledge_id: str, public: bool = True) -> None:
@@ -1204,8 +1293,17 @@ def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
     include_optional_network_tools = bool(runtime.get("include_optional_network_tools"))
     tool_count = len(load_tool_records(include_optional_network_tools))
     function_count = len(load_function_records())
+    prompt_count = len(load_prompt_records())
     skills = skill_files()
     model_files = sorted(SINGLE_MODELS.glob("*/model.json"))
+    prompt_commands: set[str] = set()
+    for record in load_prompt_records():
+        command = str(record.get("command") or "").strip().lstrip("/")
+        if not command or not str(record.get("content") or "").strip():
+            raise RuntimeError("Prompt import payload contains an empty command or content.")
+        if command in prompt_commands:
+            raise RuntimeError(f"Prompt import payload contains duplicate command: {command}")
+        prompt_commands.add(command)
     for model_file in model_files:
         data = read_json(model_file)
         if not isinstance(data, list) or not data or not isinstance(data[0], dict):
@@ -1221,6 +1319,8 @@ def validate_workspace_payload(runtime: dict[str, Any]) -> list[ImportResult]:
         ImportResult("function_valves", skipped=len(configured_function_valves(runtime))),
         ImportResult("skills", skipped=len(skills)),
         ImportResult("skill_public_access", skipped=len(skills)),
+        ImportResult("prompts", skipped=prompt_count),
+        ImportResult("prompt_public_access", skipped=prompt_count),
         ImportResult("model_required_file_context", skipped=len(model_files) * 3),
         ImportResult("model_knowledge_collections", skipped=len(model_files)),
         ImportResult("knowledge_public_access", skipped=0 if runtime.get("skip_knowledge") else len(model_files)),
@@ -1372,6 +1472,59 @@ def import_skills(client: OpenWebUIClient, public: bool) -> ImportResult:
         if public:
             update_skill_access(client, skill_id, public=True)
     return ImportResult("skills", created, updated, skipped)
+
+
+def prompt_form(record: dict[str, Any], public: bool) -> dict[str, Any]:
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    data = record.get("data") if isinstance(record.get("data"), dict) else {}
+    tags = record.get("tags") if isinstance(record.get("tags"), list) else ["workbench"]
+    return {
+        "command": str(record.get("command") or record.get("id") or "").strip().lstrip("/"),
+        "name": str(record.get("name") or record.get("command") or record.get("id") or "Workbench Prompt"),
+        "content": str(record.get("content") or ""),
+        "data": data,
+        "meta": meta,
+        "tags": [str(tag) for tag in tags if str(tag).strip()],
+        "access_grants": public_read_grants(public),
+    }
+
+
+def get_prompt_by_command(client: OpenWebUIClient, command: str) -> dict[str, Any] | None:
+    return get_existing_any(client, [f"/api/v1/prompts/command/{command}", f"/api/prompts/command/{command}"])
+
+
+def import_prompts(client: OpenWebUIClient, public: bool) -> ImportResult:
+    created = updated = 0
+    for record in load_prompt_records():
+        command = normalize_prompt_command(str(record.get("command") or record.get("id") or ""), str(record.get("id") or "workbench-prompt"))
+        record = {**record, "command": command}
+        payload = prompt_form(record, public)
+        existing = get_prompt_by_command(client, command)
+        prompt_id = ""
+        if existing:
+            prompt_id = str(existing.get("id") or record.get("id") or command)
+            existing = client.request_any(
+                "POST",
+                [f"/api/v1/prompts/id/{prompt_id}/update", f"/api/prompts/id/{prompt_id}/update"],
+                payload,
+            )
+            updated += 1
+        else:
+            existing = client.request_any("POST", ["/api/v1/prompts/create", "/api/prompts/create"], payload)
+            created += 1
+            if isinstance(existing, dict):
+                prompt_id = str(existing.get("id") or "")
+        if public and prompt_id:
+            try:
+                update_prompt_access(client, prompt_id, public=True)
+            except RuntimeError as exc:
+                if not is_not_found_error(exc):
+                    raise
+                print(
+                    f"Warning: skipped prompt public access update for {command}; OpenWebUI did not expose a matching prompt access endpoint. {exc}",
+                    file=sys.stderr,
+                )
+    return ImportResult("prompts", created, updated)
 
 
 def find_knowledge_by_name(client: OpenWebUIClient, name: str) -> dict[str, Any] | None:
@@ -1767,6 +1920,7 @@ def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> in
     started = time.time()
     tool_records = load_tool_records(bool(runtime["include_optional_network_tools"]))
     function_records = load_function_records()
+    prompt_records = load_prompt_records()
     skills = skill_files()
     model_count = len(sorted(SINGLE_MODELS.glob("*/model.json")))
     tool_import = import_tools(
@@ -1778,6 +1932,7 @@ def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> in
     function_import = import_functions(client)
     function_valves = import_function_valves(client, runtime)
     skill_import = import_skills(client, public=bool(runtime["public_read"]))
+    prompt_import = import_prompts(client, public=bool(runtime["public_read"]))
     model_import, model_load = import_models(
         client,
         public=bool(runtime["public_read"]),
@@ -1793,6 +1948,8 @@ def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> in
         function_valves,
         skill_import,
         ImportResult("skill_public_access", updated=len(skills)),
+        prompt_import,
+        ImportResult("prompt_public_access", updated=len(prompt_records)),
         ImportResult(
             "model_required_file_context",
             created=model_load.required_files_uploaded,
@@ -1818,7 +1975,7 @@ def run_workspace_import(client: OpenWebUIClient, runtime: dict[str, Any]) -> in
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Import this repository's OpenWebUI tools, functions, skills, knowledge and models."
+        description="Import this repository's OpenWebUI tools, functions, skills, prompt templates, knowledge and models."
     )
     parser.add_argument("--config", default=None, help="Central YAML config file. Defaults to scripts/openwebui_workspace_config.yaml when present.")
     parser.add_argument("--base-url", default=None, help="One-off override for openwebui.base_url from the central config.")

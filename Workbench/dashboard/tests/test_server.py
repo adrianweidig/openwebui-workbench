@@ -78,8 +78,18 @@ class WorkbenchStateTests(unittest.TestCase):
         (umlaut_dir / "systemprompt.md").write_text("Umlaut\n", encoding="utf-8")
         (self.root / "Tools" / "openwebui_ext" / "tools").mkdir(parents=True)
         (self.root / "Tools" / "openwebui_ext" / "tools" / "demo_tool.py").write_text("# demo\n", encoding="utf-8")
+        (self.root / "Tools" / "openwebui_ext" / "filters").mkdir(parents=True)
+        (self.root / "Tools" / "openwebui_ext" / "filters" / "demo_filter.py").write_text(
+            "class Filter:\n    async def inlet(self, body: dict) -> dict:\n        return body\n",
+            encoding="utf-8",
+        )
         (self.root / "Tools" / "openwebui_ext" / "skills").mkdir(parents=True)
         (self.root / "Tools" / "openwebui_ext" / "skills" / "demo-skill.md").write_text("# Demo Skill\n", encoding="utf-8")
+        (self.root / "Tools" / "openwebui_ext" / "prompts").mkdir(parents=True)
+        (self.root / "Tools" / "openwebui_ext" / "prompts" / "demo-prompt.md").write_text(
+            "---\ncommand: demo-prompt\nname: Demo Prompt\n---\n\n# Demo Prompt\n",
+            encoding="utf-8",
+        )
         self.state = WorkbenchState(
             WorkbenchConfig(
                 root=self.root,
@@ -244,6 +254,32 @@ class WorkbenchStateTests(unittest.TestCase):
         with self.assertRaisesRegex(PermissionError, "Schreibzugriff"):
             state.delete_openwebui_models(["demo-model"])
 
+    def test_delete_openwebui_resources_calls_admin_api(self) -> None:
+        calls: list[tuple[str, str]] = []
+
+        def fake_request(method: str, path: str, **_kwargs: object) -> object:
+            calls.append((method, path))
+            if path == "/api/v1/prompts/command/demo-prompt":
+                return {"id": "prompt-db-id"}
+            return True
+
+        with (
+            patch.dict(os.environ, {"OPENWEBUI_ADMIN_TOKEN": "secret-token", "OPENWEBUI_ADMIN_TOKEN_FILE": ""}),
+            patch.object(self.state, "openwebui_api_request", side_effect=fake_request),
+        ):
+            result = self.state.delete_openwebui_resources("prompt", ["demo-prompt", "demo-prompt"])
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["deleted"], ["demo-prompt"])
+        self.assertIn(("GET", "/api/v1/prompts/command/demo-prompt"), calls)
+        self.assertIn(("DELETE", "/api/v1/prompts/id/prompt-db-id/delete"), calls)
+
+    def test_read_only_state_blocks_openwebui_resource_delete(self) -> None:
+        state = WorkbenchState(WorkbenchConfig(root=self.root, allow_write=False, locale="de"))
+
+        with self.assertRaisesRegex(PermissionError, "Schreibzugriff"):
+            state.delete_openwebui_resources("tool", ["demo_tool"])
+
     def test_sync_status_action_uses_token_env_without_command_exposure(self) -> None:
         state = WorkbenchState(
             WorkbenchConfig(
@@ -309,6 +345,13 @@ class WorkbenchStateTests(unittest.TestCase):
         payload = self.state.read_resource("skill", "demo-skill")
         self.assertEqual(payload["content"], "# Demo Skill\n")
 
+    def test_reads_function_and_prompt_resources(self) -> None:
+        function_payload = self.state.read_resource("function", "demo_filter")
+        prompt_payload = self.state.read_resource("prompt", "demo-prompt")
+
+        self.assertIn("class Filter", function_payload["content"])
+        self.assertIn("Demo Prompt", prompt_payload["content"])
+
     def test_creates_and_deletes_skill_resource(self) -> None:
         created = self.state.create_resource("skill", "new-skill", "# New Skill\n")
         self.assertEqual(created["id"], "new-skill")
@@ -321,6 +364,15 @@ class WorkbenchStateTests(unittest.TestCase):
         created = self.state.create_resource("tool", "new_tool", "# New Tool\n")
         self.assertEqual(created["id"], "new_tool")
         self.assertTrue((self.root / "Tools" / "openwebui_ext" / "tools" / "new_tool.py").is_file())
+
+    def test_creates_function_and_prompt_resources_with_expected_suffixes(self) -> None:
+        function_created = self.state.create_resource("function", "new_filter", "class Filter:\n    pass\n")
+        prompt_created = self.state.create_resource("prompt", "new-prompt", "# New Prompt\n")
+
+        self.assertEqual(function_created["id"], "new_filter")
+        self.assertEqual(prompt_created["id"], "new-prompt")
+        self.assertTrue((self.root / "Tools" / "openwebui_ext" / "filters" / "new_filter.py").is_file())
+        self.assertTrue((self.root / "Tools" / "openwebui_ext" / "prompts" / "new-prompt.md").is_file())
 
     def test_rejects_resource_path_traversal(self) -> None:
         with self.assertRaises(ValueError):
@@ -399,7 +451,7 @@ class WorkbenchStateTests(unittest.TestCase):
         required = [item for item in artifacts if item["required"]]
         optional = [item for item in artifacts if not item["required"]]
 
-        self.assertEqual(len(required), 7)
+        self.assertEqual(len(required), 8)
         self.assertEqual(len(optional), 1)
         self.assertEqual(optional[0]["kind"], "optional_network_tools")
         self.assertTrue(optional[0]["path"].endswith("Tools/dist/openwebui-tools-import.json"))
@@ -451,10 +503,14 @@ class WorkbenchStateTests(unittest.TestCase):
 
         self.assertEqual(summary["counts"]["models"], 0)
         self.assertEqual(summary["counts"]["tools"], 0)
+        self.assertEqual(summary["counts"]["functions"], 0)
         self.assertEqual(summary["counts"]["skills"], 0)
+        self.assertEqual(summary["counts"]["prompts"], 0)
         self.assertEqual(empty_state.list_models(), [])
         self.assertEqual(empty_state.list_tools(), [])
+        self.assertEqual(empty_state.list_functions(), [])
         self.assertEqual(empty_state.list_skills(), [])
+        self.assertEqual(empty_state.list_prompts(), [])
 
     def test_i18n_defaults_to_german_and_supports_english(self) -> None:
         self.assertEqual(normalize_locale("fr-FR"), "de")
@@ -476,6 +532,18 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(args.host, "127.0.0.1")
         self.assertEqual(args.port, 8088)
         self.assertEqual(dashboard_server.configuration_errors(), [])
+
+    def test_resources_route_lists_tools_functions_skills_and_prompts(self) -> None:
+        base_url = self.start_server(self.state)
+
+        status, response = self.request(base_url, path="/api/resources")
+
+        payload = json.loads(response)
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["tools"][0]["kind"], "tool")
+        self.assertEqual(payload["functions"][0]["kind"], "function")
+        self.assertEqual(payload["skills"][0]["kind"], "skill")
+        self.assertEqual(payload["prompts"][0]["kind"], "prompt")
 
     def test_dashboard_server_invalid_numeric_env_exits_without_traceback(self) -> None:
         env = os.environ.copy()
@@ -884,6 +952,44 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(response)["deleted"], ["demo-model"])
         delete.assert_called_once_with(["demo-model"])
+
+    def test_openwebui_resource_delete_route_requires_workbench_request_header(self) -> None:
+        state = WorkbenchState(
+            WorkbenchConfig(
+                root=self.root,
+                openwebui_base_url="http://127.0.0.1:9",
+                auth_username="admin",
+                auth_password="secret",
+            )
+        )
+        base_url = self.start_server(state)
+        auth = self.basic_auth("admin", "secret")
+        body = json.dumps({"kind": "prompt", "ids": ["demo-prompt"]})
+
+        status, response = self.request(
+            base_url,
+            authorization=auth,
+            path="/api/openwebui/resources/delete",
+            method="POST",
+            body=body,
+        )
+        self.assertEqual(status, 403)
+        self.assertIn("same-origin", json.loads(response)["error"].lower())
+
+        result = {"ok": True, "kind": "prompt", "deleted": ["demo-prompt"], "failed": [], "requested": ["demo-prompt"]}
+        with patch.object(state, "delete_openwebui_resources", return_value=result) as delete:
+            status, response = self.request(
+                base_url,
+                authorization=auth,
+                path="/api/openwebui/resources/delete",
+                method="POST",
+                body=body,
+                headers={"X-Workbench-Request": "same-origin"},
+            )
+
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(response)["deleted"], ["demo-prompt"])
+        delete.assert_called_once_with("prompt", ["demo-prompt"])
 
     def test_automation_run_route_requires_workbench_request_header(self) -> None:
         state = WorkbenchState(

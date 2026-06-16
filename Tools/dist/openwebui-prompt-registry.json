@@ -1,0 +1,46 @@
+{
+  "schema": "openwebui-prompt-registry/v1",
+  "order": [
+    "tools",
+    "filters",
+    "skills",
+    "prompts",
+    "models"
+  ],
+  "gui_import_file": "Tools/dist/openwebui-prompts-import.json",
+  "prompt_source_dir": "Tools/openwebui_ext/prompts",
+  "prompt_import_order": [
+    "workbench-model-review",
+    "workbench-sync-check"
+  ],
+  "prompts": [
+    {
+      "id": "workbench-model-review",
+      "command": "workbench-model-review",
+      "name": "Workbench Model Review",
+      "path": "Tools/openwebui_ext/prompts/workbench-model-review.md",
+      "description": "Reviewt ein einzelnes Workbench-Modellpaket vor dem Import.",
+      "tags": [
+        "workbench",
+        "modelle",
+        "review"
+      ],
+      "sha256": "d129b9ead13e1368f16d0102b97cc4f692cae0bbee3a22644c0d9940315905f8",
+      "importable": true
+    },
+    {
+      "id": "workbench-sync-check",
+      "command": "workbench-sync-check",
+      "name": "Workbench Sync Check",
+      "path": "Tools/openwebui_ext/prompts/workbench-sync-check.md",
+      "description": "Prüft, ob ein OpenWebUI-Workbench-Import vollständig und nachvollziehbar synchronisiert wurde.",
+      "tags": [
+        "workbench",
+        "openwebui",
+        "audit"
+      ],
+      "sha256": "29db5898ba7f22f7316062a9c9cb975d7428155c85be11416f6d77fcdfcb47ad",
+      "importable": true
+    }
+  ]
+}

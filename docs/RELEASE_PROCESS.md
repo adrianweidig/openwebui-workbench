@@ -36,6 +36,7 @@ Das Repository veröffentlicht versionierte Handover-Stände über GitHub Releas
 - `Modelle/dist/openwebui-offline-artifacts.zip`
 - `Tools/dist/openwebui-tools-offline-import.json`
 - `Tools/dist/openwebui-functions-import.json`
+- `Tools/dist/openwebui-prompts-import.json`
 - `Tools/dist/openwebui-tools-skills-offline.zip`
 - `SHA256SUMS.txt`
 - `RELEASE_NOTES.md`

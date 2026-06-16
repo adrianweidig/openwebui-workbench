@@ -9,11 +9,13 @@
     "6_apply_function_filter_valves",
     "7_import_workspace_skills",
     "8_publish_skills_public",
-    "9_upload_model_required_file_context",
-    "10_upload_model_example_knowledge",
-    "11_publish_model_knowledge_public",
-    "12_import_or_update_models",
-    "13_publish_models_public"
+    "9_import_workspace_prompts",
+    "10_publish_prompts_public",
+    "11_upload_model_required_file_context",
+    "12_upload_model_example_knowledge",
+    "13_publish_model_knowledge_public",
+    "14_import_or_update_models",
+    "15_publish_models_public"
   ],
   "api_import_script": "Tools/import_openwebui_workspace.py",
   "api_import_config_file": "scripts/openwebui_workspace_config.yaml",
@@ -34,12 +36,13 @@
       "import"
     ],
     "auth": "Default is Authorization: Bearer <token>. For OpenWebUI CUSTOM_API_KEY_HEADER setups use openwebui.auth_header and openwebui.auth_scheme in the central YAML.",
-    "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves, function/filter valves and required model-file-context settings into OpenWebUI before importing models. Tools, skills, example Knowledge and models are published with public read access; functions and filters are enabled and made global."
+    "behavior": "The importer reads the central YAML first and maps endpoint, token, backend-visible paths, tool valves, function/filter valves and required model-file-context settings into OpenWebUI before importing models. Tools, skills, prompt templates, example Knowledge and models are published with public read access; functions and filters are enabled and made global."
   },
   "api_import_token": "openwebui.admin_token in scripts/openwebui_workspace_config.yaml; --token is only an explicit one-off override. The token must be an OpenWebUI API key or JWT for an admin user.",
   "public_access_policy": {
     "tools": "public_read_grant_after_upsert",
     "skills": "public_read_grant_after_upsert",
+    "prompts": "public_read_grant_after_upsert",
     "model_knowledge": "public_read_grant_after_upsert",
     "models": "public_read_grant_after_import",
     "functions_and_filters": "active_and_global_after_upsert",
@@ -241,6 +244,12 @@
     "visual-toolkit-v3-offline"
   ],
   "skill_source_dir": "Tools/openwebui_ext/skills",
+  "prompt_gui_import_file": "Tools/dist/openwebui-prompts-import.json",
+  "prompts_before_models": [
+    "workbench-model-review",
+    "workbench-sync-check"
+  ],
+  "prompt_source_dir": "Tools/openwebui_ext/prompts",
   "model_required_file_context_schema": "workbench-file-context/v1",
   "model_legacy_example_file": "beispielergebnis.md",
   "model_legacy_example_file_overrides": {

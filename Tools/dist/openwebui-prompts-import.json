@@ -1,0 +1,56 @@
+[
+  {
+    "id": "workbench-model-review",
+    "command": "workbench-model-review",
+    "name": "Workbench Model Review",
+    "content": "Reviewe das bereitgestellte Workbench-Modellpaket.\n\nPrüfe:\n\n- kurzer deterministischer `systemprompt.md` mit Verweis auf die drei Pflichtdateien\n- vorhandene und nicht leere `mainprompt.md`, `fachwissen.md` und genau eine `Golden_Example.<ext>`\n- `beispiele/` nur als optionale Knowledge-/RAG-Beispiele\n- passende Tool-, Function-/Filter- und Skill-Zuordnung\n- keine Secrets, lokalen Infrastrukturverweise oder nicht belegten Versprechen\n\nAntworte zuerst mit Befunden nach Schweregrad, danach mit einer kurzen Änderungsliste.\n",
+    "data": {
+      "source_file": "Tools/openwebui_ext/prompts/workbench-model-review.md",
+      "source_sha256": "d129b9ead13e1368f16d0102b97cc4f692cae0bbee3a22644c0d9940315905f8"
+    },
+    "meta": {
+      "description": "Reviewt ein einzelnes Workbench-Modellpaket vor dem Import.",
+      "source": "Tools/openwebui_ext/prompts/workbench-model-review.md",
+      "schema": "openwebui-workbench-prompt/v1"
+    },
+    "tags": [
+      "workbench",
+      "modelle",
+      "review"
+    ],
+    "access_grants": [
+      {
+        "principal_type": "user",
+        "principal_id": "*",
+        "permission": "read"
+      }
+    ]
+  },
+  {
+    "id": "workbench-sync-check",
+    "command": "workbench-sync-check",
+    "name": "Workbench Sync Check",
+    "content": "Prüfe den aktuellen OpenWebUI-Workbench-Import fachlich und technisch.\n\nBerichte knapp in dieser Struktur:\n\n1. Importstatus der Modelle, Tools, Functions/Filter, Skills und Promptvorlagen.\n2. Nachweis, dass `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` als echte Dateien und nicht als Knowledge/RAG-Kernkontext genutzt werden.\n3. Auffälligkeiten bei fehlenden Public-Read-Freigaben, inaktiven Functions, fehlenden Default-Filtern oder falschen Basismodellen.\n4. Konkrete nächste Korrekturschritte.\n\nErfinde keine Zielsystemdaten. Wenn ein Nachweis fehlt, markiere ihn als nicht geprüft.\n",
+    "data": {
+      "source_file": "Tools/openwebui_ext/prompts/workbench-sync-check.md",
+      "source_sha256": "29db5898ba7f22f7316062a9c9cb975d7428155c85be11416f6d77fcdfcb47ad"
+    },
+    "meta": {
+      "description": "Prüft, ob ein OpenWebUI-Workbench-Import vollständig und nachvollziehbar synchronisiert wurde.",
+      "source": "Tools/openwebui_ext/prompts/workbench-sync-check.md",
+      "schema": "openwebui-workbench-prompt/v1"
+    },
+    "tags": [
+      "workbench",
+      "openwebui",
+      "audit"
+    ],
+    "access_grants": [
+      {
+        "principal_type": "user",
+        "principal_id": "*",
+        "permission": "read"
+      }
+    ]
+  }
+]

@@ -19,7 +19,7 @@
         </div>
         <nav aria-label="Workbench Bereiche" data-i18n-aria-label="nav.aria">
           <button class="nav-item active" data-panel="models"><span aria-hidden="true">M</span><span data-i18n="nav.models">Modelle</span></button>
-          <button class="nav-item" data-panel="resources"><span aria-hidden="true">T</span><span data-i18n="nav.resources">Tools & Skills</span></button>
+          <button class="nav-item" data-panel="resources"><span aria-hidden="true">R</span><span data-i18n="nav.resources">Ressourcen</span></button>
           <button class="nav-item" data-panel="actions"><span aria-hidden="true">S</span><span data-i18n="nav.sync">Sync</span></button>
           <button class="nav-item" data-panel="assets"><span aria-hidden="true">A</span><span data-i18n="nav.artifacts">Artefakte</span></button>
         </nav>
@@ -49,7 +49,7 @@
           <div class="hero-copy">
             <span class="eyebrow" data-i18n="hero.eyebrow">Repository-Quelle für OpenWebUI</span>
             <h2 data-i18n="hero.title">Repository-Workbench für OpenWebUI</h2>
-            <p data-i18n="hero.body">Modellpakete, Tools, Skills und Dist-Artefakte kuratieren, prüfen und kontrolliert synchronisieren.</p>
+            <p data-i18n="hero.body">Modellpakete, Tools, Functions, Skills, Promptvorlagen und Dist-Artefakte kuratieren, prüfen und kontrolliert synchronisieren.</p>
           </div>
           <div class="topbar-actions">
             <select id="locale-select" class="ghost locale-select" aria-label="Sprache" data-i18n-aria-label="language.select">
@@ -163,10 +163,10 @@
 
         <section class="panel" id="panel-resources">
           <div class="split">
-            <section class="list-pane" aria-label="Tool- und Skillliste" data-i18n-aria-label="resources.listAria">
+            <section class="list-pane" aria-label="Ressourcenliste" data-i18n-aria-label="resources.listAria">
               <div class="pane-head">
                 <div>
-                  <h3 data-i18n="resources.title">Tools & Skills</h3>
+                  <h3 data-i18n="resources.title">Tools, Functions, Skills & Prompts</h3>
                   <p id="resource-filter-state" data-i18n="resources.all">Alle Ressourcen</p>
                 </div>
                 <div class="pane-actions">
@@ -177,11 +177,11 @@
               <div id="resource-list" class="model-list"></div>
             </section>
 
-            <section class="editor-pane" aria-label="Tool- und Skill-Editor" data-i18n-aria-label="resources.editorAria">
+            <section class="editor-pane" aria-label="Ressourcen-Editor" data-i18n-aria-label="resources.editorAria">
               <div class="editor-head">
                 <div>
                   <h3 id="resource-title" data-i18n="resources.none">Keine Ressource ausgewählt</h3>
-                  <p id="resource-description" data-i18n="resources.pick">Wähle links ein Tool oder Skill aus.</p>
+                  <p id="resource-description" data-i18n="resources.pick">Wähle links eine Ressource aus.</p>
                 </div>
               </div>
 
@@ -197,7 +197,8 @@
               <div class="editor-actions">
                 <span id="resource-state" data-i18n="state.ready">Bereit</span>
                 <div class="editor-action-buttons">
-                  <button id="delete-resource" class="ghost danger-action" disabled data-i18n="action.delete">Entfernen</button>
+                  <button id="delete-openwebui-resource" class="ghost danger-action" disabled data-i18n="action.deleteOpenWebUIResource">Aus OpenWebUI entfernen</button>
+                  <button id="delete-resource" class="ghost danger-action" disabled data-i18n="action.delete">Lokale Datei entfernen</button>
                   <button id="save-resource" class="primary" disabled data-i18n="action.save">Speichern</button>
                 </div>
               </div>
@@ -214,7 +215,7 @@
                   <span data-i18n="sync.baseModel.label">Standardmodell</span>
                   <select id="base-model-select"></select>
                 </label>
-                <button id="refresh-base-models" class="ghost compact" type="button" data-i18n="sync.baseModel.refresh">Modelle laden</button>
+                <button id="refresh-base-models" class="ghost compact" type="button" data-i18n="sync.baseModel.refresh">Basismodelle laden</button>
                 <span id="base-model-state" class="sync-setting-state" data-i18n="sync.baseModel.loading">Modelle werden geladen.</span>
               </div>
               <div class="action-grid">
@@ -236,7 +237,7 @@
                 <button class="action-card" data-action="import-openwebui">
                   <small data-i18n="sync.api.step">5 · API Sync</small>
                   <strong data-i18n="sync.api.title">Zu OpenWebUI synchronisieren</strong>
-                  <span data-i18n="sync.api.body">Tools, Filter, Skills, Knowledge und Modelle über die API importieren.</span>
+                  <span data-i18n="sync.api.body">Alle Workbench-Modelle, Tools, Functions/Filter, Skills, Promptvorlagen, Pflichtdateien und Knowledge über die API importieren.</span>
                 </button>
                 <button class="action-card" data-action="sync-status">
                   <small data-i18n="sync.status.step">6 · Vergleich</small>

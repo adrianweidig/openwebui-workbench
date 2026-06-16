@@ -132,6 +132,7 @@ class DashboardStaticAssetsTests(unittest.TestCase):
             "add-resource",
             "save-resource",
             "delete-resource",
+            "delete-openwebui-resource",
         ):
             with self.subTest(control=control):
                 self.assertIn(f'setWriteControlState("{control}"', app_js)
@@ -150,6 +151,32 @@ class DashboardStaticAssetsTests(unittest.TestCase):
         ):
             with self.subTest(symbol=symbol):
                 self.assertIn(symbol, app_js)
+
+    def test_resource_openwebui_delete_controls_and_types_are_visible(self) -> None:
+        collector = collect_index()
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+        messages = json.loads((STATIC_ROOT / "locales" / "de.json").read_text(encoding="utf-8"))
+
+        self.assertIn("delete-openwebui-resource", collector.ids)
+        for symbol in (
+            "function deleteSelectedOpenWebUIResource",
+            "/api/openwebui/resources/delete",
+            "payload.functions",
+            "payload.prompts",
+            "function resourceKindTone",
+            '"function", "skill", "prompt"',
+        ):
+            with self.subTest(symbol=symbol):
+                self.assertIn(symbol, app_js)
+        for key in (
+            "action.deleteOpenWebUIResource",
+            "resources.deleteRemoteResult",
+            "resources.deleteRemoteFailed",
+            "resource.kind.function",
+            "resource.kind.prompt",
+        ):
+            with self.subTest(key=key):
+                self.assertIn(key, messages)
 
     def test_sync_base_model_selector_is_visible(self) -> None:
         collector = collect_index()

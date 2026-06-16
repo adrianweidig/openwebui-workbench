@@ -2,7 +2,7 @@
 
 🌐 Languages: [Deutsch](../WORKBENCH_DASHBOARD.md) | [English](WORKBENCH_DASHBOARD.md)
 
-The Workbench dashboard turns this repository into an active management UI for an OpenWebUI instance. OpenWebUI remains the chat and runtime container; the Workbench runs next to it and manages the sources used to generate and synchronize tools, filters, skills, knowledge, and model profiles.
+The Workbench dashboard turns this repository into an active management UI for an OpenWebUI instance. OpenWebUI remains the chat and runtime container; the Workbench runs next to it and manages the sources used to generate and synchronize tools, functions/filters, skills, prompt templates, knowledge, and model profiles.
 
 ## Target Setup
 
@@ -24,7 +24,9 @@ The editable source remains the repository:
 - model-defined example result files such as `beispielergebnis.md`, `beispielergebnis.html`, or `beispielergebnis.json`
 - approved examples under `Modelle/einzelmodelle/<modell>/beispiele/`
 - `Tools/openwebui_ext/tools/*.py`
+- `Tools/openwebui_ext/filters/*.py`
 - `Tools/openwebui_ext/skills/*.md`
+- `Tools/openwebui_ext/prompts/*.md`
 - `Tools/dist/`
 - `Modelle/dist/`
 
@@ -50,11 +52,11 @@ If the local `top.secret` edge proxy is used, the Workbench can also be exposed 
 ## Workflow
 
 1. Select a model in the dashboard.
-2. Edit `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, examples, tools, or skills.
+2. Edit `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, examples, tools, functions/filters, skills, or prompt templates.
 3. Save the file.
 4. Run `Regenerate artifacts`.
 5. Run `Check import`.
-6. With `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` set, run `Sync to OpenWebUI`.
+6. In the sync panel, optionally load base models, select the target OpenWebUI base model, and with `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` set, run `Sync to OpenWebUI`. This sync imports all Workbench models plus tools, functions/filters, skills, prompt templates, required files, and knowledge.
 7. Run `Compare model status` to compare Workbench-managed model fields with OpenWebUI.
 8. Run `Refresh OpenWebUI snapshot` when OpenWebUI-only models should be visible in the Workbench.
 

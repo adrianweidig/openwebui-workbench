@@ -1,6 +1,6 @@
-# OpenWebUI Tools/Filter/Skills Offline-Paket
+# OpenWebUI Tools/Filter/Skills/Prompts Offline-Paket
 
-Dieses Verzeichnis ist der Copy/Paste- und Transportbereich für OpenWebUI-Tools, Filter und Skills.
+Dieses Verzeichnis ist der Copy/Paste- und Transportbereich für OpenWebUI-Tools, Filter, Skills und Promptvorlagen.
 
 ## Enthalten
 
@@ -8,8 +8,10 @@ Dieses Verzeichnis ist der Copy/Paste- und Transportbereich für OpenWebUI-Tools
 - `openwebui-tools-offline-import.json`: direkt importierbares GUI-Bundle für alle Offline-Default-Tools.
 - `openwebui-tools-import.json`: direkt importierbares GUI-Bundle inklusive optionaler Netzwerk-, Rich-UI- und lokaler Crawl-Tools.
 - `openwebui-functions-import.json`: direkt importierbares GUI-Bundle für Functions/Filter.
+- `openwebui-prompts-import.json`: direkt importierbares Bundle für OpenWebUI-Promptvorlagen.
 - `openwebui-tool-registry.json`: maschinenlesbare Tool-Registry mit Importreihenfolge, Pfaden, Checksummen und öffentlichen Tool-Methoden.
 - `openwebui-function-registry.json`: maschinenlesbare Function-/Filter-Registry mit Auto-Tool-Selector, Kontextkomprimierer und Markdown-Normalizer.
+- `openwebui-prompt-registry.json`: maschinenlesbare Prompt-Registry mit Commands, Pfaden und Checksummen.
 
 ## Nutzung
 
@@ -17,8 +19,9 @@ Dieses Verzeichnis ist der Copy/Paste- und Transportbereich für OpenWebUI-Tools
 2. Entpacken.
 3. `openwebui-tools-offline-import.json` über `Workspace > Tools > Import` importieren.
 4. `openwebui-functions-import.json` über `Workspace > Functions > Import` importieren.
-5. `.md`-Dateien aus `openwebui_ext/skills/` über `Workspace > Skills` importieren.
-6. Für den vollständigen API-Pfad `scripts/openwebui_workspace_config.yaml` nutzen; sie setzt Jupyter-, Artefakt-, Addon-, Tool- und Function-/Filter-Valves zentral und veröffentlicht Tools, Skills, Knowledge und Modelle automatisch public.
+5. `openwebui-prompts-import.json` über `Workspace > Prompts` oder den API-Importer importieren.
+6. `.md`-Dateien aus `openwebui_ext/skills/` über `Workspace > Skills` importieren.
+7. Für den vollständigen API-Pfad `scripts/openwebui_workspace_config.yaml` nutzen; sie setzt Jupyter-, Artefakt-, Addon-, Tool- und Function-/Filter-Valves zentral und veröffentlicht Tools, Skills, Promptvorlagen, Knowledge und Modelle automatisch public.
 
 Der empfohlene Offline-Stack bindet `F:\offline-ai-stack\openwebui-offline-addons` in OpenWebUI ein. Die Konfigurationsdatei setzt dafür `addons.*`, `environment.*` und die passenden `tool_valves.*`, sodass Tools lokale Python-Pakete, Tiktoken/NLTK-Caches und Playwright/Chromium ohne Laufzeitdownloads verwenden können. Filterwerte wie das Kontextbudget des `context_compressor_filter` liegen im Abschnitt `function_valves`.
 

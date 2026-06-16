@@ -1,6 +1,6 @@
 # OpenWebUI Extensions
 
-Dieses Repository enthält zusätzliche OpenWebUI-Erweiterungen unter `Tools/openwebui_ext/`. Sie ergänzen die vorhandenen Modelle und das bestehende Jupyter-Tool um praktische, einzeln importierbare Tools, Filter und Skills.
+Dieses Repository enthält zusätzliche OpenWebUI-Erweiterungen unter `Tools/openwebui_ext/`. Sie ergänzen die vorhandenen Modelle und das bestehende Jupyter-Tool um praktische, einzeln importierbare Tools, Filter, Skills und Promptvorlagen.
 
 ## Tools importieren
 
@@ -33,6 +33,13 @@ Der Filter `auto_tool_selector.py` läuft als `inlet` vor dem Modellaufruf. Er e
 2. Eine Datei aus `Tools/openwebui_ext/skills/*.md` auswählen.
 3. Name, Beschreibung und Zugriff prüfen.
 4. Skill per `$skill-name` im Chat nutzen oder an ein Modell binden.
+
+## Promptvorlagen importieren
+
+1. Bevorzugt den API-Importer oder `Tools/dist/openwebui-prompts-import.json` verwenden.
+2. Als Fallback `Workspace > Prompts` öffnen und eine Vorlage aus `Tools/openwebui_ext/prompts/*.md` manuell anlegen.
+3. `command`, Name, Inhalt, Tags und Zugriff prüfen.
+4. Promptvorlagen sind eigenständige OpenWebUI-Prompts; sie werden nicht als Modell-Knowledge importiert.
 
 ## Tool-Katalog
 
@@ -88,7 +95,7 @@ Secrets gehören nie in Git. Für den API-Import ist `scripts/openwebui_workspac
 
 Die Datei bündelt die von der Import-Maschine erreichbare OpenWebUI-Adresse, den Admin-API-Key, backend-sichtbare Artefakt- und Addon-Pfade, Jupyter-Zugangsdaten, `tool_valves` und `function_valves`. Der Importer setzt daraus unter anderem die Valves für `air_gapped_jupyter_python`, `offline_artifact_workbench` und den `context_compressor_filter`. CLI-Parameter sind nur für bewusste Einmal-Overrides gedacht.
 
-Beim API-Import werden die importierten Tools, Skills, modellbezogenen Knowledge-Bases und Modelle automatisch mit Public-Read-Grants veröffentlicht. Functions und Filter werden nach Create/Update aktiviert und global geschaltet, damit sie ohne manuelle Nacharbeit für alle passenden Modelle greifen.
+Beim API-Import werden die importierten Tools, Skills, Promptvorlagen, modellbezogenen Knowledge-Bases und Modelle automatisch mit Public-Read-Grants veröffentlicht. Functions und Filter werden nach Create/Update aktiviert und global geschaltet, damit sie ohne manuelle Nacharbeit für alle passenden Modelle greifen.
 
 Der Offline-Addon-Stack `F:\offline-ai-stack\openwebui-offline-addons` kann als lokale OpenWebUI-Erweiterung eingebunden werden. Im Container werden seine Bestandteile über `/app/backend/data/cache`, `/app/backend/data/python`, `/app/backend/data/nltk_data` und `/app/backend/data/cache/ms-playwright` bereitgestellt und in der zentralen YAML abgebildet. Tools und Filter sollen außerdem OpenWebUI-Standardfunktionen wie Datei-/Knowledge-Kontext, Citations, Statusmeldungen, Code Interpreter, native Tool Calls und Builtins nutzen, wenn die Zielinstanz sie anbietet.
 
@@ -122,10 +129,11 @@ Das Skript arbeitet in dieser Reihenfolge:
 
 1. Tool-Dateien aus `Tools/jupyter/` und `Tools/openwebui_ext/tools/` entdecken und importierbar prüfen.
 2. Filter-Dateien aus `Tools/openwebui_ext/filters/` entdecken und importierbar prüfen.
-3. `Tools/dist/openwebui-tools-offline-import.json`, `Tools/dist/openwebui-tools-import.json`, `Tools/dist/openwebui-functions-import.json`, `Tools/index.json`, die Registries und die Fallback-Bundles erzeugen.
-4. Chat-Modelle in `Modelle/einzelmodelle/*/model.json` konfigurieren.
-5. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
-6. Optional Offline-ZIP-Pakete neu bauen.
+3. Promptvorlagen aus `Tools/openwebui_ext/prompts/` entdecken und importierbar prüfen.
+4. `Tools/dist/openwebui-tools-offline-import.json`, `Tools/dist/openwebui-tools-import.json`, `Tools/dist/openwebui-functions-import.json`, `Tools/dist/openwebui-prompts-import.json`, `Tools/index.json`, die Registries und die Fallback-Bundles erzeugen.
+5. Chat-Modelle in `Modelle/einzelmodelle/*/model.json` konfigurieren.
+6. Kombinierte Modellimporte und Einzelartefakte unter `Modelle/dist/` neu schreiben.
+7. Optional Offline-ZIP-Pakete neu bauen.
 
 Chat-Modelle erhalten im Spezialmodell-Standard nur Offline-Default-Tools in `meta.toolIds`; das Fallbackmodell `Allgemein` erhält bewusst alle importierbaren Tools. Zusätzlich setzt der Generator `base_model_id` auf das ausgewählte OpenWebUI-Basismodell, standardmäßig `coder`; derselbe Wert ist in der Workbench-GUI im Sync-Bereich, per CLI mit `--base-model-id <modell-id>` oder per Environment `WORKBENCH_BASE_MODEL_ID` änderbar. Außerdem setzt der Generator `meta.filterIds`, `meta.defaultFilterIds`, `meta.capabilities.builtin_tools: true`, `meta.capabilities.vision: true`, `meta.primaryToolIds`, `meta.recommendedSkillIds`, `meta.requiredFileContextFiles`, `meta.exampleKnowledgeFiles`, `meta.workbenchFileContext`, `params.function_calling: "native"`, `params.reasoning_effort: "high"`, `params.temperature: 0.7`, `params.top_p: 0.95`, `params.parallel_tool_calls: true`, eingebettete PNG-Icons in `meta.profile_image_url` und einen kurzen deterministischen Systemprompt. Dieser Systemprompt verweist verbindlich auf `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>`; die drei Dateien werden nicht als optionales RAG-Wissen behandelt. Weitere Beispiele aus `beispiele/`, Legacy-Artefakte `beispielergebnis.*` und i18n-Profile bleiben fokussiertes Knowledge/RAG-Material. `params.max_tokens` wird nicht gesetzt, damit OpenWebUI und der jeweilige Modellserver ihre eigenen Kontext- und Antwortlimits verwenden. Öffentliche Netzwerktools werden im Offline-Standard nicht zugewiesen, stehen aber im Modell `Allgemein` für bewusst freigegebene Instanzen zur Verfügung. Embedding- und Reranker-Modelle werden anhand von Modell-ID, Name, Base Model, Tags und Capabilities ausgeschlossen; falls solche Modelle später ergänzt werden, entfernt das Skript dort Tool-, Filter- und Function-Calling-Zuweisungen.
 
@@ -139,7 +147,7 @@ python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 
 Die Konfigurationsdatei enthält die von der ausführenden Maschine erreichbare OpenWebUI-Adresse und den Admin-API-Key sowie die aus Sicht des OpenWebUI-Backends erreichbare Jupyter-Adresse, den Jupyter-Token, das Artefakt-Volume, die `addons.*`-Pfade, generische `tool_valves`, `function_valves` und zentrale dokumentierte Environment-Namen. Die echte `scripts/openwebui_workspace_config.yaml` ist per `.gitignore` ausgeschlossen; nur die Beispiel-Datei wird versioniert. `import.include_optional_network_tools: true` ist der Standard, damit der API-Importer alle importierbaren Repo-Tools anlegt; für einen strikten Minimalimport kann der Wert lokal auf `false` gesetzt werden.
 
-Der Generator validiert zuerst alle lokalen Artefakte und startet danach `Tools/import_openwebui_workspace.py`. Der Importer importiert beziehungsweise aktualisiert Tools, setzt Tool-Valves, importiert Functions/Filter, setzt Function-/Filter-Valves, importiert Skills und anschließend Modelle. Standardmäßig lädt er pro Modell `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` als echte OpenWebUI-Files hoch, speichert die resultierenden File-IDs in `meta.workbenchFileContext.uploadedFiles` und importiert erst danach das Modellprofil. Die Knowledge Collection wird nur aus `meta.exampleKnowledgeFiles` gebaut, also aus `beispiele/**`, optionalen Legacy-Dateien `beispielergebnis.*` und primären i18n-Profilen. Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` oder direkt mit `python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
+Der Generator validiert zuerst alle lokalen Artefakte und startet danach `Tools/import_openwebui_workspace.py`. Der Importer importiert beziehungsweise aktualisiert Tools, setzt Tool-Valves, importiert Functions/Filter, setzt Function-/Filter-Valves, importiert Skills und Promptvorlagen und anschließend Modelle. Standardmäßig lädt er pro Modell `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` als echte OpenWebUI-Files hoch, speichert die resultierenden File-IDs in `meta.workbenchFileContext.uploadedFiles` und importiert erst danach das Modellprofil. Die Knowledge Collection wird nur aus `meta.exampleKnowledgeFiles` gebaut, also aus `beispiele/**`, optionalen Legacy-Dateien `beispielergebnis.*` und primären i18n-Profilen. Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist mit `python scripts/configure_openwebui_tool_models.py --write --check --import-dry-run --config scripts/openwebui_workspace_config.yaml` oder direkt mit `python Tools/import_openwebui_workspace.py --dry-run --config scripts/openwebui_workspace_config.yaml` möglich.
 
 ## Wartung
 

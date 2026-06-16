@@ -35,6 +35,14 @@ class FakeClient:
             raise result
         return result
 
+    def request_any(self, method: str, paths: list[str], payload=None, query=None, expected=(200,)):
+        last_result = None
+        for path in paths:
+            last_result = self.request(method, path, payload=payload, query=query)
+            if last_result is not None:
+                return last_result
+        return last_result
+
     def upload_file(self, path: Path, process: bool = True):
         raise AssertionError(f"unexpected upload_file call for {path} with process={process}")
 
@@ -252,6 +260,35 @@ class ImportOpenWebUIWorkspaceTests(unittest.TestCase):
 
         self.assertTrue(result.changed)
         self.assertIn(("POST", "/api/v1/knowledge/knowledge-1/reset"), client.calls)
+
+    def test_import_prompts_updates_existing_prompt_by_command(self) -> None:
+        module = load_import_module()
+        client = FakeClient(
+            {
+                "/api/v1/prompts/command/demo-prompt": {"id": "prompt-1", "command": "demo-prompt"},
+                "/api/v1/prompts/id/prompt-1/update": {"id": "prompt-1"},
+                "/api/v1/prompts/id/prompt-1/access/update": {"access_grants": [module.PUBLIC_READ_GRANT]},
+            }
+        )
+        records = [
+            {
+                "id": "demo-prompt",
+                "command": "demo-prompt",
+                "name": "Demo Prompt",
+                "content": "Nutze diese Promptvorlage für einen Importtest.\n",
+                "data": {"source_file": "Tools/openwebui_ext/prompts/demo-prompt.md"},
+                "meta": {"description": "Demo"},
+                "tags": ["workbench"],
+            }
+        ]
+
+        with patch.object(module, "load_prompt_records", return_value=records):
+            result = module.import_prompts(client, public=True)
+
+        self.assertEqual(result.updated, 1)
+        self.assertIn(("GET", "/api/v1/prompts/command/demo-prompt"), client.calls)
+        self.assertIn(("POST", "/api/v1/prompts/id/prompt-1/update"), client.calls)
+        self.assertIn(("POST", "/api/v1/prompts/id/prompt-1/access/update"), client.calls)
 
 
 if __name__ == "__main__":

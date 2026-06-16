@@ -46,7 +46,7 @@ Die Workbench ist die lokale Verwaltungsoberfläche für dieses Repository. Sie 
 
 ![Workbench Dashboard mit Modellpaketen und gruppierten Modelldateien](docs/assets/screenshots/workbench-dashboard-models.jpg)
 
-Tools und Skills werden in einem eigenen Bereich gepflegt. Von dort lassen sich die lokalen `.py`-Tools und `.md`-Skills prüfen, bearbeiten, ergänzen oder entfernen, bevor die Dist-Artefakte neu erzeugt und nach OpenWebUI synchronisiert werden.
+Tools, Functions/Filter, Skills und Promptvorlagen werden in einem eigenen Ressourcenbereich gepflegt. Von dort lassen sich lokale `.py`-Tools, `.py`-Functions, `.md`-Skills und `.md`-Promptvorlagen prüfen, bearbeiten, ergänzen, lokal entfernen oder aus OpenWebUI löschen, bevor die Dist-Artefakte neu erzeugt und nach OpenWebUI synchronisiert werden.
 
 ![Workbench Dashboard mit Tools und Skills](docs/assets/screenshots/workbench-dashboard-tools-skills.jpg)
 
@@ -61,6 +61,7 @@ Der anschließende Zielort in OpenWebUI ist der Workspace der laufenden OpenWebU
 - `Workspace > Tools`: importierte Tools aus `Tools/dist/openwebui-tools-offline-import.json` oder `Tools/dist/openwebui-tools-import.json`.
 - `Workspace > Functions`: importierte Filter aus `Tools/dist/openwebui-functions-import.json`.
 - `Workspace > Skills`: importierte Skills aus `Tools/dist/openwebui-tools-skills-offline.zip` oder den einzelnen Skill-Markdown-Dateien.
+- `Workspace > Prompts`: importierte Promptvorlagen aus `Tools/dist/openwebui-prompts-import.json`.
 
 OpenWebUI-Screenshots sind bewusst nicht versioniert, wenn sie lokale Nutzerkonten, Tokens oder private Instanzdaten zeigen würden. Die Workbench-Screenshots oben sind aus einer lokalen Testinstanz aufgenommen und enthalten keine Secrets. Die englische README enthält dieselbe `internetwissen`-Ansicht mit englischer Workbench-Lokalisierung.
 
@@ -227,15 +228,17 @@ Nach einem Compose-Start zeigen `docker compose --env-file .env -f Deployment/do
 6. Optional ein schlichtes Profilicon aus [`Modelle/icons/generic/`](Modelle/icons/generic/) oder [`Modelle/dist/artifacts/icons/generic/`](Modelle/dist/artifacts/icons/generic/) zuweisen.
 7. Das Jupyter-Tool nur dann zuordnen, wenn es im Modellprofil genannt ist.
 
-### 4. Tools, Functions und Skills importieren
+### 4. Tools, Functions, Skills und Promptvorlagen importieren
 
 Die Erweiterungen unter [`Tools/openwebui_ext/`](Tools/openwebui_ext/) sind direkt für OpenWebUI vorbereitet:
 
 - `Tools/dist/openwebui-tools-offline-import.json` über `Workspace > Tools > Import` importieren.
 - `Tools/dist/openwebui-functions-import.json` über `Workspace > Functions > Import` importieren; alle aktivierten Functions sind echte Filter.
+- `Tools/dist/openwebui-prompts-import.json` über `Workspace > Prompts` oder den API-Importer importieren.
 - Optional mit Netzwerk-/Rich-UI-/lokalen Crawl-Tools: `Tools/dist/openwebui-tools-import.json` über `Workspace > Tools > Import` importieren.
 - Einzelne `.py`-Dateien aus `Tools/openwebui_ext/tools/` nur als Fallback über `Workspace > Tools > Create Tool` einfügen.
 - `.md`-Dateien aus `Tools/openwebui_ext/skills/` über `Workspace > Skills > Import` importieren.
+- `.md`-Dateien aus `Tools/openwebui_ext/prompts/` nur als Fallback manuell in `Workspace > Prompts` anlegen.
 
 Details, Sicherheitsgrenzen und Testbefehle stehen in [`OPENWEBUI_EXTENSIONS.md`](OPENWEBUI_EXTENSIONS.md).
 
@@ -261,7 +264,7 @@ In der lokalen YAML werden unter anderem gesetzt:
 
 Das direkte Importskript [`Tools/import_openwebui_workspace.py`](Tools/import_openwebui_workspace.py) bleibt als Fallback nutzbar und liest dieselbe zentrale Konfigurationsdatei. CLI-Parameter wie `--token`, `--base-url` oder `--jupyter-url` sind nur für bewusste Einmal-Overrides gedacht.
 
-Der Importer importiert Tools, Functions/Filter, Skills, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, lädt `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` pro Modell als echte OpenWebUI-Files hoch, hängt nur Dateien aus `beispiele/`, Legacy-Artefakte `beispielergebnis.*` sowie die primären i18n-Dateien `manifest.json`, `de.md` und `en.md` als Knowledge pro Modell an, bindet profilbezogene Skills über `meta.skillIds`, veröffentlicht Tools/Skills/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
+Der Importer importiert Tools, Functions/Filter, Skills, Promptvorlagen, Modellprofile und eingebettete Icons, setzt Tool- und Function-Valves aus der Konfiguration, lädt `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>` pro Modell als echte OpenWebUI-Files hoch, hängt nur Dateien aus `beispiele/`, Legacy-Artefakte `beispielergebnis.*` sowie die primären i18n-Dateien `manifest.json`, `de.md` und `en.md` als Knowledge pro Modell an, bindet profilbezogene Skills über `meta.skillIds`, veröffentlicht Tools/Skills/Promptvorlagen/Knowledge/Modelle automatisch mit Public-Read-Grants und setzt alle Functions/Filter aktiv sowie global.
 
 Ein lokaler Payload-Check ohne OpenWebUI-Aufruf ist möglich:
 
@@ -277,7 +280,7 @@ Die Tool-Registry und die Modell-Tool-Zuweisungen werden reproduzierbar erzeugt 
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
-Der Generator sortiert Tools, Filter und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf das ausgewählte OpenWebUI-Basismodell, natives Tool-Calling, `reasoning_effort=high`, `temperature=0.7`, `top_p=0.95`, `parallel_tool_calls=true`, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, profilbezogene `meta.skillIds`, eingebettete Modellicons und einen bewusst kurzen deterministischen Systemprompt. Ohne explizite Auswahl nutzt die Workbench `coder`; alternativ kann derselbe Wert in der GUI im Sync-Bereich, per CLI mit `--base-model-id <modell-id>` oder per Environment `WORKBENCH_BASE_MODEL_ID` gesetzt werden.
+Der Generator sortiert Tools, Filter, Promptvorlagen und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf das ausgewählte OpenWebUI-Basismodell, natives Tool-Calling, `reasoning_effort=high`, `temperature=0.7`, `top_p=0.95`, `parallel_tool_calls=true`, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, profilbezogene `meta.skillIds`, eingebettete Modellicons und einen bewusst kurzen deterministischen Systemprompt. Ohne explizite Auswahl nutzt die Workbench `coder`; alternativ kann derselbe Wert in der GUI im Sync-Bereich, per CLI mit `--base-model-id <modell-id>` oder per Environment `WORKBENCH_BASE_MODEL_ID` gesetzt werden.
 
 Dieser Systemprompt verweist nur auf die drei verbindlichen Pflichtdateien `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>`. Beim späteren API-Import lädt die Workbench diese drei Dateien pro Modell als echte OpenWebUI-Files hoch und der Filter `workbench_required_file_context_filter` injiziert ihren gespeicherten Inhalt bei jedem Request als geschützten Full-Context-Systemblock vor dem `context_compressor_filter`. Weitere Dateien aus `beispiele/`, Legacy-Artefakte `beispielergebnis.*` und i18n-Profile bleiben Knowledge/RAG-Material für gezielten On-Demand-Abruf. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann.
 

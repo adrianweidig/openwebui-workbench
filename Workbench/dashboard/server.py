@@ -393,7 +393,9 @@ class WorkbenchState:
         self.root = config.root.resolve()
         self.models_root = self.root / "Modelle" / "einzelmodelle"
         self.tools_root = self.root / "Tools" / "openwebui_ext" / "tools"
+        self.functions_root = self.root / "Tools" / "openwebui_ext" / "filters"
         self.skills_root = self.root / "Tools" / "openwebui_ext" / "skills"
+        self.prompts_root = self.root / "Tools" / "openwebui_ext" / "prompts"
         self.dist_root = self.root / "Modelle" / "dist"
         self.tools_dist_root = self.root / "Tools" / "dist"
         self.model_sync_status_file = self.root / "Artefakte" / "openwebui_sync" / "status.json"
@@ -406,7 +408,9 @@ class WorkbenchState:
     def summary(self) -> dict[str, Any]:
         models = self.list_models()
         tools = self.list_tools()
+        functions = self.list_functions()
         skills = self.list_skills()
+        prompts = self.list_prompts()
         return {
             "root": str(self.root),
             "locale": {
@@ -437,7 +441,9 @@ class WorkbenchState:
             "counts": {
                 "models": len(models),
                 "tools": len(tools),
+                "functions": len(functions),
                 "skills": len(skills),
+                "prompts": len(prompts),
                 "model_dist_json": len(list(self.dist_root.glob("*.json"))) if self.dist_root.exists() else 0,
                 "tool_dist_json": len(list(self.tools_dist_root.glob("*.json"))) if self.tools_dist_root.exists() else 0,
             },
@@ -507,6 +513,7 @@ class WorkbenchState:
             (self.dist_root / "openwebui-offline-artifacts.zip", "handover_zip", True),
             (self.tools_dist_root / "openwebui-tools-offline-import.json", "offline_tool_import", True),
             (self.tools_dist_root / "openwebui-functions-import.json", "function_import", True),
+            (self.tools_dist_root / "openwebui-prompts-import.json", "prompt_import", True),
             (self.tools_dist_root / "openwebui-tools-skills-offline.zip", "tools_skills_zip", True),
             (self.tools_dist_root / "openwebui-tools-import.json", "optional_network_tools", False),
         ]
@@ -891,8 +898,14 @@ class WorkbenchState:
     def list_tools(self) -> list[dict[str, Any]]:
         return self._list_markdown_or_python(self.tools_root, "*.py", "tool")
 
+    def list_functions(self) -> list[dict[str, Any]]:
+        return self._list_markdown_or_python(self.functions_root, "*.py", "function")
+
     def list_skills(self) -> list[dict[str, Any]]:
         return self._list_markdown_or_python(self.skills_root, "*.md", "skill")
+
+    def list_prompts(self) -> list[dict[str, Any]]:
+        return self._list_markdown_or_python(self.prompts_root, "*.md", "prompt")
 
     def _list_markdown_or_python(self, root: Path, pattern: str, kind: str) -> list[dict[str, Any]]:
         if not root.exists():
@@ -918,8 +931,12 @@ class WorkbenchState:
         safe_resource_id = require_safe_path_segment(resource_id, t("invalid_resource_id", self.config.locale))
         if kind == "tool":
             path = self.tools_root / f"{safe_resource_id}.py"
+        elif kind == "function":
+            path = self.functions_root / f"{safe_resource_id}.py"
         elif kind == "skill":
             path = self.skills_root / f"{safe_resource_id}.md"
+        elif kind == "prompt":
+            path = self.prompts_root / f"{safe_resource_id}.md"
         else:
             raise ValueError(t("resource_type", self.config.locale))
         if not path.exists() or not path.is_file():
@@ -934,12 +951,24 @@ class WorkbenchState:
             if safe_resource_id == "__init__.py":
                 raise ValueError(t("invalid_resource_id", self.config.locale))
             return self.tools_root / safe_resource_id
+        if kind == "function":
+            if not safe_resource_id.endswith(".py"):
+                safe_resource_id = f"{safe_resource_id}.py"
+            if safe_resource_id == "__init__.py":
+                raise ValueError(t("invalid_resource_id", self.config.locale))
+            return self.functions_root / safe_resource_id
         if kind == "skill":
             if not safe_resource_id.endswith(".md"):
                 safe_resource_id = f"{safe_resource_id}.md"
             if safe_resource_id.upper() == "README.MD":
                 raise ValueError(t("invalid_resource_id", self.config.locale))
             return self.skills_root / safe_resource_id
+        if kind == "prompt":
+            if not safe_resource_id.endswith(".md"):
+                safe_resource_id = f"{safe_resource_id}.md"
+            if safe_resource_id.upper() == "README.MD":
+                raise ValueError(t("invalid_resource_id", self.config.locale))
+            return self.prompts_root / safe_resource_id
         raise ValueError(t("resource_type", self.config.locale))
 
     def read_resource(self, kind: str, resource_id: str) -> dict[str, Any]:
@@ -983,6 +1012,88 @@ class WorkbenchState:
         path.unlink()
         return {"kind": kind, "id": resource_id, "path": rel(path), "deleted": True}
 
+    def delete_openwebui_resources(self, kind: str, resource_ids: list[str]) -> dict[str, Any]:
+        if not self.config.allow_write:
+            raise PermissionError(t("write_disabled", self.config.locale))
+        if kind not in {"tool", "function", "skill", "prompt"}:
+            raise ValueError(t("resource_type", self.config.locale))
+        unique_ids = list(
+            dict.fromkeys(
+                require_safe_path_segment(str(item), t("invalid_resource_id", self.config.locale))
+                for item in resource_ids
+            )
+        )
+        if not unique_ids:
+            raise ValueError(t("resource_selection_empty", self.config.locale))
+        deleted: list[str] = []
+        failed: list[dict[str, str]] = []
+        for resource_id in unique_ids:
+            last_error = ""
+            candidates = self.openwebui_resource_delete_candidates(kind, resource_id)
+            for method, path, payload, query in candidates:
+                try:
+                    self.openwebui_api_request(method, path, payload=payload, query=query)
+                    deleted.append(resource_id)
+                    last_error = ""
+                    break
+                except RuntimeError as exc:
+                    last_error = str(exc)
+                    if "HTTP 404" not in last_error and "HTTP 405" not in last_error:
+                        break
+            if last_error:
+                failed.append({"id": resource_id, "error": last_error})
+        return {
+            "kind": kind,
+            "deleted": deleted,
+            "failed": failed,
+            "requested": unique_ids,
+            "ok": not failed,
+        }
+
+    def openwebui_resource_delete_candidates(
+        self,
+        kind: str,
+        resource_id: str,
+    ) -> list[tuple[str, str, Any | None, dict[str, str] | None]]:
+        if kind == "tool":
+            return [
+                ("DELETE", f"/api/v1/tools/id/{resource_id}/delete", None, None),
+                ("DELETE", f"/api/tools/id/{resource_id}/delete", None, None),
+            ]
+        if kind == "function":
+            return [
+                ("DELETE", f"/api/v1/functions/id/{resource_id}/delete", None, None),
+                ("DELETE", f"/api/functions/id/{resource_id}/delete", None, None),
+            ]
+        if kind == "skill":
+            return [
+                ("DELETE", f"/api/v1/skills/id/{resource_id}/delete", None, None),
+                ("DELETE", f"/api/skills/id/{resource_id}/delete", None, None),
+            ]
+        if kind == "prompt":
+            prompt_ids = [resource_id]
+            for path in (f"/api/v1/prompts/command/{resource_id}", f"/api/prompts/command/{resource_id}"):
+                try:
+                    value = self.openwebui_api_request("GET", path)
+                except RuntimeError as exc:
+                    if "HTTP 404" in str(exc) or "HTTP 405" in str(exc):
+                        continue
+                    raise
+                if isinstance(value, dict) and value.get("id"):
+                    prompt_id = str(value["id"])
+                    if prompt_id not in prompt_ids:
+                        prompt_ids.insert(0, prompt_id)
+            candidates: list[tuple[str, str, Any | None, dict[str, str] | None]] = []
+            for prompt_id in prompt_ids:
+                candidates.extend(
+                    [
+                        ("DELETE", f"/api/v1/prompts/id/{prompt_id}/delete", None, None),
+                        ("DELETE", f"/api/prompts/id/{prompt_id}/delete", None, None),
+                    ]
+                )
+            return candidates
+        raise ValueError(t("resource_type", self.config.locale))
+
     def ensure_action_allowed(self, action: str) -> None:
         if action in WRITE_ACTIONS and not self.config.allow_write:
             raise PermissionError(t("write_disabled", self.config.locale))
@@ -995,13 +1106,13 @@ class WorkbenchState:
                 "Generator-Check, Import-Dry-Run, Unit-Tests und JSON-Validierung ausführen.",
             ],
             "generate": [
-                "Tools, Filter, Skills und Modellpakete aus dem Repository lesen.",
-                "Modellparameter, Pflichtdatei-Kontext, Icons und Dist-Artefakte aktualisieren.",
+                "Tools, Functions/Filter, Skills, Promptvorlagen und Modellpakete aus dem Repository lesen.",
+                "Registries, Prompt-Import, Modellparameter, Pflichtdatei-Kontext, Icons und Dist-Artefakte aktualisieren.",
                 "Offline-ZIP-Pakete neu bauen und Generator-Konsistenz prüfen.",
             ],
             "import-dry-run": [
                 "Lokale Dist-Artefakte schreiben und prüfen.",
-                "Importer-Payload mit der gewählten OpenWebUI-Konfiguration simulieren.",
+                "Importer-Payload für Tools, Functions, Skills, Promptvorlagen, Dateien, Knowledge und Modelle simulieren.",
                 "Keine Zielinstanz verändern.",
             ],
             "sync-status": [
@@ -1016,7 +1127,7 @@ class WorkbenchState:
             ],
             "import-openwebui": [
                 "Dist-Artefakte neu erzeugen und validieren.",
-                "Tools, Functions/Filter und Skills in OpenWebUI importieren.",
+                "Tools, Functions/Filter, Skills und Promptvorlagen in OpenWebUI importieren.",
                 "Pro Modell mainprompt.md, fachwissen.md und Golden_Example.<ext> als echte Files hochladen.",
                 "Beispiele nur als Knowledge/RAG-Material anlegen und Modellprofile synchronisieren.",
             ],
@@ -1512,10 +1623,21 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 self.send_json(STATE.read_model_file(model_id, name))
             elif parsed.path == "/api/tools":
                 self.send_json({"tools": STATE.list_tools()})
+            elif parsed.path == "/api/functions":
+                self.send_json({"functions": STATE.list_functions()})
             elif parsed.path == "/api/skills":
                 self.send_json({"skills": STATE.list_skills()})
+            elif parsed.path == "/api/prompts":
+                self.send_json({"prompts": STATE.list_prompts()})
             elif parsed.path == "/api/resources":
-                self.send_json({"tools": STATE.list_tools(), "skills": STATE.list_skills()})
+                self.send_json(
+                    {
+                        "tools": STATE.list_tools(),
+                        "functions": STATE.list_functions(),
+                        "skills": STATE.list_skills(),
+                        "prompts": STATE.list_prompts(),
+                    }
+                )
             elif parsed.path == "/api/openwebui/models":
                 self.send_json(STATE.list_openwebui_base_models())
             elif parsed.path.startswith("/api/resources/") and parsed.path.endswith("/file"):
@@ -1583,6 +1705,15 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 raw_ids = payload.get("ids") if isinstance(payload, dict) else []
                 model_ids = raw_ids if isinstance(raw_ids, list) else []
                 result = STATE.delete_openwebui_models([str(item) for item in model_ids])
+                self.send_json(result, HTTPStatus.OK if result.get("ok") else HTTPStatus.BAD_GATEWAY)
+            elif parsed.path == "/api/openwebui/resources/delete":
+                payload = self.read_json_body()
+                raw_ids = payload.get("ids") if isinstance(payload, dict) else []
+                resource_ids = raw_ids if isinstance(raw_ids, list) else []
+                result = STATE.delete_openwebui_resources(
+                    str(payload.get("kind") or "") if isinstance(payload, dict) else "",
+                    [str(item) for item in resource_ids],
+                )
                 self.send_json(result, HTTPStatus.OK if result.get("ok") else HTTPStatus.BAD_GATEWAY)
             else:
                 self.send_error_json(HTTPStatus.NOT_FOUND, self.message("route_not_found"))
