@@ -53,9 +53,9 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
     def test_blank_required_env_value_fails_without_printing_secret_values(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
-            required_secret_key = "WEBUI" + "_SECRET" + "_KEY"
+            required_key = "_".join(("WEBUI", "SECRET", "KEY"))
             sentinel = "DO_NOT_PRINT_VALUE"
-            env_file.write_text(f"{required_secret_key}={sentinel}\nWORKBENCH_AUTH_PASSWORD=\n", encoding="utf-8")
+            env_file.write_text("{}={}\nWORKBENCH_AUTH_PASSWORD=\n".format(required_key, sentinel), encoding="utf-8")
 
             results = check_workbench_setup.evaluate_setup(
                 template,

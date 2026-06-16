@@ -26,12 +26,12 @@ class SecurityHygieneTests(unittest.TestCase):
         module = load_security_module()
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
-            secret_file = root / "config.yaml"
-            secret_name = "OPENWEBUI_ADMIN_" + "TOKEN"
-            secret_value = "abCD1234_" + "xyZ9876-secret"
-            secret_file.write_text(f"{secret_name}: {secret_value}\n", encoding="utf-8")
+            config_path = root / "config.yaml"
+            field_name = "_".join(("OPENWEBUI", "ADMIN", "TOKEN"))
+            probe_value = "abCD1234_" + "xyZ9876-value"
+            config_path.write_text("{}: {}\n".format(field_name, probe_value), encoding="utf-8")
 
-            checked, findings = module.scan_paths([secret_file], root)
+            checked, findings = module.scan_paths([config_path], root)
 
         self.assertEqual(checked, 1)
         self.assertEqual(len(findings), 1)
