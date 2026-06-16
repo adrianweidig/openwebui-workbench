@@ -8,6 +8,8 @@ const state = {
   selectedModel: null,
   selectedModelIds: new Set(),
   selectedFile: "systemprompt.md",
+  modelEditorTab: "files",
+  modelSettings: null,
   selectedResource: null,
   baseModelOptions: [],
   selectedBaseModelId: localStorage.getItem("workbench-base-model-id") || "",
@@ -23,11 +25,14 @@ const el = (id) => document.getElementById(id);
 const DEFAULT_LOCALE = "de";
 const DEFAULT_PANEL = "models";
 const DEFAULT_MODEL_FILE = "systemprompt.md";
+const DEFAULT_MODEL_TAB = "files";
 const DEFAULT_VIEW_MODE = "split";
 const SUPPORTED_LOCALES = ["de", "en"];
 const SUPPORTED_PANELS = new Set(["models", "resources", "actions", "assets"]);
+const SUPPORTED_MODEL_TABS = new Set(["files", "settings"]);
 const SUPPORTED_VIEW_MODES = new Set(["split", "edit", "preview"]);
 const WRITE_ACTIONS = new Set(["generate", "import-dry-run", "import-openwebui", "pull-openwebui"]);
+const MODEL_CAPABILITIES = ["builtin_tools", "file_context", "vision", "file_upload", "code_interpreter", "status_updates", "usage"];
 const queryParams = new URLSearchParams(window.location.search);
 
 function normalizeLocale(value) {
@@ -156,6 +161,58 @@ async function api(path, options = {}) {
 
 function setText(id, value) {
   el(id).textContent = value;
+}
+
+function cloneJson(value) {
+  return JSON.parse(JSON.stringify(value ?? {}));
+}
+
+function plainObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+}
+
+function listFromText(value) {
+  return String(value || "")
+    .split(/[\n,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function textFromList(value) {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object" && typeof item.name === "string") return item.name;
+      return "";
+    })
+    .filter(Boolean)
+    .join("\n");
+}
+
+function tagNamesFromSettings(settings) {
+  return textFromList(plainObject(settings.meta).tags).replace(/\n/g, ", ");
+}
+
+function settingsJsonText(settings) {
+  return `${JSON.stringify(settings, null, 2)}\n`;
+}
+
+function readSettingsJsonEditor() {
+  const raw = el("setting-raw-json").value.trim();
+  if (!raw) return {};
+  const parsed = JSON.parse(raw);
+  if (Array.isArray(parsed) && parsed.length === 1 && plainObject(parsed[0]) === parsed[0]) {
+    return cloneJson(parsed[0]);
+  }
+  if (plainObject(parsed) === parsed) return cloneJson(parsed);
+  throw new Error(t("settings.invalidJsonObject"));
+}
+
+function setSettingsSelectValue(id, value) {
+  const select = el(id);
+  const next = String(value || "");
+  select.value = Array.from(select.options).some((option) => option.value === next) ? next : "";
 }
 
 function syncUrlState() {
@@ -763,9 +820,21 @@ function updateEditorWriteControls() {
     if (readOnly) textarea.title = reason;
     else textarea.removeAttribute("title");
   });
+  document.querySelectorAll("[data-model-setting]").forEach((control) => {
+    const unavailable = !state.selectedModel || Boolean(state.selectedModel.remote_only);
+    const shouldDisable = unavailable || (readOnly && ["SELECT", "INPUT"].includes(control.tagName) && control.type !== "text" && control.type !== "number");
+    if ("readOnly" in control) control.readOnly = readOnly;
+    control.disabled = shouldDisable;
+    control.setAttribute("aria-readonly", String(readOnly));
+    if (readOnly) control.title = reason;
+    else control.removeAttribute("title");
+  });
   setWriteControlState("add-model-file", !state.selectedModel, reason);
   setWriteControlState("save-file", !state.selectedModel || el("markdown-editor").disabled, reason);
   setWriteControlState("delete-model-file", !selectedModelFileExists(), reason);
+  setWriteControlState("validate-model-settings", !state.selectedModel || !state.modelSettings, "");
+  setWriteControlState("save-model-settings", !state.selectedModel || !state.modelSettings, reason);
+  setWriteControlState("save-generate-model-settings", !state.selectedModel || !state.modelSettings, reason);
   setWriteControlState("add-resource", false, reason);
   setWriteControlState("save-resource", !state.selectedResource || el("resource-editor").disabled, reason);
   setWriteControlState("delete-resource", !state.selectedResource, reason);
@@ -1090,10 +1159,238 @@ function selectedModelFileExists() {
   return Boolean(state.selectedModel?.files.find((file) => file.name === state.selectedFile && file.exists));
 }
 
+function clearModelSettingsForm() {
+  state.modelSettings = null;
+  [
+    "setting-base-model-id",
+    "setting-name",
+    "setting-description",
+    "setting-tags",
+    "setting-tool-ids",
+    "setting-filter-ids",
+    "setting-skill-ids",
+    "setting-temperature",
+    "setting-top-p",
+    "setting-stop",
+    "setting-raw-json",
+  ].forEach((id) => {
+    el(id).value = "";
+  });
+  setSettingsSelectValue("setting-function-calling", "");
+  setSettingsSelectValue("setting-reasoning-effort", "");
+  el("setting-parallel-tool-calls").checked = false;
+  document.querySelectorAll("[data-capability]").forEach((checkbox) => {
+    checkbox.checked = false;
+  });
+  setText("settings-state", t("state.ready"));
+}
+
+function renderModelEditorTabs() {
+  document.querySelectorAll("[data-model-tab]").forEach((button) => {
+    const active = button.dataset.modelTab === state.modelEditorTab;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+  el("model-files-panel").hidden = state.modelEditorTab !== "files";
+  el("model-settings-panel").hidden = state.modelEditorTab !== "settings";
+}
+
+async function setModelEditorTab(tab) {
+  const nextTab = SUPPORTED_MODEL_TABS.has(tab) ? tab : DEFAULT_MODEL_TAB;
+  if (state.modelEditorTab === nextTab) return;
+  if (!confirmDiscardUnsaved("model")) return;
+  state.modelDirty = false;
+  state.modelEditorTab = nextTab;
+  renderModelEditorTabs();
+  if (!state.selectedModel) {
+    updateEditorWriteControls();
+    return;
+  }
+  if (nextTab === "settings") {
+    if (state.selectedModel.remote_only) {
+      clearModelSettingsForm();
+      setText("settings-state", t("editor.disabled.remoteOnly"));
+      updateEditorWriteControls();
+      return;
+    }
+    await loadModelSettings();
+  } else if (!state.selectedModel.remote_only && state.selectedModel.files.length) {
+    await loadFile(state.selectedFile);
+  }
+  updateEditorWriteControls();
+}
+
+function fillModelSettingsForm(settings, content = "", dirty = false) {
+  const normalized = cloneJson(settings);
+  const meta = plainObject(normalized.meta);
+  const params = plainObject(normalized.params);
+  const capabilities = plainObject(meta.capabilities);
+  state.modelSettings = normalized;
+  el("setting-base-model-id").value = normalized.base_model_id || currentBaseModelFromStatus();
+  el("setting-name").value = normalized.name || normalized.id || "";
+  el("setting-description").value = meta.description || normalized.description || "";
+  el("setting-tags").value = tagNamesFromSettings(normalized);
+  MODEL_CAPABILITIES.forEach((capability) => {
+    const checkbox = document.querySelector(`[data-capability="${capability}"]`);
+    if (checkbox) checkbox.checked = Boolean(capabilities[capability]);
+  });
+  el("setting-tool-ids").value = textFromList(meta.toolIds);
+  el("setting-filter-ids").value = textFromList(meta.filterIds || meta.defaultFilterIds);
+  el("setting-skill-ids").value = textFromList(meta.skillIds || meta.recommendedSkillIds);
+  el("setting-temperature").value = params.temperature ?? "";
+  el("setting-top-p").value = params.top_p ?? "";
+  el("setting-stop").value = textFromList(params.stop);
+  setSettingsSelectValue("setting-function-calling", params.function_calling);
+  setSettingsSelectValue("setting-reasoning-effort", params.reasoning_effort);
+  el("setting-parallel-tool-calls").checked = Boolean(params.parallel_tool_calls);
+  el("setting-raw-json").value = content || settingsJsonText(normalized);
+  state.modelDirty = dirty;
+  updateEditorWriteControls();
+}
+
+function numberSettingValue(id, min, max) {
+  const value = String(el(id).value || "").trim();
+  if (!value) return undefined;
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < min || number > max) {
+    throw new Error(t("settings.invalidNumber", { field: id, min, max }));
+  }
+  return number;
+}
+
+function collectModelSettingsFromFields(baseSettings) {
+  if (!state.selectedModel) throw new Error(t("models.none"));
+  const settings = cloneJson(baseSettings || {});
+  const meta = plainObject(settings.meta);
+  const params = plainObject(settings.params);
+  const capabilities = plainObject(meta.capabilities);
+  settings.id = state.selectedModel.id;
+  settings.base_model_id = String(el("setting-base-model-id").value || "").trim() || currentBaseModelFromStatus();
+  settings.name = String(el("setting-name").value || "").trim() || state.selectedModel.id;
+  meta.description = String(el("setting-description").value || "").trim();
+  meta.tags = listFromText(el("setting-tags").value).map((name) => ({ name }));
+  MODEL_CAPABILITIES.forEach((capability) => {
+    const checkbox = document.querySelector(`[data-capability="${capability}"]`);
+    capabilities[capability] = Boolean(checkbox?.checked);
+  });
+  meta.capabilities = capabilities;
+  meta.toolIds = listFromText(el("setting-tool-ids").value);
+  meta.filterIds = listFromText(el("setting-filter-ids").value);
+  meta.defaultFilterIds = [...meta.filterIds];
+  meta.skillIds = listFromText(el("setting-skill-ids").value);
+  meta.recommendedSkillIds = [...meta.skillIds];
+  const temperature = numberSettingValue("setting-temperature", 0, 2);
+  const topP = numberSettingValue("setting-top-p", 0, 1);
+  if (temperature === undefined) delete params.temperature;
+  else params.temperature = temperature;
+  if (topP === undefined) delete params.top_p;
+  else params.top_p = topP;
+  params.stop = listFromText(el("setting-stop").value);
+  const functionCalling = String(el("setting-function-calling").value || "").trim();
+  if (functionCalling) params.function_calling = functionCalling;
+  else delete params.function_calling;
+  const reasoningEffort = String(el("setting-reasoning-effort").value || "").trim();
+  if (reasoningEffort) params.reasoning_effort = reasoningEffort;
+  else delete params.reasoning_effort;
+  params.parallel_tool_calls = Boolean(el("setting-parallel-tool-calls").checked);
+  settings.meta = meta;
+  settings.params = params;
+  return settings;
+}
+
+function collectModelSettingsFromForm() {
+  return collectModelSettingsFromFields(readSettingsJsonEditor());
+}
+
+function syncModelSettingsRawFromFields() {
+  let baseSettings = state.modelSettings || {};
+  try {
+    baseSettings = readSettingsJsonEditor();
+  } catch {
+    // Keep the broken raw JSON visible until the user validates or fixes it.
+  }
+  const settings = collectModelSettingsFromFields(baseSettings);
+  el("setting-raw-json").value = settingsJsonText(settings);
+}
+
+async function loadModelSettings() {
+  if (!state.selectedModel) return;
+  clearModelSettingsForm();
+  setText("settings-state", t("state.loadingFile"));
+  try {
+    const payload = await api(`/api/models/${encodeURIComponent(state.selectedModel.id)}/settings`);
+    fillModelSettingsForm(payload.settings, payload.content, false);
+    setText("settings-state", t("state.loaded", { path: payload.path }));
+  } catch (error) {
+    setText("settings-state", error.message);
+  }
+}
+
+function markModelSettingsDirty(syncRaw = true) {
+  state.modelDirty = true;
+  if (syncRaw) {
+    try {
+      syncModelSettingsRawFromFields();
+      setText("settings-state", t("state.unsaved"));
+    } catch (error) {
+      setText("settings-state", error.message);
+    }
+  } else {
+    setText("settings-state", t("state.unsaved"));
+  }
+  updateEditorWriteControls();
+}
+
+function validateModelSettings() {
+  try {
+    const settings = readSettingsJsonEditor();
+    if (!settings.id) settings.id = state.selectedModel?.id;
+    fillModelSettingsForm(settings, settingsJsonText(settings), true);
+    setText("settings-state", t("settings.valid"));
+  } catch (error) {
+    setText("settings-state", error.message);
+  }
+}
+
+async function saveModelSettings(generateAfterSave = false) {
+  if (!canUseEditorWrites("settings-state")) return;
+  if (!state.selectedModel) return;
+  el("save-model-settings").disabled = true;
+  el("save-generate-model-settings").disabled = true;
+  setText("settings-state", t("state.saving"));
+  try {
+    const settings = collectModelSettingsFromForm();
+    const payload = await api(`/api/models/${encodeURIComponent(state.selectedModel.id)}/settings`, {
+      method: "PUT",
+      body: JSON.stringify({ settings }),
+    });
+    fillModelSettingsForm(payload.settings, payload.content, false);
+    setText("settings-state", t("state.saved", { path: payload.path }));
+    await refreshModels(true);
+    if (state.selectedModel) {
+      setText("model-title", modelDisplayName(state.selectedModel));
+      setText("model-description", modelDisplayDescriptionWithCapability(state.selectedModel));
+    }
+    if (generateAfterSave) {
+      activatePanel("actions");
+      await runAction("generate");
+    }
+  } catch (error) {
+    setText("settings-state", error.message);
+  } finally {
+    el("save-model-settings").disabled = false;
+    el("save-generate-model-settings").disabled = false;
+    updateEditorWriteControls();
+  }
+}
+
 function resetModelEditor() {
   state.selectedModel = null;
   state.selectedFile = DEFAULT_MODEL_FILE;
+  state.modelEditorTab = DEFAULT_MODEL_TAB;
   state.modelDirty = false;
+  clearModelSettingsForm();
+  renderModelEditorTabs();
   setText("model-title", t("models.none"));
   setText("model-description", t("models.pick"));
   el("markdown-editor").value = "";
@@ -1191,7 +1488,9 @@ async function selectModel(modelId) {
   setText("model-description", modelDisplayDescriptionWithCapability(model));
   renderModels();
   renderFileTabs();
+  renderModelEditorTabs();
   if (model.remote_only || !model.files.length) {
+    clearModelSettingsForm();
     el("markdown-editor").value = model.sync_action || "";
     el("markdown-editor").disabled = true;
     updateModelPreview();
@@ -1202,7 +1501,8 @@ async function selectModel(modelId) {
     syncUrlState();
     return;
   }
-  await loadFile(state.selectedFile);
+  if (state.modelEditorTab === "settings") await loadModelSettings();
+  else await loadFile(state.selectedFile);
 }
 
 async function loadFile(name) {
@@ -1552,6 +1852,13 @@ function wireEvents() {
   document.querySelectorAll(".view-mode").forEach((button) => {
     button.addEventListener("click", () => applyView(button.dataset.editor, button.dataset.mode));
   });
+  document.querySelectorAll("[data-model-tab]").forEach((button) => {
+    button.addEventListener("click", () => setModelEditorTab(button.dataset.modelTab));
+  });
+  document.querySelectorAll("[data-model-setting]").forEach((control) => {
+    control.addEventListener("input", () => markModelSettingsDirty(false));
+    control.addEventListener("change", () => markModelSettingsDirty(control.id !== "setting-raw-json"));
+  });
   el("theme-toggle").addEventListener("click", () => {
     applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light");
   });
@@ -1577,6 +1884,9 @@ function wireEvents() {
   el("save-file").addEventListener("click", saveFile);
   el("add-model-file").addEventListener("click", addModelFile);
   el("delete-model-file").addEventListener("click", deleteModelFile);
+  el("validate-model-settings").addEventListener("click", validateModelSettings);
+  el("save-model-settings").addEventListener("click", () => saveModelSettings(false));
+  el("save-generate-model-settings").addEventListener("click", () => saveModelSettings(true));
   el("select-visible-models").addEventListener("change", () => toggleVisibleModelSelection(el("select-visible-models").checked));
   el("delete-openwebui-models").addEventListener("click", deleteSelectedOpenWebUIModels);
   el("add-resource").addEventListener("click", addResource);

@@ -220,13 +220,15 @@ Nach einem Compose-Start zeigen `docker compose --env-file .env -f Deployment/do
 
 ### 3. Modelle per OpenWebUI-GUI importieren
 
-1. In OpenWebUI das gewünschte Basismodell verfügbar machen. Standard ist der lokale OpenWebUI-Modellname `coder`; in der Workbench-GUI kann vor Generierung oder Synchronisierung ein anderes erkanntes OpenWebUI-Modell gewählt werden.
+1. In OpenWebUI das gewünschte Basismodell verfügbar machen. Standard ist der lokale OpenWebUI-Modellname `coder`; pro Modell kann `base_model_id` im Workbench-Tab `Einstellungen` geändert werden.
 2. In [`Modelle/einzelmodelle/<modell-id>/`](Modelle/einzelmodelle/) das passende Paket wählen.
 3. Entweder das einzelne `model.json` importieren oder ein neues Modell anlegen.
 4. Jedes `model.json` ist ein direkt importierbares OpenWebUI-JSON-Array mit genau einem Modellobjekt.
 5. Für vollständige Pflichtdatei-Injektion den API-Importer verwenden. Ein manueller GUI-Import kann das Modellprofil importieren, erzeugt aber keine persistierten `workbenchFileContext.uploadedFiles`. Die Pflichtdateien sind `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>`; `beispiele/` und `beispielergebnis.*` bleiben Knowledge/RAG-Material.
 6. Optional ein schlichtes Profilicon aus [`Modelle/icons/generic/`](Modelle/icons/generic/) oder [`Modelle/dist/artifacts/icons/generic/`](Modelle/dist/artifacts/icons/generic/) zuweisen.
 7. Das Jupyter-Tool nur dann zuordnen, wenn es im Modellprofil genannt ist.
+
+Im Workbench-Dashboard besitzt jedes Modell zusätzlich zum Datei-Editor den Tab `Einstellungen`. Dort lassen sich `base_model_id`, Name, Beschreibung, Tags, Capabilities, `toolIds`, `filterIds`, `skillIds` und Laufzeitparameter wie `params.temperature`, `params.top_p`, `params.stop`, `params.function_calling`, `params.reasoning_effort` und `params.parallel_tool_calls` direkt im jeweiligen `model.json` pflegen. Der Raw-JSON-Editor bleibt für OpenWebUI-Felder verfügbar, die noch kein eigenes Formularfeld haben. Nach dem Speichern können die Importartefakte direkt neu erzeugt werden.
 
 ### 4. Tools, Functions, Skills und Promptvorlagen importieren
 
@@ -280,7 +282,7 @@ Die Tool-Registry und die Modell-Tool-Zuweisungen werden reproduzierbar erzeugt 
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
-Der Generator sortiert Tools, Filter, Promptvorlagen und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. Er normalisiert Chat-Modelle auf das ausgewählte OpenWebUI-Basismodell, natives Tool-Calling, `reasoning_effort=high`, `temperature=0.7`, `top_p=0.95`, `parallel_tool_calls=true`, OpenWebUI-Builtin-Nutzung, Vision-Fähigkeit, profilbezogene `meta.skillIds`, eingebettete Modellicons und einen bewusst kurzen deterministischen Systemprompt. Ohne explizite Auswahl nutzt die Workbench `coder`; alternativ kann derselbe Wert in der GUI im Sync-Bereich, per CLI mit `--base-model-id <modell-id>` oder per Environment `WORKBENCH_BASE_MODEL_ID` gesetzt werden.
+Der Generator sortiert Tools, Filter, Promptvorlagen und Modelle deterministisch und schließt lokale Cache-Dateien aus ZIP-Paketen aus. `model.json` bleibt die Quelle für pro-Modell-Einstellungen: vorhandene `base_model_id`, Capabilities, `toolIds`, `filterIds`, `skillIds` und Parameter wie `temperature`, `top_p`, `stop`, `function_calling`, `reasoning_effort` und `parallel_tool_calls` werden erhalten. Fehlen diese Werte, ergänzt die Workbench konservative Defaults: Basismodell `coder`, natives Tool-Calling, `reasoning_effort=high`, `temperature=0.7`, `top_p=0.95`, `parallel_tool_calls=true`, profilbezogene Standard-Ressourcen, eingebettete Modellicons und einen bewusst kurzen deterministischen Systemprompt. Für Einmal-Läufe kann der Fallback per GUI im Sync-Bereich, CLI mit `--base-model-id <modell-id>` oder Environment `WORKBENCH_BASE_MODEL_ID` gesetzt werden.
 
 Dieser Systemprompt verweist nur auf die drei verbindlichen Pflichtdateien `mainprompt.md`, `fachwissen.md` und `Golden_Example.<ext>`. Beim späteren API-Import lädt die Workbench diese drei Dateien pro Modell als echte OpenWebUI-Files hoch und der Filter `workbench_required_file_context_filter` injiziert ihren gespeicherten Inhalt bei jedem Request als geschützten Full-Context-Systemblock vor dem `context_compressor_filter`. Weitere Dateien aus `beispiele/`, Legacy-Artefakte `beispielergebnis.*` und i18n-Profile bleiben Knowledge/RAG-Material für gezielten On-Demand-Abruf. `max_tokens` wird bewusst nicht gesetzt, damit die Zielinstanz ihre eigenen Kontext- und Antwortlimits verwenden kann.
 
@@ -290,7 +292,7 @@ Der generierte Importplan liegt unter [`Modelle/dist/openwebui-registration-plan
 
 Zusätzlich zu den Problemfallmodellen gibt es mehrere Querschnittsmodelle:
 
-- `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme; nutzt das konfigurierte OpenWebUI-Basismodell mit allen importierbaren Tools und Standardfiltern.
+- `Allgemein`: Fallbackmodell für freie oder gemischte Nutzerprobleme; nutzt sein in `model.json` gesetztes OpenWebUI-Basismodell mit allen importierbaren Tools und Standardfiltern.
 - `Internetwissen`: offline nutzbares Recherche- und Erklärmodell für allgemeines Wissen, Anleitungen, Quellenkritik und Wissensstrukturierung ohne Live-Websuche.
 - `PromptForge`: erzeugt vollständige Markdown-Promptvorlagen für ChatGPT, Custom GPTs, OpenWebUI, lokale LLMs und API-Workflows.
 - `n8n Workflow Architect`: erstellt oder prüft importierbare n8n-Workflow-JSONs.

@@ -228,6 +228,12 @@ def validate_base_model_id(value: str) -> str:
     return clean
 
 
+def string_list(value: Any) -> List[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(item).strip() for item in value if str(item).strip()]
+
+
 def legacy_example_result_file_for_model(model_id: str) -> str:
     return MODEL_LEGACY_EXAMPLE_FILE_OVERRIDES.get(model_id, LEGACY_EXAMPLE_RESULT_FILE)
 
@@ -1642,14 +1648,15 @@ def normalize_base_prompt_text(system_prompt: str) -> str:
 
 def configure_runtime_params(model_id: str, params: Dict[str, Any]) -> None:
     system_prompt = systemprompt_source_for_model(model_id)
+    existing = dict(params)
     params.clear()
     params["system"] = system_prompt.strip()
-    params["temperature"] = WORKBENCH_TEMPERATURE
-    params["top_p"] = WORKBENCH_TOP_P
-    params["stop"] = []
-    params["function_calling"] = WORKBENCH_FUNCTION_CALLING
-    params["reasoning_effort"] = WORKBENCH_REASONING_EFFORT
-    params["parallel_tool_calls"] = WORKBENCH_PARALLEL_TOOL_CALLS
+    params["temperature"] = existing.get("temperature", WORKBENCH_TEMPERATURE)
+    params["top_p"] = existing.get("top_p", WORKBENCH_TOP_P)
+    params["stop"] = existing.get("stop", [])
+    params["function_calling"] = existing.get("function_calling", WORKBENCH_FUNCTION_CALLING)
+    params["reasoning_effort"] = existing.get("reasoning_effort", WORKBENCH_REASONING_EFFORT)
+    params["parallel_tool_calls"] = existing.get("parallel_tool_calls", WORKBENCH_PARALLEL_TOOL_CALLS)
 
 
 def icon_data_uri_for_model(model_id: str) -> str:
@@ -1695,17 +1702,28 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
     model_dir = SINGLE_MODELS / model_id
     required_sources = required_file_context_sources(model_id, model_dir)
     example_knowledge = [path.relative_to(model_dir).as_posix() for path in model_knowledge_files(model_id)]
-    model["base_model_id"] = workbench_base_model_id()
+    model["base_model_id"] = validate_base_model_id(str(model.get("base_model_id") or workbench_base_model_id()))
     meta["profile_image_url"] = icon_data_uri_for_model(model_id)
     meta.pop("localCoderProfile", None)
-    meta["toolIds"] = tool_ids_for_model(model_id, offline_tool_ids, all_tool_ids)
-    meta["filterIds"] = merge_unique(REQUIRED_DEFAULT_FILTER_IDS, merge_unique(filter_ids, meta.get("filterIds")))
+    has_configured_tool_ids = isinstance(meta.get("toolIds"), list)
+    has_configured_filter_ids = isinstance(meta.get("filterIds"), list)
+    has_configured_default_filter_ids = isinstance(meta.get("defaultFilterIds"), list)
+    has_configured_skill_ids = isinstance(meta.get("skillIds"), list)
+    configured_tool_ids = string_list(meta.get("toolIds"))
+    configured_filter_ids = string_list(meta.get("filterIds"))
+    configured_default_filter_ids = string_list(meta.get("defaultFilterIds"))
+    configured_skill_ids = string_list(meta.get("skillIds"))
+    meta["toolIds"] = configured_tool_ids if has_configured_tool_ids else tool_ids_for_model(model_id, offline_tool_ids, all_tool_ids)
+    meta["filterIds"] = merge_unique(
+        REQUIRED_DEFAULT_FILTER_IDS,
+        configured_filter_ids if has_configured_filter_ids else filter_ids,
+    )
     meta["defaultFilterIds"] = merge_unique(
         REQUIRED_DEFAULT_FILTER_IDS,
-        merge_unique(filter_ids, meta.get("defaultFilterIds")),
+        configured_default_filter_ids if has_configured_default_filter_ids else filter_ids,
     )
     meta["primaryToolIds"] = selected_tool_ids_for_model(model_id, set(all_tool_ids))
-    meta["skillIds"] = selected_skill_ids_for_model(model_id, set(skill_ids()))
+    meta["skillIds"] = configured_skill_ids if has_configured_skill_ids else selected_skill_ids_for_model(model_id, set(skill_ids()))
     meta["recommendedSkillIds"] = list(meta["skillIds"])
     meta.pop("coderRuntimeProfile", None)
     meta.pop("requiredKnowledgeFiles", None)
@@ -1731,12 +1749,12 @@ def configure_model(model: Dict[str, Any], offline_tool_ids: List[str], filter_i
     meta["supportedLocales"] = list(SUPPORTED_PRODUCT_LOCALES)
     meta["productLocaleFiles"] = [f"{MODEL_I18N_DIR_NAME}/{locale}.md" for locale in SUPPORTED_PRODUCT_LOCALES]
     configure_runtime_params(model_id, params)
-    capabilities["builtin_tools"] = True
+    capabilities["builtin_tools"] = bool(capabilities.get("builtin_tools", True))
     capabilities["file_context"] = bool(capabilities.get("file_context", True))
-    capabilities["vision"] = True
+    capabilities["vision"] = bool(capabilities.get("vision", True))
     capabilities["file_upload"] = bool(capabilities.get("file_upload", True))
-    capabilities["code_interpreter"] = True if is_cloud_coder_production_model(model_id) else bool(capabilities.get("code_interpreter", True))
-    capabilities["status_updates"] = True if is_cloud_coder_production_model(model_id) else bool(capabilities.get("status_updates", True))
+    capabilities["code_interpreter"] = bool(capabilities.get("code_interpreter", True))
+    capabilities["status_updates"] = bool(capabilities.get("status_updates", True))
     capabilities["usage"] = bool(capabilities.get("usage", True))
     if capabilities["code_interpreter"]:
         features = meta.setdefault("defaultFeatureIds", [])
@@ -2212,26 +2230,30 @@ def validate(
             if tool_ids or filter_ids or default_filter_ids or params.get("function_calling"):
                 issues.append(f"Non-Chat-Modell {model_id} hat Tool-/Filter-/Function-Calling-Konfiguration")
             continue
-        if model.get("base_model_id") != workbench_base_model_id():
-            issues.append(f"Chat-Modell {model_id} nutzt nicht das konfigurierte Mistral-Basismodell {workbench_base_model_id()}")
-        if params.get("function_calling") != WORKBENCH_FUNCTION_CALLING:
-            issues.append(f"Chat-Modell {model_id} hat function_calling nicht auf native")
-        if params.get("reasoning_effort") != WORKBENCH_REASONING_EFFORT:
-            issues.append(f"Chat-Modell {model_id} hat reasoning_effort nicht auf 'high' gesetzt")
-        if params.get("parallel_tool_calls") is not WORKBENCH_PARALLEL_TOOL_CALLS:
-            issues.append(f"Chat-Modell {model_id} hat parallel_tool_calls nicht auf true gesetzt")
+        try:
+            validate_base_model_id(str(model.get("base_model_id") or ""))
+        except ValueError as exc:
+            issues.append(f"Chat-Modell {model_id} hat ungültiges base_model_id: {exc}")
+        if params.get("function_calling") is not None and not isinstance(params.get("function_calling"), str):
+            issues.append(f"Chat-Modell {model_id} hat function_calling nicht als Textwert")
+        if params.get("reasoning_effort") is not None and not isinstance(params.get("reasoning_effort"), str):
+            issues.append(f"Chat-Modell {model_id} hat reasoning_effort nicht als Textwert")
+        if params.get("parallel_tool_calls") is not None and not isinstance(params.get("parallel_tool_calls"), bool):
+            issues.append(f"Chat-Modell {model_id} hat parallel_tool_calls nicht als Boolean")
         profile_image_url = str(meta.get("profile_image_url", ""))
         if not profile_image_url.startswith("data:image/png;base64,"):
             issues.append(f"Chat-Modell {model_id} hat kein eingebettetes PNG-Icon in meta.profile_image_url")
         unsupported_params = sorted(set(params) - SUPPORTED_CHAT_RUNTIME_PARAMS)
         if unsupported_params:
             issues.append(f"Chat-Modell {model_id} setzt nicht freigegebene Runtime-Parameter: {', '.join(unsupported_params)}")
-        if params.get("temperature") != WORKBENCH_TEMPERATURE:
-            issues.append(f"Chat-Modell {model_id} nutzt temperature nicht auf {WORKBENCH_TEMPERATURE}")
-        if params.get("top_p") != WORKBENCH_TOP_P:
-            issues.append(f"Chat-Modell {model_id} nutzt top_p nicht auf {WORKBENCH_TOP_P}")
-        if params.get("stop") != []:
-            issues.append(f"Chat-Modell {model_id} nutzt stop nicht als leere Liste")
+        temperature = params.get("temperature")
+        if not isinstance(temperature, (int, float)) or not 0 <= float(temperature) <= 2:
+            issues.append(f"Chat-Modell {model_id} nutzt keine gültige temperature zwischen 0 und 2")
+        top_p = params.get("top_p")
+        if not isinstance(top_p, (int, float)) or not 0 <= float(top_p) <= 1:
+            issues.append(f"Chat-Modell {model_id} nutzt kein gültiges top_p zwischen 0 und 1")
+        if not isinstance(params.get("stop"), list):
+            issues.append(f"Chat-Modell {model_id} nutzt stop nicht als Liste")
         system_text = str(params.get("system", ""))
         if not has_short_bootloader_systemprompt(system_text, model_id):
             issues.append(f"Chat-Modell {model_id} hat keinen vollständigen Bootloader-Systemprompt")
@@ -2249,7 +2271,6 @@ def validate(
         ]:
             if required_phrase not in system_text:
                 issues.append(f"Chat-Modell {model_id} fehlt Bootloader-Kriterium: {required_phrase}")
-        missing_profile_tools = sorted(set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(tool_ids))
         profile_skills = set(TOOL_FORCE_PROFILES.get(model_id, {}).get("skills", []))
         missing_skill_files = sorted(profile_skills - valid_skill_ids)
         if missing_skill_files:
@@ -2257,14 +2278,14 @@ def validate(
         meta_primary_tools = meta.get("primaryToolIds", [])
         meta_skills = meta.get("recommendedSkillIds", [])
         bound_skills = meta.get("skillIds", [])
-        if missing_profile_tools:
-            issues.append(f"Chat-Modell {model_id} nennt Tool-Pflichtprofil mit nicht zugewiesenen Tools: {', '.join(missing_profile_tools)}")
-        if not isinstance(meta_primary_tools, list) or set(TOOL_FORCE_PROFILES.get(model_id, {}).get("tools", [])) - set(meta_primary_tools):
-            issues.append(f"Chat-Modell {model_id} hat meta.primaryToolIds nicht passend zum Tool-Profil")
-        if not isinstance(meta_skills, list) or profile_skills - set(meta_skills):
-            issues.append(f"Chat-Modell {model_id} hat meta.recommendedSkillIds nicht passend zum Skill-Profil")
-        if not isinstance(bound_skills, list) or profile_skills - set(bound_skills):
-            issues.append(f"Chat-Modell {model_id} hat meta.skillIds nicht passend zum Skill-Profil")
+        if not isinstance(tool_ids, list) or not all(isinstance(item, str) and item for item in tool_ids):
+            issues.append(f"Chat-Modell {model_id} hat meta.toolIds nicht als Textliste")
+        if not isinstance(filter_ids, list) or not all(isinstance(item, str) and item for item in filter_ids):
+            issues.append(f"Chat-Modell {model_id} hat meta.filterIds nicht als Textliste")
+        if not isinstance(meta_primary_tools, list):
+            issues.append(f"Chat-Modell {model_id} hat meta.primaryToolIds nicht als Liste")
+        if not isinstance(meta_skills, list) or not isinstance(bound_skills, list):
+            issues.append(f"Chat-Modell {model_id} hat Skill-Listen nicht als Listen")
         workbench_file_context = meta.get("workbenchFileContext", {})
         if not isinstance(workbench_file_context, dict) or workbench_file_context.get("schema") != WORKBENCH_REQUIRED_FILE_CONTEXT_SCHEMA:
             issues.append(f"Chat-Modell {model_id} hat kein gültiges meta.workbenchFileContext")

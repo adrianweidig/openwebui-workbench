@@ -193,6 +193,45 @@ class DashboardStaticAssetsTests(unittest.TestCase):
             with self.subTest(symbol=symbol):
                 self.assertIn(symbol, app_js)
 
+    def test_model_settings_editor_controls_are_visible(self) -> None:
+        collector = collect_index()
+        app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
+
+        for element_id in (
+            "model-settings-tab",
+            "model-settings-panel",
+            "setting-base-model-id",
+            "setting-name",
+            "setting-description",
+            "setting-tags",
+            "setting-tool-ids",
+            "setting-filter-ids",
+            "setting-skill-ids",
+            "setting-temperature",
+            "setting-top-p",
+            "setting-stop",
+            "setting-function-calling",
+            "setting-reasoning-effort",
+            "setting-parallel-tool-calls",
+            "setting-raw-json",
+            "validate-model-settings",
+            "save-model-settings",
+            "save-generate-model-settings",
+        ):
+            with self.subTest(element_id=element_id):
+                self.assertIn(element_id, collector.ids)
+        for symbol in (
+            "/api/models/${encodeURIComponent(state.selectedModel.id)}/settings",
+            "function loadModelSettings",
+            "function collectModelSettingsFromForm",
+            "function validateModelSettings",
+            "function saveModelSettings",
+            "await runAction(\"generate\")",
+            "settings.invalidJsonObject",
+        ):
+            with self.subTest(symbol=symbol):
+                self.assertIn(symbol, app_js)
+
     def test_action_log_uses_live_job_updates(self) -> None:
         app_js = (STATIC_ROOT / "app.js").read_text(encoding="utf-8")
 

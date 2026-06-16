@@ -52,19 +52,21 @@ If the local `top.secret` edge proxy is used, the Workbench can also be exposed 
 ## Workflow
 
 1. Select a model in the dashboard.
-2. Edit `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, examples, tools, functions/filters, skills, or prompt templates.
-3. Save the file.
-4. Run `Regenerate artifacts`.
-5. Run `Check import`.
-6. In the sync panel, optionally load base models, select the target OpenWebUI base model, and with `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` set, run `Sync to OpenWebUI`. This sync imports all Workbench models plus tools, functions/filters, skills, prompt templates, required files, and knowledge.
-7. Run `Compare model status` to compare Workbench-managed model fields with OpenWebUI.
-8. Run `Refresh OpenWebUI snapshot` when OpenWebUI-only models should be visible in the Workbench.
+2. Edit `systemprompt.md`, `mainprompt.md`, `fachwissen.md`, or examples directly in the Markdown editor and review the preview.
+3. Use the `Settings` tab when the model's `model.json` needs changes: `base_model_id`, name, description, tags, capabilities, `toolIds`, `filterIds`, `skillIds`, default parameters, and raw JSON.
+4. Save the file or settings. For settings, `Save & build artifacts` can immediately regenerate the import artifacts.
+5. Optionally edit tools, functions/filters, skills, or prompt templates in the resources panel. Local files can be removed there; with an admin token, selected resources can also be removed from OpenWebUI.
+6. Run `Regenerate artifacts` if they were not already built from the settings tab.
+7. Run `Check import`.
+8. In the sync panel, optionally load base models. That selection is the fallback for models without their own `base_model_id`; with `OPENWEBUI_ADMIN_TOKEN` or `OPENWEBUI_ADMIN_TOKEN_FILE` set, `Sync to OpenWebUI` imports all Workbench models plus tools, functions/filters, skills, prompt templates, required files, and knowledge.
+9. Run `Compare model status` to compare Workbench-managed model fields with OpenWebUI.
+10. Run `Refresh OpenWebUI snapshot` when OpenWebUI-only models should be visible in the Workbench.
 
 The real OpenWebUI sync runs as a background job. The dashboard remains usable while it runs; triggering the same sync again shows the active job instead of starting a parallel import.
 
 ## Bidirectional Model Check
 
-The Workbench remains the write source for the versioned model packages under `Modelle/einzelmodelle/`. The existing API import mirrors these packages to OpenWebUI. The reverse direction deliberately has no automatic destructive pull: `scripts/sync_openwebui_models.py` reads OpenWebUI through the API, compares the managed fields `id`, `name`, `base_model_id`, `params`, and known Workbench `meta` keys with the local model state, and can write an auditable snapshot under `Artefakte/openwebui_sync/`.
+The Workbench remains the write source for the versioned model packages under `Modelle/einzelmodelle/`. The settings tab writes to the model's own `model.json`; the existing API import mirrors these packages to OpenWebUI. The reverse direction deliberately has no automatic destructive pull: `scripts/sync_openwebui_models.py` reads OpenWebUI through the API, compares the managed fields `id`, `name`, `base_model_id`, `params`, and known Workbench `meta` keys with the local model state, and can write an auditable snapshot under `Artefakte/openwebui_sync/`.
 
 Status values are:
 

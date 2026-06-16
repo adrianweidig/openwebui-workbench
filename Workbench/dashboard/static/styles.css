@@ -540,6 +540,32 @@ textarea:focus {
   font-weight: 600;
 }
 
+.model-editor-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 0;
+}
+
+.model-editor-tab {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.model-editor-tab.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.model-tab-panel[hidden] {
+  display: none;
+}
+
 textarea {
   display: block;
   width: 100%;
@@ -715,6 +741,102 @@ textarea:read-only:not(:disabled) {
 }
 
 #resource-state {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.model-settings-form {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.settings-section {
+  display: grid;
+  gap: 10px;
+}
+
+.settings-section h4 {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.settings-grid label,
+.settings-section label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.settings-grid .wide {
+  grid-column: 1 / -1;
+}
+
+.settings-grid input[type="text"],
+.settings-grid input[type="number"],
+.settings-grid select {
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 10px;
+}
+
+.compact-textarea,
+.raw-json-editor {
+  min-height: 88px;
+  max-height: 240px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.raw-json-editor {
+  min-height: 260px;
+  max-height: 520px;
+}
+
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px 12px;
+}
+
+.capability-grid label,
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.capability-grid input,
+.checkbox-line input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.params-grid {
+  align-items: end;
+}
+
+#settings-state {
   color: var(--muted);
   font-size: 13px;
 }
@@ -1614,7 +1736,8 @@ textarea,
 
   .signal-strip,
   .setup-checks,
-  .summary-grid {
+  .summary-grid,
+  .settings-grid {
     grid-template-columns: 1fr;
   }
 

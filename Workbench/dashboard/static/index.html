@@ -134,28 +134,144 @@
                 <a id="open-openwebui" class="secondary-link" href="http://localhost:3000" target="_blank" rel="noreferrer" data-i18n="models.open">OpenWebUI öffnen</a>
               </div>
 
-              <div class="file-management">
-                <div class="file-management-head">
-                  <strong data-i18n="files.title">Dateien</strong>
-                  <div>
-                    <button id="add-model-file" class="ghost compact" type="button" disabled data-i18n="action.addFile">Datei hinzufügen</button>
-                    <button id="delete-model-file" class="ghost compact danger-action" type="button" disabled data-i18n="action.deleteFile">Entfernen</button>
+              <div class="model-editor-tabs" role="tablist" aria-label="Modellbereich" data-i18n-aria-label="models.tabAria">
+                <button id="model-files-tab" class="model-editor-tab active" data-model-tab="files" type="button" role="tab" aria-selected="true" aria-controls="model-files-panel" data-i18n="models.tab.files">Dateien</button>
+                <button id="model-settings-tab" class="model-editor-tab" data-model-tab="settings" type="button" role="tab" aria-selected="false" aria-controls="model-settings-panel" data-i18n="models.tab.settings">Einstellungen</button>
+              </div>
+
+              <div id="model-files-panel" class="model-tab-panel" role="tabpanel" aria-labelledby="model-files-tab">
+                <div class="file-management">
+                  <div class="file-management-head">
+                    <strong data-i18n="files.title">Dateien</strong>
+                    <div>
+                      <button id="add-model-file" class="ghost compact" type="button" disabled data-i18n="action.addFile">Datei hinzufügen</button>
+                      <button id="delete-model-file" class="ghost compact danger-action" type="button" disabled data-i18n="action.deleteFile">Entfernen</button>
+                    </div>
+                  </div>
+                  <div class="file-tabs file-list" id="file-tabs" aria-label="Modelldateien"></div>
+                </div>
+                <div class="viewer-toolbar" aria-label="Markdown Ansicht" data-i18n-aria-label="view.markdownAria">
+                  <button class="view-mode active" data-editor="model" data-mode="split" type="button" data-i18n="view.split">Split</button>
+                  <button class="view-mode" data-editor="model" data-mode="edit" type="button" data-i18n="view.editor">Editor</button>
+                  <button class="view-mode" data-editor="model" data-mode="preview" type="button" data-i18n="view.viewer">Viewer</button>
+                </div>
+                <div class="workspace-view split-mode" id="model-workspace">
+                  <textarea id="markdown-editor" spellcheck="false" disabled></textarea>
+                  <article id="markdown-preview" class="markdown-preview" aria-label="Markdown Vorschau" data-i18n-aria-label="view.markdownPreview"></article>
+                </div>
+                <div class="editor-actions">
+                  <span id="editor-state" data-i18n="state.ready">Bereit</span>
+                  <button id="save-file" class="primary" disabled data-i18n="action.save">Speichern</button>
+                </div>
+              </div>
+
+              <div id="model-settings-panel" class="model-tab-panel" role="tabpanel" aria-labelledby="model-settings-tab" hidden>
+                <form id="model-settings-form" class="model-settings-form">
+                  <section class="settings-section">
+                    <h4 data-i18n="settings.identity">Identität</h4>
+                    <div class="settings-grid">
+                      <label>
+                        <span data-i18n="settings.baseModelId">base_model_id</span>
+                        <input id="setting-base-model-id" data-model-setting type="text" autocomplete="off" spellcheck="false" />
+                      </label>
+                      <label>
+                        <span data-i18n="settings.name">Name</span>
+                        <input id="setting-name" data-model-setting type="text" autocomplete="off" />
+                      </label>
+                      <label class="wide">
+                        <span data-i18n="settings.description">Beschreibung</span>
+                        <textarea id="setting-description" data-model-setting class="compact-textarea" spellcheck="true"></textarea>
+                      </label>
+                      <label class="wide">
+                        <span data-i18n="settings.tags">Tags</span>
+                        <input id="setting-tags" data-model-setting type="text" autocomplete="off" spellcheck="false" data-i18n-placeholder="settings.tagsPlaceholder" placeholder="coder, workbench" />
+                      </label>
+                    </div>
+                  </section>
+
+                  <section class="settings-section">
+                    <h4 data-i18n="settings.capabilities">Capabilities</h4>
+                    <div class="capability-grid">
+                      <label><input data-model-setting data-capability="builtin_tools" type="checkbox" /> <span data-i18n="settings.capability.builtinTools">Built-in Tools</span></label>
+                      <label><input data-model-setting data-capability="file_context" type="checkbox" /> <span data-i18n="settings.capability.fileContext">File Context</span></label>
+                      <label><input data-model-setting data-capability="vision" type="checkbox" /> <span data-i18n="settings.capability.vision">Vision</span></label>
+                      <label><input data-model-setting data-capability="file_upload" type="checkbox" /> <span data-i18n="settings.capability.fileUpload">File Upload</span></label>
+                      <label><input data-model-setting data-capability="code_interpreter" type="checkbox" /> <span data-i18n="settings.capability.codeInterpreter">Code Interpreter</span></label>
+                      <label><input data-model-setting data-capability="status_updates" type="checkbox" /> <span data-i18n="settings.capability.statusUpdates">Status Updates</span></label>
+                      <label><input data-model-setting data-capability="usage" type="checkbox" /> <span data-i18n="settings.capability.usage">Usage</span></label>
+                    </div>
+                  </section>
+
+                  <section class="settings-section">
+                    <h4 data-i18n="settings.attachments">Ressourcenbindung</h4>
+                    <div class="settings-grid">
+                      <label>
+                        <span data-i18n="settings.toolIds">toolIds</span>
+                        <textarea id="setting-tool-ids" data-model-setting class="compact-textarea" spellcheck="false"></textarea>
+                      </label>
+                      <label>
+                        <span data-i18n="settings.filterIds">filterIds</span>
+                        <textarea id="setting-filter-ids" data-model-setting class="compact-textarea" spellcheck="false"></textarea>
+                      </label>
+                      <label class="wide">
+                        <span data-i18n="settings.skillIds">skillIds</span>
+                        <textarea id="setting-skill-ids" data-model-setting class="compact-textarea" spellcheck="false"></textarea>
+                      </label>
+                    </div>
+                  </section>
+
+                  <section class="settings-section">
+                    <h4 data-i18n="settings.params">Parameter</h4>
+                    <div class="settings-grid params-grid">
+                      <label>
+                        <span data-i18n="settings.temperature">params.temperature</span>
+                        <input id="setting-temperature" data-model-setting type="number" min="0" max="2" step="0.05" inputmode="decimal" />
+                      </label>
+                      <label>
+                        <span data-i18n="settings.topP">params.top_p</span>
+                        <input id="setting-top-p" data-model-setting type="number" min="0" max="1" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label>
+                        <span data-i18n="settings.functionCalling">params.function_calling</span>
+                        <select id="setting-function-calling" data-model-setting>
+                          <option value="" data-i18n="settings.option.inherit">Automatisch</option>
+                          <option value="native">native</option>
+                          <option value="none">none</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span data-i18n="settings.reasoningEffort">params.reasoning_effort</span>
+                        <select id="setting-reasoning-effort" data-model-setting>
+                          <option value="" data-i18n="settings.option.inherit">Automatisch</option>
+                          <option value="low">low</option>
+                          <option value="medium">medium</option>
+                          <option value="high">high</option>
+                        </select>
+                      </label>
+                      <label class="checkbox-line">
+                        <input id="setting-parallel-tool-calls" data-model-setting type="checkbox" />
+                        <span data-i18n="settings.parallelToolCalls">params.parallel_tool_calls</span>
+                      </label>
+                      <label class="wide">
+                        <span data-i18n="settings.stop">params.stop</span>
+                        <textarea id="setting-stop" data-model-setting class="compact-textarea" spellcheck="false"></textarea>
+                      </label>
+                    </div>
+                  </section>
+
+                  <section class="settings-section">
+                    <h4 data-i18n="settings.rawJson">Raw JSON</h4>
+                    <textarea id="setting-raw-json" data-model-setting class="raw-json-editor" spellcheck="false"></textarea>
+                  </section>
+                </form>
+                <div class="editor-actions">
+                  <span id="settings-state" data-i18n="state.ready">Bereit</span>
+                  <div class="editor-action-buttons">
+                    <button id="validate-model-settings" class="ghost" type="button" disabled data-i18n="settings.validate">Validieren</button>
+                    <button id="save-generate-model-settings" class="ghost" type="button" disabled data-i18n="settings.saveGenerate">Speichern & Artefakte bauen</button>
+                    <button id="save-model-settings" class="primary" type="button" disabled data-i18n="action.save">Speichern</button>
                   </div>
                 </div>
-                <div class="file-tabs file-list" id="file-tabs" aria-label="Modelldateien"></div>
-              </div>
-              <div class="viewer-toolbar" aria-label="Markdown Ansicht" data-i18n-aria-label="view.markdownAria">
-                <button class="view-mode active" data-editor="model" data-mode="split" type="button" data-i18n="view.split">Split</button>
-                <button class="view-mode" data-editor="model" data-mode="edit" type="button" data-i18n="view.editor">Editor</button>
-                <button class="view-mode" data-editor="model" data-mode="preview" type="button" data-i18n="view.viewer">Viewer</button>
-              </div>
-              <div class="workspace-view split-mode" id="model-workspace">
-                <textarea id="markdown-editor" spellcheck="false" disabled></textarea>
-                <article id="markdown-preview" class="markdown-preview" aria-label="Markdown Vorschau" data-i18n-aria-label="view.markdownPreview"></article>
-              </div>
-              <div class="editor-actions">
-                <span id="editor-state" data-i18n="state.ready">Bereit</span>
-                <button id="save-file" class="primary" disabled data-i18n="action.save">Speichern</button>
               </div>
             </section>
           </div>
