@@ -2288,11 +2288,11 @@
       ],
       "example_knowledge_files": [
         "beispielergebnis.md",
+        "beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md",
         "beispiele/eggplant/aircraft_track_line_visual.script",
         "beispiele/eggplant/mixed_workflow_with_visual_check.script",
         "beispiele/eggplant/winforms_legacy_order_dialog.script",
         "beispiele/eggplant/wpf_login_customer_save.script",
-        "beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md",
         "beispiele/generated-csharp/Directory.Build.props",
         "beispiele/generated-csharp/Directory.Packages.props",
         "beispiele/generated-csharp/Product.UiTests.Shared/Configuration/ConfigurationLoader.cs",
@@ -2342,6 +2342,12 @@
           "non_empty": true,
           "bytes": 3406
         },
+        "beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md": {
+          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 5100
+        },
         "beispiele/eggplant/aircraft_track_line_visual.script": {
           "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/eggplant/aircraft_track_line_visual.script",
           "exists": true,
@@ -2365,12 +2371,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 924
-        },
-        "beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md": {
-          "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 5100
         },
         "beispiele/generated-csharp/Directory.Build.props": {
           "path": "Modelle/einzelmodelle/eggplant-flaui-skriptmigration/beispiele/generated-csharp/Directory.Build.props",
@@ -6535,12 +6535,12 @@
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/run-local-aunit.sh",
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.adb",
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/src/calculator.ads",
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr",
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.adb",
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.ads",
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.adb",
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_test_cases.ads",
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/test_runner.adb",
-        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr",
         "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/azure-pipelines-gnattest.yml",
         "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/default.gpr",
         "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/scripts/generate_gnattest_harness.sh",
@@ -6796,6 +6796,12 @@
           "non_empty": true,
           "bytes": 254
         },
+        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr": {
+          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr",
+          "exists": true,
+          "non_empty": true,
+          "bytes": 329
+        },
         "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.adb": {
           "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests/calculator_suite.adb",
           "exists": true,
@@ -6825,12 +6831,6 @@
           "exists": true,
           "non_empty": true,
           "bytes": 506
-        },
-        "beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr": {
-          "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/05_ada_aunit_calculator/tests.gpr",
-          "exists": true,
-          "non_empty": true,
-          "bytes": 329
         },
         "beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/azure-pipelines-gnattest.yml": {
           "path": "Modelle/einzelmodelle/testprogrammierung/beispiele/openwebui-testprogrammierung-code-examples/06_ada_gnattest_bounded_counter/azure-pipelines-gnattest.yml",

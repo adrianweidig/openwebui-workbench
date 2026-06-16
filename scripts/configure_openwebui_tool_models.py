@@ -1126,14 +1126,14 @@ def write_prompt_artifacts(records: List[PromptRecord], write: bool) -> bool:
 def sync_icon_artifacts(write: bool) -> bool:
     if not MODEL_ICONS.exists():
         return False
-    source_files = sorted(path for path in MODEL_ICONS.rglob("*") if path.is_file() and should_archive(path))
+    source_files = sorted_archive_paths(path for path in MODEL_ICONS.rglob("*") if path.is_file() and should_archive(path))
     changed = False
     for source in source_files:
         target = MODEL_ICON_ARTIFACTS / source.relative_to(MODEL_ICONS)
         if not target.exists() or target.read_bytes() != source.read_bytes():
             changed = True
             break
-    existing_targets = sorted(path for path in MODEL_ICON_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_ICON_ARTIFACTS.exists() else []
+    existing_targets = sorted_archive_paths(path for path in MODEL_ICON_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_ICON_ARTIFACTS.exists() else []
     expected_targets = {MODEL_ICON_ARTIFACTS / source.relative_to(MODEL_ICONS) for source in source_files}
     if any(path not in expected_targets for path in existing_targets):
         changed = True
@@ -1149,12 +1149,12 @@ def sync_icon_artifacts(write: bool) -> bool:
 
 def sync_model_example_artifacts(write: bool) -> bool:
     source_files: List[Tuple[str, Path, Path]] = []
-    for model_dir in sorted(path for path in SINGLE_MODELS.iterdir() if path.is_dir()):
+    for model_dir in sorted_archive_paths(path for path in SINGLE_MODELS.iterdir() if path.is_dir()):
         examples_dir = model_dir / MODEL_EXAMPLES_DIR_NAME
         if examples_dir.exists():
             source_files.extend(
                 (model_dir.name, path, path.relative_to(examples_dir))
-                for path in sorted(examples_dir.rglob("*"))
+                for path in sorted_archive_paths(examples_dir.rglob("*"))
                 if path.is_file() and should_archive(path)
             )
 
@@ -1162,7 +1162,7 @@ def sync_model_example_artifacts(write: bool) -> bool:
         MODEL_EXAMPLE_ARTIFACTS / model_id / relative_path
         for model_id, _, relative_path in source_files
     }
-    existing_targets = sorted(path for path in MODEL_EXAMPLE_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_EXAMPLE_ARTIFACTS.exists() else []
+    existing_targets = sorted_archive_paths(path for path in MODEL_EXAMPLE_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_EXAMPLE_ARTIFACTS.exists() else []
     changed = any(path not in expected_targets for path in existing_targets)
     if not changed:
         for model_id, source, relative_path in source_files:
@@ -1182,12 +1182,12 @@ def sync_model_example_artifacts(write: bool) -> bool:
 
 def sync_model_i18n_artifacts(write: bool) -> bool:
     source_files: List[Tuple[str, Path, Path]] = []
-    for model_dir in sorted(path for path in SINGLE_MODELS.iterdir() if path.is_dir()):
+    for model_dir in sorted_archive_paths(path for path in SINGLE_MODELS.iterdir() if path.is_dir()):
         i18n_dir = model_dir / MODEL_I18N_DIR_NAME
         if i18n_dir.exists():
             source_files.extend(
                 (model_dir.name, path, path.relative_to(i18n_dir))
-                for path in sorted(i18n_dir.rglob("*"))
+                for path in sorted_archive_paths(i18n_dir.rglob("*"))
                 if path.is_file() and should_archive(path)
             )
 
@@ -1195,7 +1195,7 @@ def sync_model_i18n_artifacts(write: bool) -> bool:
         MODEL_I18N_ARTIFACTS / model_id / relative_path
         for model_id, _, relative_path in source_files
     }
-    existing_targets = sorted(path for path in MODEL_I18N_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_I18N_ARTIFACTS.exists() else []
+    existing_targets = sorted_archive_paths(path for path in MODEL_I18N_ARTIFACTS.rglob("*") if path.is_file()) if MODEL_I18N_ARTIFACTS.exists() else []
     changed = any(path not in expected_targets for path in existing_targets)
     if not changed:
         for model_id, source, relative_path in source_files:
@@ -1326,7 +1326,7 @@ def select_best_example_files_for_model(model_dir: Path, model_id: str, profile_
     examples_dir = model_dir / MODEL_EXAMPLES_DIR_NAME
     if not examples_dir.exists():
         return []
-    example_files = sorted(path for path in examples_dir.rglob("*") if path.is_file() and should_archive(path))
+    example_files = sorted_archive_paths(path for path in examples_dir.rglob("*") if path.is_file() and should_archive(path))
     if not example_files:
         return []
     prioritized = sorted(example_files, key=lambda p: score_example_file(model_id, p, profile_focus))
@@ -1770,7 +1770,7 @@ def model_example_files(model_id: str) -> List[Path]:
     examples_dir = SINGLE_MODELS / model_id / MODEL_EXAMPLES_DIR_NAME
     if not examples_dir.exists():
         return []
-    return sorted(path for path in examples_dir.rglob("*") if path.is_file() and should_archive(path))
+    return sorted_archive_paths(path for path in examples_dir.rglob("*") if path.is_file() and should_archive(path))
 
 
 def model_i18n_files(model_id: str) -> List[Path]:

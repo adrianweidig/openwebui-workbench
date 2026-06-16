@@ -375,6 +375,13 @@ def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def path_sort_key(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix().casefold()
+    except ValueError:
+        return path.as_posix().casefold()
+
+
 def strip_yaml_comment(line: str) -> str:
     in_single = False
     in_double = False
@@ -925,7 +932,7 @@ def load_function_records() -> list[dict[str, Any]]:
 def prompt_files() -> list[Path]:
     if not PROMPTS_DIR.exists():
         return []
-    return sorted(path for path in PROMPTS_DIR.glob("*.md") if path.name.upper() != "README.MD")
+    return sorted((path for path in PROMPTS_DIR.glob("*.md") if path.name.upper() != "README.MD"), key=path_sort_key)
 
 
 def prompt_records_from_files() -> list[dict[str, Any]]:
@@ -1244,7 +1251,10 @@ def model_example_files(model_dir: Path) -> list[Path]:
     examples_dir = model_dir / MODEL_EXAMPLES_DIR_NAME
     if not examples_dir.exists():
         return []
-    return sorted(path for path in examples_dir.rglob("*") if path.is_file() and path.suffix.lower() not in {".pyc", ".pyo", ".pyd"})
+    return sorted(
+        (path for path in examples_dir.rglob("*") if path.is_file() and path.suffix.lower() not in {".pyc", ".pyo", ".pyd"}),
+        key=path_sort_key,
+    )
 
 
 def model_i18n_files(model_dir: Path) -> list[Path]:

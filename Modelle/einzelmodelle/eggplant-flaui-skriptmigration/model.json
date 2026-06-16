@@ -247,11 +247,11 @@
       ],
       "exampleKnowledgeFiles": [
         "beispielergebnis.md",
+        "beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md",
         "beispiele/eggplant/aircraft_track_line_visual.script",
         "beispiele/eggplant/mixed_workflow_with_visual_check.script",
         "beispiele/eggplant/winforms_legacy_order_dialog.script",
         "beispiele/eggplant/wpf_login_customer_save.script",
-        "beispiele/eggplant-flaui-skriptmigration-goldstandard-briefing.md",
         "beispiele/generated-csharp/Directory.Build.props",
         "beispiele/generated-csharp/Directory.Packages.props",
         "beispiele/generated-csharp/Product.UiTests.Shared/Configuration/ConfigurationLoader.cs",
