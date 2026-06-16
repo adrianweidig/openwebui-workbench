@@ -196,7 +196,7 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertEqual(raw[0]["id"], "demo-model")
 
     def test_rejects_model_settings_id_change(self) -> None:
-        with self.assertRaisesRegex(ValueError, "Modell-ID"):
+        with self.assertRaisesRegex(ValueError, "demo-model.*other-model"):
             self.state.write_model_settings("demo-model", {"id": "other-model", "name": "Wrong"})
 
     def test_write_model_settings_can_be_disabled(self) -> None:
