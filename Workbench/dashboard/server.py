@@ -234,6 +234,14 @@ def read_json_file(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def first_model_json_object(payload: Any) -> dict[str, Any] | None:
+    if isinstance(payload, list) and len(payload) == 1 and isinstance(payload[0], dict):
+        return payload[0]
+    if isinstance(payload, dict):
+        return payload
+    return None
+
+
 def safe_mtime(path: Path) -> float | None:
     try:
         return path.stat().st_mtime
@@ -802,6 +810,54 @@ class WorkbenchState:
             "path": rel(path),
             "mtime": format_mtime(path),
         }
+
+    def model_settings_path(self, model_id: str) -> Path:
+        return self.model_dir(model_id) / "model.json"
+
+    def read_model_settings(self, model_id: str) -> dict[str, Any]:
+        path = self.model_settings_path(model_id)
+        payload = read_json_file(path)
+        model = first_model_json_object(payload)
+        if model is None:
+            raise ValueError(t("invalid_model_settings", self.config.locale))
+        content = json.dumps(model, ensure_ascii=False, indent=2)
+        return {
+            "model_id": model_id,
+            "settings": model,
+            "content": f"{content}\n",
+            "path": rel(path),
+            "mtime": format_mtime(path),
+        }
+
+    def validate_model_settings(self, model_id: str, settings: Any) -> dict[str, Any]:
+        if not isinstance(settings, dict):
+            raise ValueError(t("invalid_model_settings", self.config.locale))
+        current_id = str(settings.get("id") or model_id)
+        if current_id != model_id:
+            raise ValueError(
+                t("model_settings_id_mismatch", self.config.locale, expected=model_id, actual=current_id)
+            )
+        normalized = json.loads(json.dumps(settings, ensure_ascii=False))
+        normalized["id"] = model_id
+        meta = normalized.setdefault("meta", {})
+        params = normalized.setdefault("params", {})
+        if not isinstance(meta, dict) or not isinstance(params, dict):
+            raise ValueError(t("invalid_model_settings", self.config.locale))
+        if not str(normalized.get("name") or "").strip():
+            normalized["name"] = model_id
+        return normalized
+
+    def write_model_settings(self, model_id: str, settings: Any) -> dict[str, Any]:
+        if not self.config.allow_write:
+            raise PermissionError(t("write_disabled", self.config.locale))
+        normalized = self.validate_model_settings(model_id, settings)
+        rendered = json.dumps([normalized], ensure_ascii=False, indent=2)
+        encoded = rendered.encode("utf-8")
+        if len(encoded) > MAX_BODY_BYTES:
+            raise ValueError(t("content_too_large", self.config.locale, max_bytes=MAX_BODY_BYTES))
+        path = self.model_settings_path(model_id)
+        path.write_text(f"{rendered}\n", encoding="utf-8", newline="\n")
+        return self.read_model_settings(model_id)
 
     def write_model_file(self, model_id: str, name: str, content: str) -> dict[str, Any]:
         if not self.config.allow_write:
@@ -1617,6 +1673,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 self.send_json(STATE.summary())
             elif parsed.path == "/api/models":
                 self.send_json({"models": STATE.list_models()})
+            elif parsed.path.startswith("/api/models/") and parsed.path.endswith("/settings"):
+                model_id = unquote(parsed.path.split("/")[3])
+                self.send_json(STATE.read_model_settings(model_id))
             elif parsed.path.startswith("/api/models/") and parsed.path.endswith("/file"):
                 model_id = unquote(parsed.path.split("/")[3])
                 name = parse_qs(parsed.query).get("name", ["systemprompt.md"])[0]
@@ -1664,6 +1723,10 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 model_id = unquote(parsed.path.split("/")[3])
                 payload = self.read_json_body()
                 self.send_json(STATE.write_model_file(model_id, str(payload.get("name") or ""), str(payload.get("content") or "")))
+            elif parsed.path.startswith("/api/models/") and parsed.path.endswith("/settings"):
+                model_id = unquote(parsed.path.split("/")[3])
+                payload = self.read_json_body()
+                self.send_json(STATE.write_model_settings(model_id, payload.get("settings")))
             elif parsed.path.startswith("/api/resources/") and parsed.path.endswith("/file"):
                 parts = parsed.path.split("/")
                 kind = unquote(parts[3])

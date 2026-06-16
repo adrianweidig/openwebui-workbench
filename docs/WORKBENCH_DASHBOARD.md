@@ -90,19 +90,20 @@ Unter Linux kann statt `host.docker.internal` auch eine konkrete Host-IP verwend
 
 1. Modell im Dashboard auswählen.
 2. `systemprompt.md`, `mainprompt.md`, `fachwissen.md` oder Beispiele direkt im Markdown-Editor ändern und im Viewer prüfen.
-3. Datei speichern.
-4. Optional Tools, Functions/Filter, Skills oder Promptvorlagen im Ressourcenbereich bearbeiten. Lokale Dateien können dort entfernt werden; mit Admin-Token können ausgewählte Ressourcen zusätzlich aus OpenWebUI gelöscht werden.
-5. `Artefakte neu erzeugen` ausführen.
-6. `Import prüfen` ausführen.
-7. Im Sync-Bereich bei Bedarf `Basismodelle laden` nutzen, das gewünschte OpenWebUI-Basismodell auswählen und mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` `Zu OpenWebUI synchronisieren` ausführen. Dieser Sync importiert alle Workbench-Modelle sowie Tools, Functions/Filter, Skills, Promptvorlagen, Pflichtdateien und Knowledge.
-8. `Modellstatus vergleichen` ausführen, um die verwalteten Modellfelder der Workbench mit OpenWebUI zu vergleichen.
-9. `OpenWebUI-Snapshot aktualisieren` ausführen, wenn OpenWebUI-only-Modelle in der Workbench sichtbar werden sollen.
+3. Im Tab `Einstellungen` bei Bedarf das jeweilige `model.json` pflegen: `base_model_id`, Name, Beschreibung, Tags, Capabilities, `toolIds`, `filterIds`, `skillIds`, Standardparameter und Raw JSON.
+4. Datei oder Einstellungen speichern. Für Einstellungen kann direkt `Speichern & Artefakte bauen` genutzt werden.
+5. Optional Tools, Functions/Filter, Skills oder Promptvorlagen im Ressourcenbereich bearbeiten. Lokale Dateien können dort entfernt werden; mit Admin-Token können ausgewählte Ressourcen zusätzlich aus OpenWebUI gelöscht werden.
+6. `Artefakte neu erzeugen` ausführen, falls sie nicht bereits über den Einstellungstab gebaut wurden.
+7. `Import prüfen` ausführen.
+8. Im Sync-Bereich bei Bedarf `Basismodelle laden` nutzen. Die dortige Auswahl dient als Fallback für Modelle ohne eigenes `base_model_id`; mit gesetztem `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` importiert `Zu OpenWebUI synchronisieren` alle Workbench-Modelle sowie Tools, Functions/Filter, Skills, Promptvorlagen, Pflichtdateien und Knowledge.
+9. `Modellstatus vergleichen` ausführen, um die verwalteten Modellfelder der Workbench mit OpenWebUI zu vergleichen.
+10. `OpenWebUI-Snapshot aktualisieren` ausführen, wenn OpenWebUI-only-Modelle in der Workbench sichtbar werden sollen.
 
 Der echte OpenWebUI-Sync läuft im Dashboard als Hintergrundjob. Die Oberfläche bleibt währenddessen bedienbar; ein zweiter Sync-Klick startet keinen parallelen Import, sondern zeigt den laufenden Job weiter an.
 
 ## Bidirektionale Modellprüfung
 
-Die Workbench bleibt die Schreibquelle für die versionierten Modellpakete unter `Modelle/einzelmodelle/`. Der bestehende API-Import spiegelt diese Pakete nach OpenWebUI. Für die Gegenrichtung gibt es bewusst keinen automatischen destruktiven Pull: `scripts/sync_openwebui_models.py` liest OpenWebUI über die API, vergleicht die verwalteten Felder `id`, `name`, `base_model_id`, `params` und die bekannten Workbench-`meta`-Schlüssel mit dem lokalen Modellstand und schreibt bei Bedarf einen prüfbaren Snapshot unter `Artefakte/openwebui_sync/`.
+Die Workbench bleibt die Schreibquelle für die versionierten Modellpakete unter `Modelle/einzelmodelle/`. Der Einstellungstab schreibt in das jeweilige `model.json`; der bestehende API-Import spiegelt diese Pakete nach OpenWebUI. Für die Gegenrichtung gibt es bewusst keinen automatischen destruktiven Pull: `scripts/sync_openwebui_models.py` liest OpenWebUI über die API, vergleicht die verwalteten Felder `id`, `name`, `base_model_id`, `params` und die bekannten Workbench-`meta`-Schlüssel mit dem lokalen Modellstand und schreibt bei Bedarf einen prüfbaren Snapshot unter `Artefakte/openwebui_sync/`.
 
 Die Statuswerte sind:
 

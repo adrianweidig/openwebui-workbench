@@ -104,6 +104,58 @@ class ConfigureOpenWebUIToolModelsTests(unittest.TestCase):
 
         self.assertEqual(ordered, [config, readme])
 
+    def test_configure_model_preserves_model_json_runtime_preferences(self) -> None:
+        module = load_configure_module()
+        model = {
+            "id": "allgemein",
+            "name": "Allgemein Custom",
+            "base_model_id": "mistral-medium-3.5-128b",
+            "meta": {
+                "capabilities": {
+                    "builtin_tools": False,
+                    "vision": False,
+                    "file_upload": False,
+                    "code_interpreter": False,
+                    "status_updates": False,
+                    "usage": False,
+                },
+                "toolIds": [],
+                "filterIds": ["custom_filter"],
+                "defaultFilterIds": ["custom_filter"],
+                "skillIds": ["custom-skill"],
+            },
+            "params": {
+                "temperature": 0.2,
+                "top_p": 0.8,
+                "stop": ["</stop>"],
+                "function_calling": "none",
+                "reasoning_effort": "medium",
+                "parallel_tool_calls": False,
+            },
+        }
+
+        tool_records = module.discover_tools()
+        offline_tool_ids = [record.id for record in module.offline_default_tool_records(tool_records)]
+        all_tool_ids = [record.id for record in tool_records if record.importable]
+
+        configured = module.configure_model(model, offline_tool_ids, ["fallback_filter"], all_tool_ids)
+
+        self.assertEqual(configured["base_model_id"], "mistral-medium-3.5-128b")
+        self.assertEqual(configured["params"]["temperature"], 0.2)
+        self.assertEqual(configured["params"]["top_p"], 0.8)
+        self.assertEqual(configured["params"]["stop"], ["</stop>"])
+        self.assertEqual(configured["params"]["function_calling"], "none")
+        self.assertEqual(configured["params"]["reasoning_effort"], "medium")
+        self.assertFalse(configured["params"]["parallel_tool_calls"])
+        self.assertIn("system", configured["params"])
+        self.assertEqual(configured["meta"]["toolIds"], [])
+        self.assertIn("custom_filter", configured["meta"]["filterIds"])
+        self.assertNotIn("fallback_filter", configured["meta"]["filterIds"])
+        self.assertEqual(configured["meta"]["skillIds"], ["custom-skill"])
+        self.assertFalse(configured["meta"]["capabilities"]["builtin_tools"])
+        self.assertFalse(configured["meta"]["capabilities"]["vision"])
+        self.assertFalse(configured["meta"]["capabilities"]["code_interpreter"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -152,6 +152,58 @@ class WorkbenchStateTests(unittest.TestCase):
         after = self.state.write_model_file("demo-model", "systemprompt.md", "Updated\n")
         self.assertEqual(after["content"], "Updated\n")
 
+    def test_reads_model_settings_as_editable_object(self) -> None:
+        payload = self.state.read_model_settings("demo-model")
+
+        self.assertEqual(payload["model_id"], "demo-model")
+        self.assertEqual(payload["settings"]["id"], "demo-model")
+        self.assertIn('"base_model_id": "coder"', payload["content"])
+        self.assertTrue(payload["path"].endswith("Modelle/einzelmodelle/demo-model/model.json"))
+
+    def test_writes_model_settings_as_single_model_json_array(self) -> None:
+        payload = self.state.write_model_settings(
+            "demo-model",
+            {
+                "id": "demo-model",
+                "name": "Demo Custom",
+                "base_model_id": "mistral-medium-3.5-128b",
+                "meta": {
+                    "description": "Custom settings",
+                    "tags": [{"name": "custom"}],
+                    "capabilities": {"vision": True, "builtin_tools": False},
+                    "toolIds": [],
+                    "filterIds": ["workbench_required_file_context_filter"],
+                    "skillIds": ["demo-skill"],
+                },
+                "params": {
+                    "temperature": 0.2,
+                    "top_p": 0.8,
+                    "stop": ["</stop>"],
+                    "function_calling": "native",
+                    "reasoning_effort": "medium",
+                    "parallel_tool_calls": False,
+                },
+            },
+        )
+
+        self.assertEqual(payload["settings"]["name"], "Demo Custom")
+        self.assertEqual(payload["settings"]["base_model_id"], "mistral-medium-3.5-128b")
+        self.assertEqual(payload["settings"]["meta"]["toolIds"], [])
+        self.assertEqual(payload["settings"]["params"]["temperature"], 0.2)
+        raw = json.loads((self.root / "Modelle" / "einzelmodelle" / "demo-model" / "model.json").read_text(encoding="utf-8"))
+        self.assertIsInstance(raw, list)
+        self.assertEqual(len(raw), 1)
+        self.assertEqual(raw[0]["id"], "demo-model")
+
+    def test_rejects_model_settings_id_change(self) -> None:
+        with self.assertRaisesRegex(ValueError, "Modell-ID"):
+            self.state.write_model_settings("demo-model", {"id": "other-model", "name": "Wrong"})
+
+    def test_write_model_settings_can_be_disabled(self) -> None:
+        state = WorkbenchState(WorkbenchConfig(root=self.root, allow_write=False, locale="de"))
+        with self.assertRaisesRegex(PermissionError, "Schreibzugriff"):
+            state.write_model_settings("demo-model", {"id": "demo-model", "name": "Nope"})
+
     def test_reads_and_writes_allowed_example_markdown(self) -> None:
         after = self.state.write_model_file("demo-model", "beispiele/demo.md", "Example note\n")
         self.assertEqual(after["content"], "Example note\n")
