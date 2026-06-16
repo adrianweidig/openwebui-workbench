@@ -60,38 +60,38 @@ jobs:
           fi
           if [ -n "${previous_tag}" ]; then
             log_args=("${previous_tag}..${GITHUB_SHA}")
-            changes_intro="Änderungen seit \`${previous_tag}\`:"
+            changes_intro="Changes since \`${previous_tag}\`:"
           else
             log_args=("-n" "20" "${GITHUB_SHA}")
-            changes_intro="Kein vorheriger Tag gefunden. Letzte relevante Commits:"
+            changes_intro="No previous tag was found. Recent relevant commits:"
           fi
           mapfile -t commit_lines < <(git log --pretty=format:'- `%h` %s' "${log_args[@]}")
 
           {
             echo "# Release Notes: ${branch}"
             echo
-            echo "Datum: ${release_date}"
-            echo "Zweck: Nachvollziehbarer Workbench-Release-Snapshot mit fachlichen Änderungen, Validierungshinweisen und Handover-Artefakt."
+            echo "Date: ${release_date}"
+            echo "Purpose: Traceable OpenWebUI Workbench release snapshot with user-facing change notes, validation context, and handover artifacts."
             echo
-            echo "## Was geändert wurde"
+            echo "## What changed"
             echo
             echo "${changes_intro}"
             echo
             if [ "${#commit_lines[@]}" -gt 0 ]; then
               printf '%s\n' "${commit_lines[@]}"
             else
-              echo "- Keine neuen Commits im berechneten Bereich."
+              echo "- No commits were found in the computed release range."
             fi
             echo
-            echo "## Nutzen für Anwender"
+            echo "## User impact"
             echo
-            echo "- Der ZIP-Snapshot bildet exakt den angegebenen Commit ab und enthält keine Git-Metadaten."
-            echo "- Release Notes nennen die enthaltenen Commits statt nur technische Workflow-Felder."
-            echo "- Prüfsummen liegen als `SHA256SUMS.txt` neben Archiv und Notes."
+            echo "- The ZIP snapshot maps exactly to the listed commit and contains no Git metadata."
+            echo "- Release notes show the included commits instead of only workflow metadata."
+            echo "- Checksums are published as `SHA256SUMS.txt` next to the archive and notes."
             echo
-            echo "## Technische Metadaten"
+            echo "## Technical details"
             echo
-            echo "| Feld | Wert |"
+            echo "| Field | Value |"
             echo "|---|---|"
             echo "| Repository | ${GITHUB_REPOSITORY} |"
             echo "| Ref | ${branch} |"
@@ -100,18 +100,18 @@ jobs:
             echo "| Short SHA | ${short_sha} |"
             echo "| Event | ${GITHUB_EVENT_NAME} |"
             echo "| Actor | ${GITHUB_ACTOR} |"
-            echo "| UTC-Zeit | ${release_time} |"
+            echo "| UTC time | ${release_time} |"
             echo "| Archive | ${archive_name} |"
             echo
-            echo "## Validierung"
+            echo "## Validation and security"
             echo
-            echo "- Archiv-Erstellung per \`git archive\` aus \`${GITHUB_SHA}\`."
-            echo "- SHA-256-Prüfsummen werden für Archiv und Release Notes erzeugt."
-            echo "- CI, CodeQL und Docker/GHCR laufen als separate Workflows für denselben Ref."
+            echo "- Archive generation uses \`git archive\` from \`${GITHUB_SHA}\`."
+            echo "- SHA-256 checksums are generated for the archive and release notes."
+            echo "- CI, CodeQL, and Docker/GHCR checks run as separate workflows for the same ref."
             echo
             echo "## Docker Image"
             echo
-            echo "Das Workbench-Dashboard-Image wird durch den separaten Docker-Workflow gebaut, wenn dessen Pfadfilter greifen. GHCR-Verfügbarkeit sollte am konkreten Docker-Workflow-Lauf geprüft werden, bevor sie dokumentiert oder zugesichert wird."
+            echo "The Workbench dashboard image is built by the dedicated Docker workflow when its path filters match. Check the concrete Docker workflow run before documenting or promising GHCR availability."
           } > release-artifacts/RELEASE_NOTES.md
 
           sha256sum "release-artifacts/${archive_name}" "release-artifacts/RELEASE_NOTES.md" > release-artifacts/SHA256SUMS.txt
