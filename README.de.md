@@ -18,6 +18,18 @@ Die Idee ist einfach: Nutzer wählen ein Aufgabenmodell, beschreiben ihr Problem
 
 Die enthaltenen Prompts und Wissensdateien wurden mit GPT-5.5 Pro erzeugt und geschärft, damit dieses Verhalten lokal in OpenWebUI nutzbar ist, auch in privaten oder Air-Gap-Umgebungen.
 
+## Workbench-Screenshots
+
+Der empfohlene Weg ist der Workbench-Dashboard-Container. Er bearbeitet das gemountete Repository direkt und erzeugt daraus die OpenWebUI-Importartefakte.
+
+![Model-Settings-Editor im Workbench-Dashboard](docs/assets/screenshots/workbench-dashboard-model-settings-en.png)
+
+Im Tab **Settings** bearbeitest du die `model.json`: `base_model_id`, Name, Beschreibung, Tags, Capabilities, Tool-/Filter-/Skill-Bindings, Laufzeitparameter und Raw JSON.
+
+![Tools, Functions, Skills und Prompts im Workbench-Dashboard](docs/assets/screenshots/workbench-dashboard-resources-en.png)
+
+Tools, Filter, Skills und Prompts werden im selben Dashboard gepflegt, damit Modellpaket und OpenWebUI-Ressourcen zusammenbleiben.
+
 ## Was Du Bekommst
 
 - Aufgabenmodelle für Code-Review, Debugging, Dokumentanalyse, Dokumenterstellung, n8n-Workflows, Testfälle, Präsentationen, Datenanalyse, Lokalisierung, Support-Tickets und mehr.
@@ -32,15 +44,16 @@ Die enthaltenen Prompts und Wissensdateien wurden mit GPT-5.5 Pro erzeugt und ge
 Voraussetzungen:
 
 - Docker mit Docker Compose
-- Python 3.10 oder neuer
+- eine laufende OpenWebUI-Instanz
 - ein OpenWebUI-Basismodell unter der Modell-ID, die Du nutzen willst. Repository-Default ist `coder`; zeige diese ID auf Dein bevorzugtes lokales Modell oder ändere sie pro Modell im Dashboard.
 
-Workbench-Dashboard starten:
+Workbench-Dashboard als Container starten:
 
 ```powershell
-python scripts/init_workbench_env.py
-python scripts/check_workbench_setup.py
-docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
+if (-not (Test-Path .env)) { Copy-Item Deployment/workbench.env.example .env }
+# .env bearbeiten: WORKBENCH_AUTH_PASSWORD und OPENWEBUI_BASE_URL setzen.
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml pull workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d
 ```
 
 Öffnen:
@@ -49,6 +62,12 @@ docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d 
 - OpenWebUI: die URL aus Deiner `.env`, meist `http://localhost:3000`
 
 `Deployment/docker-compose.workbench.yml` startet genau einen Container: das Workbench-Dashboard. Es startet und ersetzt keinen OpenWebUI-Server. Setze `OPENWEBUI_BASE_URL` auf die OpenWebUI-Instanz, die Du bereits nutzt.
+
+Für lokale Entwicklung am Dashboard-Image kannst du stattdessen aus dem Checkout bauen:
+
+```powershell
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
+```
 
 ## Modell Importieren
 
@@ -88,6 +107,8 @@ Das Repository bleibt die Quelle der Wahrheit. OpenWebUI ist die Laufzeitumgebun
 | `scripts/verify_openwebui_workspace.py` | Zentrale nicht-mutierende Prüfung |
 
 ## Lokal Prüfen
+
+Diese Befehle sind für Maintainer und CI-nahe Prüfungen gedacht. Für die normale Container-Nutzung brauchst du sie nicht.
 
 ```powershell
 python scripts/verify_openwebui_workspace.py

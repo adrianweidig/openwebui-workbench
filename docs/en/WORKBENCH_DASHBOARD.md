@@ -9,9 +9,10 @@ OpenWebUI stays your chat runtime. The Workbench is a separate local dashboard t
 ## Start
 
 ```powershell
-python scripts/init_workbench_env.py
-python scripts/check_workbench_setup.py
-docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
+if (-not (Test-Path .env)) { Copy-Item Deployment/workbench.env.example .env }
+# Edit .env: set WORKBENCH_AUTH_PASSWORD and OPENWEBUI_BASE_URL.
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml pull workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d
 ```
 
 Open:
@@ -21,6 +22,8 @@ http://localhost:8088
 ```
 
 The standard Compose file starts exactly one container: `workbench`.
+
+For local dashboard image development, add `--build` to build from the checkout.
 
 Set `OPENWEBUI_BASE_URL` in `.env` to the OpenWebUI instance the container should call. For Docker Desktop with OpenWebUI running on the host, the default is usually enough:
 

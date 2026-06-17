@@ -15,16 +15,21 @@ The normal path is intentionally small:
 Create the local `.env` file:
 
 ```powershell
-python scripts/init_workbench_env.py
-python scripts/check_workbench_setup.py
+if (-not (Test-Path .env)) { Copy-Item Deployment/workbench.env.example .env }
 ```
 
-Set `OPENWEBUI_BASE_URL` in `.env` if your OpenWebUI is not reachable at `http://host.docker.internal:3000` from Docker.
+Fill `WORKBENCH_AUTH_PASSWORD` locally, then check the OpenWebUI URLs:
+
+```env
+OPENWEBUI_BASE_URL=http://host.docker.internal:3000
+OPENWEBUI_PUBLIC_URL=http://localhost:3000
+```
 
 Start the Workbench:
 
 ```powershell
-docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml pull workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d
 ```
 
 Open the dashboard:
@@ -33,7 +38,13 @@ Open the dashboard:
 http://localhost:8088
 ```
 
-The dashboard asks for HTTP Basic Auth. The init script generates `WORKBENCH_AUTH_PASSWORD` locally and does not print it.
+The dashboard asks for HTTP Basic Auth. Keep `WORKBENCH_AUTH_PASSWORD` local and do not commit `.env`.
+
+For local image development, build from the checkout instead:
+
+```powershell
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
+```
 
 ## What The Container Does
 
@@ -52,19 +63,20 @@ The Workbench does not start or replace OpenWebUI. OpenWebUI remains your separa
 
 ## Minimal `.env`
 
-The generated `.env` already contains the needed keys. The values most users touch are:
+The local `.env` already contains the needed keys after copying the example. The values most users touch are:
 
 ```env
+WORKBENCH_IMAGE=ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest
 OPENWEBUI_BASE_URL=http://host.docker.internal:3000
 OPENWEBUI_PUBLIC_URL=http://localhost:3000
 WORKBENCH_PORT=8088
 WORKBENCH_LOCALE=en
 ```
 
-For real API sync, add one of:
+For real API sync, set one of these in the local `.env`:
 
 ```env
-OPENWEBUI_ADMIN_TOKEN=...
+OPENWEBUI_ADMIN_TOKEN=
 OPENWEBUI_ADMIN_TOKEN_FILE=/run/secrets/openwebui-admin-token
 ```
 

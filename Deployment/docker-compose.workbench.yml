@@ -5,7 +5,7 @@ services:
     build:
       context: ..
       dockerfile: Deployment/Dockerfile.workbench
-    image: ${WORKBENCH_IMAGE:-openwebui-workbench-dashboard:local}
+    image: ${WORKBENCH_IMAGE:-ghcr.io/adrianweidig/openwebui-workbench/workbench-dashboard:latest}
     container_name: ${WORKBENCH_CONTAINER_NAME:-openwebui-workbench}
     restart: unless-stopped
     ports:
