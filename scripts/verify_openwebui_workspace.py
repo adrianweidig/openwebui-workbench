@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Iterable, Sequence
 
 
@@ -112,15 +112,9 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
         )
     if args.include_docker_compose:
         docker = list(args.docker_command)
-        verify_host_path = lambda name: str(PurePosixPath("/", "tmp", name))
         compose_auth_env = {
-            "WEBUI_SECRET_KEY": "verify-only-placeholder",
             "WORKBENCH_AUTH_PASSWORD": "verify-only-placeholder",
-            "WORKBENCH_ENTERPRISE_CA_HOST_FILE": verify_host_path("workbench-verify-ca.pem"),
-            "WORKBENCH_AUTH_PASSWORD_HOST_FILE": verify_host_path("workbench-auth-password.txt"),
-            "WORKBENCH_AUTH_PASSWORD_FILE": "/run/secrets/workbench-auth-password",
-            "OPENWEBUI_ADMIN_TOKEN_HOST_FILE": verify_host_path("openwebui-admin-token.txt"),
-            "OPENWEBUI_ADMIN_TOKEN_FILE": "/run/secrets/openwebui-admin-token",
+            "WEBUI_SECRET_KEY": "verify-only-placeholder",
         }
         steps.append(
             CommandStep(
@@ -133,128 +127,6 @@ def build_command_steps(args: argparse.Namespace) -> list[CommandStep]:
             CommandStep(
                 "Docker compose workbench config",
                 [*docker, "compose", "-f", "Deployment/docker-compose.workbench.yml", "config"],
-                env=compose_auth_env,
-                requires_docker=True,
-            )
-        )
-        steps.append(
-            CommandStep(
-                "Docker compose shared-targets workbench config",
-                [*docker, "compose", "-f", "Deployment/docker-compose.shared-targets.yml", "config"],
-                env={
-                    **compose_auth_env,
-                    "WORKBENCH_SHARED_DOCKER_NETWORK": "ki_infra_seu_test",
-                    "OPENWEBUI_BASE_URL": "http://openwebui:8080",
-                    "OPENWEBUI_PUBLIC_URL": "https://openwebui.top.secret",
-                    "RAGFLOW_BASE_URL": "http://ragflow",
-                    "SEAFILE_BASE_URL": "http://seafile",
-                    "PORTAINER_URL": "http://portainer:9000",
-                },
-                requires_docker=True,
-            )
-        )
-        steps.append(
-            CommandStep(
-                "Docker compose enterprise CA workbench config",
-                [
-                    *docker,
-                    "compose",
-                    "-f",
-                    "Deployment/docker-compose.workbench.yml",
-                    "-f",
-                    "Deployment/docker-compose.enterprise-ca.yml",
-                    "config",
-                ],
-                env=compose_auth_env,
-                requires_docker=True,
-            )
-        )
-        steps.append(
-            CommandStep(
-                "Docker compose shared-targets enterprise CA config",
-                [
-                    *docker,
-                    "compose",
-                    "-f",
-                    "Deployment/docker-compose.shared-targets.yml",
-                    "-f",
-                    "Deployment/docker-compose.shared-targets-enterprise-ca.yml",
-                    "config",
-                ],
-                env={
-                    **compose_auth_env,
-                    "WORKBENCH_SHARED_DOCKER_NETWORK": "ki_infra_seu_test",
-                    "OPENWEBUI_BASE_URL": "http://openwebui:8080",
-                    "OPENWEBUI_PUBLIC_URL": "https://openwebui.top.secret",
-                    "RAGFLOW_BASE_URL": "http://ragflow",
-                    "SEAFILE_BASE_URL": "http://seafile",
-                    "PORTAINER_URL": "http://portainer:9000",
-                },
-                requires_docker=True,
-            )
-        )
-        steps.append(
-            CommandStep(
-                "Docker compose workbench password-file config",
-                [
-                    *docker,
-                    "compose",
-                    "-f",
-                    "Deployment/docker-compose.workbench.yml",
-                    "-f",
-                    "Deployment/docker-compose.workbench-password-file.yml",
-                    "config",
-                ],
-                env=compose_auth_env,
-                requires_docker=True,
-            )
-        )
-        steps.append(
-            CommandStep(
-                "Docker compose OpenWebUI admin-token-file config",
-                [
-                    *docker,
-                    "compose",
-                    "-f",
-                    "Deployment/docker-compose.workbench.yml",
-                    "-f",
-                    "Deployment/docker-compose.openwebui-admin-token-file.yml",
-                    "config",
-                ],
-                env=compose_auth_env,
-                requires_docker=True,
-            )
-        )
-        steps.append(
-            CommandStep(
-                "Docker compose combined secret-file config",
-                [
-                    *docker,
-                    "compose",
-                    "-f",
-                    "Deployment/docker-compose.workbench.yml",
-                    "-f",
-                    "Deployment/docker-compose.workbench-password-file.yml",
-                    "-f",
-                    "Deployment/docker-compose.openwebui-admin-token-file.yml",
-                    "config",
-                ],
-                env=compose_auth_env,
-                requires_docker=True,
-            )
-        )
-        steps.append(
-            CommandStep(
-                "Docker compose top.secret workbench config",
-                [
-                    *docker,
-                    "compose",
-                    "-f",
-                    "Deployment/docker-compose.workbench.yml",
-                    "-f",
-                    "Deployment/docker-compose.top-secret.yml",
-                    "config",
-                ],
                 env=compose_auth_env,
                 requires_docker=True,
             )

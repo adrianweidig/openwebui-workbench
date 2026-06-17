@@ -26,14 +26,14 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    python scripts/verify_openwebui_workspace.py
    ```
 
-3. Wenn Docker lokal verfügbar ist, Compose-Beispiele inklusive optionalem Enterprise-CA- und `top.secret`-Override zusätzlich prüfen:
+3. Wenn Docker lokal verfügbar ist, die Standard-Workbench-Compose und die getrennte Offline-Beispielvorlage zusätzlich prüfen:
 
    ```powershell
    python scripts/check_workbench_setup.py --require-docker --run-compose-config
    python scripts/verify_openwebui_workspace.py --include-docker-compose
    ```
 
-   In GitHub Actions läuft derselbe Compose-Config-Pfad als separater CI-Job. Es werden nur Compose-Dateien gerendert, keine Container gestartet. Der optionale Verify-Pfad rendert neben Standard-, Shared-Targets-, Enterprise-CA- und `top.secret`-Varianten auch die separaten Passwortdatei- und OpenWebUI-Admin-Token-Datei-Overrides sowie deren kombinierte Nutzung.
+   In GitHub Actions läuft derselbe Compose-Config-Pfad als separater CI-Job. Es werden nur Compose-Dateien gerendert, keine Container gestartet. Der optionale Verify-Pfad rendert die Standard-Workbench-Compose und die getrennte OpenWebUI-Offline-Beispielvorlage.
    Auf Windows-Hosts ohne Docker in der PATH, aber mit verfügbarer WSL, weisen Setup-Doctor und Verify-Runner auf den WSL-Pfad hin. Die Compose-Prüfungen sollen dann aus der WSL-Umgebung laufen, die Docker bereitstellt.
    Für nicht-mutierende Prüfungen aus Windows heraus kann der Docker-Befehl explizit gesetzt werden:
 
@@ -43,13 +43,7 @@ Dieses Repository ist ein OpenWebUI-Workspace mit Python-Skripten, importierbare
    ```
 
    Der Setup-Doctor führt bei explizitem `--docker-command` vorab `docker compose version` aus. Ein deaktivierter `WSLService` oder ein nicht nutzbarer WSL-Docker-Pfad wird dadurch als Preflight-Fehler sichtbar, ohne Container zu starten.
-   Zusätzliche lokale Compose-Overrides können für denselben Preflight wiederholbar angegeben werden:
-
-   ```powershell
-   python scripts/check_workbench_setup.py --require-docker --run-compose-config --compose-override Deployment/docker-compose.workbench-password-file.yml --compose-override Deployment/docker-compose.openwebui-admin-token-file.yml
-   ```
-
-   Bei Compose-Overrides mit `${VAR:?Meldung}` prüft der Setup-Doctor die benötigten Variablen vor `docker compose config`, damit fehlende Secret-Dateipfade als gezielte Preflight-Meldung statt als nachgelagerter Compose-Fehler erscheinen.
+   Zusätzliche lokale Compose-Overrides werden nicht als öffentlicher Standard empfohlen. Wer private Overrides nutzt, prüft sie bewusst über `--compose-override`; die öffentliche Einstiegskonfiguration bleibt eine Compose-Datei mit einem Workbench-Container.
 
 4. Wenn Tool-, Filter-, Skill- oder Modellartefakte bewusst geändert wurden, Dist-Artefakte neu erzeugen und danach erneut prüfen:
 
@@ -84,16 +78,16 @@ Die Unit-Tests unter `Tools.openwebui_ext.tests` enthalten zusätzlich leichte W
 Die bidirektionale OpenWebUI-Modellprüfung wird durch `scripts/sync_openwebui_models.py` abgedeckt. Die Unit-Tests klassifizieren `identical`, `local_only`, `remote_only`, `conflict`, `remote_inactive` und Snapshot-Schreibpfade ohne echte OpenWebUI-Instanz. In einer Live-Umgebung kann der Vergleich ohne Zieländerung ausgeführt werden:
 
 ```powershell
-python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem
+python scripts/sync_openwebui_models.py --base-url http://localhost:3000 --token-file /run/secrets/openwebui-admin-token
 ```
 
 Der prüfbare Gegenrichtungs-Snapshot schreibt nur unter `Artefakte/openwebui_sync/` und überschreibt keine Workbench-Modellpakete:
 
 ```powershell
-python scripts/sync_openwebui_models.py --base-url https://openwebui.top.secret --token-file /run/secrets/openwebui-admin-token --ca-file /certs/top-secret-edge-root-ca.pem --write-snapshot
+python scripts/sync_openwebui_models.py --base-url http://localhost:3000 --token-file /run/secrets/openwebui-admin-token --write-snapshot
 ```
 
-Der Setup-Doctor ist nicht-mutierend und prüft zusätzlich, ob `OPENWEBUI_PORT` und `WORKBENCH_PORT` gültige, unterschiedliche Host-Ports ergeben, ob `OPENWEBUI_BASE_URL`, `OPENWEBUI_PUBLIC_URL` sowie optional gesetzte `PORTAINER_URL`, `RAGFLOW_BASE_URL` und `SEAFILE_BASE_URL` vollständige `http`- oder `https`-URLs ohne eingebettete Zugangsdaten sind, ob boolesche Flags wie `OPENWEBUI_TLS_VERIFY` und `WORKBENCH_REQUIRE_AUTH` explizite Wahr/Falsch-Werte enthalten, ob Timeout-/Größenwerte und `WORKBENCH_AUTOMATION_INTERVAL_MINUTES` gültige Ganzzahlen sind, ob Automationsaktionen aus der erlaubten Liste stammen und ob dateibasierte Runtime-Pfade plausibel sind. Mit `--probe-runtime` prüft der Setup-Doctor OpenWebUI und optional Portainer per HTTP, ohne Tokens zu nutzen oder Dienste zu verändern. `WORKBENCH_ENTERPRISE_CA_HOST_FILE` wird als lokale Hostdatei und PEM-Zertifikat geprüft; mit `--allow-unverified-root-ca-path` darf ein nicht lokal sichtbarer Docker-/Portainer-Hostpfad als Warnung durchlaufen, während lokal lesbare PEM-Dateien weiterhin validiert werden. `WORKBENCH_AUTH_PASSWORD_HOST_FILE` und `OPENWEBUI_ADMIN_TOKEN_HOST_FILE` werden als lokale Hostdateien geprüft; mit `--allow-unverified-secret-file-path` darf ein nicht lokal sichtbarer Docker-/Portainer-Hostpfad als Warnung durchlaufen, ohne Secret-Dateiinhalte zu lesen oder auszugeben. Container-only Secret- oder CA-Pfade werden als Warnung markiert, wenn sie hostseitig nicht sichtbar sind. Fehlende Werte nutzen die Compose-Defaults.
+Der Setup-Doctor ist nicht-mutierend und prüft zusätzlich Ports, URLs, boolesche Flags, Timeouts, Automationsaktionen sowie dateibasierte Token-, Passwort- und CA-Pfade. Mit `--probe-runtime` prüft er OpenWebUI und optional Portainer per HTTP, ohne Tokens zu nutzen oder Dienste zu verändern. Fehlende Werte nutzen die Compose-Defaults.
 
 Mit `--probe-runtime` führt der Setup-Doctor zusätzlich nicht-mutierende HTTP-Probes aus. OpenWebUI wird über `OPENWEBUI_PUBLIC_URL` geprüft; Portainer wird nur geprüft, wenn `--portainer-url`, die Prozessumgebung `PORTAINER_URL` oder `PORTAINER_URL` in der lokalen `.env` gesetzt ist. Der CLI-Wert hat Vorrang vor `.env`. Der Probe nutzt keine Tokens, behandelt HTTP 401/403 als erreichbaren Auth-Endpunkt und wird mit `--require-runtime` abnahmehart.
 

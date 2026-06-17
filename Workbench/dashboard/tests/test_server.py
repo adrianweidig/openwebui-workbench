@@ -336,8 +336,8 @@ class WorkbenchStateTests(unittest.TestCase):
         state = WorkbenchState(
             WorkbenchConfig(
                 root=self.root,
-                openwebui_base_url="https://openwebui.top.secret",
-                ca_file="/certs/top-secret-edge-root-ca.pem",
+                openwebui_base_url="https://openwebui.localhost",
+                ca_file="/certs/workbench-root-ca.pem",
                 locale="de",
             )
         )
@@ -353,7 +353,7 @@ class WorkbenchStateTests(unittest.TestCase):
         self.assertIn("scripts/sync_openwebui_models.py", command)
         self.assertNotIn("secret-token", command)
         self.assertEqual(run.call_args.kwargs["env"]["OPENWEBUI_ADMIN_TOKEN"], "secret-token")
-        self.assertEqual(run.call_args.kwargs["env"]["OPENWEBUI_CA_FILE"], "/certs/top-secret-edge-root-ca.pem")
+        self.assertEqual(run.call_args.kwargs["env"]["OPENWEBUI_CA_FILE"], "/certs/workbench-root-ca.pem")
         self.assertTrue(result["ok"])
 
     def test_openwebui_base_model_options_include_remote_and_current_model(self) -> None:

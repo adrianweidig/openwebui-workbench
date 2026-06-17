@@ -2,11 +2,12 @@
 
 🌐 Sprachen: [Deutsch](index.md) | [English](../en/index.md)
 
-Deutsch ist die Standardsprache dieses Repositorys. GitHub schaltet normale Repository-Dateien nicht automatisch nach Nutzersprache um; deshalb sind README, Community-Dateien und zentrale Dokumentationsseiten explizit verlinkt.
+Die GitHub-Startseite ist jetzt Englisch. Die deutsche README bleibt als eigener Einstieg erhalten.
 
 ## Einstieg
 
-- [README](../../README.md)
+- [Deutsche README](../../README.de.md)
+- [Englische GitHub-README](../../README.md)
 - [Internationalisierung](I18N.md)
 - [Architektur](../ARCHITECTURE.md)
 - [Workbench Dashboard](../WORKBENCH_DASHBOARD.md)
@@ -16,8 +17,8 @@ Deutsch ist die Standardsprache dieses Repositorys. GitHub schaltet normale Repo
 
 ## Sprachstruktur
 
-- Deutsch: `README.md`, `docs/de/`, Standard-Dokumente im Repository-Root und Standard-UI des Dashboards.
-- Englisch: `README.en.md`, `docs/en/` und `.en.md`-Varianten der Community-Dateien.
+- Deutsch: `README.de.md`, `docs/de/`, deutsche Standarddokumente und deutsche Dashboard-UI.
+- Englisch: `README.md`, `docs/en/` und `.en.md`-Varianten der Community-Dateien.
 - Weitere Sprachen können durch zusätzliche `docs/<lang>/`, README-Varianten und Dashboard-Locale-Dateien ergänzt werden.
 
 ## Grundsatz

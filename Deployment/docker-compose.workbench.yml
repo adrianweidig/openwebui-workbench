@@ -1,54 +1,6 @@
 name: openwebui-workbench
 
 services:
-  # OpenWebUI runtime
-  #
-  # Purpose:
-  # - Provides the chat/runtime UI.
-  # - Persists OpenWebUI state in the named volume below.
-  # - Mounts this repo's generated model/tool artifacts read-only for manual import.
-  #
-  # Required local decisions:
-  # - Set WEBUI_SECRET_KEY in an ignored .env for stable sessions across restarts.
-  # - Change OPENWEBUI_PORT only if localhost:3000 is already occupied.
-  openwebui:
-    image: ghcr.io/open-webui/open-webui:${OPENWEBUI_IMAGE_TAG:-main}
-    container_name: ${OPENWEBUI_CONTAINER_NAME:-openwebui}
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:${OPENWEBUI_PORT:-3000}:8080"
-    environment:
-      WEBUI_AUTH: ${WEBUI_AUTH:-true}
-      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:-}
-      DO_NOT_TRACK: ${DO_NOT_TRACK:-true}
-      SCARF_NO_ANALYTICS: ${SCARF_NO_ANALYTICS:-true}
-      ANONYMIZED_TELEMETRY: ${ANONYMIZED_TELEMETRY:-false}
-    healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5).read()\""]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-    volumes:
-      - openwebui-data:/app/backend/data
-      - ../Modelle/dist:/app/backend/data/openwebui-import:ro
-      - ../Tools:/app/backend/data/openwebui-tools:ro
-      - ../Artefakte/output:/app/backend/data/offline_artifacts
-    networks:
-      - workbench
-
-  # Workbench dashboard
-  #
-  # Purpose:
-  # - Serves the repository dashboard on localhost.
-  # - Edits model Markdown, tool Python files and skill Markdown directly in /workspace.
-  # - Runs fixed repository actions such as validation, artifact generation and import dry-runs.
-  #
-  # Required local decisions:
-  # - Set WORKBENCH_AUTH_PASSWORD directly or mount a password file and set
-  #   WORKBENCH_AUTH_PASSWORD_FILE before starting the dashboard.
-  #   WORKBENCH_AUTH_USERNAME defaults to "workbench".
-  # - Set OPENWEBUI_ADMIN_TOKEN or OPENWEBUI_ADMIN_TOKEN_FILE only when the dashboard should perform real OpenWebUI sync.
   workbench:
     build:
       context: ..
@@ -68,13 +20,13 @@ services:
       WORKBENCH_AUTOMATION_INTERVAL_MINUTES: ${WORKBENCH_AUTOMATION_INTERVAL_MINUTES:-30}
       WORKBENCH_AUTOMATION_ACTIONS: ${WORKBENCH_AUTOMATION_ACTIONS:-check}
       WORKBENCH_AUTOMATION_RUN_ON_START: ${WORKBENCH_AUTOMATION_RUN_ON_START:-false}
-      WORKBENCH_LOCALE: ${WORKBENCH_LOCALE:-de}
+      WORKBENCH_LOCALE: ${WORKBENCH_LOCALE:-en}
       WORKBENCH_REQUIRE_AUTH: ${WORKBENCH_REQUIRE_AUTH:-true}
       WORKBENCH_AUTH_USERNAME: ${WORKBENCH_AUTH_USERNAME:-workbench}
       WORKBENCH_AUTH_PASSWORD: ${WORKBENCH_AUTH_PASSWORD:-}
       WORKBENCH_AUTH_PASSWORD_FILE: ${WORKBENCH_AUTH_PASSWORD_FILE:-}
-      OPENWEBUI_BASE_URL: ${OPENWEBUI_BASE_URL:-http://openwebui:8080}
-      OPENWEBUI_PUBLIC_URL: ${OPENWEBUI_PUBLIC_URL:-http://localhost:${OPENWEBUI_PORT:-3000}}
+      OPENWEBUI_BASE_URL: ${OPENWEBUI_BASE_URL:-http://host.docker.internal:3000}
+      OPENWEBUI_PUBLIC_URL: ${OPENWEBUI_PUBLIC_URL:-http://localhost:3000}
       OPENWEBUI_TLS_VERIFY: ${OPENWEBUI_TLS_VERIFY:-true}
       OPENWEBUI_CA_FILE: ${OPENWEBUI_CA_FILE:-}
       OPENWEBUI_CA_PATH: ${OPENWEBUI_CA_PATH:-}
@@ -90,14 +42,3 @@ services:
       - ..:/workspace
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    networks:
-      - workbench
-
-volumes:
-  # OpenWebUI database, files, settings and uploaded data.
-  openwebui-data:
-
-networks:
-  # Private bridge used by the dashboard to reach OpenWebUI via http://openwebui:8080.
-  workbench:
-    driver: bridge

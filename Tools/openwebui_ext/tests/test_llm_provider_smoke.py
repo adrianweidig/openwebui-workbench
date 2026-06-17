@@ -17,7 +17,7 @@ class LlmProviderSmokeTest(unittest.TestCase):
 
     def test_rejects_top_secret_provider_base_url(self):
         with self.assertRaisesRegex(smoke.SmokeError, "refusing local model endpoint"):
-            smoke._reject_local_base_url("https://openwebui.top.secret/v1")
+            smoke._reject_local_base_url("https://openwebui.localhost/v1")
 
     def test_auto_selects_external_provider_key_without_printing_secret(self):
         old_env = os.environ.copy()

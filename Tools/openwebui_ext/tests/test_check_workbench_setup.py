@@ -324,7 +324,7 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             self.assertIn("OPENWEBUI_PORT=3000", rendered)
             self.assertIn("WORKBENCH_PORT=8088", rendered)
             self.assertEqual(levels["OpenWebUI URLs"], "ok")
-            self.assertIn("OPENWEBUI_BASE_URL=http://openwebui:8080", rendered)
+            self.assertIn("OPENWEBUI_BASE_URL=http://host.docker.internal:3000", rendered)
             self.assertIn("OPENWEBUI_PUBLIC_URL=http://localhost:3000", rendered)
             self.assertEqual(levels["Boolean config"], "ok")
             self.assertIn("OPENWEBUI_TLS_VERIFY=true", rendered)
@@ -1058,7 +1058,7 @@ class CheckWorkbenchSetupTests(unittest.TestCase):
             template, env_file, compose_file = self._write_minimal_files(Path(temp_dir))
             env_file.write_text(
                 "WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=set\n"
-                "OPENWEBUI_PUBLIC_URL=https://openwebui.top.secret\n",
+                "OPENWEBUI_PUBLIC_URL=https://openwebui.localhost\n",
                 encoding="utf-8",
             )
 

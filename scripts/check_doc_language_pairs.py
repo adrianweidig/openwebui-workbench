@@ -6,7 +6,7 @@ from typing import Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
 LANGUAGE_PAIRS = [
-    ("README.md", "README.en.md"),
+    ("README.de.md", "README.md"),
     ("CONTRIBUTING.md", "CONTRIBUTING.en.md"),
     ("SECURITY.md", "SECURITY.en.md"),
     ("SUPPORT.md", "SUPPORT.en.md"),

@@ -1,6 +1,6 @@
 # Workbench Dashboard
 
-🌐 Sprachen: [Deutsch](README.md) | [English](../docs/en/WORKBENCH_DASHBOARD.md)
+Sprachen: [Deutsch](README.md) | [English](../docs/en/WORKBENCH_DASHBOARD.md)
 
 `Workbench/dashboard` ist die lokale Verwaltungsoberfläche für dieses Repository. Der Service liest und schreibt direkt im gemounteten Repository-Volume und macht damit die Markdown-Dateien unter `Modelle/einzelmodelle/`, die Tool-Quellen unter `Tools/openwebui_ext/tools/` und die Skills unter `Tools/openwebui_ext/skills/` zur zentralen Quelle für Systemprompts, Mainprompts, Fachwissen, Beispiele, Tools und Modellpflege.
 
@@ -73,11 +73,11 @@ Der OpenWebUI-zu-Workbench-Snapshot schreibt nur unter `Artefakte/openwebui_sync
 
 ## HTTPS und lokale Zertifikate
 
-Wenn die Workbench OpenWebUI über eine lokale HTTPS-Adresse wie `https://openwebui.top.secret` erreicht, kann sie private Zertifikate explizit vertrauen oder für eine rein lokale Testinstanz die TLS-Prüfung deaktivieren:
+Wenn die Workbench OpenWebUI über eine private HTTPS-Adresse erreicht, kann sie lokale Zertifikate explizit vertrauen oder für eine rein lokale Testinstanz die TLS-Prüfung deaktivieren:
 
 ```powershell
-$env:OPENWEBUI_BASE_URL="https://openwebui.top.secret"
-$env:OPENWEBUI_PUBLIC_URL="https://openwebui.top.secret"
+$env:OPENWEBUI_BASE_URL="https://openwebui.localhost"
+$env:OPENWEBUI_PUBLIC_URL="https://openwebui.localhost"
 $env:OPENWEBUI_CA_FILE="C:\Pfad\zur\local-ca.pem"
 ```
 
