@@ -39,6 +39,7 @@ jobs:
           short_sha="${GITHUB_SHA::7}"
           root_dir="${project}-${safe_branch}-${short_sha}"
           archive_name="${root_dir}.zip"
+          image_name="ghcr.io/${GITHUB_REPOSITORY,,}/workbench-dashboard"
 
           mkdir -p release-artifacts
           git archive --format=zip --prefix="${root_dir}/" --output="release-artifacts/${archive_name}" "${GITHUB_SHA}"
@@ -87,7 +88,7 @@ jobs:
             echo
             echo "- The ZIP snapshot maps exactly to the listed commit and contains no Git metadata."
             echo "- Release notes show the included commits instead of only workflow metadata."
-            echo "- Checksums are published as `SHA256SUMS.txt` next to the archive and notes."
+            echo "- Checksums are published as \`SHA256SUMS.txt\` next to the archive and notes."
             echo
             echo "## Technical details"
             echo
@@ -111,7 +112,15 @@ jobs:
             echo
             echo "## Docker Image"
             echo
-            echo "The Workbench dashboard image is built by the dedicated Docker workflow when its path filters match. Check the concrete Docker workflow run before documenting or promising GHCR availability."
+            echo "- GHCR image: \`${image_name}\`."
+            if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+              echo "- Release image tag: \`${image_name}:${branch}\`."
+              echo "- Commit image tag: \`${image_name}:sha-${short_sha}\`."
+              echo "- The Docker workflow for this tag must be green before announcing the image as available."
+            else
+              echo "- Main image tags: \`${image_name}:latest\`, \`${image_name}:main\`, and \`${image_name}:sha-${short_sha}\`."
+              echo "- Pull-request artifacts do not publish GHCR images."
+            fi
           } > release-artifacts/RELEASE_NOTES.md
 
           sha256sum "release-artifacts/${archive_name}" "release-artifacts/RELEASE_NOTES.md" > release-artifacts/SHA256SUMS.txt
