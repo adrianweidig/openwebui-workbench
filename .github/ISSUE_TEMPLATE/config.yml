@@ -7,5 +7,5 @@ contact_links:
     url: https://github.com/adrianweidig/openwebui-workbench/blob/main/SECURITY.md
     about: Sensible Schwachstellen nicht öffentlich melden. Bitte zuerst die Security Policy lesen.
   - name: English documentation
-    url: https://github.com/adrianweidig/openwebui-workbench/blob/main/README.en.md
+    url: https://github.com/adrianweidig/openwebui-workbench/blob/main/README.md
     about: English README and links to translated documentation.

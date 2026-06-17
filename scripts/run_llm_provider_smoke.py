@@ -104,7 +104,7 @@ def _host_from_url(url: str) -> str:
 
 def _reject_local_base_url(url: str) -> str:
     host = _host_from_url(url)
-    if host in LOCAL_HOSTS or "." not in host or host.endswith((".local", ".internal", ".lan", ".home.arpa", ".top.secret")):
+    if host in LOCAL_HOSTS or "." not in host or host.endswith((".localhost", ".local", ".internal", ".lan", ".home.arpa")):
         raise SmokeError(f"refusing local model endpoint for live LLM smoke test: {host}")
     try:
         addresses = [item[4][0] for item in socket.getaddrinfo(host, None)]

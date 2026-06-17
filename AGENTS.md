@@ -47,7 +47,7 @@ Artefakte bewusst neu erzeugen:
 python scripts/configure_openwebui_tool_models.py --write --check --rebuild-zips
 ```
 
-Wenn Docker lokal verfügbar ist, können die Compose-Beispielkonfigurationen inklusive optionalem `top.secret`-Override zusätzlich geprüft werden:
+Wenn Docker lokal verfügbar ist, können die Compose-Beispielkonfigurationen zusätzlich geprüft werden:
 
 ```powershell
 python scripts/verify_openwebui_workspace.py --include-docker-compose

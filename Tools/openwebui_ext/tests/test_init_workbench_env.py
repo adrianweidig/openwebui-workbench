@@ -16,38 +16,37 @@ class InitWorkbenchEnvTests(unittest.TestCase):
             template = root / "workbench.env.example"
             output = root / ".env"
             template.write_text(
-                "WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\nOPENWEBUI_ADMIN_TOKEN=\nWORKBENCH_LOCALE=de\n",
+                "WORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\nOPENWEBUI_ADMIN_TOKEN=\nWORKBENCH_LOCALE=en\n",
                 encoding="utf-8",
             )
 
             generated = init_workbench_env.write_env_file(template, output)
 
             values = init_workbench_env.env_values(output.read_text(encoding="utf-8"))
-            self.assertEqual(generated, ["WEBUI_SECRET_KEY", "WORKBENCH_AUTH_PASSWORD"])
-            self.assertGreaterEqual(len(values["WEBUI_SECRET_KEY"]), 32)
+            self.assertEqual(generated, ["WORKBENCH_AUTH_PASSWORD"])
             self.assertGreaterEqual(len(values["WORKBENCH_AUTH_PASSWORD"]), 24)
             self.assertEqual(values["OPENWEBUI_ADMIN_TOKEN"], "")
-            self.assertEqual(values["WORKBENCH_LOCALE"], "de")
+            self.assertEqual(values["WORKBENCH_LOCALE"], "en")
 
     def test_refuses_to_overwrite_without_force(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             template = root / "workbench.env.example"
             output = root / ".env"
-            template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\n", encoding="utf-8")
-            output.write_text("WEBUI_SECRET_KEY=keep\nWORKBENCH_AUTH_PASSWORD=keep\n", encoding="utf-8")
+            template.write_text("WORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\n", encoding="utf-8")
+            output.write_text("WORKBENCH_AUTH_PASSWORD=keep\n", encoding="utf-8")
 
             with self.assertRaises(FileExistsError):
                 init_workbench_env.write_env_file(template, output)
 
-            self.assertEqual(output.read_text(encoding="utf-8"), "WEBUI_SECRET_KEY=keep\nWORKBENCH_AUTH_PASSWORD=keep\n")
+            self.assertEqual(output.read_text(encoding="utf-8"), "WORKBENCH_AUTH_PASSWORD=keep\n")
 
     def test_refuses_template_missing_required_keys(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             template = root / "workbench.env.example"
             output = root / ".env"
-            template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_LOCALE=de\n", encoding="utf-8")
+            template.write_text("WORKBENCH_LOCALE=en\n", encoding="utf-8")
 
             with self.assertRaises(ValueError):
                 init_workbench_env.write_env_file(template, output)
@@ -57,7 +56,7 @@ class InitWorkbenchEnvTests(unittest.TestCase):
     def test_check_reports_missing_required_values(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             env_file = Path(temp_dir) / ".env"
-            env_file.write_text("WEBUI_SECRET_KEY=set\nWORKBENCH_AUTH_PASSWORD=\n", encoding="utf-8")
+            env_file.write_text("WORKBENCH_AUTH_PASSWORD=\n", encoding="utf-8")
 
             self.assertEqual(
                 init_workbench_env.missing_required_values(env_file),
@@ -68,7 +67,6 @@ class InitWorkbenchEnvTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             env_file = Path(temp_dir) / ".env"
             env_file.write_text(
-                "WEBUI_SECRET_KEY=set\n"
                 "WORKBENCH_REQUIRE_AUTH=true\n"
                 "WORKBENCH_AUTH_PASSWORD=\n"
                 "WORKBENCH_AUTH_PASSWORD_FILE=/run/secrets/workbench-auth-password\n",
@@ -81,7 +79,7 @@ class InitWorkbenchEnvTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             env_file = Path(temp_dir) / ".env"
             env_file.write_text(
-                "WEBUI_SECRET_KEY=set\nWORKBENCH_REQUIRE_AUTH=false\nWORKBENCH_AUTH_PASSWORD=\n",
+                "WORKBENCH_REQUIRE_AUTH=false\nWORKBENCH_AUTH_PASSWORD=\n",
                 encoding="utf-8",
             )
 
@@ -92,8 +90,8 @@ class InitWorkbenchEnvTests(unittest.TestCase):
             root = Path(temp_dir)
             template = root / "workbench.env.example"
             output = root / ".env"
-            template.write_text("WEBUI_SECRET_KEY=\nWORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\n", encoding="utf-8")
-            output.write_text("WEBUI_SECRET_KEY=keep\nWORKBENCH_AUTH_PASSWORD=keep\n", encoding="utf-8")
+            template.write_text("WORKBENCH_AUTH_PASSWORD=\nWORKBENCH_AUTH_PASSWORD_FILE=\n", encoding="utf-8")
+            output.write_text("WORKBENCH_AUTH_PASSWORD=keep\n", encoding="utf-8")
             stdout = io.StringIO()
             stderr = io.StringIO()
 

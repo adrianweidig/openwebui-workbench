@@ -2,11 +2,12 @@
 
 🌐 Languages: [Deutsch](../de/index.md) | [English](index.md)
 
-German is the default language of this repository. GitHub does not automatically switch normal repository files by visitor language, so README files, community files, and central documentation pages are linked explicitly.
+English is now the default GitHub landing language. German remains available as a separate README and documentation entry.
 
 ## Start Here
 
-- [English README](../../README.en.md)
+- [English README](../../README.md)
+- [German README](../../README.de.md)
 - [Internationalization](I18N.md)
 - [Architecture](ARCHITECTURE.md)
 - [Workbench Dashboard](WORKBENCH_DASHBOARD.md)
@@ -16,8 +17,8 @@ German is the default language of this repository. GitHub does not automatically
 
 ## Language Structure
 
-- German: `README.md`, `docs/de/`, default root documentation, and default dashboard UI.
-- English: `README.en.md`, `docs/en/`, and `.en.md` variants of community files.
+- German: `README.de.md`, `docs/de/`, German root documentation, and German dashboard UI.
+- English: `README.md`, `docs/en/`, and `.en.md` variants of community files.
 - Additional languages can be added with new `docs/<lang>/` folders, README variants, and dashboard locale resources.
 
 ## Rule

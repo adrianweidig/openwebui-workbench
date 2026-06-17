@@ -143,7 +143,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--portainer-url",
         default=os.environ.get("PORTAINER_URL", ""),
-        help="optional Portainer base URL to probe without credentials, for example https://portainer.top.secret",
+        help="optional Portainer base URL to probe without credentials, for example http://localhost:9000",
     )
     return parser.parse_args(argv)
 
@@ -288,7 +288,7 @@ def check_openwebui_urls(env_path: Path) -> CheckResult:
     except OSError as exc:
         return CheckResult("fail", "OpenWebUI URLs", str(exc), "Check file permissions.")
 
-    base_url, base_error = _env_url(values, "OPENWEBUI_BASE_URL", "http://openwebui:8080")
+    base_url, base_error = _env_url(values, "OPENWEBUI_BASE_URL", "http://host.docker.internal:3000")
     public_url, public_error = _env_url(values, "OPENWEBUI_PUBLIC_URL", "http://localhost:3000")
     errors = [error for error in (base_error, public_error) if error]
     if errors:
@@ -804,7 +804,7 @@ def check_runtime_reachability(
                 _runtime_probe_level(require_runtime),
                 "Runtime Portainer",
                 "PORTAINER_URL is not configured; Portainer reachability was not probed.",
-                "Pass --portainer-url https://portainer.top.secret for Portainer acceptance checks.",
+                "Pass --portainer-url http://localhost:9000 for Portainer acceptance checks.",
             )
         )
     return results

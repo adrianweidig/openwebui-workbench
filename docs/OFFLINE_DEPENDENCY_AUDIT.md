@@ -19,7 +19,7 @@ Dieses Audit klassifiziert Netzwerkindikatoren im Repository. Ziel ist nicht, je
 
 | Datei | Fundstelle | Kategorie | Risiko | Offline-Status | Maßnahme |
 |---|---:|---:|---|---|---|
-| `README.md`, `README.en.md` | GitHub- und shields.io-Badges | 2 | Badges laden nur in der GitHub-/Webansicht nach | kein Runtime-Effekt | Lokale Hero- und Screenshot-Bilder bleiben versioniert; externe Badges sind Komfortanzeige |
+| `README.md`, `README.de.md` | GitHub- und shields.io-Badges | 2 | Badges laden nur in der GitHub-/Webansicht nach | kein Runtime-Effekt | Lokale Hero- und Screenshot-Bilder bleiben versioniert; externe Badges sind Komfortanzeige |
 | `Tools/import_openwebui_workspace.py` | `urllib`, `OPENWEBUI_BASE_URL` | 3 | API-Import spricht bewusst eine Zielinstanz an | nicht Teil des Offline-Modellbetriebs | Import nur mit lokaler Konfiguration und Admin-Token ausführen |
 | `Tools/openwebui_ext/tools/llm_council.py` | `requests`, lokale OpenWebUI-API | 0 | Modellrat braucht eine erreichbare lokale OpenWebUI-API und lokale Modell-IDs | Offline-Default mit lokaler API | Öffentliche Provider-Fallbacks bleiben im Air-Gap-Build deaktiviert; `OPENWEBUI_BASE_URL` auf lokale oder Intra-Stack-API setzen |
 | `Tools/openwebui_ext/tools/safe_http_fetcher.py` | `urllib.request` | 3 | öffentliches HTTP-Fetching möglich | nicht Offline-Default | Nicht im Offline-Import und nicht im `internetwissen`-Profil verwenden |

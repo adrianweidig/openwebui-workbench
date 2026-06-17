@@ -11,12 +11,11 @@ from typing import Callable, Sequence
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = ROOT / "Deployment" / "workbench.env.example"
 DEFAULT_OUTPUT = ROOT / ".env"
-REQUIRED_KEYS = ("WEBUI_SECRET_KEY",)
-TEMPLATE_KEYS = (*REQUIRED_KEYS, "WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE")
+REQUIRED_KEYS: tuple[str, ...] = ()
+TEMPLATE_KEYS = ("WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE")
 AUTH_VALUE_KEYS = ("WORKBENCH_AUTH_PASSWORD", "WORKBENCH_AUTH_PASSWORD_FILE", "WORKBENCH_AUTH_PASSWORD_HOST_FILE")
 AUTH_VALUE_LABEL = "WORKBENCH_AUTH_PASSWORD or WORKBENCH_AUTH_PASSWORD_FILE"
 GENERATED_VALUES: dict[str, Callable[[], str]] = {
-    "WEBUI_SECRET_KEY": lambda: secrets.token_urlsafe(48),
     "WORKBENCH_AUTH_PASSWORD": lambda: secrets.token_urlsafe(24),
 }
 ENV_LINE_RE = re.compile(r"^(?P<key>[A-Z0-9_]+)=(?P<value>.*)$")
@@ -76,7 +75,7 @@ def write_env_file(template_path: Path, output_path: Path, force: bool = False) 
 
 def missing_required_values(env_path: Path) -> list[str]:
     if not env_path.exists():
-        return [*REQUIRED_KEYS, AUTH_VALUE_LABEL]
+        return [AUTH_VALUE_LABEL]
     values = env_values(env_path.read_text(encoding="utf-8"))
     missing = [key for key in REQUIRED_KEYS if not values.get(key, "").strip()]
     auth_required = values.get("WORKBENCH_REQUIRE_AUTH", "true").strip().lower()
