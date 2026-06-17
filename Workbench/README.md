@@ -2,9 +2,34 @@
 
 Sprachen: [Deutsch](README.md) | [English](../docs/en/WORKBENCH_DASHBOARD.md)
 
-`Workbench/dashboard` ist die lokale Verwaltungsoberfläche für dieses Repository. Der Service liest und schreibt direkt im gemounteten Repository-Volume und macht damit die Markdown-Dateien unter `Modelle/einzelmodelle/`, die Tool-Quellen unter `Tools/openwebui_ext/tools/` und die Skills unter `Tools/openwebui_ext/skills/` zur zentralen Quelle für Systemprompts, Mainprompts, Fachwissen, Beispiele, Tools und Modellpflege.
+`Workbench/dashboard` ist die Verwaltungsoberfläche für dieses Repository. Der empfohlene Start läuft als Container über `Deployment/docker-compose.workbench.yml`. Der Service liest und schreibt direkt im gemounteten Repository-Volume und macht damit die Markdown-Dateien unter `Modelle/einzelmodelle/`, die Tool-Quellen unter `Tools/openwebui_ext/tools/` und die Skills unter `Tools/openwebui_ext/skills/` zur zentralen Quelle für Systemprompts, Mainprompts, Fachwissen, Beispiele, Tools und Modellpflege.
 
-## Start lokal
+## Start mit Docker Compose
+
+```powershell
+if (-not (Test-Path .env)) { Copy-Item Deployment/workbench.env.example .env }
+# .env bearbeiten: WORKBENCH_AUTH_PASSWORD und OPENWEBUI_BASE_URL setzen.
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml pull workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d
+```
+
+Standardports:
+
+- OpenWebUI: `http://localhost:3000`
+- Workbench Dashboard: `http://localhost:8088`
+
+Wenn OpenWebUI bereits außerhalb dieses Compose-Projekts läuft:
+
+```powershell
+$env:OPENWEBUI_BASE_URL="http://host.docker.internal:3000"
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d workbench
+```
+
+Für lokale Entwicklung am Dashboard-Image kannst du `--build` ergänzen und aus dem Checkout bauen.
+
+Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` erwartet. Der Token wird nicht in Antworten ausgegeben und gehört nicht ins Repository.
+
+## Lokaler Entwicklerstart
 
 ```powershell
 python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
@@ -23,28 +48,6 @@ $env:WORKBENCH_AUTH_USERNAME="workbench"
 $env:WORKBENCH_AUTH_PASSWORD=Read-Host "Workbench-Passwort"
 python -m Workbench.dashboard.server --host 127.0.0.1 --port 8088
 ```
-
-## Start mit Docker Compose
-
-```powershell
-python scripts/init_workbench_env.py
-python scripts/init_workbench_env.py --check
-docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
-```
-
-Standardports:
-
-- OpenWebUI: `http://localhost:3000`
-- Workbench Dashboard: `http://localhost:8088`
-
-Wenn OpenWebUI bereits außerhalb dieses Compose-Projekts läuft:
-
-```powershell
-$env:OPENWEBUI_BASE_URL="http://host.docker.internal:3000"
-docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build workbench
-```
-
-Für den API-Sync wird ein OpenWebUI-Admin-API-Key über `OPENWEBUI_ADMIN_TOKEN` oder `OPENWEBUI_ADMIN_TOKEN_FILE` erwartet. Der Token wird nicht in Antworten ausgegeben und gehört nicht ins Repository.
 
 ## Dashboard-Funktionen
 

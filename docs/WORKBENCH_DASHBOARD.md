@@ -9,9 +9,10 @@ OpenWebUI bleibt die Chat- und Runtime-Instanz. Die Workbench läuft daneben als
 ## Start
 
 ```powershell
-python scripts/init_workbench_env.py
-python scripts/check_workbench_setup.py
-docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d --build
+if (-not (Test-Path .env)) { Copy-Item Deployment/workbench.env.example .env }
+# .env bearbeiten: WORKBENCH_AUTH_PASSWORD und OPENWEBUI_BASE_URL setzen.
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml pull workbench
+docker compose --env-file .env -f Deployment/docker-compose.workbench.yml up -d
 ```
 
 Danach öffnen:
@@ -21,6 +22,8 @@ http://localhost:8088
 ```
 
 Die Standard-Compose-Datei startet genau einen Container: `workbench`.
+
+Für lokale Entwicklung am Dashboard-Image kannst du `--build` ergänzen und aus dem Checkout bauen.
 
 Setze `OPENWEBUI_BASE_URL` in `.env` auf die OpenWebUI-Instanz, die der Container erreichen soll. Wenn OpenWebUI auf dem Host läuft, reicht bei Docker Desktop meist:
 
